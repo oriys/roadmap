@@ -191,12 +191,15 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
 }
 
 function buildLessonQuizCanonical(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
+  const minQuestions = 10
+  const maxQuestions = 30
   const base = createLessonQuiz(lesson, week, stage)
   const custom = customLessonQuizzes[lesson.id] || []
   if (!custom.length) return base
+  if (custom.length >= minQuestions) return custom.slice(0, maxQuestions)
   const customIds = new Set(custom.map((q) => q.id))
   const merged = [...custom, ...base.filter((q) => !customIds.has(q.id))]
-  return merged.slice(0, 10)
+  return merged.slice(0, minQuestions)
 }
 
 function buildLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
@@ -238,7 +241,7 @@ const roadmap: Stage[] = [
             resources: [
               { title: "cgroup v2 内核文档", url: "https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html" },
               { title: "cgroups man7", url: "https://man7.org/linux/man-pages/man7/cgroups.7.html" },
-              { title: "容器资源限制示例（Docker 官方）", url: "https://docs.docker.com/config/containers/resource_constraints/" },
+              { title: "容器资源限制示例（Docker 官方）", url: "https://docs.docker.com/engine/containers/resource_constraints/" },
             ],
           },
           {
@@ -246,9 +249,9 @@ const roadmap: Stage[] = [
             title: "联合文件系统（UnionFS）",
             detail: "剖析 Overlay2 存储驱动与 Copy-on-Write 机制。",
             resources: [
-              { title: "Docker OverlayFS 驱动", url: "https://docs.docker.com/storage/storagedriver/overlayfs-driver/" },
+              { title: "Docker OverlayFS 驱动", url: "https://docs.docker.com/engine/storage/drivers/overlayfs-driver/" },
               { title: "Linux overlayfs 内核文档", url: "https://docs.kernel.org/filesystems/overlayfs.html" },
-              { title: "容器镜像与层演示（官方教程）", url: "https://docs.docker.com/get-started/overview/#images" },
+              { title: "容器镜像与层演示（官方教程）", url: "https://docs.docker.com/get-started/docker-overview/#images" },
             ],
           },
           {
@@ -256,9 +259,9 @@ const roadmap: Stage[] = [
             title: "容器网络基础",
             detail: "虚拟网桥、Veth Pair 与 iptables 在容器通信中的作用。",
             resources: [
-              { title: "Docker Bridge 网络", url: "https://docs.docker.com/network/bridge/" },
-              { title: "veth 内核文档", url: "https://www.kernel.org/doc/Documentation/networking/veth.txt" },
-              { title: "Docker 网络动手实验", url: "https://docs.docker.com/network/network-tutorial-standalone/" },
+              { title: "Docker Bridge 网络", url: "https://docs.docker.com/engine/network/drivers/bridge/" },
+              { title: "veth(4) man7", url: "https://man7.org/linux/man-pages/man4/veth.4.html" },
+              { title: "Docker 端口发布与防火墙", url: "https://docs.docker.com/engine/network/packet-filtering-firewalls/" },
             ],
           },
         ],
