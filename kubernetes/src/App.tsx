@@ -322,9 +322,11 @@ const roadmap: Stage[] = [
       {
         id: "w3",
         title: "第 3 周：Kubernetes 架构与部署",
-        summary: "迈入 K8s：架构、声明式 API 与 Pod 生命周期。",
-        overview: "建立对控制平面/数据平面的全局图，动手用 kubeadm/minikube/kind 拉起集群并体验声明式 API 与调和循环。",
+        summary: "迈入 K8s：入门概念、架构、声明式 API 与 Pod 生命周期。",
+        overview:
+          "补齐入门概念与术语（Why/What/核心对象），再动手用 kubeadm/minikube/kind 拉起集群，部署第一个应用并体验声明式 API 与调和循环。",
         keyPoints: [
+          "为什么需要 Kubernetes：解决部署、伸缩与自愈问题；理解核心对象（Pod/Service/Deployment/Namespace）与常见术语。",
           "API Server + etcd + Scheduler + Controller Manager 的职责边界，kubelet/kube-proxy 的节点责任。",
           "声明式 vs 命令式：期望状态、调和循环、finalizer，kubectl apply/patch 的差异。",
           "Pod 生命周期：Init/Probes/重启策略，常见 CrashLoopBackOff 排查路径。",
@@ -336,19 +338,25 @@ const roadmap: Stage[] = [
             detail: "控制平面（API Server、Etcd、Scheduler）与工作节点（Kubelet、Kube-proxy）。",
             resources: [
               { title: "Kubernetes 组件概览", url: "https://kubernetes.io/docs/concepts/overview/components/" },
+              { title: "What is Kubernetes?", url: "https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" },
+              { title: "Kubernetes Glossary", url: "https://kubernetes.io/docs/reference/glossary/" },
               { title: "Controller 模式", url: "https://kubernetes.io/docs/concepts/architecture/controller/" },
-              { title: "Kubernetes Basics 交互式教程", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/" },
+              { title: "Kubernetes Alternatives（Nomad）", url: "https://developer.hashicorp.com/nomad/docs" },
+              { title: "Kubernetes Alternatives（Docker Swarm）", url: "https://docs.docker.com/engine/swarm/" },
             ],
           },
           {
             id: "w3-2",
             title: "集群搭建实战",
-            detail: "Kubeadm 或 Minikube/Kind 的快速集群搭建。",
+            detail: "Kubeadm 或 Minikube/Kind 的快速集群搭建，并部署第一个应用验证链路。",
             resources: [
               { title: "kubeadm 创建集群", url: "https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/" },
               { title: "minikube 快速开始", url: "https://minikube.sigs.k8s.io/docs/start/" },
               { title: "kind 快速开始", url: "https://kind.sigs.k8s.io/docs/user/quick-start/" },
               { title: "kubeadm HA 部署指南", url: "https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/" },
+              { title: "部署第一个应用（Kubernetes Basics）", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/deploy-app/deploy-intro/" },
+              { title: "暴露服务（Kubernetes Basics）", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/" },
+              { title: "生产环境方案（托管/发行版）", url: "https://kubernetes.io/docs/setup/production-environment/turnkey-solutions/" },
             ],
           },
           {
@@ -385,9 +393,9 @@ const roadmap: Stage[] = [
         id: "w4",
         title: "第 4 周：工作负载管理",
         summary: "控制器模式与流量入口，掌握发布与路由。",
-        overview: "熟悉 Deployment 滚动升级与回滚，掌握 Service/Ingress 如何让应用被发现与暴露。",
+        overview: "掌握工作负载控制器（Deployment/Job/CronJob）与发布策略，理解 Service/Ingress 如何让应用被发现、负载均衡并对外暴露。",
         keyPoints: [
-          "ReplicaSet/Deployment 的发布策略、探针配合、金丝雀/蓝绿基本做法。",
+          "Deployment/ReplicaSet 与 Job/CronJob 的差异：长运行服务 vs 批处理任务；发布策略、探针配合与回滚。",
           "Service 类型（ClusterIP/NodePort/LB）与 kube-proxy iptables/IPVS 流量路径。",
           "Ingress Controller/Ingress 规则与 TLS、Host/Path 路由、常见 404/调试。",
         ],
@@ -395,9 +403,11 @@ const roadmap: Stage[] = [
           {
             id: "w4-1",
             title: "控制器模式",
-            detail: "ReplicaSet 与 Deployment 的滚动更新 / 回滚。",
+            detail: "Deployment/ReplicaSet 的滚动更新与回滚，以及 Job/CronJob 批处理控制器。",
             resources: [
               { title: "Deployment 官方文档", url: "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" },
+              { title: "Job", url: "https://kubernetes.io/docs/concepts/workloads/controllers/job/" },
+              { title: "CronJob", url: "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/" },
               { title: "滚动更新与回滚", url: "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment" },
               { title: "滚动更新动手实验", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/" },
             ],
@@ -424,11 +434,12 @@ const roadmap: Stage[] = [
           },
           {
             id: "w4-4",
-            title: "命名空间与配额",
-            detail: "Namespaces 隔离与 ResourceQuota / LimitRange。",
+            title: "资源治理与配额",
+            detail: "Requests/Limits 与 QoS 资源治理，配合 Namespace/ResourceQuota/LimitRange 做多租户配额。",
             resources: [
-              { title: "Namespaces", url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/" },
+              { title: "管理容器资源（Requests/Limits/QoS）", url: "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" },
               { title: "ResourceQuota / LimitRange", url: "https://kubernetes.io/docs/concepts/policy/resource-quotas/" },
+              { title: "Namespaces", url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/" },
               { title: "资源配额示例", url: "https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/" },
             ],
           },
@@ -491,30 +502,33 @@ const roadmap: Stage[] = [
         id: "w6",
         title: "第 6 周：调度与高级网络",
         summary: "把应用放到正确的节点上，并限制流量。",
-        overview: "用亲和/反亲和、污点/容忍把工作负载放对位置，再用 NetworkPolicy/CNI 控制网络可达性与隔离。",
+        overview: "用亲和/反亲和、优先级、污点/容忍把工作负载放对位置，并理解驱逐/中断；再用 NetworkPolicy/CNI 控制网络可达性与隔离。",
         keyPoints: [
           "节点/Pod 亲和与反亲和适用场景，拓扑分布约束应对跨可用区的分布。",
-          "污点与容忍的匹配逻辑，常见专用节点/NoSchedule/NoExecute 场景。",
+          "Pod Priority/Preemption 与污点/容忍的匹配逻辑，常见专用节点/NoSchedule/NoExecute 场景。",
           "NetworkPolicy 默认允许→显式拒绝模型，CNI 插件差异（Overlay vs BGP）。",
         ],
         lessons: [
           {
             id: "w6-1",
             title: "高级调度策略",
-            detail: "Node Affinity 与 Pod Anti-Affinity。",
+            detail: "亲和/拓扑分布、PriorityClass/Preemption，以及自定义调度扩展点。",
             resources: [
               { title: "节点亲和/反亲和", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/" },
               { title: "拓扑分布约束", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/" },
-              { title: "亲和性示例 YAML", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity" },
+              { title: "Pod Priority & Preemption", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/" },
+              { title: "Scheduling Framework", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/" },
+              { title: "配置多调度器", url: "https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/" },
             ],
           },
           {
             id: "w6-2",
             title: "污点与容忍",
-            detail: "Taints & Tolerations 实战配置。",
+            detail: "Taints & Tolerations 以及驱逐/中断（PDB）相关机制。",
             resources: [
               { title: "Taints & Tolerations", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/" },
               { title: "污点容忍示例", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#example-use-cases" },
+              { title: "Pod Disruption Budget & Disruptions", url: "https://kubernetes.io/docs/concepts/workloads/pods/disruptions/" },
             ],
           },
           {
@@ -712,7 +726,7 @@ const roadmap: Stage[] = [
         keyPoints: [
           "Application CRD 关键字段（source/destination/syncPolicy）与健康/同步状态。",
           "Auto-Sync、Prune、Self-Heal 配置，Sync Wave/Hook 的发布编排。",
-          "多环境（dev/stage/prod）差异管理：Kustomize overlays 或 Helm values；App of Apps 引导大规模集群。",
+          "多环境（dev/stage/prod）差异管理：Kustomize overlays 或 Helm values；App of Apps + 多集群管理与渐进式发布。",
         ],
         lessons: [
           {
@@ -748,9 +762,11 @@ const roadmap: Stage[] = [
           {
             id: "w10-4",
             title: "App of Apps 模式",
-            detail: "规模化管理数千微服务的策略。",
+            detail: "规模化引导（Bootstrap）、多集群管理与渐进式发布（Canary/Blue-Green）。",
             resources: [
               { title: "App of Apps/集群引导", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/" },
+              { title: "ArgoCD Cluster Management", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-management/" },
+              { title: "Argo Rollouts（渐进式交付）", url: "https://argo-rollouts.readthedocs.io/en/stable/" },
               { title: "ArgoCD 示例仓库", url: "https://github.com/argoproj/argocd-example-apps/tree/master/apps" },
             ],
           },
@@ -771,6 +787,7 @@ const roadmap: Stage[] = [
         overview: "搭建 Metrics 链路：Prometheus 拉取 → PromQL 计算 → Grafana 展示 → Alertmanager 告警，理解采样/聚合/告警抑制要点。",
         keyPoints: [
           "Prometheus 抓取目标发现、relabel、Exporter 选型与 TSDB 存储特性。",
+          "Kubernetes 资源健康：metrics-server/kube-state-metrics 让容量、配额与控制器状态可观测。",
           "PromQL 常用函数（rate/sum by/histogram_quantile），区分瞬时值与区间向量。",
           "Grafana Dashboard 设计与告警路由、静默/抑制策略，防“告警风暴”。",
         ],
@@ -781,6 +798,8 @@ const roadmap: Stage[] = [
             detail: "Pull 模型、TSDB 存储与 Exporter。",
             resources: [
               { title: "Prometheus 概览", url: "https://prometheus.io/docs/introduction/overview/" },
+              { title: "Kubernetes 资源指标链路（metrics-server）", url: "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/" },
+              { title: "kube-state-metrics", url: "https://github.com/kubernetes/kube-state-metrics" },
               { title: "Exporter 生态", url: "https://prometheus.io/docs/instrumenting/exporters/" },
               { title: "Prometheus 安装示例", url: "https://prometheus.io/docs/prometheus/latest/installation/" },
             ],
@@ -987,7 +1006,7 @@ const roadmap: Stage[] = [
         summary: "HPA/Cluster Autoscaler，Knative 与事件驱动架构。",
         overview: "掌握从 Pod 到集群的弹性链路，理解 Knative 的 scale-to-zero 与事件驱动模型，以及 Operator 模式的自动化扩展。",
         keyPoints: [
-          "HPA 指标来源（metrics-server/自定义指标）与目标配置，抖动与冷却时间调优。",
+          "HPA/VPA 指标来源（metrics-server/自定义指标）与目标配置，抖动与冷却时间调优。",
           "Cluster Autoscaler 节点弹性与调度耦合；Knative Serving 冷启动、并发控制。",
           "Eventing + CloudEvents 的事件总线思路，Operator/CRD 让扩展点可编排。",
         ],
@@ -995,9 +1014,10 @@ const roadmap: Stage[] = [
           {
             id: "w15-1",
             title: "自动扩缩容",
-            detail: "HPA 与 Cluster Autoscaler 的协同。",
+            detail: "HPA/VPA 与 Cluster Autoscaler 的协同。",
             resources: [
               { title: "Horizontal Pod Autoscaler", url: "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" },
+              { title: "Vertical Pod Autoscaler (VPA)", url: "https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler" },
               { title: "Cluster Autoscaler", url: "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler" },
               { title: "HPA 自定义指标示例", url: "https://kubernetes.io/docs/tasks/run-application/hpa-walkthrough/" },
             ],
@@ -1028,6 +1048,8 @@ const roadmap: Stage[] = [
             detail: "用 Operator 管理复杂有状态应用。",
             resources: [
               { title: "Operator 模式", url: "https://kubernetes.io/docs/concepts/extend-kubernetes/operator/" },
+              { title: "Custom Resources / CRD", url: "https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/" },
+              { title: "API Aggregation Layer", url: "https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/" },
               { title: "Operator SDK", url: "https://sdk.operatorframework.io/docs/" },
               { title: "Kubebuilder 快速开始", url: "https://book.kubebuilder.io/quick-start.html" },
             ],
@@ -1106,11 +1128,11 @@ const knowledgeCards: KnowledgeCard[] = [
   {
     id: "phase2",
     title: "K8s 编排的“期望状态”",
-    summary: "K8s 控制器不断调和期望状态与实际状态，Deployment/Service/StatefulSet 分别关注副本、流量和身份。",
+    summary: "K8s 控制器不断调和期望状态与实际状态，Deployment/Job/Service/StatefulSet 覆盖副本、批处理、流量和身份。",
     points: [
-      "Deployment 负责无状态副本，StatefulSet 负责稳定身份，有序部署与持久卷。",
+      "Deployment 负责无状态副本，StatefulSet 负责稳定身份，Job/CronJob 负责一次性/定时任务。",
       "Service + Ingress 构成东西向与南北向流量入口，NetworkPolicy 才是“防火墙”。",
-      "存储三件事：声明（PVC）、供给（StorageClass/CSI）、生命周期（绑定/回收）。",
+      "资源治理与存储：requests/limits/QoS + ResourceQuota/LimitRange，配合 PVC/StorageClass/CSI 管理状态。",
     ],
     practice: "给同一应用同时创建 Deployment 与 StatefulSet，对比 Pod 名称、PVC 行为以及滚动更新方式。",
   },
@@ -1120,7 +1142,7 @@ const knowledgeCards: KnowledgeCard[] = [
     summary: "一切配置进 Git，CI 生成镜像，CD 由 ArgoCD 拉取并自愈，同步失败即回滚。",
     points: [
       "Terraform 创建集群，Ansible 配机器，K8s 负责运行；分层职责让排错可定位。",
-      "GitOps：Git 是唯一真相，ArgoCD 持续拉取并调和目标集群状态。",
+      "GitOps + 多集群：Git 是唯一真相，ArgoCD 对多个集群持续拉取并调和目标状态。",
       "流水线要包含安全：镜像扫描（Trivy）、自动化测试、分支保护与审批。",
     ],
     practice: "为一个示例应用写 GitHub Actions：构建镜像、扫描、推送；再写 ArgoCD Application 自动拉取部署。",
@@ -1142,7 +1164,7 @@ const knowledgeCards: KnowledgeCard[] = [
     summary: "4C 安全模型确保云、集群、容器、代码层层防护；CKA/CKAD 考点集中在排错与日常运维。",
     points: [
       "Admission 控制 + 镜像签名防供应链攻击；Runtime Security 防零日利用。",
-      "HPA/Autoscaler 与事件驱动架构让资源按需弹性，但要监控成本与冷启动。",
+      "HPA/VPA/Autoscaler 与事件驱动架构让资源按需弹性，但要监控成本与冷启动。",
       "备考：熟练 kubectl、etcd 备份恢复、NetworkPolicy、PV/PVC 以及常见故障分析。",
     ],
     practice: "用 cosign 给镜像签名，并在集群里配置准入控制器拒绝未签名镜像。",

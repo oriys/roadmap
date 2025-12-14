@@ -22,8 +22,8 @@
 
 ### 第 3 周：Kubernetes 架构与部署
 
-- w3-1 K8s 核心架构：建立 Kubernetes 组件全景：API Server/etcd/scheduler/controller/kubelet/kube-proxy 的职责与边界。完成后能用这张图解释集群行为、调和循环以及常见故障域。
-- w3-2 集群搭建实战：动手搭建集群（kubeadm/minikube/kind），掌握 kubeconfig/context、网络插件与节点健康检查。完成后拥有可反复销毁重建的练习环境，为后续实验打底。
+- w3-1 K8s 核心架构：补齐入门概念与核心术语，建立 Kubernetes 组件全景：API Server/etcd/scheduler/controller/kubelet/kube-proxy 的职责与边界，并了解常见替代方案的取舍。完成后能用这张图解释集群行为、调和循环以及常见故障域。
+- w3-2 集群搭建实战：动手搭建集群（kubeadm/minikube/kind），部署第一个应用验证链路，掌握 kubeconfig/context、网络插件与节点健康检查，并理解自建 vs 托管的基本选择。完成后拥有可反复销毁重建的练习环境，为后续实验打底。
 - w3-3 声明式 API 与 YAML：掌握声明式对象管理：用 YAML 表达期望状态，通过调和循环持续收敛；理解 `apply` 与 `patch` 的差异。完成后能避免“手改被覆盖”，并用声明式方式管理对象演进。
 - w3-4 Pod 生命周期：系统理解 Pod 生命周期：Init、就绪/存活/启动探针、重启策略与 BackOff。完成后能基于事件/日志/探针把 CrashLoopBackOff 等问题拆解到根因。
 
@@ -31,10 +31,10 @@
 
 ### 第 4 周：工作负载管理
 
-- w4-1 控制器模式：掌握 Deployment/ReplicaSet 的控制器模式与发布策略（滚动升级、回滚与副本管理）。完成后能做一次可验证的升级/回滚，并理解它与探针/就绪门控的配合。
+- w4-1 控制器模式：掌握 Deployment/ReplicaSet 以及 Job/CronJob 的控制器模式与发布策略（滚动升级、回滚与批处理/定时任务）。完成后能做一次可验证的升级/回滚，并理解它与探针/就绪门控的配合。
 - w4-2 服务发现：理解 Service 的服务发现与负载均衡：ClusterIP/NodePort/LoadBalancer 的流量路径，以及 kube-proxy iptables/IPVS 差异。完成后能解释常见访问异常（不通/指到旧 Pod/会话丢失）。
 - w4-3 流量入口：从“Ingress 只是规则，Controller 才是数据面”出发理解入口流量：Host/Path 路由、TLS、后端 Service 关系。完成后能定位 404/503、证书问题与路径匹配坑。
-- w4-4 命名空间与配额：用 Namespace 做隔离边界，用 ResourceQuota/LimitRange 做资源治理与默认值约束。完成后能为团队/环境设计配额方案，避免资源争抢与成本失控。
+- w4-4 资源治理与配额：用 requests/limits 与 QoS 做资源治理，用 Namespace、ResourceQuota/LimitRange 做隔离边界与默认值约束。完成后能为团队/环境设计配额方案，避免资源争抢与成本失控。
 
 ### 第 5 周：存储与配置管理
 
@@ -45,8 +45,8 @@
 
 ### 第 6 周：调度与高级网络
 
-- w6-1 高级调度策略：用 node/pod 亲和与拓扑分布约束把工作负载放到正确位置（跨 AZ、隔离、反共置）。完成后能设计更稳健的副本分布并避免热点。
-- w6-2 污点与容忍：用 taints/tolerations 实现专用节点、驱逐策略与环境隔离，理解匹配规则与 NoExecute 行为。完成后能解释“为什么不调度/为什么被驱逐”，并写出可维护策略。
+- w6-1 高级调度策略：用 node/pod 亲和与拓扑分布约束把工作负载放到正确位置（跨 AZ、隔离、反共置），并理解 PriorityClass/抢占与自定义调度扩展点。完成后能设计更稳健的副本分布并避免热点。
+- w6-2 污点与容忍：用 taints/tolerations 实现专用节点、驱逐策略与环境隔离，结合 PDB 理解中断保护与 NoExecute 行为。完成后能解释“为什么不调度/为什么被驱逐”，并写出可维护策略。
 - w6-3 网络策略：理解 NetworkPolicy 的显式允许模型：从默认全通到默认拒绝，按 label/端口/namespace 切边界。完成后能为典型三层应用写 ingress/egress 白名单并验证生效（前提是 CNI 支持）。
 - w6-4 CNI 插件解析：理解 CNI 插件在网络模型与策略能力上的差异：Overlay（Flannel）vs 路由/BGP（Calico），以及性能与运维成本权衡。完成后能在选型/排障时说清数据路径与策略生效条件。
 
@@ -78,13 +78,13 @@
 - w10-1 ArgoCD 架构：理解 ArgoCD 的组件与数据流：API/UI、repo-server、application-controller 与 Application/Project 模型。完成后能安装并跑通一个应用的声明式同步。
 - w10-2 同步策略：掌握同步策略：auto-sync、prune、self-heal，以及 hooks/waves 的发布编排。完成后能实现自动对齐与漂移自愈，同时理解误删与发布顺序风险。
 - w10-3 多环境管理：多环境差异管理：用 Kustomize overlays 或 Helm values 管 dev/prod 漂移与晋级。完成后能做到一套源码多环境、可审计可回滚。
-- w10-4 App of Apps 模式：理解 App of Apps：用引导应用管理大量子应用/目录结构，实现集群级 bootstrap。完成后能给大规模微服务设计目录、权限与编排策略。
+- w10-4 App of Apps 模式：理解 App of Apps：用引导应用管理大量子应用/目录结构，配合多集群管理与渐进式发布（canary/blue-green），实现集群级 bootstrap。完成后能给大规模微服务设计目录、权限与编排策略。
 
 ## 第四阶段：可观测性与服务网格（第 11-13 周）
 
 ### 第 11 周：监控与指标
 
-- w11-1 Prometheus 架构：理解 Prometheus 采集链路：pull 模型、服务发现、exporter、relabel，以及 TSDB 存储与保留。完成后能让一个服务从暴露 metrics 到被采集全链路打通。
+- w11-1 Prometheus 架构：理解 Prometheus 采集链路：pull 模型、服务发现、exporter、relabel，以及 TSDB 存储与保留，并了解 metrics-server/kube-state-metrics 让集群资源健康可观测。完成后能让一个服务从暴露 metrics 到被采集全链路打通。
 - w11-2 PromQL 查询语言：掌握 PromQL 的核心用法：rate/聚合、label 维度、直方图分位数等。完成后能写出“请求量/错误率/延迟”的关键查询并避免常见误用。
 - w11-3 Grafana 可视化：用 Grafana 把指标可视化：配置数据源，导入/自定义 dashboard，参数化筛选。完成后能产出一套可复用的观测面板。
 - w11-4 告警管理：告警管理与降噪：Alertmanager 的分组、路由、抑制与静默。完成后能设计不刷屏、可值班的告警策略与通知链路。
@@ -114,10 +114,10 @@
 
 ### 第 15 周：Serverless 与自动扩缩容
 
-- w15-1 自动扩缩容：掌握弹性链路：HPA（Pod 级）与 Cluster Autoscaler（节点级）的协同与限制，指标来源与稳定窗口调优。完成后能避免抖动并解释扩缩容为何不生效。
+- w15-1 自动扩缩容：掌握弹性链路：HPA/VPA（Pod 级）与 Cluster Autoscaler（节点级）的协同与限制，指标来源与稳定窗口调优。完成后能避免抖动并解释扩缩容为何不生效。
 - w15-2 Knative Serving：理解 Knative Serving：revision/route、并发与 scale-to-zero，以及冷启动权衡。完成后能部署一个服务并做流量分配与回滚。
 - w15-3 事件驱动架构：事件驱动架构：Knative Eventing + CloudEvents，把事件当一等公民（broker/trigger/source/sink）。完成后能搭一个事件→服务的最小闭环。
-- w15-4 Operator 模式：理解 Operator 模式：CRD 定义期望状态，controller 调和复杂应用生命周期。完成后能用 Operator SDK/Kubebuilder 搭出最小 operator，并判断何时该写 operator。
+- w15-4 Operator 模式：理解 Operator 模式：CRD 定义期望状态，controller 调和复杂应用生命周期，并了解 API 扩展（Aggregation）等进阶能力。完成后能用 Operator SDK/Kubebuilder 搭出最小 operator，并判断何时该写 operator。
 
 ### 第 16 周：故障排查与认证冲刺
 
