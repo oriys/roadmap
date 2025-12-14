@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Solarized Light palette */
+  --background: 44 87% 94%; /* base3 #fdf6e3 */
+  --foreground: 192 13% 23%; /* base00 #657b83 */
+  --card: 44 87% 94%;
+  --card-foreground: 192 13% 23%;
+  --popover: 44 87% 94%;
+  --popover-foreground: 192 13% 23%;
+  --primary: 175 54% 37%; /* cyan #2aa198 */
+  --primary-foreground: 44 87% 94%;
+  --secondary: 205 69% 49%; /* blue #268bd2 */
+  --secondary-foreground: 44 87% 94%;
+  --muted: 44 30% 85%;
+  --muted-foreground: 192 13% 40%; /* base0 */
+  --accent: 68 100% 30%; /* green #859900 */
+  --accent-foreground: 44 87% 94%;
+  --destructive: 2 72% 50%; /* red #dc322f */
+  --destructive-foreground: 44 87% 94%;
+  --border: 44 30% 82%;
+  --input: 44 30% 82%;
+  --ring: 205 69% 49%;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Sora", "Inter", "Segoe UI", "PingFang SC", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+    background-image: radial-gradient(circle at 1px 1px, rgba(147, 161, 161, 0.08) 1px, transparent 0),
+      radial-gradient(circle at 18% 18%, rgba(38, 139, 210, 0.12), transparent 24%),
+      radial-gradient(circle at 82% 8%, rgba(42, 161, 152, 0.1), transparent 22%),
+      radial-gradient(circle at 60% 72%, rgba(133, 153, 0, 0.1), transparent 30%),
+      hsl(var(--background));
+    background-size: 24px 24px, auto, auto, auto, auto;
+    min-height: 100vh;
+  }
+}
+
+.glass-card {
+  @apply bg-card/80 border border-border shadow-glow backdrop-blur;
+}
