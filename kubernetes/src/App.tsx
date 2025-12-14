@@ -283,7 +283,7 @@ const roadmap: Stage[] = [
             detail: "Docker CLI、Daemon、Containerd 与 Runc 的关系。",
             resources: [
               { title: "Docker 官方概览", url: "https://docs.docker.com/get-started/overview/" },
-              { title: "containerd 架构", url: "https://github.com/containerd/containerd/blob/main/docs/architecture.md" },
+              { title: "containerd 架构", url: "https://github.com/containerd/containerd/blob/main/docs/PLUGINS.md" },
               { title: "Docker CLI 与 Daemon 交互演示", url: "https://docs.docker.com/get-started/" },
             ],
           },
