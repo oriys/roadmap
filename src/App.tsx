@@ -1,5 +1,6 @@
 import React from "react"
 import {
+  ArrowLeft,
   ArrowUpRight,
   BadgeCheck,
   BookOpen,
@@ -37,6 +38,28 @@ type QuizState = { answers: Record<string, number | undefined>; attempts: number
 type LessonQuizState = { answers: Record<string, number | undefined>; attempts: number; bestScore?: number; lastScore?: number }
 type DocQuizProgress = Record<string, number[]>
 type ResourceContext = { resource: Resource; lesson: Lesson; week: Week; stage: Stage }
+
+type RoadmapId = "kubernetes" | "technical-writer"
+type RoadmapDefinition = {
+  id: RoadmapId
+  label: string
+  title: string
+  durationLabel: string
+  description: string
+  heroBadge: string
+  stages: Stage[]
+  knowledgeCards: KnowledgeCard[]
+  examQuestions: QuizQuestion[]
+  suggestion: (percent: number) => string
+  resourceGuide: {
+    environment: string
+    fallbackKeyPoints: string[]
+    handsOnSteps: string[]
+    selfChecks: string[]
+    extensions: string[]
+    lessonQuizAdvice: string
+  }
+}
 
 function getLessonOverview(lesson: Lesson): string | undefined {
   return lesson.overview || lessonOverviewMap[lesson.id.toLowerCase()]
@@ -89,13 +112,13 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
     lesson.keyPoints?.[0] ||
     week.keyPoints?.[0] ||
     `如何将 ${lesson.title} 落地到 ${stage.goal.replace("目标：", "") || "业务场景"}`
-  const verification = "按照官方示例运行最小案例，并通过事件/日志/监控验证结果"
+  const verification = "按照官方/权威资料完成最小可行练习，并用输出/截图/测试/日志等证据验证结果"
   const baseline = lesson.detail
   const stageGoal = stage.goal
   const weekSummary = week.summary
   const practicePath = week.overview || week.summary || stage.goal
   const keyPointSecondary = lesson.keyPoints?.[1] || week.keyPoints?.[1] || stage.goal
-  const successSignal = "事件/日志/探针/指标均与文档预期一致，且变更后的行为可复现"
+  const successSignal = "输出/截图/测试结果与文档预期一致，且步骤可复现"
   return [
     {
       id: `${lesson.id}-what`,
@@ -116,19 +139,19 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
       question: `How：官方最小可行实践的正确验证方式？`,
       options: [verification, "只阅读不执行", "跳过验证直接上线", "等待他人验证"],
       answer: 0,
-      rationale: "先跑通文档示例，再用事件/日志/监控确认行为，形成可复制的闭环。",
+      rationale: "先跑通示例，再用可观察证据确认结果，形成可复制的闭环。",
     },
     {
       id: `${lesson.id}-risk`,
       question: `官方/生产常见风险如何排查？`,
       options: [
-        "按层次检查权限/网络/存储/探针/调度，结合事件和日志定位",
-        "先重启集群",
+        "按层次检查前置条件/权限/配置/输入输出/边界条件，结合错误信息和示例定位",
+        "先重启一切再说",
         "忽略告警，等待自愈",
-        "只看应用日志，不检查资源与配置",
+        "只看局部现象，不回到文档与步骤复现",
       ],
       answer: 0,
-      rationale: "分层排查结合事件/日志是权威推荐的高效路径。",
+      rationale: "按层次排查并回到文档/示例复现，是权威推荐的高效路径。",
     },
     {
       id: `${lesson.id}-resource`,
@@ -141,13 +164,13 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
       id: `${lesson.id}-ops`,
       question: `实操验收标准（How well）：哪种描述最符合官方示例？`,
       options: [
-        "输出/事件/日志与官方示例一致，关键指标/探针通过",
+        "输出/截图/测试与官方示例一致，关键检查点通过",
         "未执行也算完成",
         "只要配置文件存在即可",
         "跳过验证",
       ],
       answer: 0,
-      rationale: "以可观测信号与探针/指标为准，符合官方示例预期才算验收。",
+      rationale: "以可观察证据为准，符合官方示例预期才算验收。",
     },
     {
       id: `${lesson.id}-path`,
@@ -161,12 +184,12 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
       question: `完成实验后，什么信号最能证明配置/行为与文档一致？`,
       options: [
         successSignal,
-        "Pod 处于 Running 就算成功，不看探针/日志",
+        "只要界面显示 OK 就算成功，不看输出与验证步骤",
         "未验证直接删除资源",
         "只在本地记录命令，不关注实际输出",
       ],
       answer: 0,
-      rationale: "需要用事件、日志、探针或监控确认效果，而非仅凭状态值。",
+      rationale: "需要用输出/截图/测试/日志等证据确认效果，而非仅凭状态值。",
     },
     {
       id: `${lesson.id}-key`,
@@ -206,7 +229,7 @@ function buildLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestion
   return buildLessonQuizCanonical(lesson, week, stage).map(shuffleQuizOptions)
 }
 
-const roadmap: Stage[] = [
+const kubernetesStages: Stage[] = [
   {
     id: "phase1",
     title: "第一阶段：基石与容器化",
@@ -1113,7 +1136,7 @@ const roadmap: Stage[] = [
   },
 ]
 
-const knowledgeCards: KnowledgeCard[] = [
+const kubernetesKnowledgeCards: KnowledgeCard[] = [
   {
     id: "phase1",
     title: "容器 = 被雕刻过的 Linux",
@@ -1171,7 +1194,7 @@ const knowledgeCards: KnowledgeCard[] = [
   },
 ]
 
-const quizQuestions: QuizQuestion[] = [
+const kubernetesExamQuestions: QuizQuestion[] = [
   {
     id: "q1",
     question: "K8s 移除 Docker Shim 的主要原因是什么？",
@@ -1274,11 +1297,725 @@ const quizQuestions: QuizQuestion[] = [
   },
 ]
 
-const STORAGE_KEY = "k8s-roadmap-progress-v2"
+const technicalWriterStages: Stage[] = [
+  {
+    id: "tw-phase1",
+    title: "第一阶段：写作基础与读者思维",
+    duration: "第 1-2 周",
+    goal: "掌握技术写作的读者分析、结构化表达与风格一致性。",
+    weeks: [
+      {
+        id: "tw-w1",
+        title: "第 1 周：技术写作入门",
+        summary: "明确读者与目标，写出可执行、可验证的文档。",
+        overview:
+          "理解技术文档的常见类型（Quickstart/教程/How-to/Reference/解释/排错），用“任务 + 证据”驱动写作，并建立可复用的写作模板。",
+        keyPoints: [
+          "先回答三件事：写给谁（Persona）、解决什么任务（Task）、如何验收（Evidence）。",
+          "以结构化写作替代“流水账”：标题/前置条件/步骤/预期结果/常见错误。",
+          "术语统一与示例可复现优先于华丽表达。",
+        ],
+        lessons: [
+          {
+            id: "tw-w1-1",
+            title: "技术写作的目标与交付物",
+            detail: "理解 Technical Writer 的协作方式与常见产出：教程、参考、排错、发布说明。",
+            resources: [
+              { title: "roadmap.sh Technical Writer", url: "https://roadmap.sh/technical-writer" },
+              { title: "Write the Docs：Documentation Guide", url: "https://www.writethedocs.org/guide/" },
+              { title: "Diátaxis Framework", url: "https://diataxis.fr/" },
+            ],
+          },
+          {
+            id: "tw-w1-2",
+            title: "读者分析与任务导向",
+            detail: "用读者画像、场景与先验知识划分内容层次，避免“一篇写给所有人”。",
+            resources: [
+              { title: "Google Developer Documentation：Audience", url: "https://developers.google.com/style/audience" },
+              { title: "Nielsen Norman Group：Writing for the Web", url: "https://www.nngroup.com/articles/how-users-read-on-the-web/" },
+              { title: "Write the Docs：Audience", url: "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/#know-your-audience" },
+            ],
+          },
+          {
+            id: "tw-w1-3",
+            title: "结构化写作与信息架构",
+            detail: "用 Diátaxis（Tutorial/How-to/Reference/Explanation）拆分内容，搭出可维护目录结构。",
+            resources: [
+              { title: "Diátaxis：Quality", url: "https://diataxis.fr/quality/" },
+              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/docs-practices/" },
+              { title: "Google：Document structure", url: "https://developers.google.com/style/formatting" },
+            ],
+          },
+          {
+            id: "tw-w1-4",
+            title: "清晰表达：简洁、准确、一致",
+            detail: "掌握句式与术语规则：短句、主动语态、避免歧义，让读者一次读懂。",
+            resources: [
+              { title: "Google Developer Documentation Style Guide", url: "https://developers.google.com/style" },
+              { title: "Microsoft Writing Style Guide", url: "https://learn.microsoft.com/en-us/style-guide/welcome/" },
+              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "tw-w2",
+        title: "第 2 周：工具链与 Docs-as-Code",
+        summary: "掌握 Markdown + Git + 评审流程，把文档当代码一样维护。",
+        overview: "建立最小 docs-as-code 工作流：Markdown → PR Review → 自动检查 → 站点发布。",
+        keyPoints: [
+          "写作格式标准化：Markdown 规范、目录结构、图片/链接策略。",
+          "用 Git 管理变更：分支、PR、review、changelog，避免“口头同步”。",
+          "为文档引入自动化质量线：拼写/链接/风格检查与预览环境。",
+        ],
+        lessons: [
+          {
+            id: "tw-w2-1",
+            title: "Markdown 与可复用模板",
+            detail: "掌握 Markdown 基础语法与可读性排版，沉淀 Quickstart/How-to/Reference 模板。",
+            resources: [
+              { title: "Markdown Guide", url: "https://www.markdownguide.org/basic-syntax/" },
+              { title: "CommonMark Spec", url: "https://spec.commonmark.org/" },
+              { title: "GitHub：Mastering Markdown", url: "https://guides.github.com/features/mastering-markdown/" },
+            ],
+          },
+          {
+            id: "tw-w2-2",
+            title: "Git 基础与协作评审",
+            detail: "会用分支、PR、review 与冲突解决，让文档迭代可追踪、可回滚。",
+            resources: [
+              { title: "Pro Git（免费在线）", url: "https://git-scm.com/book/en/v2" },
+              { title: "GitHub：About pull requests", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests" },
+              { title: "Write the Docs：Docs as Code", url: "https://www.writethedocs.org/guide/docs-as-code/" },
+            ],
+          },
+          {
+            id: "tw-w2-3",
+            title: "静态站点与发布（SSG）",
+            detail: "了解 Docusaurus/MkDocs/VitePress 等，能把 Markdown 发布成可导航网站。",
+            resources: [
+              { title: "Docusaurus Docs", url: "https://docusaurus.io/docs" },
+              { title: "MkDocs", url: "https://www.mkdocs.org/" },
+              { title: "VitePress", url: "https://vitepress.dev/" },
+            ],
+          },
+          {
+            id: "tw-w2-4",
+            title: "贡献指南与写作规范",
+            detail: "写好 CONTRIBUTING、写作规范与提交约定，让团队协作不靠口口相传。",
+            resources: [
+              { title: "GitHub：CONTRIBUTING guidelines", url: "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions" },
+              { title: "Keep a Changelog", url: "https://keepachangelog.com/en/1.1.0/" },
+              { title: "Write the Docs：Docs Practices", url: "https://www.writethedocs.org/guide/docs-practices/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "tw-phase2",
+    title: "第二阶段：技术素养与 API 文档",
+    duration: "第 3-4 周",
+    goal: "补齐基础技术概念与写作方法，能输出可用的 API/CLI 文档与示例。",
+    weeks: [
+      {
+        id: "tw-w3",
+        title: "第 3 周：基础技术素养",
+        summary: "理解 HTTP/JSON/CLI 等基础，能跑通示例并复现问题。",
+        overview: "技术写作需要“能跑起来”：会用命令行、理解请求/响应、能描述复现步骤与预期/实际差异。",
+        keyPoints: [
+          "把概念写成可操作：输入、输出、边界条件与错误处理。",
+          "示例必须可复现：命令、返回值、截图与版本信息齐全。",
+          "排错写作优先：先给快速定位，再给深入解释。",
+        ],
+        lessons: [
+          {
+            id: "tw-w3-1",
+            title: "HTTP/JSON 基础（面向文档）",
+            detail: "理解常见方法、状态码、Headers、JSON 结构，能写出清晰的请求/响应示例。",
+            resources: [
+              { title: "MDN：HTTP", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP" },
+              { title: "HTTP Semantics (RFC 9110)", url: "https://www.rfc-editor.org/rfc/rfc9110" },
+              { title: "JSON", url: "https://www.json.org/json-en.html" },
+            ],
+          },
+          {
+            id: "tw-w3-2",
+            title: "命令行与可复现示例",
+            detail: "会用基本命令行工具与环境变量，写出可复制粘贴的操作步骤与输出。",
+            resources: [
+              { title: "The Art of Command Line", url: "https://github.com/jlevy/the-art-of-command-line" },
+              { title: "curl manual", url: "https://curl.se/docs/manual.html" },
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples/" },
+            ],
+          },
+          {
+            id: "tw-w3-3",
+            title: "排错文档（Troubleshooting）写法",
+            detail: "从症状到原因：复现步骤、日志/错误信息、快速绕过与根因说明。",
+            resources: [
+              { title: "Google：Troubleshooting", url: "https://developers.google.com/style/troubleshooting" },
+              { title: "Write the Docs：Troubleshooting", url: "https://www.writethedocs.org/guide/writing/troubleshooting/" },
+              { title: "Keep a Changelog：Change log guide", url: "https://keepachangelog.com/en/1.1.0/" },
+            ],
+          },
+          {
+            id: "tw-w3-4",
+            title: "图表与示意图（可维护）",
+            detail: "用 Mermaid/PlantUML 画流程/架构/时序图，让复杂概念可视化且可版本化。",
+            resources: [
+              { title: "Mermaid", url: "https://mermaid.js.org/" },
+              { title: "PlantUML", url: "https://plantuml.com/" },
+              { title: "Diátaxis：Explanation", url: "https://diataxis.fr/explanation/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "tw-w4",
+        title: "第 4 周：API / CLI 文档体系",
+        summary: "写出可用的 API Reference：认证、分页、错误码、示例与最佳实践。",
+        overview: "把 API 文档写成“可用说明书”：从概览到认证，再到端点参考、示例与错误处理。",
+        keyPoints: [
+          "每个端点写清楚：用途、请求参数、响应字段、错误与示例。",
+          "示例要覆盖主路径与失败路径：最小可用 + 常见错误。",
+          "保持一致性：命名、术语、错误格式与版本策略。",
+        ],
+        lessons: [
+          {
+            id: "tw-w4-1",
+            title: "API 文档结构与规范",
+            detail: "把 API 文档拆成概览、认证、速率限制、错误模型、版本与变更。",
+            resources: [
+              { title: "Google：API Documentation", url: "https://developers.google.com/style/api-reference-comments" },
+              { title: "Stripe API Docs（参考范例）", url: "https://stripe.com/docs/api" },
+              { title: "RFC 7807 Problem Details", url: "https://www.rfc-editor.org/rfc/rfc7807" },
+            ],
+          },
+          {
+            id: "tw-w4-2",
+            title: "OpenAPI / Swagger 入门",
+            detail: "理解 OpenAPI 的核心结构，能读懂并用它生成/校验 API 参考文档。",
+            resources: [
+              { title: "OpenAPI Specification", url: "https://spec.openapis.org/oas/latest.html" },
+              { title: "Swagger：Getting Started", url: "https://swagger.io/docs/specification/about/" },
+              { title: "Redocly OpenAPI Guides", url: "https://redocly.com/docs/" },
+            ],
+          },
+          {
+            id: "tw-w4-3",
+            title: "示例、SDK 与代码样例写法",
+            detail: "写出可复制、可运行的代码样例：输入/输出、版本、错误处理与说明文字。",
+            resources: [
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples/" },
+              { title: "Google：Sample code", url: "https://developers.google.com/style/code-samples" },
+              { title: "Microsoft：Code samples", url: "https://learn.microsoft.com/en-us/style-guide/code-examples" },
+            ],
+          },
+          {
+            id: "tw-w4-4",
+            title: "CLI 文档与命令参考",
+            detail: "写清命令用途、参数、示例与返回值；覆盖最常见的使用路径与错误。",
+            resources: [
+              { title: "GNU：Command-Line Options", url: "https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html" },
+              { title: "Cobra User Guide（参考）", url: "https://cobra.dev/" },
+              { title: "Click Documentation（参考）", url: "https://click.palletsprojects.com/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "tw-phase3",
+    title: "第三阶段：内容体系与质量保障",
+    duration: "第 5-6 周",
+    goal: "掌握教程/How-to/Reference/Explanation 的写法，并建立审阅、可访问性与自动化质量线。",
+    weeks: [
+      {
+        id: "tw-w5",
+        title: "第 5 周：内容类型与写作模板",
+        summary: "按 Diátaxis 输出四类内容，让文档“可学、可用、可查、可理解”。",
+        overview: "同一主题可拆成：Tutorial（学习路径）、How-to（解决任务）、Reference（查参数）、Explanation（理解原理）。",
+        keyPoints: [
+          "Tutorial 以学习为主：循序渐进、避免岔路。",
+          "How-to 以任务为主：前置条件明确、步骤短且可验证。",
+          "Reference 以信息为主：完整、准确、一致，少叙述多结构化。",
+        ],
+        lessons: [
+          {
+            id: "tw-w5-1",
+            title: "Tutorial（教程）写作",
+            detail: "写一篇从 0 到 1 的学习路径：目标、步骤、检查点与复盘。",
+            resources: [
+              { title: "Diátaxis：Tutorials", url: "https://diataxis.fr/tutorials/" },
+              { title: "Google：Tutorials", url: "https://developers.google.com/style/tutorials" },
+              { title: "Write the Docs：Tutorials", url: "https://www.writethedocs.org/guide/writing/tutorials/" },
+            ],
+          },
+          {
+            id: "tw-w5-2",
+            title: "How-to（操作指南）写作",
+            detail: "写成任务清单：最少背景、直接步骤、可验证结果与常见坑。",
+            resources: [
+              { title: "Diátaxis：How-to guides", url: "https://diataxis.fr/how-to-guides/" },
+              { title: "Google：How-to", url: "https://developers.google.com/style/how-to" },
+              { title: "Microsoft：Procedures", url: "https://learn.microsoft.com/en-us/style-guide/procedures-instructions/writing-step-by-step-instructions" },
+            ],
+          },
+          {
+            id: "tw-w5-3",
+            title: "Reference（参考）写作",
+            detail: "用表格/字段说明写出可查的参考文档：参数、约束、默认值与示例。",
+            resources: [
+              { title: "Diátaxis：Reference", url: "https://diataxis.fr/reference/" },
+              { title: "Google：Reference documents", url: "https://developers.google.com/style/reference-docs" },
+              { title: "Microsoft：Tables", url: "https://learn.microsoft.com/en-us/style-guide/scannable-content/tables" },
+            ],
+          },
+          {
+            id: "tw-w5-4",
+            title: "Explanation（概念解释）写作",
+            detail: "建立心智模型：定义、背景、边界、权衡与示意图。",
+            resources: [
+              { title: "Diátaxis：Explanation", url: "https://diataxis.fr/explanation/" },
+              { title: "Google：Conceptual docs", url: "https://developers.google.com/style/conceptual-docs" },
+              { title: "Write the Docs：Conceptual Writing", url: "https://www.writethedocs.org/guide/writing/concepts/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "tw-w6",
+        title: "第 6 周：质量线与可持续维护",
+        summary: "用风格指南、审阅流程与自动化检查保障质量。",
+        overview: "建立文档质量线：术语/风格一致、链接可用、示例可运行、可访问性与本地化考虑。",
+        keyPoints: [
+          "把主观标准变成可执行规则：style guide + checklist + linter。",
+          "可访问性优先：标题层级、替代文本、对比度与易读语言。",
+          "本地化/国际化要早做：术语表、占位符、避免文化特定隐喻。",
+        ],
+        lessons: [
+          {
+            id: "tw-w6-1",
+            title: "风格指南与术语表",
+            detail: "建立术语表与写作规范，统一命名、大小写、标点与翻译策略。",
+            resources: [
+              { title: "Google Style Guide", url: "https://developers.google.com/style" },
+              { title: "Microsoft Style Guide", url: "https://learn.microsoft.com/en-us/style-guide/welcome/" },
+              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides/" },
+            ],
+          },
+          {
+            id: "tw-w6-2",
+            title: "可访问性与包容性写作",
+            detail: "用可读语言与结构化信息降低理解门槛，避免歧视性表达。",
+            resources: [
+              { title: "W3C：WAI Introduction", url: "https://www.w3.org/WAI/fundamentals/accessibility-intro/" },
+              { title: "Microsoft：Accessibility", url: "https://learn.microsoft.com/en-us/style-guide/accessibility-guidelines" },
+              { title: "Google：Inclusive language", url: "https://developers.google.com/style/inclusive-documentation" },
+            ],
+          },
+          {
+            id: "tw-w6-3",
+            title: "本地化与国际化（I18n/L10n）",
+            detail: "理解翻译流程与约束，写出“可翻译”的原文：术语一致、避免歧义与硬编码。",
+            resources: [
+              { title: "W3C：Internationalization", url: "https://www.w3.org/International/" },
+              { title: "Google：Writing for a global audience", url: "https://developers.google.com/style/translation" },
+              { title: "Microsoft：Localization", url: "https://learn.microsoft.com/en-us/style-guide/global-communications" },
+            ],
+          },
+          {
+            id: "tw-w6-4",
+            title: "文档 QA 与自动化检查",
+            detail: "用 Vale/markdownlint/link check 等把质量检查自动化，减少人工重复劳动。",
+            resources: [
+              { title: "Vale（Style linter）", url: "https://vale.sh/" },
+              { title: "markdownlint", url: "https://github.com/DavidAnson/markdownlint" },
+              { title: "GitHub Actions", url: "https://docs.github.com/en/actions" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "tw-phase4",
+    title: "第四阶段：发布运营与职业作品集",
+    duration: "第 7-8 周",
+    goal: "把文档发布到可持续维护的站点，建立反馈闭环与个人作品集。",
+    weeks: [
+      {
+        id: "tw-w7",
+        title: "第 7 周：发布、反馈与持续改进",
+        summary: "用版本与数据驱动迭代：发布说明、变更管理、反馈渠道与指标。",
+        overview: "把文档当产品运营：有版本、有发布说明、有反馈闭环，有数据就能迭代。",
+        keyPoints: [
+          "发布说明要面向用户：新增/变更/弃用/修复与迁移建议。",
+          "建立反馈入口：issue 模板、评分组件或表单，形成闭环。",
+          "用最小指标衡量：搜索失败率、页面退出、支持工单主题等。",
+        ],
+        lessons: [
+          {
+            id: "tw-w7-1",
+            title: "信息架构与导航优化",
+            detail: "通过目录、侧边栏、交叉链接与术语表，让文档更易找、更易学。",
+            resources: [
+              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/docs-practices/" },
+              { title: "Nielsen Norman Group：IA Basics", url: "https://www.nngroup.com/articles/information-architecture-ia/" },
+              { title: "Google：Cross-references", url: "https://developers.google.com/style/cross-references" },
+            ],
+          },
+          {
+            id: "tw-w7-2",
+            title: "发布说明与变更日志",
+            detail: "写清版本变更：Breaking changes、迁移步骤、弃用计划与兼容性说明。",
+            resources: [
+              { title: "Keep a Changelog", url: "https://keepachangelog.com/en/1.1.0/" },
+              { title: "Semantic Versioning", url: "https://semver.org/" },
+              { title: "Google：Release notes", url: "https://developers.google.com/style/release-notes" },
+            ],
+          },
+          {
+            id: "tw-w7-3",
+            title: "反馈与数据：文档指标",
+            detail: "把“感觉”变成数据：收集反馈、定位高跳出页面、优化搜索与导航。",
+            resources: [
+              { title: "Write the Docs：Analytics", url: "https://www.writethedocs.org/guide/docs-as-code/#analytics" },
+              { title: "Nielsen Norman Group：UX Metrics", url: "https://www.nngroup.com/articles/success-metrics/" },
+              { title: "Google：Search", url: "https://developers.google.com/style/search" },
+            ],
+          },
+          {
+            id: "tw-w7-4",
+            title: "DocsOps：预览与自动发布",
+            detail: "给每个 PR 提供预览链接，合并后自动发布，减少沟通成本。",
+            resources: [
+              { title: "GitHub Actions", url: "https://docs.github.com/en/actions" },
+              { title: "Netlify Docs（预览/部署）", url: "https://docs.netlify.com/" },
+              { title: "Vercel Docs", url: "https://vercel.com/docs" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "tw-w8",
+        title: "第 8 周：作品集与面试准备",
+        summary: "用一个完整 docs 项目展示能力：信息架构 + 样例 + 质量线 + 发布。",
+        overview: "面试最有效的材料是作品：可访问链接、PR 记录、写作测试与复盘。",
+        keyPoints: [
+          "作品集需要可展示：在线链接 + 变更记录 + 设计取舍说明。",
+          "写作测试常考：改写、结构优化、补齐缺失信息、示例可复现。",
+          "协作能力同样重要：需求澄清、评审沟通与跨团队推进。",
+        ],
+        lessons: [
+          {
+            id: "tw-w8-1",
+            title: "作品集项目：从 0 到 1 建一个文档站",
+            detail: "选一个开源或个人项目，完成 IA、关键页面、示例与自动化检查并发布。",
+            resources: [
+              { title: "Write the Docs：Portfolio", url: "https://www.writethedocs.org/guide/writing/portfolio/" },
+              { title: "Diátaxis", url: "https://diataxis.fr/" },
+              { title: "GitHub Pages", url: "https://pages.github.com/" },
+            ],
+          },
+          {
+            id: "tw-w8-2",
+            title: "写作测试与复盘方法",
+            detail: "用 checklist 复盘：读者、结构、示例可运行、术语一致、可搜索可维护。",
+            resources: [
+              { title: "Write the Docs：Testing Docs", url: "https://www.writethedocs.org/guide/writing/testing-docs/" },
+              { title: "Google：Writing tests (guidance)", url: "https://developers.google.com/style" },
+              { title: "Microsoft：Checklist", url: "https://learn.microsoft.com/en-us/style-guide/procedures-instructions" },
+            ],
+          },
+          {
+            id: "tw-w8-3",
+            title: "跨团队协作：与 PM/工程/支持对齐",
+            detail: "学会需求澄清、信息收集与评审沟通，推动文档与产品同步交付。",
+            resources: [
+              { title: "Write the Docs：Working with Engineers", url: "https://www.writethedocs.org/guide/writing/working-with-engineers/" },
+              { title: "Write the Docs：Docs Project Management", url: "https://www.writethedocs.org/guide/docs-project-management/" },
+              { title: "Nielsen Norman Group：Stakeholders", url: "https://www.nngroup.com/articles/stakeholder-interviews/" },
+            ],
+          },
+          {
+            id: "tw-w8-4",
+            title: "职业成长路径",
+            detail: "规划深度与广度：产品理解、技术能力、信息架构与团队影响力。",
+            resources: [
+              { title: "Write the Docs：Career", url: "https://www.writethedocs.org/guide/career/" },
+              { title: "roadmap.sh", url: "https://roadmap.sh/" },
+              { title: "Write the Docs：Community", url: "https://www.writethedocs.org/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+]
+
+const technicalWriterKnowledgeCards: KnowledgeCard[] = [
+  {
+    id: "tw-phase1",
+    title: "写作先看读者与任务",
+    summary: "技术写作不是文学创作，而是帮助读者完成任务。先明确读者与验收标准，内容才会“可用”。",
+    points: [
+      "读者画像 > 术语堆砌：不同读者的前置知识完全不同。",
+      "用结构化模板降低沟通成本：前置条件/步骤/预期结果/错误处理。",
+      "一句话验收：读者看完能否独立完成任务并验证成功？",
+    ],
+    practice: "选一个你熟悉的功能，写一页 Quickstart：包含前置条件、3-5 步操作与可验证结果。",
+  },
+  {
+    id: "tw-phase2",
+    title: "Docs-as-Code 是效率杠杆",
+    summary: "把文档当代码一样：用 Git 管变更，用 PR 做评审，用自动化做质量线，发布就变成流水线。",
+    points: [
+      "PR 让协作可追踪：谁改了什么、为何改、如何回滚。",
+      "自动化检查减少重复劳动：链接、拼写、风格与格式一次性解决。",
+      "预览环境让评审更高效：所见即所得，减少来回沟通。",
+    ],
+    practice: "建一个 docs 仓库：启用 PR 预览 + link check + style linter（如 Vale）。",
+  },
+  {
+    id: "tw-phase3",
+    title: "用 Diátaxis 组织内容",
+    summary: "同一主题需要不同文档类型：教程教会你，How-to 帮你做事，Reference 让你查，Explanation 让你理解。",
+    points: [
+      "Tutorial 避免岔路：一步一步走到成功体验。",
+      "How-to 只为完成任务：最少背景，强校验结果。",
+      "Reference 要“结构化与完整”：表格、字段、约束、默认值。",
+    ],
+    practice: "给同一功能写 4 份内容：Tutorial/How-to/Reference/Explanation，各 1 页。",
+  },
+  {
+    id: "tw-phase4",
+    title: "发布与反馈闭环",
+    summary: "文档是长期产品。发布说明、反馈渠道与指标让它持续变好，也让你的能力可展示。",
+    points: [
+      "发布说明面向用户：Breaking change + 迁移指南。",
+      "反馈入口要低摩擦：issue 模板、评分组件或表单。",
+      "作品集要可验证：在线链接 + PR 记录 + 取舍复盘。",
+    ],
+    practice: "为作品集站点加“反馈入口”与“变更日志”，并用数据挑 1 页做优化复盘。",
+  },
+]
+
+const technicalWriterExamQuestions: QuizQuestion[] = [
+  {
+    id: "tw-q1",
+    question: "技术文档最重要的验收标准更接近哪项？",
+    options: ["写得足够华丽", "覆盖所有细节", "读者能完成任务并验证成功", "页面排版好看"],
+    answer: 2,
+    rationale: "技术写作的目标是帮助读者完成任务；是否可复现、可验证是关键。",
+  },
+  {
+    id: "tw-q2",
+    question: "Diátaxis 框架中，How-to guide 的核心特征是？",
+    options: ["解释原理与背景", "提供完整参数参考", "面向具体任务的可执行步骤", "按章节讲解概念"],
+    answer: 2,
+    rationale: "How-to 面向完成任务：最少背景、清晰步骤、可验证结果。",
+  },
+  {
+    id: "tw-q3",
+    question: "为什么建议用 Docs-as-Code（Git + PR）管理文档？",
+    options: ["让写作更有仪式感", "变更可追踪、可评审、可回滚", "避免使用 Markdown", "可以绕过协作沟通"],
+    answer: 1,
+    rationale: "Git/PR 能追踪变更、进行评审并回滚，降低协作成本。",
+  },
+  {
+    id: "tw-q4",
+    question: "一段操作步骤最需要补齐的“证据”通常是？",
+    options: ["更多形容词", "预期输出/截图/检查点", "更长的背景故事", "更多抽象概念"],
+    answer: 1,
+    rationale: "步骤需要可验证：明确预期结果与检查点才能判断是否做对。",
+  },
+  {
+    id: "tw-q5",
+    question: "API Reference 文档里，错误处理更推荐怎么写？",
+    options: ["只写“发生错误请重试”", "列出错误模型、状态码/错误码与示例", "把错误都放到 FAQ", "完全不写以免吓到读者"],
+    answer: 1,
+    rationale: "错误模型、常见错误与示例是 API 文档可用性的核心组成。",
+  },
+  {
+    id: "tw-q6",
+    question: "写作测试中最常见的“加分项”是？",
+    options: ["把每句话都写得更长", "把结构与信息补齐并让示例可复现", "删除所有标题", "只改标点不改内容"],
+    answer: 1,
+    rationale: "结构化与可复现性直接提升可用性，是写作测试的关键。",
+  },
+  {
+    id: "tw-q7",
+    question: "下列哪项更属于 Reference 文档？",
+    options: ["从 0 到 1 的完整教程", "面向任务的操作指南", "参数/字段/约束的结构化说明", "原理与背景解释"],
+    answer: 2,
+    rationale: "Reference 强调结构化信息：参数、字段、约束、默认值与示例。",
+  },
+  {
+    id: "tw-q8",
+    question: "为什么要尽早考虑本地化/国际化？",
+    options: ["因为翻译越早越便宜", "避免术语不一致与难以翻译的表达", "为了让文档更长", "因为写作必须用英文"],
+    answer: 1,
+    rationale: "术语与表达如果不一致，会让翻译成本飙升且质量不可控。",
+  },
+  {
+    id: "tw-q9",
+    question: "文档的反馈闭环中，最关键的一步是？",
+    options: ["开一个群聊", "只收集不处理", "建立低摩擦入口并把改进落到 PR", "把问题都交给支持团队"],
+    answer: 2,
+    rationale: "反馈要进入可追踪的迭代流程（issue/PR），才能真正改进。",
+  },
+  {
+    id: "tw-q10",
+    question: "一个好的 Quickstart 通常包含哪些最小元素？",
+    options: ["完整概念史", "前置条件 + 最短步骤 + 可验证结果", "所有高级用法", "至少 20 张截图"],
+    answer: 1,
+    rationale: "Quickstart 的目标是最短路径跑通成功体验：前置条件、步骤与验证结果。",
+  },
+]
+
+const kubernetesRoadmap: RoadmapDefinition = {
+  id: "kubernetes",
+  label: "Kubernetes",
+  title: "Kubernetes 学习路线",
+  durationLabel: "16 周",
+  description:
+    "16 周系统构建云原生实战能力：容器与 Linux 基石 → 集群核心 → 网络/存储/调度 → 可观测性 → 安全 → GitOps 与服务网格。每周打卡、文档题单与即时测验，进度本地保存。",
+  heroBadge: "Cloud Native Bootcamp · shadcn UI",
+  stages: kubernetesStages,
+  knowledgeCards: kubernetesKnowledgeCards,
+  examQuestions: kubernetesExamQuestions,
+  suggestion: (percent: number) => {
+    if (percent < 25) {
+      return "建议先完成第 1 阶段前两周，专注 Namespaces、Cgroups 与 Dockerfile 多阶段构建。"
+    }
+    if (percent < 50) {
+      return "完成阶段二工作负载与存储（周 4-5），顺便练习滚动更新与 PVC 绑定。"
+    }
+    if (percent < 75) {
+      return "补齐调度/NetworkPolicy（周 6）并搭建一条 CI/CD 流水线（周 9）。"
+    }
+    return "加强可观测性（周 11-12）与安全考点（周 14），再做一次全量测验。"
+  },
+  resourceGuide: {
+    environment: "本地 Kind/Minikube 或云上集群，具备 kubectl/容器工具链。",
+    fallbackKeyPoints: [
+      "照着官方示例跑通最小闭环：构建/部署/验证，先有成功体验。",
+      "逐项改参数（资源、探针、路由、存储、策略），观察事件/日志/指标的变化。",
+      "整理常见误区与排查路径：权限、网络、存储、镜像拉取、探针、调度。",
+    ],
+    handsOnSteps: [
+      "打开原文，先跑通最小可用示例（命令/清单照抄也行），确认成功信号。",
+      "修改 1-2 个关键参数（副本、探针阈值、资源限额、路由/策略等），对比行为差异并记录。",
+      "用 `kubectl describe`、事件、日志或容器 CLI 验证修改已生效，并观察监控/告警（如适用）。",
+    ],
+    selfChecks: [
+      "用自己的话阐述：核心机制/配置到底做了什么？边界条件是什么？",
+      "故障排查优先级：先看事件/日志，再看网络/权限/存储，再看探针/资源/调度。",
+      "在生产落地：需要哪些安全/性能/成本防护（如 RBAC、配额、限流、告警）？",
+    ],
+    extensions: [
+      "把官方示例收录到你的实验仓库，写出“期望 vs 实际”差异与复盘。",
+      "列 3 条常见坑，并附上排查脚本/命令（kubectl/日志/监控）。",
+      "把本节知识与前后周的内容串联，设计一个小型端到端演练（部署 → 观测 → 调优 → 回滚）。",
+    ],
+    lessonQuizAdvice: "建议：复盘错题对应的配置/命令，回到文档或实验里重新验证。",
+  },
+}
+
+const technicalWriterRoadmap: RoadmapDefinition = {
+  id: "technical-writer",
+  label: "Technical Writer",
+  title: "技术写作学习路线",
+  durationLabel: "8 周",
+  description:
+    "8 周构建技术写作与 Docs-as-Code 能力：写作基础 → 工具链与协作 → API/CLI 文档 → 内容体系与质量线 → 发布运营与作品集。每周打卡与课时测验，进度本地保存。",
+  heroBadge: "Docs-as-Code Bootcamp · shadcn UI",
+  stages: technicalWriterStages,
+  knowledgeCards: technicalWriterKnowledgeCards,
+  examQuestions: technicalWriterExamQuestions,
+  suggestion: (percent: number) => {
+    if (percent < 25) {
+      return "先补齐第 1 阶段：读者分析 + 写作模板 + 风格指南，确保“可用”优先。"
+    }
+    if (percent < 50) {
+      return "把 docs-as-code 跑起来：Git + PR + 自动检查 + 预览发布，形成协作闭环。"
+    }
+    if (percent < 75) {
+      return "重点练 API/CLI 文档：认证/错误模型/示例可复现，并补齐四类文档模板。"
+    }
+    return "开始做作品集：挑 1 个真实项目做信息架构与发布，并用反馈/数据做一次迭代复盘。"
+  },
+  resourceGuide: {
+    environment: "Markdown 编辑器 + Git 仓库（可选：静态站点生成器），能运行示例命令并产出截图/链接。",
+    fallbackKeyPoints: [
+      "先写大纲再写正文：标题层级、导航与交叉链接优先。",
+      "每一步都可复现：前置条件、版本、命令与预期输出齐全。",
+      "术语一致与示例可运行，比“写得很长”更重要。",
+    ],
+    handsOnSteps: [
+      "阅读原文，提炼目标读者、前置条件与验收标准，先写 5-10 行大纲。",
+      "写一份最小可用内容（Quickstart/How-to/Reference 任选其一），补齐示例与预期输出/截图。",
+      "用 checklist 自检（结构/术语/链接/示例可复现），提交 PR 并邀请评审。",
+    ],
+    selfChecks: [
+      "读者是谁？看完能完成什么任务？成功/失败如何验证？",
+      "步骤是否可复制粘贴、可复现？是否遗漏版本/环境差异？",
+      "术语、命名与示例是否一致？链接与截图是否可用？",
+    ],
+    extensions: [
+      "把本节产出沉淀为模板（Quickstart/How-to/Reference/Explanation），后续复用。",
+      "为仓库加上自动化检查：link check + style linter（如 Vale）+ PR 预览。",
+      "补一页 Troubleshooting/FAQ，把高频问题写成可搜索的答案。",
+    ],
+    lessonQuizAdvice: "建议：把错题对应的概念/模板写成一段可复用示例，并用真实场景验证可用性。",
+  },
+}
+
+const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
+  kubernetes: kubernetesRoadmap,
+  "technical-writer": technicalWriterRoadmap,
+}
+
+const ROADMAP_LIST: RoadmapDefinition[] = [kubernetesRoadmap, technicalWriterRoadmap]
+const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
+const ACTIVE_ROADMAP_KEY = "roadmap-active-id"
+const STORAGE_KEY_PREFIX = "roadmap-progress-v1"
+const LEGACY_K8S_STORAGE_KEY = "k8s-roadmap-progress-v2"
+
+function storageKeyForRoadmap(roadmapId: RoadmapId) {
+  return `${STORAGE_KEY_PREFIX}:${roadmapId}`
+}
+
+function roadmapTotals(stages: Stage[]) {
+  const lessons = stages.reduce((sum, stage) => sum + stage.weeks.reduce((weekSum, w) => weekSum + w.lessons.length, 0), 0)
+  const weeks = stages.reduce((sum, stage) => sum + stage.weeks.length, 0)
+  return { lessons, weeks, stages: stages.length }
+}
+
+function loadProgressSummary(roadmap: RoadmapDefinition) {
+  if (typeof window === "undefined") return { completed: 0, bestScore: undefined as number | undefined }
+  try {
+    const key = storageKeyForRoadmap(roadmap.id)
+    const raw =
+      localStorage.getItem(key) || (roadmap.id === "kubernetes" ? localStorage.getItem(LEGACY_K8S_STORAGE_KEY) : null)
+    if (!raw) return { completed: 0, bestScore: undefined as number | undefined }
+    const parsed = JSON.parse(raw)
+    const completed = Array.isArray(parsed.completed) ? parsed.completed.length : 0
+    const bestScore = typeof parsed?.quiz?.bestScore === "number" ? parsed.quiz.bestScore : undefined
+    return { completed, bestScore }
+  } catch {
+    return { completed: 0, bestScore: undefined as number | undefined }
+  }
+}
+
 const defaultQuizState: QuizState = { answers: {}, attempts: 0, bestScore: undefined, lastScore: undefined }
 const defaultLessonQuizState: LessonQuizState = { answers: {}, attempts: 0, bestScore: undefined, lastScore: undefined }
 
-function loadPersisted() {
+function loadPersisted(roadmap: RoadmapDefinition) {
   if (typeof window === "undefined") {
     return {
       completed: new Set<string>(),
@@ -1288,7 +2025,8 @@ function loadPersisted() {
     }
   }
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const key = storageKeyForRoadmap(roadmap.id)
+    const raw = localStorage.getItem(key) || (roadmap.id === "kubernetes" ? localStorage.getItem(LEGACY_K8S_STORAGE_KEY) : null)
     if (!raw)
       return {
         completed: new Set<string>(),
@@ -1302,7 +2040,7 @@ function loadPersisted() {
     if (!parsed.lessonQuizOptionsShuffled) {
       try {
         const optionCountByQuestionId: Record<string, number> = {}
-        roadmap.forEach((stage) =>
+        roadmap.stages.forEach((stage) =>
           stage.weeks.forEach((week) =>
             week.lessons.forEach((lesson) =>
               buildLessonQuizCanonical(lesson, week, stage).forEach((q) => {
@@ -1357,19 +2095,31 @@ function loadPersisted() {
 }
 
 export default function App() {
-  const persisted = React.useMemo(() => loadPersisted(), [])
-  const [completedLessons, setCompletedLessons] = React.useState<Set<string>>(persisted.completed)
-  const [quizState, setQuizState] = React.useState<QuizState>(persisted.quiz)
-  const [lessonQuiz, setLessonQuiz] = React.useState<Record<string, LessonQuizState>>(persisted.lessonQuiz || {})
-  const [docQuiz, setDocQuiz] = React.useState<DocQuizProgress>(persisted.docQuiz || {})
+  const initial = React.useMemo(() => {
+    const stored = typeof window === "undefined" ? null : localStorage.getItem(ACTIVE_ROADMAP_KEY)
+    const roadmapId: RoadmapId =
+      stored === "kubernetes" || stored === "technical-writer" ? stored : DEFAULT_ROADMAP_ID
+    const roadmap = ROADMAPS[roadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
+    return { roadmapId: roadmap.id, roadmap, persisted: loadPersisted(roadmap) }
+  }, [])
+
+  const [activeRoadmapId, setActiveRoadmapId] = React.useState<RoadmapId>(initial.roadmapId)
+  const activeRoadmap = ROADMAPS[activeRoadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
+
+  const [completedLessons, setCompletedLessons] = React.useState<Set<string>>(initial.persisted.completed)
+  const [quizState, setQuizState] = React.useState<QuizState>(initial.persisted.quiz)
+  const [lessonQuiz, setLessonQuiz] = React.useState<Record<string, LessonQuizState>>(initial.persisted.lessonQuiz || {})
+  const [docQuiz, setDocQuiz] = React.useState<DocQuizProgress>(initial.persisted.docQuiz || {})
+  const [page, setPage] = React.useState<"landing" | "roadmap">("landing")
   const [tab, setTab] = React.useState("overview")
-  const [knowledgeStage, setKnowledgeStage] = React.useState(knowledgeCards[0].id)
+  const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
   const [lessonQuizView, setLessonQuizView] = React.useState<{ lesson: Lesson; week: Week; stage: Stage } | null>(null)
 
   const totalLessons = React.useMemo(
-    () => roadmap.reduce((sum, stage) => sum + stage.weeks.reduce((weekSum, w) => weekSum + w.lessons.length, 0), 0),
-    []
+    () =>
+      activeRoadmap.stages.reduce((sum, stage) => sum + stage.weeks.reduce((weekSum, w) => weekSum + w.lessons.length, 0), 0),
+    [activeRoadmapId]
   )
 
   const overall = React.useMemo(() => {
@@ -1380,7 +2130,7 @@ export default function App() {
 
   const stageStats = React.useCallback(
     (stageId: string) => {
-      const stage = roadmap.find((item) => item.id === stageId)
+      const stage = activeRoadmap.stages.find((item) => item.id === stageId)
       if (!stage) return { done: 0, total: 0 }
       const total = stage.weeks.reduce((sum, w) => sum + w.lessons.length, 0)
       let done = 0
@@ -1391,8 +2141,13 @@ export default function App() {
       )
       return { done, total }
     },
-    [completedLessons]
+    [activeRoadmapId, completedLessons]
   )
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    localStorage.setItem(ACTIVE_ROADMAP_KEY, activeRoadmapId)
+  }, [activeRoadmapId])
 
   React.useEffect(() => {
     const payload = {
@@ -1402,8 +2157,8 @@ export default function App() {
       docQuiz,
       lessonQuizOptionsShuffled: true,
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [completedLessons, quizState, lessonQuiz, docQuiz])
+    localStorage.setItem(storageKeyForRoadmap(activeRoadmapId), JSON.stringify(payload))
+  }, [activeRoadmapId, completedLessons, quizState, lessonQuiz, docQuiz])
 
   const toggleLesson = (lessonId: string) => {
     setCompletedLessons((prev) => {
@@ -1421,6 +2176,7 @@ export default function App() {
   }
 
   const submitQuiz = () => {
+    const quizQuestions = activeRoadmap.examQuestions
     let score = 0
     quizQuestions.forEach((q) => {
       if (quizState.answers[q.id] === q.answer) score += 1
@@ -1476,12 +2232,42 @@ export default function App() {
   }
 
   const resetAll = () => {
-    const ok = window.confirm("确定要清空打卡与答题记录吗？")
+    const ok = window.confirm(`确定要清空「${activeRoadmap.label}」的打卡与答题记录吗？`)
     if (!ok) return
     setCompletedLessons(new Set())
     setQuizState(defaultQuizState)
     setLessonQuiz({})
     setDocQuiz({})
+  }
+
+  const scrollToTop = () => {
+    if (typeof window === "undefined") return
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  const openRoadmap = (roadmapId: RoadmapId, nextTab: string = "overview") => {
+    setResourceView(null)
+    setLessonQuizView(null)
+    if (roadmapId !== activeRoadmapId) {
+      const nextRoadmap = ROADMAPS[roadmapId]
+      const persisted = loadPersisted(nextRoadmap)
+      setCompletedLessons(persisted.completed)
+      setQuizState(persisted.quiz)
+      setLessonQuiz(persisted.lessonQuiz || {})
+      setDocQuiz(persisted.docQuiz || {})
+      setKnowledgeStage(nextRoadmap.knowledgeCards[0]?.id || "")
+      setActiveRoadmapId(roadmapId)
+    }
+    setTab(nextTab)
+    setPage("roadmap")
+    scrollToTop()
+  }
+
+  const openLanding = () => {
+    setResourceView(null)
+    setLessonQuizView(null)
+    setPage("landing")
+    scrollToTop()
   }
 
   const docQuestionList = React.useCallback((lessonId: string) => docQuestionMap[lessonId] || [], [])
@@ -1503,21 +2289,162 @@ export default function App() {
   const resetDocQuiz = (lessonId: string) => {
     setDocQuiz((prev) => ({ ...prev, [lessonId]: [] }))
   }
+  const suggestion = React.useMemo(() => activeRoadmap.suggestion(overall.percent), [activeRoadmapId, overall.percent])
 
+  const startLabel = overall.done > 0 ? "继续学习" : "开始学习"
 
-  const suggestion = React.useMemo(() => {
-    if (overall.percent < 25) {
-      return "建议先完成第 1 阶段前两周，专注 Namespaces、Cgroups 与 Dockerfile 多阶段构建。"
-    }
-    if (overall.percent < 50) {
-      return "完成阶段二工作负载与存储（周 4-5），顺便练习滚动更新与 PVC 绑定。"
-    }
-    if (overall.percent < 75) {
-      return "补齐调度/NetworkPolicy（周 6）并搭建一条 CI/CD 流水线（周 9）。"
-    }
-    return "加强可观测性（周 11-12）与安全考点（周 14），再做一次全量测验。"
-  }, [overall.percent])
+  if (page === "landing") {
+    return (
+      <div className="min-h-screen bg-background/80 text-foreground">
+        <div className="container py-12 space-y-8">
+          <Card className="glass-card p-8 space-y-5 animate-fade-in">
+            <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              <Badge variant="secondary" className="bg-secondary/70 text-xs">
+                Roadmaps · Interactive
+              </Badge>
+              <Badge variant="outline">进度打卡</Badge>
+              <Badge variant="outline">测验 + 题单</Badge>
+              <Badge variant="outline">本地保存</Badge>
+            </div>
+            <CardTitle className="text-4xl font-bold tracking-tight">学习路线（Roadmaps）</CardTitle>
+            <CardDescription className="text-base leading-relaxed">
+              选择一条路线，按阶段/周推进；每节配套权威资源、文档题单与即时测验。
+            </CardDescription>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => openRoadmap(activeRoadmapId, "overview")} className="gap-2">
+                <GraduationCap className="h-4 w-4" />
+                {startLabel}
+              </Button>
+              <Button variant="outline" onClick={() => openRoadmap(activeRoadmapId, "exam")} className="gap-2">
+                <BadgeCheck className="h-4 w-4" />
+                模拟考试
+              </Button>
+              <Button variant="ghost" onClick={resetAll} className="gap-2 text-muted-foreground">
+                <RefreshCw className="h-4 w-4" />
+                重置记录
+              </Button>
+            </div>
+          </Card>
 
+          <div className="grid gap-4 lg:grid-cols-3">
+            {ROADMAP_LIST.map((roadmap) => {
+              const totals = roadmapTotals(roadmap.stages)
+              const summary = loadProgressSummary(roadmap)
+              const percent = totals.lessons === 0 ? 0 : Math.round((summary.completed / totals.lessons) * 100)
+              const roadmapSuggestion = roadmap.suggestion(percent)
+              return (
+                <Card key={roadmap.id} className="glass-card p-6 space-y-4 animate-fade-in">
+                  <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    <Badge variant="secondary" className="bg-secondary/70 text-xs">
+                      Live
+                    </Badge>
+                    <Badge variant="outline">{totals.stages} 阶段</Badge>
+                    <Badge variant="outline">{totals.weeks} 周</Badge>
+                    <Badge variant="outline">{totals.lessons} 课时</Badge>
+                  </div>
+                  <CardTitle className="text-2xl font-semibold tracking-tight">
+                    {roadmap.title}（{roadmap.durationLabel}）
+                  </CardTitle>
+                  <CardDescription className="text-base leading-relaxed">{roadmap.description}</CardDescription>
+                  <div className="grid gap-3 sm:grid-cols-3 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-primary" />
+                      实战优先
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <Brain className="h-4 w-4 text-accent" />
+                      测验闭环
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <BookOpen className="h-4 w-4 text-secondary" />
+                      权威资料
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">学习进度</span>
+                      <span className="font-medium">
+                        {summary.completed}/{totals.lessons} · {percent}%
+                      </span>
+                    </div>
+                    <Progress value={percent} />
+                    <p className="text-sm text-muted-foreground">{roadmapSuggestion}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button onClick={() => openRoadmap(roadmap.id, "overview")} className="gap-2">
+                      <ArrowUpRight className="h-4 w-4" />
+                      {summary.completed > 0 ? "继续学习" : "开始学习"}
+                    </Button>
+                    <Button variant="outline" onClick={() => openRoadmap(roadmap.id, "knowledge")} className="gap-2">
+                      <Lightbulb className="h-4 w-4" />
+                      速览知识点
+                    </Button>
+                  </div>
+                </Card>
+              )
+            })}
+
+            <Card className="glass-card p-6 space-y-4 animate-fade-in">
+              <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <Badge variant="secondary" className="bg-secondary/70 text-xs">
+                  External
+                </Badge>
+                <Badge variant="outline">roadmap.sh</Badge>
+                <Badge variant="outline">更多路线</Badge>
+              </div>
+              <CardTitle className="text-2xl font-semibold tracking-tight">更多 Roadmaps</CardTitle>
+              <CardDescription className="text-base leading-relaxed">
+                外部参考与灵感来源：roadmap.sh（可对照原始路线，或查找更多学习路径）。
+              </CardDescription>
+              <div className="grid gap-3">
+                <Button variant="outline" asChild className="gap-2">
+                  <a href="https://roadmap.sh/technical-writer" target="_blank" rel="noreferrer">
+                    Technical Writer Roadmap <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="outline" asChild className="gap-2">
+                  <a href="https://roadmap.sh/" target="_blank" rel="noreferrer">
+                    roadmap.sh Home <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="outline" disabled className="gap-2">
+                  <Layers className="h-4 w-4" />
+                  敬请期待
+                </Button>
+              </div>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card className="glass-card p-5 space-y-2 animate-fade-in">
+              <div className="flex items-center gap-2 font-semibold">
+                <ListChecks className="h-4 w-4 text-primary" />
+                打卡进度
+              </div>
+              <CardDescription className="text-sm">每节课一键打卡，所有进度保存在本地。</CardDescription>
+            </Card>
+            <Card className="glass-card p-5 space-y-2 animate-fade-in">
+              <div className="flex items-center gap-2 font-semibold">
+                <Brain className="h-4 w-4 text-accent" />
+                即时测验
+              </div>
+              <CardDescription className="text-sm">每周/每课配套测验与解析，帮助形成闭环。</CardDescription>
+            </Card>
+            <Card className="glass-card p-5 space-y-2 animate-fade-in">
+              <div className="flex items-center gap-2 font-semibold">
+                <BookOpen className="h-4 w-4 text-secondary" />
+                权威资料
+              </div>
+              <CardDescription className="text-sm">优先链接官方文档与权威参考，减少信息噪音。</CardDescription>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const knowledgeCards = activeRoadmap.knowledgeCards
+  const quizQuestions = activeRoadmap.examQuestions
   const knowledge = knowledgeCards.find((card) => card.id === knowledgeStage) || knowledgeCards[0]
   const showQuizFeedback = quizState.lastScore != null
   const lastScore = quizState.lastScore ?? 0
@@ -1529,19 +2456,30 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background/80 text-foreground">
       <div className="container py-10 space-y-6">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={openLanding} className="gap-2 text-muted-foreground">
+            <ArrowLeft className="h-4 w-4" />
+            返回 Roadmaps
+          </Button>
+          <Badge variant="outline" className="text-xs">
+            {activeRoadmap.label}
+          </Badge>
+        </div>
         <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
           <Card className="glass-card p-6 space-y-4 animate-fade-in">
             <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <Badge variant="secondary" className="bg-secondary/70 text-xs">
-                Cloud Native Bootcamp · shadcn UI
+                {activeRoadmap.heroBadge}
               </Badge>
-              <Badge variant="outline">16 周 · 64 课时</Badge>
+              <Badge variant="outline">
+                {activeRoadmap.durationLabel} · {totalLessons} 课时
+              </Badge>
               <Badge variant="outline">本地保存进度</Badge>
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">Kubernetes 学习路线（16 周）</CardTitle>
-            <CardDescription className="text-base leading-relaxed">
-              基于 README 打造的互动学习地图：从 Linux 内核到 GitOps 与服务网格，逐周打卡、即时测验、保存本地进度。
-            </CardDescription>
+            <CardTitle className="text-3xl font-bold tracking-tight">
+              {activeRoadmap.title}（{activeRoadmap.durationLabel}）
+            </CardTitle>
+            <CardDescription className="text-base leading-relaxed">{activeRoadmap.description}</CardDescription>
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => setTab("overview")} className="gap-2">
                 <Layers className="h-4 w-4" />
@@ -1599,7 +2537,7 @@ export default function App() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {roadmap.map((stage) => {
+              {activeRoadmap.stages.map((stage) => {
                 const stats = stageStats(stage.id)
                 const percent = stats.total === 0 ? 0 : Math.round((stats.done / stats.total) * 100)
                 return (
@@ -1632,7 +2570,7 @@ export default function App() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">路线分期</p>
-                <h2 className="text-2xl font-semibold leading-tight">16 周学习地图</h2>
+                <h2 className="text-2xl font-semibold leading-tight">{activeRoadmap.durationLabel} 学习地图</h2>
                 <p className="text-muted-foreground text-sm">逐周卡片 + 可勾选课时，自动统计完成度并生成行动建议。</p>
               </div>
               <Badge variant="secondary" className="gap-1">
@@ -1642,7 +2580,7 @@ export default function App() {
             </div>
 
             <div className="space-y-4">
-              {roadmap.map((stage) => {
+              {activeRoadmap.stages.map((stage) => {
                 const stats = stageStats(stage.id)
                 const percent = stats.total === 0 ? 0 : Math.round((stats.done / stats.total) * 100)
                 return (
@@ -1973,7 +2911,7 @@ export default function App() {
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>环境预期：本地 Kind/Minikube 或云上集群，具备 kubectl/容器工具链。</span>
+                    <span>环境预期：{activeRoadmap.resourceGuide.environment}</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
@@ -1989,11 +2927,7 @@ export default function App() {
                     ? resourceView.week.keyPoints
                     : resourceView.lesson.keyPoints && resourceView.lesson.keyPoints.length
                       ? resourceView.lesson.keyPoints
-                      : [
-                          "照着官方示例跑通最小闭环：构建/部署/验证，先有成功体验。",
-                          "逐项改参数（资源、探针、路由、存储、策略），观察事件/日志/指标的变化。",
-                          "整理常见误区与排查路径：权限、网络、存储、镜像拉取、探针、调度。",
-                        ]
+                      : activeRoadmap.resourceGuide.fallbackKeyPoints
                   ).map((kp, idx) => (
                     <li key={idx} className="flex gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
@@ -2006,45 +2940,33 @@ export default function App() {
               <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
                 <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">动手路径</p>
                 <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
-                  <li>打开原文，先跑通最小可用示例（命令/清单照抄也行），确认成功信号。</li>
-                  <li>修改 1-2 个关键参数（副本、探针阈值、资源限额、路由/策略等），对比行为差异并记录。</li>
-                  <li>用 `kubectl describe`、事件、日志或容器 CLI 验证修改已生效，并观察监控/告警（如适用）。</li>
+                  {activeRoadmap.resourceGuide.handsOnSteps.map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
                 </ol>
               </div>
 
               <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
                 <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">自检/质询</p>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>用自己的话阐述：核心机制/配置到底做了什么？边界条件是什么？</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>故障排查优先级：先看事件/日志，再看网络/权限/存储，再看探针/资源/调度。</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>在生产落地：需要哪些安全/性能/成本防护（如 RBAC、配额、限流、告警）？</span>
-                  </li>
+                  {activeRoadmap.resourceGuide.selfChecks.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
               <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
                 <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">扩展与衍生</p>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>把官方示例收录到你的实验仓库，写出“期望 vs 实际”差异与复盘。</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>列 3 条常见坑，并附上排查脚本/命令（kubectl/日志/监控）。</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>把本节知识与前后周的内容串联，设计一个小型端到端演练（部署 → 观测 → 调优 → 回滚）。</span>
-                  </li>
+                  {activeRoadmap.resourceGuide.extensions.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -2224,7 +3146,7 @@ export default function App() {
                             {getLessonQuizState(lessonQuizView.lesson.id).attempts} 次
                           </p>
                           <p className="text-muted-foreground">
-                            建议：复盘错题对应的配置/命令，回到文档或实验里重新验证。
+                            {activeRoadmap.resourceGuide.lessonQuizAdvice}
                           </p>
                         </AlertDescription>
                       </Alert>
