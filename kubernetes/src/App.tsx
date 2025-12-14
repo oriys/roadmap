@@ -25,6 +25,7 @@ import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { docQuestionMap } from "@/lib/doc-questions"
+import { lessonOverviewMap } from "@/lib/lesson-overviews"
 import { customLessonQuizzes, type QuizQuestion } from "@/lib/lesson-quizzes"
 
 type Resource = { title: string; url: string }
@@ -36,6 +37,51 @@ type QuizState = { answers: Record<string, number | undefined>; attempts: number
 type LessonQuizState = { answers: Record<string, number | undefined>; attempts: number; bestScore?: number; lastScore?: number }
 type DocQuizProgress = Record<string, number[]>
 type ResourceContext = { resource: Resource; lesson: Lesson; week: Week; stage: Stage }
+
+function getLessonOverview(lesson: Lesson): string | undefined {
+  return lesson.overview || lessonOverviewMap[lesson.id.toLowerCase()]
+}
+
+function hashToUint32(input: string): number {
+  let hash = 2166136261
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function mulberry32(seed: number) {
+  let state = seed >>> 0
+  return () => {
+    state += 0x6d2b79f5
+    let t = state
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function shuffledOrder(length: number, seed: number): number[] {
+  const order = Array.from({ length }, (_, idx) => idx)
+  const rand = mulberry32(seed)
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rand() * (i + 1))
+    const tmp = order[i]
+    order[i] = order[j]
+    order[j] = tmp
+  }
+  return order
+}
+
+function shuffleQuizOptions(question: QuizQuestion): QuizQuestion {
+  if (question.options.length <= 1) return question
+  const order = shuffledOrder(question.options.length, hashToUint32(question.id))
+  const options = order.map((idx) => question.options[idx])
+  const answer = order.indexOf(question.answer)
+  if (answer === -1) return question
+  return { ...question, options, answer }
+}
 
 function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
   const resTitle = lesson.resources[0]?.title || lesson.title
@@ -143,13 +189,18 @@ function createLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestio
     },
   ]
 }
-function buildLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
+
+function buildLessonQuizCanonical(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
   const base = createLessonQuiz(lesson, week, stage)
   const custom = customLessonQuizzes[lesson.id] || []
   if (!custom.length) return base
   const customIds = new Set(custom.map((q) => q.id))
   const merged = [...custom, ...base.filter((q) => !customIds.has(q.id))]
   return merged.slice(0, 10)
+}
+
+function buildLessonQuiz(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
+  return buildLessonQuizCanonical(lesson, week, stage).map(shuffleQuizOptions)
 }
 
 const roadmap: Stage[] = [
@@ -1221,6 +1272,44 @@ function loadPersisted() {
         docQuiz: {} as DocQuizProgress,
       }
     const parsed = JSON.parse(raw)
+
+    let lessonQuiz: Record<string, LessonQuizState> = parsed.lessonQuiz || {}
+    if (!parsed.lessonQuizOptionsShuffled) {
+      try {
+        const optionCountByQuestionId: Record<string, number> = {}
+        roadmap.forEach((stage) =>
+          stage.weeks.forEach((week) =>
+            week.lessons.forEach((lesson) =>
+              buildLessonQuizCanonical(lesson, week, stage).forEach((q) => {
+                optionCountByQuestionId[q.id] = q.options.length
+              })
+            )
+          )
+        )
+
+        const migrated: Record<string, LessonQuizState> = {}
+        Object.entries(lessonQuiz).forEach(([lessonId, state]) => {
+          const answers = state?.answers || {}
+          const nextAnswers: Record<string, number | undefined> = {}
+          Object.entries(answers).forEach(([qid, idx]) => {
+            if (typeof idx !== "number") return
+            const optionCount = optionCountByQuestionId[qid]
+            if (typeof optionCount !== "number") {
+              nextAnswers[qid] = idx
+              return
+            }
+            const order = shuffledOrder(optionCount, hashToUint32(qid))
+            const nextIdx = order.indexOf(idx)
+            nextAnswers[qid] = nextIdx === -1 ? idx : nextIdx
+          })
+          migrated[lessonId] = { ...state, answers: nextAnswers }
+        })
+        lessonQuiz = migrated
+      } catch (error) {
+        console.warn("课时测验选项顺序迁移失败，将使用原记录", error)
+      }
+    }
+
     return {
       completed: new Set<string>(parsed.completed || []),
       quiz: {
@@ -1228,7 +1317,7 @@ function loadPersisted() {
         ...parsed.quiz,
         answers: parsed.quiz?.answers ?? {},
       },
-      lessonQuiz: parsed.lessonQuiz || {},
+      lessonQuiz,
       docQuiz: parsed.docQuiz || ({} as DocQuizProgress),
     }
   } catch (error) {
@@ -1286,6 +1375,7 @@ export default function App() {
       quiz: quizState,
       lessonQuiz,
       docQuiz,
+      lessonQuizOptionsShuffled: true,
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   }, [completedLessons, quizState, lessonQuiz, docQuiz])
@@ -1854,6 +1944,10 @@ export default function App() {
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                    <span>本课综述：{getLessonOverview(resourceView.lesson) || resourceView.lesson.detail}</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
                     <span>环境预期：本地 Kind/Minikube 或云上集群，具备 kubectl/容器工具链。</span>
                   </li>
                   <li className="flex gap-2">
@@ -1943,6 +2037,7 @@ export default function App() {
                 <p className="text-sm text-muted-foreground mt-1">
                   {lessonQuizView.stage.title} · {lessonQuizView.week.title}
                 </p>
+                <p className="text-sm text-muted-foreground mt-2">{getLessonOverview(lessonQuizView.lesson) || lessonQuizView.lesson.detail}</p>
               </div>
               <div className="flex gap-2">
                 <Button
