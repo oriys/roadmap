@@ -368,7 +368,7 @@ const roadmap: Stage[] = [
             resources: [
               { title: "Pod 生命周期", url: "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/" },
               { title: "探针配置", url: "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" },
-              { title: "调试 Pod 重启与探针", url: "https://kubernetes.io/docs/tasks/debug/debug-application/debug-liveness-readiness/" },
+              { title: "调试 Pod 重启与探针", url: "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/" },
             ],
           },
         ],
