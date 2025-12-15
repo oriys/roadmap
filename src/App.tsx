@@ -254,7 +254,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "namespaces man7", url: "https://man7.org/linux/man-pages/man7/namespaces.7.html" },
               { title: "Linux namespaces 指南", url: "https://docs.kernel.org/admin-guide/namespaces/index.html" },
-              { title: "Play with Docker（在线容器实验）", url: "https://labs.play-with-docker.com/" },
+              { title: "Play with Docker（在线容器实验）", url: "https://www.docker.com/play-with-docker/" },
             ],
           },
           {
@@ -305,7 +305,7 @@ const kubernetesStages: Stage[] = [
             title: "Docker 架构链路：CLI → Daemon → containerd → runc",
             detail: "Docker CLI、Daemon、Containerd 与 Runc 的关系。",
             resources: [
-              { title: "Docker 官方概览", url: "https://docs.docker.com/get-started/overview/" },
+              { title: "Docker 官方概览", url: "https://docs.docker.com/get-started/docker-overview/" },
               { title: "containerd 架构", url: "https://github.com/containerd/containerd/blob/main/docs/PLUGINS.md" },
               { title: "Docker CLI 与 Daemon 交互演示", url: "https://docs.docker.com/get-started/" },
             ],
@@ -327,7 +327,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Dockershim FAQ（K8s 官方）", url: "https://kubernetes.io/blog/2020/12/02/dockershim-faq/" },
               { title: "CRI-O 官方文档", url: "https://cri-o.io/" },
-              { title: "Kubelet CRI 说明", url: "https://kubernetes.io/docs/concepts/architecture/cri/" },
+              { title: "Kubelet CRI 说明", url: "https://kubernetes.io/docs/concepts/containers/cri/" },
             ],
           },
           {
@@ -361,7 +361,7 @@ const kubernetesStages: Stage[] = [
             detail: "控制平面（API Server、Etcd、Scheduler）与工作节点（Kubelet、Kube-proxy）。",
             resources: [
               { title: "Kubernetes 组件概览", url: "https://kubernetes.io/docs/concepts/overview/components/" },
-              { title: "What is Kubernetes?", url: "https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" },
+              { title: "What is Kubernetes?", url: "https://kubernetes.io/docs/concepts/overview/" },
               { title: "Kubernetes Glossary", url: "https://kubernetes.io/docs/reference/glossary/" },
               { title: "Controller 模式", url: "https://kubernetes.io/docs/concepts/architecture/controller/" },
               { title: "Kubernetes Alternatives（Nomad）", url: "https://developer.hashicorp.com/nomad/docs" },
@@ -387,7 +387,7 @@ const kubernetesStages: Stage[] = [
             title: "声明式 API 与 YAML：期望状态到调和的路径",
             detail: "期望状态 vs 实际状态，理解 Reconciliation Loop。",
             resources: [
-              { title: "Kubernetes 对象", url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/" },
+              { title: "Kubernetes 对象", url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/" },
               { title: "声明式配置", url: "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/" },
               { title: "kubectl 应用/补丁示例", url: "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/" },
             ],
@@ -442,7 +442,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Service 类型", url: "https://kubernetes.io/docs/concepts/services-networking/service/" },
               { title: "kube-proxy 模式", url: "https://kubernetes.io/docs/concepts/services-networking/service/#kube-proxy-iptables-vs-ipvs" },
-              { title: "Guestbook 示例（Service 实战）", url: "https://github.com/kubernetes/examples/tree/master/guestbook" },
+              { title: "Guestbook 示例（Service 实战）", url: "https://github.com/kubernetes-sigs/examples/tree/main/guestbook" },
             ],
           },
           {
@@ -571,7 +571,7 @@ const kubernetesStages: Stage[] = [
               { title: "CNI 规范", url: "https://www.cni.dev/docs/" },
               { title: "Flannel", url: "https://github.com/flannel-io/flannel#readme" },
               { title: "Calico", url: "https://docs.tigera.io/calico/latest/about/" },
-              { title: "Calico 快速开始", url: "https://docs.tigera.io/calico/latest/getting-started/kubernetes/" },
+              { title: "Calico 快速开始", url: "https://docs.tigera.io/calico/latest/about" },
             ],
           },
         ],
@@ -622,7 +622,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Chart 模板指南", url: "https://helm.sh/docs/chart_template_guide/" },
               { title: "Values 与模板函数", url: "https://helm.sh/docs/chart_template_guide/values_files/" },
-              { title: "Helm 单元测试与 Lint", url: "https://helm.sh/docs/chart_template_guide/linting/" },
+              { title: "Helm 单元测试与 Lint", url: "https://helm.sh/docs/helm/helm_lint/" },
             ],
           },
         ],
@@ -652,7 +652,7 @@ const kubernetesStages: Stage[] = [
             detail: "HCL 语法、Provider 配置与 State 管理。",
             resources: [
               { title: "Terraform 概览", url: "https://developer.hashicorp.com/terraform/intro" },
-              { title: "Terraform 语言概览", url: "https://developer.hashicorp.com/terraform/language/overview" },
+              { title: "Terraform 语言概览", url: "https://developer.hashicorp.com/terraform/language" },
               { title: "Terraform CLI 快速开始", url: "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli" },
             ],
           },
@@ -663,7 +663,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "aws_eks_cluster 资源", url: "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster" },
               { title: "google_container_cluster 资源", url: "https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster" },
-              { title: "EKS Terraform 教程", url: "https://developer.hashicorp.com/terraform/tutorials/aws-eks/eks-fargate" },
+              { title: "EKS Terraform 教程", url: "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_fargate_profile" },
             ],
           },
           {
@@ -671,9 +671,9 @@ const kubernetesStages: Stage[] = [
             title: "Ansible 基础：无代理配置与幂等 Playbook",
             detail: "Playbook 与无 Agent 架构优势。",
             resources: [
-              { title: "Ansible Playbook 指南", url: "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html" },
-              { title: "Ansible 架构", url: "https://docs.ansible.com/ansible/latest/getting_started/get_started_ansible.html" },
-              { title: "第一个 Playbook 示例", url: "https://docs.ansible.com/ansible/latest/getting_started/get_started_playbook.html" },
+              { title: "Ansible Playbook 指南", url: "https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html" },
+              { title: "Ansible 架构", url: "https://docs.ansible.com/projects/ansible/latest/getting_started/get_started_ansible.html" },
+              { title: "第一个 Playbook 示例", url: "https://docs.ansible.com/projects/ansible/latest/getting_started/get_started_playbook.html" },
             ],
           },
           {
@@ -682,8 +682,8 @@ const kubernetesStages: Stage[] = [
             detail: "Terraform 建资源 + Ansible 配置节点。",
             resources: [
               { title: "Terraform 模块化", url: "https://developer.hashicorp.com/terraform/language/modules" },
-              { title: "Ansible Roles 最佳实践", url: "https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html" },
-              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/terraform/tutorials/configuration-language/ansible" },
+              { title: "Ansible Roles 最佳实践", url: "https://docs.ansible.com/projects/ansible/latest/tips_tricks/sample_setup.html" },
+              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/terraform/language/integrations/ansible" },
             ],
           },
         ],
@@ -704,7 +704,7 @@ const kubernetesStages: Stage[] = [
             title: "CI/CD 原则：不可变制品、版本策略与审计",
             detail: "云原生环境下的持续集成与交付挑战。",
             resources: [
-              { title: "GitHub Actions CI 概览", url: "https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration" },
+              { title: "GitHub Actions CI 概览", url: "https://docs.github.com/en/actions/get-started/continuous-integration" },
               { title: "Jenkins Pipeline 概览", url: "https://www.jenkins.io/doc/book/pipeline/" },
               { title: "部署到 Kubernetes（GH Actions）", url: "https://docs.github.com/actions/deployment/deploying-to-your-cloud-provider/deploying-to-kubernetes" },
             ],
@@ -724,9 +724,9 @@ const kubernetesStages: Stage[] = [
             title: "流水线实战（下）：安全扫描与质量门禁",
             detail: "集成 Trivy 扫描与自动化测试。",
             resources: [
-              { title: "Trivy 使用指南", url: "https://aquasecurity.github.io/trivy/latest/" },
+              { title: "Trivy 使用指南", url: "http://trivy.dev/latest/" },
               { title: "Trivy GitHub Action", url: "https://github.com/aquasecurity/trivy-action" },
-              { title: "CI 集成容器扫描示例", url: "https://aquasecurity.github.io/trivy/latest/integrations/github-action/" },
+              { title: "CI 集成容器扫描示例", url: "http://trivy.dev/latest/integrations/github-action/" },
             ],
           },
           {
@@ -735,7 +735,7 @@ const kubernetesStages: Stage[] = [
             detail: "Push 模式 vs Pull 模式（ArgoCD）。",
             resources: [
               { title: "ArgoCD 概念", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/application-spec/" },
-              { title: "Flux GitOps 概览", url: "https://fluxcd.io/docs/" },
+              { title: "Flux GitOps 概览", url: "https://fluxcd.io/flux/" },
               { title: "ArgoCD Webhook 集成", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" },
             ],
           },
@@ -843,8 +843,8 @@ const kubernetesStages: Stage[] = [
             detail: "配置数据源、导入 Dashboard 与自定义面板。",
             resources: [
               { title: "Grafana 数据源", url: "https://grafana.com/docs/grafana/latest/datasources/" },
-              { title: "Dashboard 入门", url: "https://grafana.com/docs/grafana/latest/dashboards/build-dashboards/" },
-              { title: "导入社区 Dashboard", url: "https://grafana.com/docs/grafana/latest/dashboards/export-import/#import-dashboard" },
+              { title: "Dashboard 入门", url: "https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/" },
+              { title: "导入社区 Dashboard", url: "https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/import-dashboards/" },
             ],
           },
           {
@@ -876,7 +876,7 @@ const kubernetesStages: Stage[] = [
             detail: "DaemonSet vs Sidecar 模式对比。",
             resources: [
               { title: "Kubernetes 日志架构", url: "https://kubernetes.io/docs/concepts/cluster-administration/logging/" },
-              { title: "Fluent Bit 在 Kubernetes 中部署", url: "https://docs.fluentbit.io/manual/installation/kubernetes" },
+              { title: "Fluent Bit 在 Kubernetes 中部署", url: "https://docs.fluentbit.io/manual/installation/kubernetes-deployment" },
             ],
           },
           {
@@ -885,8 +885,8 @@ const kubernetesStages: Stage[] = [
             detail: "Loki 标签索引与 LogQL 语法。",
             resources: [
               { title: "Loki 官方文档", url: "https://grafana.com/docs/loki/latest/" },
-              { title: "LogQL", url: "https://grafana.com/docs/loki/latest/logql/" },
-              { title: "Loki Helm 安装", url: "https://grafana.com/docs/loki/latest/installation/helm/" },
+              { title: "LogQL", url: "https://grafana.com/docs/loki/latest/query/" },
+              { title: "Loki Helm 安装", url: "https://grafana.com/docs/loki/latest/setup/install/helm/" },
             ],
           },
           {
@@ -904,7 +904,7 @@ const kubernetesStages: Stage[] = [
             detail: "统一观测标准与 Jaeger UI 实战。",
             resources: [
               { title: "OTel Collectors", url: "https://opentelemetry.io/docs/collector/" },
-              { title: "Jaeger 快速开始", url: "https://www.jaegertracing.io/docs/latest/getting-started/" },
+              { title: "Jaeger 快速开始", url: "https://www.jaegertracing.io/docs/2.13/getting-started/" },
               { title: "OpenTelemetry Demo", url: "https://opentelemetry.io/docs/demo/" },
             ],
           },
@@ -926,7 +926,7 @@ const kubernetesStages: Stage[] = [
             title: "Service Mesh 价值判断：下沉治理与适用场景",
             detail: "微服务通信挑战与 Sidecar 模式。",
             resources: [
-              { title: "Istio 是什么", url: "https://istio.io/latest/docs/concepts/what-is-istio/" },
+              { title: "Istio 是什么", url: "https://istio.io/latest/about/service-mesh/" },
               { title: "Service Mesh Interface (SMI)", url: "https://smi-spec.io/" },
             ],
           },
@@ -988,7 +988,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Kubernetes Security 概览", url: "https://kubernetes.io/docs/concepts/security/" },
               { title: "Pod Security Standards", url: "https://kubernetes.io/docs/concepts/security/pod-security-standards/" },
-              { title: "NSA/CISA Kubernetes 加固指南", url: "https://www.cisa.gov/sites/default/files/publications/CISA_NSA_Kubernetes_Hardening_Guidance_1.2_508C.pdf" },
+              { title: "NSA/CISA Kubernetes 加固指南", url: "https://media.defense.gov/2022/Aug/29/2003066362/-1/-1/0/CTR_KUBERNETES_HARDENING_GUIDANCE_1.2_20220829.PDF" },
             ],
           },
           {
@@ -996,7 +996,7 @@ const kubernetesStages: Stage[] = [
             title: "供应链安全：Cosign 签名验证与准入控制",
             detail: "镜像签名（Cosign）与准入控制。",
             resources: [
-              { title: "Cosign 概览", url: "https://docs.sigstore.dev/cosign/overview/" },
+              { title: "Cosign 概览", url: "https://docs.sigstore.dev/signing/quickstart" },
               { title: "Admission Controllers", url: "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/" },
               { title: "policy-controller（Sigstore）", url: "https://docs.sigstore.dev/policy-controller/overview/" },
             ],
@@ -1018,7 +1018,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Falco 文档", url: "https://falco.org/docs/" },
               { title: "Falco 规则", url: "https://falco.org/docs/rules/" },
-              { title: "Falco 在 Kubernetes 部署", url: "https://falco.org/docs/getting-started/kubernetes/" },
+              { title: "Falco 在 Kubernetes 部署", url: "https://falco.org/docs/getting-started/running/#kubernetes" },
             ],
           },
         ],
@@ -1042,7 +1042,7 @@ const kubernetesStages: Stage[] = [
               { title: "Horizontal Pod Autoscaler", url: "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" },
               { title: "Vertical Pod Autoscaler (VPA)", url: "https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler" },
               { title: "Cluster Autoscaler", url: "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler" },
-              { title: "HPA 自定义指标示例", url: "https://kubernetes.io/docs/tasks/run-application/hpa-walkthrough/" },
+              { title: "HPA 自定义指标示例", url: "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" },
             ],
           },
           {
@@ -1052,7 +1052,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Knative Serving：revision/route 与并发调优", url: "https://knative.dev/docs/serving/" },
               { title: "Scale to zero", url: "https://knative.dev/docs/serving/autoscaling/scale-to-zero/" },
-              { title: "Knative Serving 快速安装", url: "https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml" },
+              { title: "Knative Serving 快速安装", url: "https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/" },
             ],
           },
           {
@@ -1115,8 +1115,8 @@ const kubernetesStages: Stage[] = [
             title: "认证冲刺：CKA/CKAD 技巧与训练计划",
             detail: "CKA vs CKAD 考试策略与真题分析。",
             resources: [
-              { title: "CKA 认证", url: "https://www.cncf.io/certification/cka/" },
-              { title: "CKAD 认证", url: "https://www.cncf.io/certification/ckad/" },
+              { title: "CKA 认证", url: "https://www.cncf.io/training/certification/cka/" },
+              { title: "CKAD 认证", url: "https://www.cncf.io/training/certification/ckad/" },
               { title: "CNCF 考纲（curriculum）", url: "https://github.com/cncf/curriculum" },
             ],
           },
