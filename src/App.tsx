@@ -442,7 +442,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Service 类型", url: "https://kubernetes.io/docs/concepts/services-networking/service/" },
               { title: "kube-proxy 模式", url: "https://kubernetes.io/docs/concepts/services-networking/service/#kube-proxy-iptables-vs-ipvs" },
-              { title: "Guestbook 示例（Service 实战）", url: "https://github.com/kubernetes/examples/tree/master/guestbook" },
+              { title: "Guestbook 示例（Service 实战）", url: "https://kubernetes.io/docs/tutorials/stateless-application/guestbook/" },
             ],
           },
           {
@@ -683,7 +683,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Terraform 模块化", url: "https://developer.hashicorp.com/terraform/language/modules" },
               { title: "Ansible Roles 最佳实践", url: "https://docs.ansible.com/projects/ansible/latest/tips_tricks/sample_setup.html" },
-              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/terraform/tutorials/configuration-language/validated-patterns" },
+              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/validated-patterns/terraform" },
             ],
           },
         ],
@@ -726,7 +726,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Trivy 使用指南", url: "https://trivy.dev/docs/latest/" },
               { title: "Trivy GitHub Action", url: "https://github.com/aquasecurity/trivy-action" },
-              { title: "CI 集成容器扫描示例", url: "https://trivy.dev/docs/latest/integrations/github-action/" },
+              { title: "CI 集成容器扫描示例", url: "https://trivy.dev/docs/latest/tutorials/integrations/github-actions/" },
             ],
           },
           {
@@ -1707,7 +1707,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "The Art of Command Line", url: "https://github.com/jlevy/the-art-of-command-line" },
               { title: "curl manual", url: "https://curl.se/docs/manual.html" },
-              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples.html" },
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/reStructuredText.html" },
             ],
           },
           {
@@ -1716,7 +1716,7 @@ const technicalWriterStages: Stage[] = [
             detail: "从症状到原因：复现步骤、日志/错误信息、快速绕过与根因说明。",
             resources: [
               { title: "Google：Troubleshooting", url: "https://developers.google.com/style/notices" },
-              { title: "Write the Docs：Troubleshooting", url: "https://www.writethedocs.org/guide/writing/troubleshooting.html" },
+              { title: "Write the Docs：Troubleshooting", url: "https://podcast.writethedocs.org/2020/07/19/episode-30-documentation-templates/" },
               { title: "Keep a Changelog：Change log guide", url: "https://keepachangelog.com/en/1.1.0/" },
             ],
           },
@@ -1749,7 +1749,7 @@ const technicalWriterStages: Stage[] = [
             detail: "把 API 文档拆成概览、认证、速率限制、错误模型、版本与变更。",
             resources: [
               { title: "Google：API Documentation", url: "https://developers.google.com/style/api-reference-comments" },
-              { title: "Stripe API Docs（参考范例）", url: "https://docs.stripe.com/api" },
+              { title: "Stripe API Docs（参考范例）", url: "https://github.com/stripe/openapi" },
               { title: "RFC 7807 Problem Details", url: "https://www.rfc-editor.org/rfc/rfc7807" },
             ],
           },
@@ -1768,7 +1768,7 @@ const technicalWriterStages: Stage[] = [
             title: "示例、SDK 与代码样例写法",
             detail: "写出可复制、可运行的代码样例：输入/输出、版本、错误处理与说明文字。",
             resources: [
-              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples.html" },
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/reStructuredText.html" },
               { title: "Google：Sample code", url: "https://developers.google.com/style/code-samples" },
               { title: "Microsoft：Code samples", url: "https://learn.microsoft.com/en-us/style-guide/developer-content/code-examples" },
             ],
@@ -1811,7 +1811,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "Diátaxis：Tutorials", url: "https://diataxis.fr/tutorials/" },
               { title: "Google：Tutorials", url: "https://developers.google.com/style/headings" },
-              { title: "Write the Docs：Tutorials", url: "https://www.writethedocs.org/guide/writing/tutorials.html" },
+              { title: "Write the Docs：Tutorials", url: "https://www.writethedocs.org/videos/portland/2021/writing-a-perfect-technical-tutorial-jessica-garson.html" },
             ],
           },
           {
@@ -1841,7 +1841,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "Diátaxis：Explanation", url: "https://diataxis.fr/explanation/" },
               { title: "Google：Conceptual docs", url: "https://developers.google.com/style/headings" },
-              { title: "Write the Docs：Conceptual Writing", url: "https://www.writethedocs.org/guide/writing/concepts.html" },
+              { title: "Write the Docs：Conceptual Writing", url: "https://podcast.writethedocs.org/2020/07/19/episode-30-documentation-templates/" },
             ],
           },
         ],
@@ -1986,7 +1986,7 @@ const technicalWriterStages: Stage[] = [
             title: "写作测试与复盘方法",
             detail: "用 checklist 复盘：读者、结构、示例可运行、术语一致、可搜索可维护。",
             resources: [
-              { title: "Write the Docs：Testing Docs", url: "https://www.writethedocs.org/guide/writing/testing-docs.html" },
+              { title: "Write the Docs：Testing Docs", url: "https://www.writethedocs.org/guide/tools/testing.html" },
               { title: "Google：Writing tests (guidance)", url: "https://developers.google.com/style" },
               { title: "Microsoft：Checklist", url: "https://learn.microsoft.com/en-us/style-guide/procedures-instructions" },
             ],
@@ -1996,7 +1996,7 @@ const technicalWriterStages: Stage[] = [
             title: "跨团队协作：与 PM/工程/支持对齐",
             detail: "学会需求澄清、信息收集与评审沟通，推动文档与产品同步交付。",
             resources: [
-              { title: "Write the Docs：Working with Engineers", url: "https://www.writethedocs.org/guide/writing/working-with-engineers.html" },
+              { title: "Write the Docs：Working with Engineers", url: "https://www.writethedocs.org/book-club/splunk-product-docs/17-working-with-engineers/" },
               { title: "Write the Docs：Docs Project Management", url: "https://www.writethedocs.org/guide/doc-ops.html" },
               { title: "Nielsen Norman Group：Stakeholders", url: "https://www.nngroup.com/articles/stakeholder-interviews/" },
             ],
