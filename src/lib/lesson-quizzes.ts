@@ -3504,7 +3504,7 @@ export const customLessonQuizzes: Record<string, QuizQuestion[]> = {
       id: "w10-3-q4",
       question: "destination 字段包含哪些关键子字段？",
       options: [
-        "server（集群 API 地址或 https://kubernetes.default.svc）与 namespace",
+        "server（集群 API 地址或 kubernetes.default.svc）与 namespace",
         "Pod IP 与端口",
         "镜像仓库地址",
         "Helm 仓库",

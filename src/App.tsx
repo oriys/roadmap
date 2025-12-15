@@ -442,7 +442,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Service 类型", url: "https://kubernetes.io/docs/concepts/services-networking/service/" },
               { title: "kube-proxy 模式", url: "https://kubernetes.io/docs/concepts/services-networking/service/#kube-proxy-iptables-vs-ipvs" },
-              { title: "Guestbook 示例（Service 实战）", url: "https://github.com/kubernetes-sigs/examples/tree/main/guestbook" },
+              { title: "Guestbook 示例（Service 实战）", url: "https://github.com/kubernetes/examples/tree/master/guestbook" },
             ],
           },
           {
@@ -452,7 +452,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Ingress 概念", url: "https://kubernetes.io/docs/concepts/services-networking/ingress/" },
               { title: "Ingress-NGINX 文档", url: "https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/" },
-              { title: "Minikube Ingress 实践", url: "https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/" },
+              { title: "Minikube Ingress 实践", url: "https://v1-33.docs.kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/" },
             ],
           },
           {
@@ -683,7 +683,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Terraform 模块化", url: "https://developer.hashicorp.com/terraform/language/modules" },
               { title: "Ansible Roles 最佳实践", url: "https://docs.ansible.com/projects/ansible/latest/tips_tricks/sample_setup.html" },
-              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/terraform/language/integrations/ansible" },
+              { title: "Terraform + Ansible 流水线示例", url: "https://developer.hashicorp.com/terraform/tutorials/configuration-language/validated-patterns" },
             ],
           },
         ],
@@ -706,7 +706,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "GitHub Actions CI 概览", url: "https://docs.github.com/en/actions/get-started/continuous-integration" },
               { title: "Jenkins Pipeline 概览", url: "https://www.jenkins.io/doc/book/pipeline/" },
-              { title: "部署到 Kubernetes（GH Actions）", url: "https://docs.github.com/actions/deployment/deploying-to-your-cloud-provider/deploying-to-kubernetes" },
+              { title: "部署到 Kubernetes（GH Actions）", url: "https://docs.github.com/en/actions/how-tos/deploy/deploy-to-third-party-platforms" },
             ],
           },
           {
@@ -724,9 +724,9 @@ const kubernetesStages: Stage[] = [
             title: "流水线实战（下）：安全扫描与质量门禁",
             detail: "集成 Trivy 扫描与自动化测试。",
             resources: [
-              { title: "Trivy 使用指南", url: "http://trivy.dev/latest/" },
+              { title: "Trivy 使用指南", url: "https://trivy.dev/docs/latest/" },
               { title: "Trivy GitHub Action", url: "https://github.com/aquasecurity/trivy-action" },
-              { title: "CI 集成容器扫描示例", url: "http://trivy.dev/latest/integrations/github-action/" },
+              { title: "CI 集成容器扫描示例", url: "https://trivy.dev/docs/latest/integrations/github-action/" },
             ],
           },
           {
@@ -734,7 +734,7 @@ const kubernetesStages: Stage[] = [
             title: "GitOps 导论：拉取式对齐与审计回滚优势",
             detail: "Push 模式 vs Pull 模式（ArgoCD）。",
             resources: [
-              { title: "ArgoCD 概念", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/application-spec/" },
+              { title: "ArgoCD 概念", url: "https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/" },
               { title: "Flux GitOps 概览", url: "https://fluxcd.io/flux/" },
               { title: "ArgoCD Webhook 集成", url: "https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" },
             ],
@@ -876,7 +876,7 @@ const kubernetesStages: Stage[] = [
             detail: "DaemonSet vs Sidecar 模式对比。",
             resources: [
               { title: "Kubernetes 日志架构", url: "https://kubernetes.io/docs/concepts/cluster-administration/logging/" },
-              { title: "Fluent Bit 在 Kubernetes 中部署", url: "https://docs.fluentbit.io/manual/installation/kubernetes-deployment" },
+              { title: "Fluent Bit 在 Kubernetes 中部署", url: "https://docs.fluentbit.io/manual/installation/downloads/kubernetes" },
             ],
           },
           {
@@ -988,7 +988,7 @@ const kubernetesStages: Stage[] = [
             resources: [
               { title: "Kubernetes Security 概览", url: "https://kubernetes.io/docs/concepts/security/" },
               { title: "Pod Security Standards", url: "https://kubernetes.io/docs/concepts/security/pod-security-standards/" },
-              { title: "NSA/CISA Kubernetes 加固指南", url: "https://media.defense.gov/2022/Aug/29/2003066362/-1/-1/0/CTR_KUBERNETES_HARDENING_GUIDANCE_1.2_20220829.PDF" },
+              { title: "NSA/CISA Kubernetes 加固指南", url: "https://kubernetes.io/blog/2021/10/05/nsa-cisa-kubernetes-hardening-guidance/" },
             ],
           },
           {
@@ -996,7 +996,7 @@ const kubernetesStages: Stage[] = [
             title: "供应链安全：Cosign 签名验证与准入控制",
             detail: "镜像签名（Cosign）与准入控制。",
             resources: [
-              { title: "Cosign 概览", url: "https://docs.sigstore.dev/signing/quickstart" },
+              { title: "Cosign 概览", url: "https://docs.sigstore.dev/quickstart/quickstart-cosign/" },
               { title: "Admission Controllers", url: "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/" },
               { title: "policy-controller（Sigstore）", url: "https://docs.sigstore.dev/policy-controller/overview/" },
             ],
@@ -1215,7 +1215,7 @@ const gitGithubStages: Stage[] = [
             resources: [
               { title: "git rebase", url: "https://git-scm.com/docs/git-rebase" },
               { title: "git cherry-pick", url: "https://git-scm.com/docs/git-cherry-pick" },
-              { title: "避免破坏历史的最佳实践", url: "https://docs.github.com/zh/pull-requests/committing-changes-to-your-project/managing-commit-history" },
+              { title: "避免破坏历史的最佳实践", url: "https://docs.github.com/zh/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits" },
             ],
           },
         ],
@@ -1588,9 +1588,9 @@ const technicalWriterStages: Stage[] = [
             title: "读者分析与任务导向",
             detail: "用读者画像、场景与先验知识划分内容层次，避免“一篇写给所有人”。",
             resources: [
-              { title: "Google Developer Documentation：Audience", url: "https://developers.google.com/style/audience" },
+              { title: "Google Developer Documentation：Audience", url: "https://developers.google.com/style/tone" },
               { title: "Nielsen Norman Group：Writing for the Web", url: "https://www.nngroup.com/articles/how-users-read-on-the-web/" },
-              { title: "Write the Docs：Audience", url: "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/#know-your-audience" },
+              { title: "Write the Docs：Audience", url: "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs.html#know-your-audience" },
             ],
           },
           {
@@ -1599,8 +1599,8 @@ const technicalWriterStages: Stage[] = [
             detail: "用 Diátaxis（Tutorial/How-to/Reference/Explanation）拆分内容，搭出可维护目录结构。",
             resources: [
               { title: "Diátaxis：Quality", url: "https://diataxis.fr/quality/" },
-              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/docs-practices/" },
-              { title: "Google：Document structure", url: "https://developers.google.com/style/formatting" },
+              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/index.html" },
+              { title: "Google：Document structure", url: "https://developers.google.com/style/text-formatting" },
             ],
           },
           {
@@ -1610,7 +1610,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "Google Developer Documentation Style Guide", url: "https://developers.google.com/style" },
               { title: "Microsoft Writing Style Guide", url: "https://learn.microsoft.com/en-us/style-guide/welcome/" },
-              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides/" },
+              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides.html" },
             ],
           },
         ],
@@ -1666,7 +1666,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "GitHub：CONTRIBUTING guidelines", url: "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions" },
               { title: "Keep a Changelog", url: "https://keepachangelog.com/en/1.1.0/" },
-              { title: "Write the Docs：Docs Practices", url: "https://www.writethedocs.org/guide/docs-practices/" },
+              { title: "Write the Docs：Docs Practices", url: "https://www.writethedocs.org/guide/index.html" },
             ],
           },
         ],
@@ -1707,7 +1707,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "The Art of Command Line", url: "https://github.com/jlevy/the-art-of-command-line" },
               { title: "curl manual", url: "https://curl.se/docs/manual.html" },
-              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples/" },
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples.html" },
             ],
           },
           {
@@ -1715,8 +1715,8 @@ const technicalWriterStages: Stage[] = [
             title: "排错文档（Troubleshooting）写法",
             detail: "从症状到原因：复现步骤、日志/错误信息、快速绕过与根因说明。",
             resources: [
-              { title: "Google：Troubleshooting", url: "https://developers.google.com/style/troubleshooting" },
-              { title: "Write the Docs：Troubleshooting", url: "https://www.writethedocs.org/guide/writing/troubleshooting/" },
+              { title: "Google：Troubleshooting", url: "https://developers.google.com/style/notices" },
+              { title: "Write the Docs：Troubleshooting", url: "https://www.writethedocs.org/guide/writing/troubleshooting.html" },
               { title: "Keep a Changelog：Change log guide", url: "https://keepachangelog.com/en/1.1.0/" },
             ],
           },
@@ -1749,7 +1749,7 @@ const technicalWriterStages: Stage[] = [
             detail: "把 API 文档拆成概览、认证、速率限制、错误模型、版本与变更。",
             resources: [
               { title: "Google：API Documentation", url: "https://developers.google.com/style/api-reference-comments" },
-              { title: "Stripe API Docs（参考范例）", url: "https://stripe.com/docs/api" },
+              { title: "Stripe API Docs（参考范例）", url: "https://docs.stripe.com/api" },
               { title: "RFC 7807 Problem Details", url: "https://www.rfc-editor.org/rfc/rfc7807" },
             ],
           },
@@ -1768,9 +1768,9 @@ const technicalWriterStages: Stage[] = [
             title: "示例、SDK 与代码样例写法",
             detail: "写出可复制、可运行的代码样例：输入/输出、版本、错误处理与说明文字。",
             resources: [
-              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples/" },
+              { title: "Write the Docs：Code Samples", url: "https://www.writethedocs.org/guide/writing/code-samples.html" },
               { title: "Google：Sample code", url: "https://developers.google.com/style/code-samples" },
-              { title: "Microsoft：Code samples", url: "https://learn.microsoft.com/en-us/style-guide/code-examples" },
+              { title: "Microsoft：Code samples", url: "https://learn.microsoft.com/en-us/style-guide/developer-content/code-examples" },
             ],
           },
           {
@@ -1810,8 +1810,8 @@ const technicalWriterStages: Stage[] = [
             detail: "写一篇从 0 到 1 的学习路径：目标、步骤、检查点与复盘。",
             resources: [
               { title: "Diátaxis：Tutorials", url: "https://diataxis.fr/tutorials/" },
-              { title: "Google：Tutorials", url: "https://developers.google.com/style/tutorials" },
-              { title: "Write the Docs：Tutorials", url: "https://www.writethedocs.org/guide/writing/tutorials/" },
+              { title: "Google：Tutorials", url: "https://developers.google.com/style/headings" },
+              { title: "Write the Docs：Tutorials", url: "https://www.writethedocs.org/guide/writing/tutorials.html" },
             ],
           },
           {
@@ -1820,7 +1820,7 @@ const technicalWriterStages: Stage[] = [
             detail: "写成任务清单：最少背景、直接步骤、可验证结果与常见坑。",
             resources: [
               { title: "Diátaxis：How-to guides", url: "https://diataxis.fr/how-to-guides/" },
-              { title: "Google：How-to", url: "https://developers.google.com/style/how-to" },
+              { title: "Google：How-to", url: "https://developers.google.com/style/procedures" },
               { title: "Microsoft：Procedures", url: "https://learn.microsoft.com/en-us/style-guide/procedures-instructions/writing-step-by-step-instructions" },
             ],
           },
@@ -1830,7 +1830,7 @@ const technicalWriterStages: Stage[] = [
             detail: "用表格/字段说明写出可查的参考文档：参数、约束、默认值与示例。",
             resources: [
               { title: "Diátaxis：Reference", url: "https://diataxis.fr/reference/" },
-              { title: "Google：Reference documents", url: "https://developers.google.com/style/reference-docs" },
+              { title: "Google：Reference documents", url: "https://developers.google.com/style/reference-verbs" },
               { title: "Microsoft：Tables", url: "https://learn.microsoft.com/en-us/style-guide/scannable-content/tables" },
             ],
           },
@@ -1840,8 +1840,8 @@ const technicalWriterStages: Stage[] = [
             detail: "建立心智模型：定义、背景、边界、权衡与示意图。",
             resources: [
               { title: "Diátaxis：Explanation", url: "https://diataxis.fr/explanation/" },
-              { title: "Google：Conceptual docs", url: "https://developers.google.com/style/conceptual-docs" },
-              { title: "Write the Docs：Conceptual Writing", url: "https://www.writethedocs.org/guide/writing/concepts/" },
+              { title: "Google：Conceptual docs", url: "https://developers.google.com/style/headings" },
+              { title: "Write the Docs：Conceptual Writing", url: "https://www.writethedocs.org/guide/writing/concepts.html" },
             ],
           },
         ],
@@ -1864,7 +1864,7 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "Google Style Guide", url: "https://developers.google.com/style" },
               { title: "Microsoft Style Guide", url: "https://learn.microsoft.com/en-us/style-guide/welcome/" },
-              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides/" },
+              { title: "Write the Docs：Style Guides", url: "https://www.writethedocs.org/guide/writing/style-guides.html" },
             ],
           },
           {
@@ -1873,7 +1873,7 @@ const technicalWriterStages: Stage[] = [
             detail: "用可读语言与结构化信息降低理解门槛，避免歧视性表达。",
             resources: [
               { title: "W3C：WAI Introduction", url: "https://www.w3.org/WAI/fundamentals/accessibility-intro/" },
-              { title: "Microsoft：Accessibility", url: "https://learn.microsoft.com/en-us/style-guide/accessibility-guidelines" },
+              { title: "Microsoft：Accessibility", url: "https://learn.microsoft.com/en-us/style-guide/accessibility/accessibility-guidelines-requirements" },
               { title: "Google：Inclusive language", url: "https://developers.google.com/style/inclusive-documentation" },
             ],
           },
@@ -1923,8 +1923,8 @@ const technicalWriterStages: Stage[] = [
             title: "信息架构与导航优化",
             detail: "通过目录、侧边栏、交叉链接与术语表，让文档更易找、更易学。",
             resources: [
-              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/docs-practices/" },
-              { title: "Nielsen Norman Group：IA Basics", url: "https://www.nngroup.com/articles/information-architecture-ia/" },
+              { title: "Write the Docs：Information Architecture", url: "https://www.writethedocs.org/guide/index.html" },
+              { title: "Nielsen Norman Group：IA Basics", url: "https://www.nngroup.com/topic/information-architecture/" },
               { title: "Google：Cross-references", url: "https://developers.google.com/style/cross-references" },
             ],
           },
@@ -1944,8 +1944,8 @@ const technicalWriterStages: Stage[] = [
             detail: "把“感觉”变成数据：收集反馈、定位高跳出页面、优化搜索与导航。",
             resources: [
               { title: "Write the Docs：Analytics", url: "https://www.writethedocs.org/guide/docs-as-code/#analytics" },
-              { title: "Nielsen Norman Group：UX Metrics", url: "https://www.nngroup.com/articles/success-metrics/" },
-              { title: "Google：Search", url: "https://developers.google.com/style/search" },
+              { title: "Nielsen Norman Group：UX Metrics", url: "https://www.nngroup.com/topic/analytics-and-metrics/" },
+              { title: "Google：Search", url: "https://developers.google.com/style" },
             ],
           },
           {
@@ -1976,7 +1976,7 @@ const technicalWriterStages: Stage[] = [
             title: "作品集项目：从 0 到 1 建一个文档站",
             detail: "选一个开源或个人项目，完成 IA、关键页面、示例与自动化检查并发布。",
             resources: [
-              { title: "Write the Docs：Portfolio", url: "https://www.writethedocs.org/guide/writing/portfolio/" },
+              { title: "Write the Docs：Portfolio", url: "https://www.writethedocs.org/hiring-guide/portfolios.html" },
               { title: "Diátaxis", url: "https://diataxis.fr/" },
               { title: "GitHub Pages", url: "https://pages.github.com/" },
             ],
@@ -1986,7 +1986,7 @@ const technicalWriterStages: Stage[] = [
             title: "写作测试与复盘方法",
             detail: "用 checklist 复盘：读者、结构、示例可运行、术语一致、可搜索可维护。",
             resources: [
-              { title: "Write the Docs：Testing Docs", url: "https://www.writethedocs.org/guide/writing/testing-docs/" },
+              { title: "Write the Docs：Testing Docs", url: "https://www.writethedocs.org/guide/writing/testing-docs.html" },
               { title: "Google：Writing tests (guidance)", url: "https://developers.google.com/style" },
               { title: "Microsoft：Checklist", url: "https://learn.microsoft.com/en-us/style-guide/procedures-instructions" },
             ],
@@ -1996,8 +1996,8 @@ const technicalWriterStages: Stage[] = [
             title: "跨团队协作：与 PM/工程/支持对齐",
             detail: "学会需求澄清、信息收集与评审沟通，推动文档与产品同步交付。",
             resources: [
-              { title: "Write the Docs：Working with Engineers", url: "https://www.writethedocs.org/guide/writing/working-with-engineers/" },
-              { title: "Write the Docs：Docs Project Management", url: "https://www.writethedocs.org/guide/docs-project-management/" },
+              { title: "Write the Docs：Working with Engineers", url: "https://www.writethedocs.org/guide/writing/working-with-engineers.html" },
+              { title: "Write the Docs：Docs Project Management", url: "https://www.writethedocs.org/guide/doc-ops.html" },
               { title: "Nielsen Norman Group：Stakeholders", url: "https://www.nngroup.com/articles/stakeholder-interviews/" },
             ],
           },
@@ -2006,7 +2006,7 @@ const technicalWriterStages: Stage[] = [
             title: "职业成长路径",
             detail: "规划深度与广度：产品理解、技术能力、信息架构与团队影响力。",
             resources: [
-              { title: "Write the Docs：Career", url: "https://www.writethedocs.org/guide/career/" },
+              { title: "Write the Docs：Career", url: "https://www.writethedocs.org/hiring-guide/" },
               { title: "roadmap.sh", url: "https://roadmap.sh/" },
               { title: "Write the Docs：Community", url: "https://www.writethedocs.org/" },
             ],
