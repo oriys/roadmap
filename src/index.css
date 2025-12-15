@@ -2,44 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Solarized Light palette */
-  --background: 44 87% 94%; /* base3 #fdf6e3 */
-  --foreground: 192 13% 23%; /* base00 #657b83 */
-  --card: 44 87% 94%;
-  --card-foreground: 192 13% 23%;
-  --popover: 44 87% 94%;
-  --popover-foreground: 192 13% 23%;
-  --primary: 175 54% 37%; /* cyan #2aa198 */
-  --primary-foreground: 44 87% 94%;
-  --secondary: 205 69% 49%; /* blue #268bd2 */
-  --secondary-foreground: 44 87% 94%;
-  --muted: 44 30% 85%;
-  --muted-foreground: 192 13% 40%; /* base0 */
-  --accent: 68 100% 30%; /* green #859900 */
-  --accent-foreground: 44 87% 94%;
-  --destructive: 2 72% 50%; /* red #dc322f */
-  --destructive-foreground: 44 87% 94%;
-  --border: 44 30% 82%;
-  --input: 44 30% 82%;
-  --ring: 205 69% 49%;
-  --radius: 0.75rem;
-}
-
 @layer base {
+
+  :root {
+    /* Solarized Light palette (Default) */
+    --background: 44 87% 94%; /* base3 #fdf6e3 */
+    --foreground: 192 13% 23%; /* base00 #657b83 */
+    --card: 44 87% 94%;
+    --card-foreground: 192 13% 23%;
+    --popover: 44 87% 94%;
+    --popover-foreground: 192 13% 23%;
+    --primary: 175 54% 37%; /* cyan #2aa198 */
+    --primary-foreground: 44 87% 94%;
+    --secondary: 205 69% 49%; /* blue #268bd2 */
+    --secondary-foreground: 44 87% 94%;
+    --muted: 44 30% 85%;
+    --muted-foreground: 192 13% 40%; /* base0 */
+    --accent: 68 100% 30%; /* green #859900 */
+    --accent-foreground: 44 87% 94%;
+    --destructive: 2 72% 50%; /* red #dc322f */
+    --destructive-foreground: 44 87% 94%;
+    --border: 44 30% 82%;
+    --input: 44 30% 82%;
+    --ring: 205 69% 49%;
+    --radius: 0.75rem;
+  }
+
+  [data-theme="dark"] {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  [data-theme="ocean"] {
+    --background: 220 60% 10%; /* Deep Blue */
+    --foreground: 200 80% 90%; /* Light Blue-Grey */
+    --card: 220 55% 15%; /* Dark Blue */
+    --card-foreground: 200 80% 90%;
+    --popover: 220 55% 15%;
+    --popover-foreground: 200 80% 90%;
+    --primary: 190 90% 50%; /* Cyan/Teal */
+    --primary-foreground: 220 60% 10%;
+    --secondary: 210 70% 30%; /* Muted Blue */
+    --secondary-foreground: 200 80% 90%;
+    --muted: 220 50% 20%;
+    --muted-foreground: 200 60% 70%;
+    --accent: 180 80% 40%; /* Aqua */
+    --accent-foreground: 220 60% 10%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 200 80% 90%;
+    --border: 215 60% 25%;
+    --input: 215 60% 25%;
+    --ring: 190 90% 50%;
+  }
+
+  [data-theme="sunset"] {
+    --background: 260 50% 10%; /* Deep Purple */
+    --foreground: 20 80% 90%; /* Warm White */
+    --card: 260 45% 15%; /* Dark Purple */
+    --card-foreground: 20 80% 90%;
+    --popover: 260 45% 15%;
+    --popover-foreground: 20 80% 90%;
+    --primary: 340 80% 60%; /* Pink/Magenta */
+    --primary-foreground: 260 50% 10%;
+    --secondary: 20 90% 60%; /* Orange */
+    --secondary-foreground: 260 50% 10%;
+    --muted: 260 40% 20%;
+    --muted-foreground: 280 50% 70%;
+    --accent: 280 70% 50%; /* Purple/Violet */
+    --accent-foreground: 20 80% 90%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 20 80% 90%;
+    --border: 260 50% 25%;
+    --input: 260 50% 25%;
+    --ring: 340 80% 60%;
+  }
+
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
     font-family: "Sora", "Inter", "Segoe UI", "PingFang SC", "Noto Sans SC", system-ui, -apple-system, sans-serif;
-    background-image: radial-gradient(circle at 1px 1px, rgba(147, 161, 161, 0.08) 1px, transparent 0),
-      radial-gradient(circle at 18% 18%, rgba(38, 139, 210, 0.12), transparent 24%),
-      radial-gradient(circle at 82% 8%, rgba(42, 161, 152, 0.1), transparent 22%),
-      radial-gradient(circle at 60% 72%, rgba(133, 153, 0, 0.1), transparent 30%),
-      hsl(var(--background));
-    background-size: 24px 24px, auto, auto, auto, auto;
-    min-height: 100vh;
+    /* Removed specific background image to allow themes to control background */
+    
   }
 }
 
