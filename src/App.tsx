@@ -1633,7 +1633,10 @@ const technicalWriterStages: Stage[] = [
             resources: [
               { title: "Markdown Guide", url: "https://www.markdownguide.org/basic-syntax/" },
               { title: "CommonMark Spec", url: "https://spec.commonmark.org/" },
-              { title: "GitHub：Mastering Markdown", url: "https://guides.github.com/features/mastering-markdown/" },
+              {
+                title: "GitHub：Markdown 快速入门",
+                url: "https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github",
+              },
             ],
           },
           {
