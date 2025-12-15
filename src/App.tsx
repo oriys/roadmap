@@ -2293,6 +2293,12 @@ const ACTIVE_ROADMAP_KEY = "roadmap-active-id"
 const STORAGE_KEY_PREFIX = "roadmap-progress-v1"
 const LEGACY_K8S_STORAGE_KEY = "k8s-roadmap-progress-v2"
 
+function getRoadmapIdFromPath(pathname: string): RoadmapId | null {
+  const normalized = pathname.replace(/^\/+|\/+$/g, "")
+  const [first] = normalized.split("/")
+  return first === "kubernetes" || first === "technical-writer" || first === "git-github" ? (first as RoadmapId) : null
+}
+
 function storageKeyForRoadmap(roadmapId: RoadmapId) {
   return `${STORAGE_KEY_PREFIX}:${roadmapId}`
 }
@@ -2403,11 +2409,14 @@ function loadPersisted(roadmap: RoadmapDefinition) {
 
 export default function App() {
   const initial = React.useMemo(() => {
+    const pathRoadmapId = typeof window === "undefined" ? null : getRoadmapIdFromPath(window.location.pathname)
     const stored = typeof window === "undefined" ? null : localStorage.getItem(ACTIVE_ROADMAP_KEY)
     const roadmapId: RoadmapId =
-      stored === "kubernetes" || stored === "technical-writer" ? stored : DEFAULT_ROADMAP_ID
+      pathRoadmapId ||
+      (stored === "kubernetes" || stored === "technical-writer" || stored === "git-github" ? stored : DEFAULT_ROADMAP_ID)
     const roadmap = ROADMAPS[roadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
-    return { roadmapId: roadmap.id, roadmap, persisted: loadPersisted(roadmap) }
+    const page: "landing" | "roadmap" = pathRoadmapId ? "roadmap" : "landing"
+    return { roadmapId: roadmap.id, roadmap, persisted: loadPersisted(roadmap), page }
   }, [])
 
   const [activeRoadmapId, setActiveRoadmapId] = React.useState<RoadmapId>(initial.roadmapId)
@@ -2417,7 +2426,7 @@ export default function App() {
   const [quizState, setQuizState] = React.useState<QuizState>(initial.persisted.quiz)
   const [lessonQuiz, setLessonQuiz] = React.useState<Record<string, LessonQuizState>>(initial.persisted.lessonQuiz || {})
   const [docQuiz, setDocQuiz] = React.useState<DocQuizProgress>(initial.persisted.docQuiz || {})
-  const [page, setPage] = React.useState<"landing" | "roadmap">("landing")
+  const [page, setPage] = React.useState<"landing" | "roadmap">(initial.page)
   const [tab, setTab] = React.useState("overview")
   const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
@@ -2547,35 +2556,61 @@ export default function App() {
     setDocQuiz({})
   }
 
-  const scrollToTop = () => {
+  const scrollToTop = React.useCallback(() => {
     if (typeof window === "undefined") return
     window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+  }, [])
 
-  const openRoadmap = (roadmapId: RoadmapId, nextTab: string = "overview") => {
-    setResourceView(null)
-    setLessonQuizView(null)
-    if (roadmapId !== activeRoadmapId) {
-      const nextRoadmap = ROADMAPS[roadmapId]
-      const persisted = loadPersisted(nextRoadmap)
-      setCompletedLessons(persisted.completed)
-      setQuizState(persisted.quiz)
-      setLessonQuiz(persisted.lessonQuiz || {})
-      setDocQuiz(persisted.docQuiz || {})
-      setKnowledgeStage(nextRoadmap.knowledgeCards[0]?.id || "")
-      setActiveRoadmapId(roadmapId)
+  const openRoadmap = React.useCallback(
+    (roadmapId: RoadmapId, nextTab: string = "overview", updateHistory = true) => {
+      setResourceView(null)
+      setLessonQuizView(null)
+      if (roadmapId !== activeRoadmapId) {
+        const nextRoadmap = ROADMAPS[roadmapId]
+        const persisted = loadPersisted(nextRoadmap)
+        setCompletedLessons(persisted.completed)
+        setQuizState(persisted.quiz)
+        setLessonQuiz(persisted.lessonQuiz || {})
+        setDocQuiz(persisted.docQuiz || {})
+        setKnowledgeStage(nextRoadmap.knowledgeCards[0]?.id || "")
+        setActiveRoadmapId(roadmapId)
+      }
+      setTab(nextTab)
+      setPage("roadmap")
+      if (updateHistory && typeof window !== "undefined") {
+        window.history.pushState({ roadmapId }, "", `/${roadmapId}`)
+      }
+      scrollToTop()
+    },
+    [activeRoadmapId, scrollToTop]
+  )
+
+  const openLanding = React.useCallback(
+    (updateHistory = true) => {
+      setResourceView(null)
+      setLessonQuizView(null)
+      setPage("landing")
+      if (updateHistory && typeof window !== "undefined") {
+        window.history.pushState({}, "", "/")
+      }
+      scrollToTop()
+    },
+    [scrollToTop]
+  )
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    const handlePopState = () => {
+      const roadmapIdFromPath = getRoadmapIdFromPath(window.location.pathname)
+      if (roadmapIdFromPath) {
+        openRoadmap(roadmapIdFromPath, "overview", false)
+      } else {
+        openLanding(false)
+      }
     }
-    setTab(nextTab)
-    setPage("roadmap")
-    scrollToTop()
-  }
-
-  const openLanding = () => {
-    setResourceView(null)
-    setLessonQuizView(null)
-    setPage("landing")
-    scrollToTop()
-  }
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [openLanding, openRoadmap])
 
   const docQuestionList = React.useCallback((lessonId: string) => docQuestionMap[lessonId] || [], [])
   const docDoneCount = React.useCallback(
@@ -2734,7 +2769,7 @@ export default function App() {
     <div className="min-h-screen bg-background/80 text-foreground">
       <div className="container py-10 space-y-6">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={openLanding} className="gap-2 text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={() => openLanding()} className="gap-2 text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
             返回 Roadmaps
           </Button>
