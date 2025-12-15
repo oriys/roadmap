@@ -2690,41 +2690,6 @@ export default function App() {
                 </Card>
               )
             })}
-
-            <Card className="glass-card p-6 space-y-4 animate-fade-in">
-              <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                <Badge variant="secondary" className="bg-secondary/70 text-xs">
-                  External
-                </Badge>
-                <Badge variant="outline">roadmap.sh</Badge>
-                <Badge variant="outline">更多路线</Badge>
-              </div>
-              <CardTitle className="text-2xl font-semibold tracking-tight">更多 Roadmaps</CardTitle>
-              <CardDescription className="text-base leading-relaxed">
-                外部参考与灵感来源：roadmap.sh（可对照原始路线，或查找更多学习路径）。
-              </CardDescription>
-              <div className="grid gap-3">
-                <Button variant="outline" asChild className="gap-2">
-                  <a href="https://roadmap.sh/git-github" target="_blank" rel="noreferrer">
-                    Git & GitHub Roadmap <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="outline" asChild className="gap-2">
-                  <a href="https://roadmap.sh/technical-writer" target="_blank" rel="noreferrer">
-                    Technical Writer Roadmap <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="outline" asChild className="gap-2">
-                  <a href="https://roadmap.sh/" target="_blank" rel="noreferrer">
-                    roadmap.sh Home <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="outline" disabled className="gap-2">
-                  <Layers className="h-4 w-4" />
-                  敬请期待
-                </Button>
-              </div>
-            </Card>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
