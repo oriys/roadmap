@@ -55,6 +55,7 @@ import {
   DEFAULT_ROADMAP_ID,
 } from "@/lib/roadmaps"
 import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
+import { kubernetesGuides } from "@/lib/lesson-guides/kubernetes"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -738,7 +739,11 @@ export default function App() {
                                         ))
                                         : null}
                                       {(() => {
-                                        const guide = activeRoadmapId === "technical-writer" ? technicalWriterGuides[lesson.id] : null
+                                        const guide = activeRoadmapId === "technical-writer"
+                                          ? technicalWriterGuides[lesson.id]
+                                          : activeRoadmapId === "kubernetes"
+                                          ? kubernetesGuides[lesson.id]
+                                          : null
                                         return guide ? (
                                           <Button
                                             size="sm"
