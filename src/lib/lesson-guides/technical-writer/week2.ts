@@ -78,5 +78,44 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests",
             "https://www.writethedocs.org/guide/docs-as-code/"
         ]
+    },
+    "tw-w2-3": {
+        lessonId: "tw-w2-3",
+        background: [
+            "静态站点生成器（SSG）将 Markdown 文件转换为可部署的 HTML 网站，是 Docs-as-Code 的核心工具。",
+            "Docusaurus 是 Meta 开源的文档站点生成器，基于 React，支持版本管理、国际化、全站搜索，适合大型文档项目。",
+            "MkDocs 是 Python 生态的文档生成器，以'fast, simple and downright gorgeous'著称，配置简单（单个 YAML 文件），适合快速上手。",
+            "VitePress 是 Vue 生态的文档生成器，基于 Vite 构建，启动速度极快，支持在 Markdown 中使用 Vue 组件，适合 Vue 技术栈团队。"
+        ],
+        keyDifficulties: [
+            "工具选型：Docusaurus（React 生态，功能丰富）、MkDocs（Python 生态，简单快速）、VitePress（Vue 生态，性能优先）——根据团队技术栈和需求选择。",
+            "配置复杂度：SSG 工具功能丰富意味着配置项多。建议从最小配置开始，按需添加功能（导航、搜索、版本管理）。",
+            "部署和 CI/CD：需要配置自动构建和部署流程（GitHub Pages、Netlify、Vercel）。关键是理解构建产物（dist/build 目录）和部署目标。",
+            "自定义主题：默认主题通常够用，但深度定制需要了解底层框架（React/Vue）。评估定制需求再决定投入。"
+        ],
+        handsOnPath: [
+            "选择一个 SSG 工具（推荐先试 VitePress 或 MkDocs），用官方脚手架创建一个文档项目，在本地运行并预览。",
+            "将你之前写的 Markdown 文档迁移到 SSG 项目中，配置导航栏和侧边栏，组织文档结构。",
+            "部署到 GitHub Pages：配置 GitHub Actions，实现 push 到 main 分支后自动构建和部署。",
+            "尝试一个高级功能：添加搜索（Algolia DocSearch 或内置搜索）、多版本文档、或国际化支持。"
+        ],
+        selfCheck: [
+            "你能否在 10 分钟内用 SSG 工具创建一个可运行的文档站点？",
+            "你的文档站点是否有清晰的导航结构？用户能否快速找到所需内容？",
+            "你是否配置了自动部署？push 代码后文档是否自动更新？",
+            "你的文档站点是否有搜索功能？用户能否通过关键词快速定位？",
+            "你是否了解如何自定义主题或添加插件？"
+        ],
+        extensions: [
+            "深入学习 Docusaurus：https://docusaurus.io/docs —— 适合需要版本管理和国际化的大型项目。",
+            "了解 MkDocs Material 主题：https://squidfunk.github.io/mkdocs-material/ —— MkDocs 最流行的主题。",
+            "学习 VitePress 自定义主题：https://vitepress.dev/guide/custom-theme —— 使用 Vue 组件扩展功能。",
+            "配置 Algolia DocSearch：免费为开源项目提供强大的文档搜索功能。"
+        ],
+        sourceUrls: [
+            "https://docusaurus.io/docs",
+            "https://www.mkdocs.org/",
+            "https://vitepress.dev/"
+        ]
     }
 }
