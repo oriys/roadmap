@@ -2,6 +2,45 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week1Guides: Record<string, LessonGuide> = {
+    "w1-3": {
+        lessonId: "w1-3",
+        background: [
+            "OverlayFS 是一种联合文件系统（Union Filesystem），将多个目录层叠合并成一个统一视图呈现给用户。Docker 默认使用 overlay2 驱动，原生支持最多 128 个下层。",
+            "容器镜像的分层结构依赖于 OverlayFS：lowerdir（只读镜像层）+ upperdir（可写容器层）= merged（合并视图）。Dockerfile 中每条指令创建一个新层，层层堆叠形成最终镜像。",
+            "Copy-on-Write（写时复制）是 OverlayFS 的核心机制：当容器首次修改来自镜像的文件时，整个文件先被复制到 upperdir，后续修改都在副本上进行。这就是为什么删除镜像中的文件不会减小镜像体积。",
+            "理解镜像分层对于优化 Dockerfile、减小镜像体积、加速构建和部署都至关重要——每一层都是不可变的，只增不减。"
+        ],
+        keyDifficulties: [
+            "Copy-on-Write 的性能影响：首次写入大文件时会有明显延迟（copy_up 操作复制整个文件）。对于频繁修改的大文件（如数据库），建议使用 Volume 绕过存储驱动。",
+            "Whiteout 机制：当在容器中删除来自镜像的文件时，并不会真正删除，而是创建一个特殊的 whiteout 文件（字符设备或 xattr）来'遮盖'它。opaque 目录则隐藏整个镜像目录而不实际删除。",
+            "层数与性能：overlay2 支持最多 128 层，过多的层会影响文件查找性能。多阶段构建可以减少最终镜像的层数。同时，共享镜像层的容器可以共享页面缓存，提高内存效率。",
+            "POSIX 兼容性问题：OverlayFS 不完全兼容 POSIX。例如先以只读模式打开文件，再以读写模式打开，由于 copy_up 时机，可能得到两个不同文件描述符指向不同版本——某些应用需要预先 touch 文件来规避。"
+        ],
+        handsOnPath: [
+            "使用 docker image inspect <image> 查看镜像层信息，找到每层在 /var/lib/docker/overlay2/ 中的位置，观察 diff/、link、lower、merged/ 目录结构。",
+            "运行一个容器，在其中创建文件，然后在宿主机的 upperdir（merged 的上层目录）中找到这个文件，验证写入发生在可写层。",
+            "写一个 Dockerfile，故意在某一层添加 100MB 文件再删除：RUN dd if=/dev/zero of=/bigfile bs=1M count=100 && rm /bigfile，构建后观察镜像大小，理解'删除不减小体积'。",
+            "使用 docker history <image> 查看每一层的大小和创建命令，分析哪些层可以通过合并 RUN 指令来优化。"
+        ],
+        selfCheck: [
+            "OverlayFS 的三层结构（lowerdir、upperdir、merged）以及 workdir 各自的作用是什么？",
+            "为什么在 Dockerfile 中 RUN apt-get install && apt-get clean 比分开写两个 RUN 更好？如果分开写会有什么问题？",
+            "什么是 whiteout 文件？它解决了什么问题？opaque 目录又是什么？",
+            "为什么数据库、日志等写密集型应用建议使用 Volume 而不是直接写容器文件系统？",
+            "多阶段构建（multi-stage build）如何帮助减少镜像层数和体积？"
+        ],
+        extensions: [
+            "阅读 Docker 官方文档，比较不同存储驱动（overlay2、btrfs、zfs、devicemapper）的特点和适用场景。",
+            "深入研究 OCI Image Spec，了解镜像层的标准格式（tar+gzip）和 manifest 分发机制。",
+            "学习使用 dive 工具分析镜像每一层的内容和体积占用，找出优化机会。",
+            "探索 BuildKit 的缓存挂载（--mount=type=cache）和并行构建机制，了解如何加速镜像构建。"
+        ],
+        sourceUrls: [
+            "https://docs.docker.com/engine/storage/drivers/overlayfs-driver/",
+            "https://docs.kernel.org/filesystems/overlayfs.html",
+            "https://docs.docker.com/get-started/docker-overview/#images"
+        ]
+    },
     "w1-2": {
         lessonId: "w1-2",
         background: [
@@ -83,6 +122,188 @@ export const week1Guides: Record<string, LessonGuide> = {
 }
 
 export const week1Quizzes: Record<string, QuizQuestion[]> = {
+    "w1-3": [
+        {
+            id: "w1-3-q1",
+            question: "OverlayFS 是什么类型的文件系统？",
+            options: [
+                "日志文件系统（Journaling Filesystem）",
+                "联合文件系统（Union Filesystem）",
+                "网络文件系统（Network Filesystem）",
+                "加密文件系统（Encrypted Filesystem）"
+            ],
+            answer: 1,
+            rationale: "OverlayFS 是联合文件系统，将多个目录（上层+下层）层叠合并成统一视图呈现给用户。"
+        },
+        {
+            id: "w1-3-q2",
+            question: "OverlayFS 的三层结构中，容器运行时的写入数据存储在哪里？",
+            options: [
+                "lowerdir（只读层）",
+                "upperdir（可写层）",
+                "merged（合并视图层）",
+                "workdir（工作目录）"
+            ],
+            answer: 1,
+            rationale: "upperdir 是可写层，所有容器运行时的修改（新建、修改、删除）都记录在这里。lowerdir 是只读的镜像层。"
+        },
+        {
+            id: "w1-3-q3",
+            question: "Copy-on-Write（写时复制）机制在什么时候触发？",
+            options: [
+                "读取镜像中的文件时",
+                "容器启动时预复制所有文件",
+                "容器首次修改来自镜像的文件时",
+                "容器停止时保存状态"
+            ],
+            answer: 2,
+            rationale: "当容器首次需要修改镜像中的文件时（写入或元数据变更），整个文件会被复制到 upperdir，这就是 copy_up 操作。"
+        },
+        {
+            id: "w1-3-q4",
+            question: "为什么 Dockerfile 中 RUN apt-get install && apt-get clean 比分开写两个 RUN 更好？",
+            options: [
+                "执行速度更快",
+                "两者没有区别",
+                "合并到一层可以避免中间层包含已删除的文件，减小镜像体积",
+                "分开写会导致构建失败"
+            ],
+            answer: 2,
+            rationale: "每个 RUN 指令创建一层。分开写时，第一层包含安装的文件，即使第二层删除，第一层仍然存在于镜像中，体积不会减少。"
+        },
+        {
+            id: "w1-3-q5",
+            question: "什么是 whiteout 文件？",
+            options: [
+                "空白的配置文件占位符",
+                "用于标记在上层被删除的文件，遮盖下层的同名文件",
+                "加密后的临时文件",
+                "存储文件元数据的隐藏文件"
+            ],
+            answer: 1,
+            rationale: "Whiteout 是特殊标记（字符设备或 xattr），用于在联合文件系统中标记删除操作，遮盖只读层的文件而不实际删除它。"
+        },
+        {
+            id: "w1-3-q6",
+            question: "Docker overlay2 驱动最多原生支持多少个下层（lower layers）？",
+            options: [
+                "32 层",
+                "64 层",
+                "128 层",
+                "256 层"
+            ],
+            answer: 2,
+            rationale: "overlay2 驱动原生支持最多 128 个 lower 层，这是 Linux 内核的限制。过多层会影响文件查找性能。"
+        },
+        {
+            id: "w1-3-q7",
+            question: "为什么数据库应用建议使用 Volume 而不是直接写容器文件系统？",
+            options: [
+                "Volume 提供加密功能",
+                "Volume 绕过存储驱动，避免 Copy-on-Write 的性能开销",
+                "Volume 自动备份数据",
+                "容器文件系统不支持大文件"
+            ],
+            answer: 1,
+            rationale: "Volume 直接挂载到容器，绕过 OverlayFS，避免写放大和 copy_up 开销。对写密集型应用（数据库、日志）性能更好，数据也不会随容器删除而丢失。"
+        },
+        {
+            id: "w1-3-q8",
+            question: "以下哪个命令可以查看镜像每一层的大小和创建命令？",
+            options: [
+                "docker images",
+                "docker history <image>",
+                "docker layer <image>",
+                "docker inspect --layers <image>"
+            ],
+            answer: 1,
+            rationale: "docker history 显示镜像每一层的大小、创建时间和创建命令（Dockerfile 指令），有助于分析镜像体积优化机会。"
+        },
+        {
+            id: "w1-3-q9",
+            question: "多阶段构建（multi-stage build）的主要优势是什么？",
+            options: [
+                "加快构建速度",
+                "减少最终镜像体积，不包含构建工具和中间产物",
+                "支持并行构建多个镜像",
+                "自动生成 Kubernetes YAML"
+            ],
+            answer: 1,
+            rationale: "多阶段构建允许在一个阶段编译/构建，只将最终产物（如二进制文件）复制到运行时镜像，避免包含编译器、源码等构建工具。"
+        },
+        {
+            id: "w1-3-q10",
+            question: "OverlayFS 的 POSIX 兼容性问题可能导致什么？",
+            options: [
+                "文件无法创建",
+                "先只读后读写打开同一文件可能得到指向不同版本的文件描述符",
+                "文件权限完全丢失",
+                "文件名长度受到严格限制"
+            ],
+            answer: 1,
+            rationale: "OverlayFS 不完全兼容 POSIX。由于 copy_up 时机问题，先以只读打开再以读写打开同一文件，可能得到两个不同的 inode。"
+        },
+        {
+            id: "w1-3-q11",
+            question: "删除镜像中的文件为什么不能减小镜像体积？",
+            options: [
+                "Docker 禁止删除镜像中的文件",
+                "删除操作创建 whiteout 标记而非真正删除下层文件，下层数据仍然存在",
+                "删除的文件被移动到回收站层",
+                "需要管理员权限才能真正删除"
+            ],
+            answer: 1,
+            rationale: "联合文件系统的下层是只读的、不可变的。删除只是在上层创建 whiteout 标记来遮盖，下层的文件数据仍然存在于镜像中。"
+        },
+        {
+            id: "w1-3-q12",
+            question: "页面缓存（Page Cache）在多容器场景下如何优化内存使用？",
+            options: [
+                "每个容器独立缓存镜像文件",
+                "共享镜像层（lowerdir）的页面缓存可以被多个容器共享",
+                "禁用页面缓存以节省内存",
+                "页面缓存与容器完全无关"
+            ],
+            answer: 1,
+            rationale: "使用相同镜像层的容器可以共享页面缓存（因为 lowerdir 相同），这是 OverlayFS 的内存效率优势，特别适合高密度容器部署。"
+        },
+        {
+            id: "w1-3-q13",
+            question: "OverlayFS 中的 workdir 目录的作用是什么？",
+            options: [
+                "存储容器的工作文件",
+                "OverlayFS 内部使用的临时空间，必须与 upperdir 在同一文件系统",
+                "存储镜像层的元数据",
+                "用于存放 whiteout 文件"
+            ],
+            answer: 1,
+            rationale: "workdir 是 OverlayFS 内部使用的临时目录，用于原子操作（如 copy_up），必须与 upperdir 位于同一文件系统上。"
+        },
+        {
+            id: "w1-3-q14",
+            question: "关于 Dockerfile 每条指令与镜像层的关系，以下说法正确的是？",
+            options: [
+                "所有指令合并成一层",
+                "每条指令创建一个新层，层层堆叠形成最终镜像",
+                "只有 RUN 指令创建新层",
+                "层数由用户手动指定"
+            ],
+            answer: 1,
+            rationale: "Dockerfile 中每条指令（RUN、COPY、ADD 等）都会创建一个新的只读层。这些层层叠加形成最终镜像，每层都是不可变的。"
+        },
+        {
+            id: "w1-3-q15",
+            question: "使用 overlay2 存储驱动时，XFS 文件系统需要满足什么条件？",
+            options: [
+                "必须启用 journaling",
+                "必须设置 d_type=true（ftype=1）",
+                "必须禁用 quota",
+                "必须使用 4K 扇区"
+            ],
+            answer: 1,
+            rationale: "overlay2 在 XFS 上要求 d_type 支持（ftype=1），否则无法正确识别文件类型。可通过 xfs_info 检查或在 mkfs.xfs 时指定 -n ftype=1。"
+        }
+    ],
     "w1-2": [
         {
             id: "w1-2-q1",
