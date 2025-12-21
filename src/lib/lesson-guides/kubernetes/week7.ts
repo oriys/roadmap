@@ -2,6 +2,45 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week7Guides: Record<string, LessonGuide> = {
+    "w7-2": {
+        lessonId: "w7-2",
+        background: [
+            "ServiceAccount 是 Kubernetes 中的非人类身份标识，为 Pod 和系统组件提供身份。与外部用户账户不同，ServiceAccount 是 Kubernetes API 对象，存在于特定命名空间中。",
+            "每个命名空间都有一个名为 'default' 的 ServiceAccount 自动创建。如果 Pod 没有指定 serviceAccountName，则使用 default。Pod 通过 ServiceAccount 获得访问 Kubernetes API 的凭证。",
+            "ServiceAccount 令牌有两种主要形式：投射卷令牌（Projected Volume，推荐，自动轮换的短期令牌）和 Secret 令牌（已废弃，长期静态令牌）。Kubernetes 1.22+ 默认使用投射卷令牌。",
+            "TokenRequest API 允许程序动态请求短期令牌，适合外部服务或需要精细控制的场景。令牌包含受众（audience）和有效期信息，由 API Server 签发并验证。"
+        ],
+        keyDifficulties: [
+            "令牌挂载机制：Pod 启动时，kubelet 自动将 ServiceAccount 令牌挂载到 /var/run/secrets/kubernetes.io/serviceaccount/。包含 token（JWT）、ca.crt（CA 证书）、namespace（命名空间）三个文件。",
+            "automountServiceAccountToken 控制：可以在 ServiceAccount 或 Pod 级别设置 automountServiceAccountToken: false 禁用自动挂载。适用于不需要访问 API 的 Pod，减少攻击面。",
+            "跨命名空间访问：ServiceAccount 是命名空间级别的，但可以通过 RoleBinding 授予其他命名空间的权限。在 subjects 中指定 namespace 字段实现跨命名空间授权。",
+            "imagePullSecrets 关联：ServiceAccount 可以关联 imagePullSecrets，Pod 使用该 ServiceAccount 时自动获得拉取私有镜像的凭证，无需在每个 Pod 中单独配置。"
+        ],
+        handsOnPath: [
+            "创建自定义 ServiceAccount（kubectl create serviceaccount mysa），查看自动创建的 token（kubectl get sa mysa -o yaml），理解 ServiceAccount 与 Secret 的关系。",
+            "创建使用自定义 ServiceAccount 的 Pod，进入 Pod 查看 /var/run/secrets/kubernetes.io/serviceaccount/ 目录下的 token、ca.crt、namespace 文件。",
+            "使用 kubectl create token <sa-name> 创建短期令牌，使用 curl 携带令牌调用 API Server 验证身份认证。",
+            "配置 automountServiceAccountToken: false 的 Pod，验证令牌目录不存在，理解这对安全性的影响。"
+        ],
+        selfCheck: [
+            "ServiceAccount 和 User 账户的区别是什么？ServiceAccount 存在于哪里？",
+            "投射卷令牌（Projected Volume Token）和 Secret 令牌的区别是什么？为什么推荐使用前者？",
+            "如何禁用 Pod 的 ServiceAccount 令牌自动挂载？什么场景下应该禁用？",
+            "ServiceAccount 令牌挂载到 Pod 的什么位置？包含哪些文件？",
+            "如何让一个命名空间的 ServiceAccount 访问另一个命名空间的资源？"
+        ],
+        extensions: [
+            "研究 Bound Service Account Token（KEP-1205），了解令牌与 Pod 生命周期绑定的安全增强。",
+            "探索 ServiceAccount Token Volume Projection 的高级配置（audience、expirationSeconds）。",
+            "学习 Workload Identity（如 AWS IRSA、GCP Workload Identity），了解云环境中 ServiceAccount 与云 IAM 的集成。",
+            "研究 Pod Security Standards 对 ServiceAccount 的要求，了解如何实施最小权限原则。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/security/service-accounts/",
+            "https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
+            "https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/"
+        ]
+    },
     "w7-1": {
         lessonId: "w7-1",
         background: [
@@ -43,6 +82,188 @@ export const week7Guides: Record<string, LessonGuide> = {
 }
 
 export const week7Quizzes: Record<string, QuizQuestion[]> = {
+    "w7-2": [
+        {
+            id: "w7-2-q1",
+            question: "ServiceAccount 的主要用途是什么？",
+            options: [
+                "管理人类用户的身份",
+                "为 Pod 和系统组件提供非人类身份标识",
+                "存储密码和密钥",
+                "管理网络策略"
+            ],
+            answer: 1,
+            rationale: "ServiceAccount 是 Kubernetes 中的非人类身份标识，为 Pod、Job、系统组件等提供身份认证。"
+        },
+        {
+            id: "w7-2-q2",
+            question: "每个命名空间默认有哪个 ServiceAccount？",
+            options: [
+                "admin",
+                "default",
+                "system",
+                "root"
+            ],
+            answer: 1,
+            rationale: "每个命名空间创建时会自动创建名为 'default' 的 ServiceAccount，未指定 serviceAccountName 的 Pod 会使用它。"
+        },
+        {
+            id: "w7-2-q3",
+            question: "ServiceAccount 令牌挂载到 Pod 的什么位置？",
+            options: [
+                "/etc/kubernetes/token",
+                "/var/run/secrets/kubernetes.io/serviceaccount/",
+                "/tmp/serviceaccount/",
+                "/opt/token/"
+            ],
+            answer: 1,
+            rationale: "ServiceAccount 令牌默认挂载到 /var/run/secrets/kubernetes.io/serviceaccount/ 目录。"
+        },
+        {
+            id: "w7-2-q4",
+            question: "ServiceAccount 令牌目录包含哪些文件？",
+            options: [
+                "只有 token 文件",
+                "token、ca.crt、namespace 三个文件",
+                "token 和 password 两个文件",
+                "config.yaml 文件"
+            ],
+            answer: 1,
+            rationale: "令牌目录包含：token（JWT 令牌）、ca.crt（API Server CA 证书）、namespace（Pod 所在命名空间）。"
+        },
+        {
+            id: "w7-2-q5",
+            question: "投射卷令牌（Projected Volume Token）相比 Secret 令牌的优势是什么？",
+            options: [
+                "容量更大",
+                "短期有效且自动轮换，更安全",
+                "加载更快",
+                "支持更多字符"
+            ],
+            answer: 1,
+            rationale: "投射卷令牌是短期令牌，会自动轮换，比长期静态的 Secret 令牌更安全，是 Kubernetes 1.22+ 的推荐方式。"
+        },
+        {
+            id: "w7-2-q6",
+            question: "如何禁用 Pod 的 ServiceAccount 令牌自动挂载？",
+            options: [
+                "删除 default ServiceAccount",
+                "设置 automountServiceAccountToken: false",
+                "设置 mountToken: false",
+                "无法禁用"
+            ],
+            answer: 1,
+            rationale: "在 ServiceAccount 或 Pod spec 中设置 automountServiceAccountToken: false 可以禁用令牌自动挂载。"
+        },
+        {
+            id: "w7-2-q7",
+            question: "什么场景下应该禁用 ServiceAccount 令牌自动挂载？",
+            options: [
+                "所有 Pod 都应该禁用",
+                "不需要访问 Kubernetes API 的 Pod，减少攻击面",
+                "所有生产环境 Pod",
+                "只有数据库 Pod"
+            ],
+            answer: 1,
+            rationale: "对于不需要访问 Kubernetes API 的 Pod，禁用令牌挂载可以减少攻击面，遵循最小权限原则。"
+        },
+        {
+            id: "w7-2-q8",
+            question: "如何使用 kubectl 创建短期 ServiceAccount 令牌？",
+            options: [
+                "kubectl generate token <sa-name>",
+                "kubectl create token <sa-name>",
+                "kubectl get secret <sa-name>",
+                "kubectl token create <sa-name>"
+            ],
+            answer: 1,
+            rationale: "kubectl create token <sa-name> 使用 TokenRequest API 创建短期令牌，可以指定有效期和受众。"
+        },
+        {
+            id: "w7-2-q9",
+            question: "ServiceAccount 的 imagePullSecrets 字段有什么作用？",
+            options: [
+                "存储镜像内容",
+                "Pod 使用此 SA 时自动获得拉取私有镜像的凭证",
+                "限制可以拉取的镜像",
+                "加速镜像下载"
+            ],
+            answer: 1,
+            rationale: "ServiceAccount 可以关联 imagePullSecrets，使用该 SA 的 Pod 会自动继承这些凭证，无需单独配置。"
+        },
+        {
+            id: "w7-2-q10",
+            question: "如何让命名空间 A 的 ServiceAccount 访问命名空间 B 的资源？",
+            options: [
+                "无法实现跨命名空间访问",
+                "在命名空间 B 创建 RoleBinding，subjects 中指定 SA 的 namespace 为 A",
+                "将 ServiceAccount 移动到命名空间 B",
+                "使用 ClusterRole 替代 Role"
+            ],
+            answer: 1,
+            rationale: "在目标命名空间创建 RoleBinding，subjects 中指定源 ServiceAccount 及其 namespace，即可实现跨命名空间授权。"
+        },
+        {
+            id: "w7-2-q11",
+            question: "kubernetes.io/service-account-token 类型的 Secret 为什么被废弃？",
+            options: [
+                "存储空间太大",
+                "长期静态令牌存在安全风险，推荐使用短期令牌",
+                "不支持 RBAC",
+                "与新版本 API 不兼容"
+            ],
+            answer: 1,
+            rationale: "静态令牌不会过期，一旦泄露风险更大。推荐使用投射卷令牌或 TokenRequest API 获取短期、自动轮换的令牌。"
+        },
+        {
+            id: "w7-2-q12",
+            question: "ServiceAccount 和 User 的主要区别是什么？",
+            options: [
+                "ServiceAccount 权限更大",
+                "ServiceAccount 是 K8s API 对象，User 是外部管理的",
+                "User 只能访问集群",
+                "没有区别"
+            ],
+            answer: 1,
+            rationale: "ServiceAccount 是 Kubernetes API 对象，存储在 etcd 中；User 是外部身份，由外部系统（如 OIDC、证书）管理。"
+        },
+        {
+            id: "w7-2-q13",
+            question: "default ServiceAccount 默认有什么权限？",
+            options: [
+                "集群管理员权限",
+                "只有基本的 API 发现权限（非常有限）",
+                "所有命名空间的读取权限",
+                "没有任何权限"
+            ],
+            answer: 1,
+            rationale: "default ServiceAccount 默认只有非常有限的权限（API 发现），需要通过 RBAC 授予具体资源的访问权限。"
+        },
+        {
+            id: "w7-2-q14",
+            question: "TokenRequest API 的主要优势是什么？",
+            options: [
+                "创建速度更快",
+                "可以指定受众（audience）和有效期，获取精细控制的短期令牌",
+                "令牌永不过期",
+                "不需要 RBAC 授权"
+            ],
+            answer: 1,
+            rationale: "TokenRequest API 允许指定令牌的受众、有效期等参数，适合需要精细控制的场景，如外部服务认证。"
+        },
+        {
+            id: "w7-2-q15",
+            question: "Pod 如何指定使用特定的 ServiceAccount？",
+            options: [
+                "使用 annotations",
+                "在 spec 中设置 serviceAccountName 字段",
+                "使用 labels",
+                "在 metadata 中设置 serviceAccount"
+            ],
+            answer: 1,
+            rationale: "在 Pod spec 中通过 serviceAccountName 字段指定要使用的 ServiceAccount 名称。"
+        }
+    ],
     "w7-1": [
         {
             id: "w7-1-q1",
