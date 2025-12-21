@@ -49,6 +49,8 @@ export function shuffleQuizOptions(question: QuizQuestion): QuizQuestion {
 
 
 export function buildLessonQuizCanonical(lesson: Lesson, week: Week, stage: Stage): QuizQuestion[] {
+    void week
+    void stage
     return customLessonQuizzes[lesson.id] || []
 }
 
