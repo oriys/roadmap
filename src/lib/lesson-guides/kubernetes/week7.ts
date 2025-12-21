@@ -1,0 +1,228 @@
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
+
+export const week7Guides: Record<string, LessonGuide> = {
+    "w7-1": {
+        lessonId: "w7-1",
+        background: [
+            "RBAC（基于角色的访问控制）是 Kubernetes 中管理 API 访问权限的核心机制。通过定义角色和绑定，控制谁（用户、组、ServiceAccount）可以对哪些资源执行哪些操作。",
+            "RBAC 有四个核心 API 对象：Role（命名空间级别的权限定义）、ClusterRole（集群级别的权限定义）、RoleBinding（将 Role 绑定到主体）、ClusterRoleBinding（将 ClusterRole 绑定到主体）。",
+            "权限由三个维度定义：apiGroups（API 组，如 apps、batch、空字符串表示核心组）、resources（资源类型，如 pods、deployments）、verbs（操作动词，如 get、list、create、delete）。",
+            "RBAC 是纯加法模型，没有'拒绝'规则。如果没有任何规则授予权限，则默认拒绝。多个角色的权限会叠加，满足任一规则即可执行操作。"
+        ],
+        keyDifficulties: [
+            "作用域区分：Role/RoleBinding 是命名空间级别的，只能授予特定命名空间内的权限；ClusterRole/ClusterRoleBinding 是集群级别的，可以授予跨命名空间或集群范围资源（如 nodes、namespaces）的权限。",
+            "ClusterRole 的灵活使用：ClusterRole 可以通过 RoleBinding 绑定到特定命名空间，实现'定义一次，多处使用'。内置的 view、edit、admin ClusterRole 常用于此模式。",
+            "roleRef 不可变：RoleBinding/ClusterRoleBinding 创建后，roleRef 字段不能修改。如需更改引用的角色，必须删除并重新创建 Binding。",
+            "权限提升防护：用户只能授予自己已拥有的权限。创建 RoleBinding 需要对目标 Role 有 bind 权限，或者拥有 Role 中定义的所有权限。"
+        ],
+        handsOnPath: [
+            "创建一个 Role 授予对 default 命名空间 Pod 的只读权限（get、list、watch），使用 kubectl create role 命令或 YAML 文件。",
+            "创建 RoleBinding 将 Role 绑定到一个用户或 ServiceAccount，使用 kubectl auth can-i --as=<user> 验证权限是否生效。",
+            "使用内置 ClusterRole（view、edit、admin）通过 RoleBinding 授权，对比三者的权限差异（kubectl get clusterrole view -o yaml）。",
+            "创建 ClusterRole 授予对所有命名空间 Deployment 的管理权限，通过 ClusterRoleBinding 绑定，验证跨命名空间操作。"
+        ],
+        selfCheck: [
+            "Role 和 ClusterRole 的区别是什么？什么情况下必须使用 ClusterRole？",
+            "RoleBinding 和 ClusterRoleBinding 各自的作用域是什么？ClusterRole 能否通过 RoleBinding 绑定？",
+            "RBAC 的权限模型是加法还是减法？如果没有规则授权，默认行为是什么？",
+            "如何验证某个用户对特定资源是否有权限？kubectl auth can-i 命令如何使用？",
+            "内置的 view、edit、admin ClusterRole 分别授予什么级别的权限？"
+        ],
+        extensions: [
+            "研究聚合 ClusterRole（Aggregated ClusterRoles），了解如何使用 aggregationRule 动态组合多个 ClusterRole。",
+            "探索 Kubernetes 的默认角色和角色绑定（system:* 开头的），了解系统组件使用的权限配置。",
+            "学习 RBAC 审计，了解如何配置审计日志记录权限检查和授权决策。",
+            "研究 impersonation（模拟）权限，了解管理员如何安全地测试其他用户的权限。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+            "https://kubernetes.io/docs/reference/access-authn-authz/authorization/"
+        ]
+    }
+}
+
+export const week7Quizzes: Record<string, QuizQuestion[]> = {
+    "w7-1": [
+        {
+            id: "w7-1-q1",
+            question: "RBAC 的四个核心 API 对象是什么？",
+            options: [
+                "User、Group、Permission、Policy",
+                "Role、ClusterRole、RoleBinding、ClusterRoleBinding",
+                "Subject、Verb、Resource、Namespace",
+                "Policy、Rule、Binding、Principal"
+            ],
+            answer: 1,
+            rationale: "RBAC 使用 Role（命名空间权限）、ClusterRole（集群权限）、RoleBinding、ClusterRoleBinding 四个对象管理访问控制。"
+        },
+        {
+            id: "w7-1-q2",
+            question: "Role 和 ClusterRole 的主要区别是什么？",
+            options: [
+                "Role 权限更大",
+                "Role 是命名空间级别的，ClusterRole 是集群级别的",
+                "ClusterRole 只能用于系统组件",
+                "两者完全相同"
+            ],
+            answer: 1,
+            rationale: "Role 定义的权限仅在特定命名空间内有效；ClusterRole 可以定义集群范围的权限或可在多个命名空间复用的权限。"
+        },
+        {
+            id: "w7-1-q3",
+            question: "RBAC 规则中 verbs 字段定义什么？",
+            options: [
+                "资源类型",
+                "API 组",
+                "可以执行的操作（如 get、list、create、delete）",
+                "目标命名空间"
+            ],
+            answer: 2,
+            rationale: "verbs 定义允许的操作类型：get、list、watch（读取）；create、update、patch、delete（写入）；* 表示所有操作。"
+        },
+        {
+            id: "w7-1-q4",
+            question: "apiGroups: [\"\"] 表示什么？",
+            options: [
+                "所有 API 组",
+                "核心 API 组（如 pods、services、configmaps）",
+                "apps API 组",
+                "无效配置"
+            ],
+            answer: 1,
+            rationale: "空字符串 \"\" 表示核心 API 组（core），包含 Pod、Service、ConfigMap、Secret 等基础资源。"
+        },
+        {
+            id: "w7-1-q5",
+            question: "RoleBinding 可以引用 ClusterRole 吗？",
+            options: [
+                "不可以，只能引用 Role",
+                "可以，ClusterRole 的权限会被限制在 RoleBinding 的命名空间内",
+                "可以，但权限会扩展到整个集群",
+                "取决于 ClusterRole 的配置"
+            ],
+            answer: 1,
+            rationale: "RoleBinding 可以引用 ClusterRole，此时 ClusterRole 中定义的权限只在 RoleBinding 所在的命名空间内生效。"
+        },
+        {
+            id: "w7-1-q6",
+            question: "RBAC 的权限模型是什么类型？",
+            options: [
+                "黑名单模式（默认允许，显式拒绝）",
+                "白名单模式（默认拒绝，显式允许，纯加法）",
+                "混合模式（允许和拒绝规则共存）",
+                "优先级模式（高优先级规则覆盖低优先级）"
+            ],
+            answer: 1,
+            rationale: "RBAC 是纯加法的白名单模型，没有'拒绝'规则。默认拒绝所有操作，只有规则明确授权的操作才被允许。"
+        },
+        {
+            id: "w7-1-q7",
+            question: "如何验证用户是否有权限执行某操作？",
+            options: [
+                "kubectl get permission",
+                "kubectl auth can-i <verb> <resource> --as=<user>",
+                "kubectl describe user",
+                "kubectl check-rbac"
+            ],
+            answer: 1,
+            rationale: "kubectl auth can-i 命令可以检查当前用户或模拟其他用户（--as）是否有权限执行指定操作。"
+        },
+        {
+            id: "w7-1-q8",
+            question: "subjects 字段可以指定哪些类型的主体？",
+            options: [
+                "只能指定 User",
+                "User、Group、ServiceAccount",
+                "只能指定 ServiceAccount",
+                "Pod、Deployment、Service"
+            ],
+            answer: 1,
+            rationale: "subjects 可以指定三种类型：User（用户）、Group（用户组）、ServiceAccount（服务账号）。"
+        },
+        {
+            id: "w7-1-q9",
+            question: "RoleBinding 创建后，roleRef 字段可以修改吗？",
+            options: [
+                "可以随时修改",
+                "不可以，必须删除并重新创建 Binding",
+                "只有管理员可以修改",
+                "可以通过 patch 修改"
+            ],
+            answer: 1,
+            rationale: "roleRef 字段是不可变的（immutable），创建 RoleBinding 后不能修改引用的 Role，必须删除重建。"
+        },
+        {
+            id: "w7-1-q10",
+            question: "内置 ClusterRole 'view' 授予什么级别的权限？",
+            options: [
+                "完全管理权限",
+                "大部分资源的只读访问权限（不包括 Secrets）",
+                "所有资源的读写权限",
+                "只能查看 Pod"
+            ],
+            answer: 1,
+            rationale: "view ClusterRole 授予大部分资源的只读权限（get、list、watch），但出于安全考虑不包括 Secrets。"
+        },
+        {
+            id: "w7-1-q11",
+            question: "如何授予用户对特定 ConfigMap 的权限（而非所有 ConfigMap）？",
+            options: [
+                "使用 namespaceSelector",
+                "在 rules 中使用 resourceNames 字段指定具体名称",
+                "创建多个 Role",
+                "无法实现细粒度控制"
+            ],
+            answer: 1,
+            rationale: "resourceNames 字段可以将权限限制到特定名称的资源实例，实现细粒度的访问控制。"
+        },
+        {
+            id: "w7-1-q12",
+            question: "什么是子资源（subresource）？如何授予 Pod 日志的查看权限？",
+            options: [
+                "设置 resources: [\"pods\"], verbs: [\"logs\"]",
+                "设置 resources: [\"pods/log\"], verbs: [\"get\"]",
+                "设置 resources: [\"logs\"], verbs: [\"get\"]",
+                "子资源无法单独授权"
+            ],
+            answer: 1,
+            rationale: "子资源使用 resource/subresource 格式，如 pods/log、pods/exec。授予 Pod 日志权限需要 resources: [\"pods/log\"]。"
+        },
+        {
+            id: "w7-1-q13",
+            question: "权限提升防护（Privilege Escalation Prevention）的作用是什么？",
+            options: [
+                "阻止所有权限变更",
+                "确保用户只能授予自己已拥有的权限",
+                "限制管理员权限",
+                "防止创建 ClusterRole"
+            ],
+            answer: 1,
+            rationale: "Kubernetes 防止权限提升：用户创建 RoleBinding 时，只能绑定自己有权限的 Role，或者自己拥有 Role 中所有权限。"
+        },
+        {
+            id: "w7-1-q14",
+            question: "ClusterRoleBinding 和 RoleBinding 的区别是什么？",
+            options: [
+                "ClusterRoleBinding 只能绑定 ClusterRole",
+                "ClusterRoleBinding 授予的权限在整个集群范围内有效",
+                "RoleBinding 不能引用 ClusterRole",
+                "两者作用相同"
+            ],
+            answer: 1,
+            rationale: "ClusterRoleBinding 将权限授予整个集群范围；RoleBinding 只在特定命名空间内授予权限。"
+        },
+        {
+            id: "w7-1-q15",
+            question: "apps API 组包含哪些常见资源？",
+            options: [
+                "Pod、Service、ConfigMap",
+                "Deployment、ReplicaSet、StatefulSet、DaemonSet",
+                "Ingress、NetworkPolicy",
+                "Job、CronJob"
+            ],
+            answer: 1,
+            rationale: "apps API 组包含工作负载相关资源：Deployment、ReplicaSet、StatefulSet、DaemonSet、ControllerRevision。"
+        }
+    ]
+}
