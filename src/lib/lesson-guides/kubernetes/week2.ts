@@ -41,6 +41,45 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://docs.docker.com/build/ci/"
         ]
     },
+    "w2-3": {
+        lessonId: "w2-3",
+        background: [
+            "CRI（Container Runtime Interface）是 Kubernetes 定义的插件接口，让 kubelet 无需重新编译即可使用不同的容器运行时。它基于 gRPC 协议，定义了 RuntimeService（容器生命周期）和 ImageService（镜像管理）两个核心服务。",
+            "dockershim 是 Kubernetes 早期为适配 Docker 而维护的垫片层。Docker 不原生实现 CRI，kubelet 需要通过 dockershim 转换请求。K8s 1.20 宣布废弃，1.24 正式移除。",
+            "containerd 和 CRI-O 是两个主流的 CRI 兼容运行时。containerd 来自 Docker 拆分，功能完整；CRI-O 专为 Kubernetes 设计，更轻量。两者都使用 runc 作为底层 OCI 运行时。",
+            "CRI 构建在 OCI（Open Container Initiative）规范之上：OCI image-spec 定义镜像打包格式，OCI runtime-spec 定义容器执行标准。这让不同工具链可以互操作。"
+        ],
+        keyDifficulties: [
+            "CRI 双服务模型：RuntimeService 处理 Pod 沙箱和容器的创建/启动/停止/删除，ImageService 处理镜像拉取/列表/删除。kubelet 通过 gRPC 调用这两个服务端点。",
+            "dockershim 废弃的影响范围：现有 Docker 镜像继续兼容，但直接调用 docker socket 的脚本/工具需要迁移。日志收集、监控 agent、GPU 集成等可能需要适配 CRI 运行时。",
+            "containerd vs CRI-O 选型：containerd 功能更全面（支持非 K8s 场景），CRI-O 更专注 K8s（更小的攻击面）。OpenShift 默认 CRI-O，大多数发行版默认 containerd。",
+            "CRI v1 API 要求：Kubernetes 1.26+ 要求运行时必须支持 v1 CRI API，否则 kubelet 无法注册节点。升级集群前需确认运行时版本兼容性。"
+        ],
+        handsOnPath: [
+            "使用 crictl（CRI 官方 CLI）替代 docker 命令：crictl ps、crictl images、crictl logs，体验直接与 CRI 运行时交互。",
+            "在 kind 或 minikube 集群中检查容器运行时：kubectl get nodes -o wide 查看 CONTAINER-RUNTIME 列，确认使用的是 containerd 还是其他运行时。",
+            "查看 kubelet 的 --container-runtime-endpoint 配置，理解 kubelet 如何连接到 CRI socket（如 unix:///run/containerd/containerd.sock）。",
+            "对比 ctr（containerd CLI）和 crictl（CRI CLI）的命令差异：ctr 是 containerd 专用，crictl 是 CRI 通用，namespace 处理方式不同。"
+        ],
+        selfCheck: [
+            "CRI 定义了哪两个核心 gRPC 服务？它们各自负责什么功能？",
+            "为什么 Kubernetes 要废弃 dockershim？直接使用 CRI 兼容运行时有什么好处？",
+            "现有的 Docker 镜像在 dockershim 移除后还能继续使用吗？为什么？",
+            "containerd 和 CRI-O 的主要区别是什么？各适合什么场景？",
+            "如果升级 Kubernetes 到 1.26+ 后节点无法注册，可能的原因是什么？如何排查？"
+        ],
+        extensions: [
+            "阅读 CRI API protobuf 定义（github.com/kubernetes/cri-api），深入理解 PodSandbox、Container 等核心概念的字段设计。",
+            "研究 crictl 的高级用法：crictl exec、crictl stats、crictl inspectp，用于生产环境故障排查。",
+            "探索其他 CRI 实现：kata-containers（轻量级 VM 隔离）、gVisor（用户态内核），理解安全隔离与性能的权衡。",
+            "了解 Mirantis/Docker 对 dockershim 的外部维护方案（cri-dockerd），用于需要保留 Docker 的过渡场景。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/blog/2020/12/02/dockershim-faq/",
+            "https://kubernetes.io/docs/concepts/architecture/cri/",
+            "https://cri-o.io/"
+        ]
+    },
     "w2-1": {
         lessonId: "w2-1",
         background: [
@@ -83,6 +122,188 @@ export const week2Guides: Record<string, LessonGuide> = {
 }
 
 export const week2Quizzes: Record<string, QuizQuestion[]> = {
+    "w2-3": [
+        {
+            id: "w2-3-q1",
+            question: "CRI（Container Runtime Interface）的主要作用是什么？",
+            options: [
+                "构建容器镜像",
+                "让 kubelet 无需重新编译即可使用不同的容器运行时",
+                "管理 Kubernetes 集群网络",
+                "存储容器日志"
+            ],
+            answer: 1,
+            rationale: "CRI 是 Kubernetes 定义的插件接口，通过标准化的 gRPC 协议让 kubelet 可以与任何兼容的容器运行时通信。"
+        },
+        {
+            id: "w2-3-q2",
+            question: "CRI 定义了哪两个核心 gRPC 服务？",
+            options: [
+                "BuildService 和 DeployService",
+                "RuntimeService 和 ImageService",
+                "ContainerService 和 PodService",
+                "NetworkService 和 StorageService"
+            ],
+            answer: 1,
+            rationale: "CRI 包含 RuntimeService（管理容器生命周期）和 ImageService（管理镜像拉取和存储）两个核心服务。"
+        },
+        {
+            id: "w2-3-q3",
+            question: "Kubernetes 废弃 dockershim 的主要原因是什么？",
+            options: [
+                "Docker 公司倒闭了",
+                "Docker 镜像格式过时",
+                "减少额外的适配层，直接使用 CRI 兼容运行时更简洁高效",
+                "Docker 不支持 Linux"
+            ],
+            answer: 2,
+            rationale: "dockershim 是额外的适配层，增加了维护负担和调用开销。直接使用 containerd 或 CRI-O 更简洁高效。"
+        },
+        {
+            id: "w2-3-q4",
+            question: "dockershim 在哪个 Kubernetes 版本被正式移除？",
+            options: [
+                "1.20",
+                "1.22",
+                "1.24",
+                "1.26"
+            ],
+            answer: 2,
+            rationale: "dockershim 在 K8s 1.20 宣布废弃，在 K8s 1.24 正式移除。1.26 开始要求 v1 CRI API。"
+        },
+        {
+            id: "w2-3-q5",
+            question: "dockershim 移除后，现有的 Docker 镜像会怎样？",
+            options: [
+                "无法使用，需要重新构建",
+                "继续兼容，因为都遵循 OCI 镜像规范",
+                "只能在 Docker 环境中使用",
+                "需要转换格式"
+            ],
+            answer: 1,
+            rationale: "Docker 镜像遵循 OCI 镜像规范，containerd 和 CRI-O 都支持这个规范，所以镜像可以继续使用。"
+        },
+        {
+            id: "w2-3-q6",
+            question: "以下哪个是 CRI 兼容的容器运行时？",
+            options: [
+                "Docker Engine（无 shim）",
+                "containerd",
+                "runc",
+                "buildah"
+            ],
+            answer: 1,
+            rationale: "containerd 原生实现 CRI 接口。Docker Engine 需要 dockershim 或 cri-dockerd 适配，runc 是 OCI 运行时，buildah 是构建工具。"
+        },
+        {
+            id: "w2-3-q7",
+            question: "CRI-O 与 containerd 的主要区别是什么？",
+            options: [
+                "CRI-O 不支持 Kubernetes",
+                "containerd 只能在 Docker 中使用",
+                "CRI-O 专为 Kubernetes 设计，更轻量；containerd 功能更全面",
+                "两者完全相同"
+            ],
+            answer: 2,
+            rationale: "CRI-O 专注 K8s 场景，攻击面更小；containerd 来自 Docker 拆分，功能更全面，也支持非 K8s 场景。"
+        },
+        {
+            id: "w2-3-q8",
+            question: "kubelet 通过什么方式与 CRI 运行时通信？",
+            options: [
+                "HTTP REST API",
+                "gRPC 协议",
+                "共享内存",
+                "消息队列"
+            ],
+            answer: 1,
+            rationale: "CRI 基于 gRPC 协议定义，kubelet 作为 gRPC 客户端连接到运行时提供的 gRPC 端点。"
+        },
+        {
+            id: "w2-3-q9",
+            question: "如何配置 kubelet 连接到容器运行时？",
+            options: [
+                "--docker-endpoint 参数",
+                "--container-runtime-endpoint 参数",
+                "--cri-socket 参数",
+                "通过环境变量 RUNTIME_SOCKET"
+            ],
+            answer: 1,
+            rationale: "kubelet 使用 --container-runtime-endpoint 参数指定 CRI socket 路径，如 unix:///run/containerd/containerd.sock。"
+        },
+        {
+            id: "w2-3-q10",
+            question: "crictl 工具的作用是什么？",
+            options: [
+                "构建容器镜像",
+                "作为 CRI 兼容运行时的官方 CLI 工具，替代 docker 命令进行调试",
+                "管理 Kubernetes 集群",
+                "监控容器性能"
+            ],
+            answer: 1,
+            rationale: "crictl 是 CRI 官方 CLI 工具，可以直接与 CRI 运行时交互，用于容器和镜像的调试操作。"
+        },
+        {
+            id: "w2-3-q11",
+            question: "Kubernetes 1.26+ 对 CRI 有什么要求？",
+            options: [
+                "必须使用 Docker",
+                "运行时必须支持 v1 CRI API",
+                "必须使用 CRI-O",
+                "不再需要 CRI"
+            ],
+            answer: 1,
+            rationale: "Kubernetes 1.26+ 要求容器运行时必须支持 v1 CRI API，否则 kubelet 无法注册节点。"
+        },
+        {
+            id: "w2-3-q12",
+            question: "如果直接调用 Docker socket 的脚本在 dockershim 移除后会怎样？",
+            options: [
+                "继续正常工作",
+                "需要迁移到使用 CRI 工具（如 crictl）或运行时 CLI",
+                "自动适配新运行时",
+                "只影响镜像构建"
+            ],
+            answer: 1,
+            rationale: "直接使用 Docker socket 的脚本/工具需要迁移，改用 crictl 或对应运行时的 CLI 工具。"
+        },
+        {
+            id: "w2-3-q13",
+            question: "cri-dockerd 的作用是什么？",
+            options: [
+                "Docker 官方的新版本",
+                "Mirantis/Docker 维护的外部 dockershim，用于在 K8s 中继续使用 Docker",
+                "CRI-O 的别名",
+                "containerd 的插件"
+            ],
+            answer: 1,
+            rationale: "cri-dockerd 是 Mirantis 和 Docker 维护的外部 dockershim 实现，用于需要保留 Docker 的过渡场景。"
+        },
+        {
+            id: "w2-3-q14",
+            question: "OpenShift 默认使用哪个容器运行时？",
+            options: [
+                "Docker",
+                "containerd",
+                "CRI-O",
+                "runc"
+            ],
+            answer: 2,
+            rationale: "OpenShift 4.x 默认使用 CRI-O，因为它专为 Kubernetes 设计，更轻量且攻击面更小。"
+        },
+        {
+            id: "w2-3-q15",
+            question: "以下哪项在 dockershim 移除后仍然正常工作？",
+            options: [
+                "kubectl exec 进入容器",
+                "直接使用 docker ps 查看 K8s 容器",
+                "docker build 在节点上构建镜像",
+                "docker logs 查看容器日志"
+            ],
+            answer: 0,
+            rationale: "kubectl exec 通过 CRI 接口工作，不依赖 Docker。docker 命令依赖 Docker daemon，在纯 containerd 节点上无法使用。"
+        }
+    ],
     "w2-2": [
         {
             id: "w2-2-q1",
