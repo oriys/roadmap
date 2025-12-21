@@ -2,6 +2,45 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week5Guides: Record<string, LessonGuide> = {
+    "w5-4": {
+        lessonId: "w5-4",
+        background: [
+            "StatefulSet 是管理有状态应用的工作负载 API 对象，为每个 Pod 提供稳定的、唯一的身份标识。与 Deployment 不同，StatefulSet 维护 Pod 的有序性和唯一性。",
+            "StatefulSet 适用于需要以下特性的应用：稳定的唯一网络标识符、稳定的持久存储、有序的优雅部署和扩缩、有序的自动滚动更新。典型场景包括数据库、消息队列、分布式存储等。",
+            "每个 StatefulSet Pod 有一个顺序索引（Ordinal Index），从 0 到 N-1。Pod 名称格式为 $(statefulset-name)-$(ordinal)，如 web-0、web-1、web-2。",
+            "StatefulSet 必须配合 Headless Service（clusterIP: None）使用，为每个 Pod 提供稳定的 DNS 记录：$(pod-name).$(service-name).$(namespace).svc.cluster.local。"
+        ],
+        keyDifficulties: [
+            "volumeClaimTemplates 机制：StatefulSet 为每个 Pod 自动创建独立的 PVC，名称格式为 $(volumeClaimTemplate-name)-$(pod-name)。删除 Pod 或缩容不会删除 PVC，需要手动清理释放存储。",
+            "有序部署和终止：默认情况下（OrderedReady），Pod 按顺序创建（0 → 1 → 2），按逆序删除（2 → 1 → 0）。每个 Pod 必须 Running 且 Ready 后，才会创建下一个。Parallel 策略可并行操作。",
+            "更新策略选择：RollingUpdate（默认）按逆序滚动更新（N-1 → 0）；OnDelete 需要手动删除 Pod 才会更新。partition 参数可实现金丝雀发布，只更新序号 >= partition 的 Pod。",
+            "Headless Service 的必要性：普通 Service 提供负载均衡的虚拟 IP，而 Headless Service 让客户端直接发现所有 Pod IP。StatefulSet 需要 Headless Service 为每个 Pod 创建独立 DNS 记录。"
+        ],
+        handsOnPath: [
+            "部署一个 3 副本的 StatefulSet（如 nginx），观察 Pod 按顺序创建（web-0 → web-1 → web-2），使用 kubectl get pods -w 实时观察。",
+            "使用 nslookup 或 dig 查询 Headless Service 和单个 Pod 的 DNS 记录，验证 $(pod-name).$(service-name) 格式的 DNS 解析。",
+            "测试 volumeClaimTemplates：创建带 PVC 模板的 StatefulSet，查看自动创建的 PVC，删除一个 Pod 后验证 PVC 保留且新 Pod 重新绑定同一 PVC。",
+            "实验滚动更新：修改 StatefulSet 的镜像版本，观察按逆序更新的过程；使用 partition 参数实现部分更新（金丝雀发布）。"
+        ],
+        selfCheck: [
+            "StatefulSet 与 Deployment 的核心区别是什么？什么场景应该使用 StatefulSet？",
+            "StatefulSet Pod 的 DNS 名称格式是什么？为什么需要 Headless Service？",
+            "volumeClaimTemplates 如何工作？删除 StatefulSet 或缩容时 PVC 会怎样？",
+            "StatefulSet 的有序部署保证是什么？OrderedReady 和 Parallel 策略的区别？",
+            "RollingUpdate 策略的 partition 参数有什么作用？如何用它实现金丝雀发布？"
+        ],
+        extensions: [
+            "研究 StatefulSet 与数据库集群（如 MySQL 主从、PostgreSQL 流复制）的集成，了解有状态应用的高可用部署模式。",
+            "探索 Operator 模式如何简化有状态应用管理（如 MySQL Operator、PostgreSQL Operator、Kafka Operator）。",
+            "学习 PodManagementPolicy 的 Parallel 策略，了解何时可以放弃有序保证以加速部署。",
+            "研究 StatefulSet 的 minReadySeconds 和 pod disruption budget 配置，了解如何控制更新速度和保护可用性。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+            "https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/",
+            "https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/"
+        ]
+    },
     "w5-3": {
         lessonId: "w5-3",
         background: [
@@ -122,6 +161,188 @@ export const week5Guides: Record<string, LessonGuide> = {
 }
 
 export const week5Quizzes: Record<string, QuizQuestion[]> = {
+    "w5-4": [
+        {
+            id: "w5-4-q1",
+            question: "StatefulSet 与 Deployment 的核心区别是什么？",
+            options: [
+                "StatefulSet 不支持滚动更新",
+                "StatefulSet 为每个 Pod 提供稳定的唯一身份标识",
+                "StatefulSet 不支持持久存储",
+                "StatefulSet 只能运行单个 Pod"
+            ],
+            answer: 1,
+            rationale: "StatefulSet 的核心特点是为每个 Pod 提供稳定、唯一的身份（名称、网络标识、存储），而 Deployment 的 Pod 是可互换的。"
+        },
+        {
+            id: "w5-4-q2",
+            question: "StatefulSet Pod 的名称格式是什么？",
+            options: [
+                "$(statefulset-name)-$(random-hash)",
+                "$(statefulset-name)-$(ordinal)",
+                "$(namespace)-$(statefulset-name)",
+                "$(pod-name)-$(timestamp)"
+            ],
+            answer: 1,
+            rationale: "StatefulSet Pod 名称格式为 $(statefulset-name)-$(ordinal)，其中 ordinal 是从 0 开始的顺序索引，如 web-0、web-1、web-2。"
+        },
+        {
+            id: "w5-4-q3",
+            question: "为什么 StatefulSet 必须使用 Headless Service？",
+            options: [
+                "提高网络性能",
+                "为每个 Pod 创建独立的 DNS 记录，而非共享的虚拟 IP",
+                "节省 IP 地址",
+                "简化配置"
+            ],
+            answer: 1,
+            rationale: "Headless Service（clusterIP: None）不分配 ClusterIP，而是让 DNS 直接返回所有 Pod IP，为 StatefulSet 每个 Pod 提供独立的 DNS 记录。"
+        },
+        {
+            id: "w5-4-q4",
+            question: "StatefulSet Pod 的 DNS 记录格式是什么？",
+            options: [
+                "$(pod-ip).$(namespace).pod.cluster.local",
+                "$(pod-name).$(service-name).$(namespace).svc.cluster.local",
+                "$(statefulset-name).$(namespace).svc.cluster.local",
+                "$(service-name).$(pod-name).cluster.local"
+            ],
+            answer: 1,
+            rationale: "StatefulSet Pod 的 DNS 格式为 $(pod-name).$(service-name).$(namespace).svc.cluster.local，如 web-0.nginx.default.svc.cluster.local。"
+        },
+        {
+            id: "w5-4-q5",
+            question: "volumeClaimTemplates 创建的 PVC 名称格式是什么？",
+            options: [
+                "$(pod-name)-$(volumeClaimTemplate-name)",
+                "$(volumeClaimTemplate-name)-$(pod-name)",
+                "$(statefulset-name)-$(volumeClaimTemplate-name)",
+                "pvc-$(random-id)"
+            ],
+            answer: 1,
+            rationale: "PVC 名称格式为 $(volumeClaimTemplate-name)-$(pod-name)，如 www-web-0、www-web-1。"
+        },
+        {
+            id: "w5-4-q6",
+            question: "删除 StatefulSet 或缩容时，自动创建的 PVC 会怎样？",
+            options: [
+                "自动删除",
+                "保留不删除，需要手动清理",
+                "变为 Released 状态",
+                "自动迁移到其他 Pod"
+            ],
+            answer: 1,
+            rationale: "StatefulSet 的 PVC 在 Pod 删除或缩容时保留，这是为了保护数据。需要手动删除 PVC 来释放存储资源。"
+        },
+        {
+            id: "w5-4-q7",
+            question: "StatefulSet 默认的 Pod 管理策略是什么？",
+            options: [
+                "Parallel",
+                "OrderedReady",
+                "Random",
+                "BestEffort"
+            ],
+            answer: 1,
+            rationale: "默认策略是 OrderedReady，Pod 按顺序创建（0 → 1 → 2），按逆序删除（2 → 1 → 0），每个 Pod 必须 Ready 后才处理下一个。"
+        },
+        {
+            id: "w5-4-q8",
+            question: "StatefulSet RollingUpdate 策略的更新顺序是什么？",
+            options: [
+                "从 Pod-0 开始正序更新",
+                "从最大序号的 Pod 开始逆序更新",
+                "随机顺序更新",
+                "并行更新所有 Pod"
+            ],
+            answer: 1,
+            rationale: "RollingUpdate 按逆序更新，从序号最大的 Pod 开始（N-1 → N-2 → ... → 0），确保有状态应用的安全更新。"
+        },
+        {
+            id: "w5-4-q9",
+            question: "RollingUpdate 的 partition 参数有什么作用？",
+            options: [
+                "设置更新的并行数",
+                "只更新序号 >= partition 的 Pod，实现金丝雀发布",
+                "设置更新的超时时间",
+                "指定从哪个 Pod 开始更新"
+            ],
+            answer: 1,
+            rationale: "partition 设置后，只有序号 >= partition 的 Pod 会被更新，序号 < partition 的 Pod 保持旧版本，用于金丝雀发布和分阶段升级。"
+        },
+        {
+            id: "w5-4-q10",
+            question: "OnDelete 更新策略的行为是什么？",
+            options: [
+                "自动删除并重建所有 Pod",
+                "只有手动删除 Pod 后才会使用新模板重建",
+                "删除 StatefulSet 时更新",
+                "在特定时间自动更新"
+            ],
+            answer: 1,
+            rationale: "OnDelete 策略不会自动更新 Pod，只有当用户手动删除 Pod 后，StatefulSet 才会用新模板重建它，提供完全的手动控制。"
+        },
+        {
+            id: "w5-4-q11",
+            question: "StatefulSet 适合运行以下哪种应用？",
+            options: [
+                "无状态的 Web 前端",
+                "数据库集群（如 MySQL、PostgreSQL）",
+                "批处理任务",
+                "CronJob 定时任务"
+            ],
+            answer: 1,
+            rationale: "StatefulSet 适合需要稳定网络标识和持久存储的有状态应用，如数据库、消息队列、分布式存储等。"
+        },
+        {
+            id: "w5-4-q12",
+            question: "PodManagementPolicy: Parallel 的作用是什么？",
+            options: [
+                "Pod 按顺序创建和删除",
+                "Pod 可以并行创建和删除，不等待前一个 Ready",
+                "只能运行一个 Pod",
+                "禁用滚动更新"
+            ],
+            answer: 1,
+            rationale: "Parallel 策略允许 Pod 并行创建和删除，不需要等待有序性。适用于不需要严格顺序保证的场景。"
+        },
+        {
+            id: "w5-4-q13",
+            question: "StatefulSet 的 serviceName 字段用于什么？",
+            options: [
+                "指定负载均衡的 Service",
+                "指定管理 Pod DNS 域的 Headless Service",
+                "指定外部访问的 Service",
+                "指定监控 Service"
+            ],
+            answer: 1,
+            rationale: "serviceName 指定控制 Pod 网络域名的 Headless Service，StatefulSet 使用它为每个 Pod 创建 DNS 记录。"
+        },
+        {
+            id: "w5-4-q14",
+            question: "如果 StatefulSet 的某个 Pod（如 web-1）失败，会发生什么？",
+            options: [
+                "创建一个新的随机名称的 Pod",
+                "重建同名的 Pod（web-1），并绑定到原来的 PVC",
+                "所有 Pod 都会重启",
+                "StatefulSet 停止运行"
+            ],
+            answer: 1,
+            rationale: "StatefulSet 会重建同名的 Pod（保持身份），并将其绑定到原来的 PVC，确保数据和身份的持续性。"
+        },
+        {
+            id: "w5-4-q15",
+            question: "apps.kubernetes.io/pod-index 标签表示什么？",
+            options: [
+                "Pod 的创建时间",
+                "Pod 在 StatefulSet 中的顺序索引",
+                "Pod 的优先级",
+                "Pod 的版本号"
+            ],
+            answer: 1,
+            rationale: "apps.kubernetes.io/pod-index 标签包含 Pod 在 StatefulSet 中的顺序索引（0、1、2...），便于根据索引选择特定 Pod。"
+        }
+    ],
     "w5-3": [
         {
             id: "w5-3-q1",
