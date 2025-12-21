@@ -118,10 +118,231 @@ export const week8Guides: Record<string, LessonGuide> = {
             "https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html",
             "https://docs.ansible.com/ansible/latest/dev_guide/overview_architecture.html"
         ]
+    },
+    "w8-4": {
+        lessonId: "w8-4",
+        background: [
+            "Terraform 和 Ansible 是互补而非竞争的工具：Terraform 擅长 Day 0 基础设施供给（创建 VPC、VM、K8s 集群等），Ansible 擅长 Day 1 配置管理（安装软件、配置服务、部署应用）。组合使用可以覆盖完整的基础设施生命周期。",
+            "Terraform 模块（Module）是可重用配置的集合，将相关资源封装在一起。模块分为根模块（Root Module，工作目录中的配置）和子模块（Child Module，被调用的模块）。模块可以从本地路径、Terraform Registry 或 Git 仓库引用。",
+            "Ansible Role 是组织 Playbook 的标准方式，使用固定目录结构（tasks/、handlers/、templates/、files/、vars/、defaults/、meta/）组织配置。group_vars 和 host_vars 目录管理分组和主机级别的变量。",
+            "两者集成的典型工作流：Terraform 创建基础设施 → 输出主机 IP 和连接信息 → 更新 Ansible Inventory → Ansible 配置主机。这个流程可以手动执行，也可以在 CI/CD 流水线中自动化。"
+        ],
+        keyDifficulties: [
+            "动态 Inventory 集成：cloud.terraform.terraform_provider 插件可以从 Terraform State 动态生成 Ansible Inventory，确保两个工具使用一致的主机信息。避免手动维护 Inventory 导致的配置漂移。",
+            "变量和输出传递：Terraform output 可以导出主机 IP、密钥路径、数据库端点等信息；Ansible 可以通过环境变量、extra-vars 或动态 Inventory 消费这些输出，实现工具间的数据流转。",
+            "职责边界划分：Terraform 管理云资源的创建和销毁（VM、网络、存储、K8s 集群），Ansible 管理资源内部的配置（包管理、服务配置、用户管理）。避免两个工具管理同一资源导致冲突。",
+            "执行顺序和依赖：Terraform apply 必须在 Ansible 执行前完成；Ansible Playbook 修改不会触发 Terraform 重新执行。在 CI/CD 中需要明确编排这两个阶段的执行顺序和触发条件。"
+        ],
+        handsOnPath: [
+            "创建 Terraform 模块结构：主模块调用 VPC 和 EC2 子模块，使用 output 导出实例公网 IP 列表和 SSH 密钥路径，运行 terraform apply 创建基础设施。",
+            "配置 Ansible 项目结构：创建 site.yml 主 Playbook，使用 group_vars/all.yml 定义通用变量，创建 roles/common 角色安装基础软件包。",
+            "集成工作流：使用 terraform output -json 导出数据，编写脚本生成 Ansible inventory.ini，运行 ansible-playbook -i inventory.ini site.yml 配置服务器。",
+            "创建 CI/CD 流水线：在 GitHub Actions 或 GitLab CI 中编排 Terraform 和 Ansible 阶段，实现基础设施变更时自动触发配置更新。"
+        ],
+        selfCheck: [
+            "Terraform 和 Ansible 各自擅长什么？Day 0/Day 1/Day 2 分别指什么阶段？",
+            "Terraform 模块的根模块和子模块有什么区别？如何从 Registry 引用模块？",
+            "Ansible Role 的标准目录结构包含哪些目录？各自的作用是什么？",
+            "如何将 Terraform 的输出传递给 Ansible？有哪些方法？",
+            "为什么修改 Ansible Playbook 不会触发 Terraform 重新执行？如何在 CI/CD 中正确编排两者？"
+        ],
+        extensions: [
+            "研究 Terraform 的 AAP Provider，了解如何在 Terraform 工作流中直接调用 Ansible Automation Platform。",
+            "探索 Terraform Run Tasks，了解如何在 Terraform 执行的特定阶段触发 Ansible 工作流。",
+            "学习 Packer + Terraform + Ansible 的组合：Packer 构建预配置镜像，Terraform 部署镜像，Ansible 处理运行时配置。",
+            "研究 GitOps 模式下的基础设施管理，了解如何使用 ArgoCD/Flux 配合 Terraform 和 Ansible 实现声明式运维。"
+        ],
+        sourceUrls: [
+            "https://developer.hashicorp.com/terraform/language/modules",
+            "https://docs.ansible.com/projects/ansible/latest/tips_tricks/sample_setup.html",
+            "https://developer.hashicorp.com/validated-patterns/terraform/terraform-integrate-ansible-automation-platform"
+        ]
     }
 }
 
 export const week8Quizzes: Record<string, QuizQuestion[]> = {
+    "w8-4": [
+        {
+            id: "w8-4-q1",
+            question: "Terraform 和 Ansible 分别擅长什么阶段的工作？",
+            options: [
+                "两者都擅长配置管理",
+                "Terraform 擅长 Day 0 基础设施供给，Ansible 擅长 Day 1 配置管理",
+                "Terraform 擅长配置管理，Ansible 擅长基础设施供给",
+                "两者功能完全相同"
+            ],
+            answer: 1,
+            rationale: "Terraform 擅长 Day 0 阶段的基础设施创建（VM、网络、存储），Ansible 擅长 Day 1 阶段的配置管理（软件安装、服务配置）。"
+        },
+        {
+            id: "w8-4-q2",
+            question: "Terraform 模块（Module）的主要作用是什么？",
+            options: [
+                "替代 Provider",
+                "将相关资源封装为可重用的配置集合",
+                "存储 State 文件",
+                "执行 Ansible Playbook"
+            ],
+            answer: 1,
+            rationale: "模块是可重用配置的集合，将相关资源封装在一起，可以从本地路径、Registry 或 Git 仓库引用。"
+        },
+        {
+            id: "w8-4-q3",
+            question: "Terraform 的根模块（Root Module）和子模块（Child Module）有什么区别？",
+            options: [
+                "根模块更大，子模块更小",
+                "根模块是工作目录中的配置，子模块是被调用的模块",
+                "根模块只能有一个，子模块可以有多个",
+                "没有区别"
+            ],
+            answer: 1,
+            rationale: "根模块是 Terraform 工作目录中的配置文件，子模块是通过 module 块调用的外部模块。"
+        },
+        {
+            id: "w8-4-q4",
+            question: "Ansible Role 的标准目录结构包含哪些核心目录？",
+            options: [
+                "只有 tasks 目录",
+                "tasks、handlers、templates、files、vars、defaults、meta",
+                "playbooks、inventory、config",
+                "src、bin、lib"
+            ],
+            answer: 1,
+            rationale: "Role 使用标准目录结构：tasks（任务）、handlers（处理器）、templates（模板）、files（静态文件）、vars/defaults（变量）、meta（依赖）。"
+        },
+        {
+            id: "w8-4-q5",
+            question: "如何从 Terraform State 动态生成 Ansible Inventory？",
+            options: [
+                "手动复制粘贴",
+                "使用 cloud.terraform.terraform_provider 插件",
+                "使用 terraform import",
+                "使用 ansible-vault"
+            ],
+            answer: 1,
+            rationale: "cloud.terraform.terraform_provider 插件可以从 Terraform State 动态生成 Ansible Inventory，确保两个工具使用一致的主机信息。"
+        },
+        {
+            id: "w8-4-q6",
+            question: "Terraform output 的主要用途是什么？",
+            options: [
+                "显示错误信息",
+                "导出资源信息供其他工具使用（如 Ansible）",
+                "创建新资源",
+                "删除资源"
+            ],
+            answer: 1,
+            rationale: "Terraform output 导出主机 IP、连接信息等数据，供 Ansible 或其他工具消费，实现工具间的数据流转。"
+        },
+        {
+            id: "w8-4-q7",
+            question: "Terraform 和 Ansible 集成的典型工作流顺序是什么？",
+            options: [
+                "Ansible → Terraform → 部署应用",
+                "Terraform 创建基础设施 → 更新 Inventory → Ansible 配置主机",
+                "同时运行 Terraform 和 Ansible",
+                "只使用 Terraform"
+            ],
+            answer: 1,
+            rationale: "典型工作流：Terraform 创建基础设施 → 输出主机信息 → 更新 Ansible Inventory → Ansible 配置主机。"
+        },
+        {
+            id: "w8-4-q8",
+            question: "group_vars 目录在 Ansible 中的作用是什么？",
+            options: [
+                "存储 Playbook 代码",
+                "存储按主机组组织的变量",
+                "定义 Role 依赖",
+                "存储模板文件"
+            ],
+            answer: 1,
+            rationale: "group_vars 目录存储按主机组组织的变量文件，文件名与组名对应，变量自动应用到该组所有主机。"
+        },
+        {
+            id: "w8-4-q9",
+            question: "为什么修改 Ansible Playbook 不会触发 Terraform 重新执行？",
+            options: [
+                "Terraform 会自动检测 Playbook 变更",
+                "两者是独立工具，Ansible 变更不影响 Terraform 基础设施定义",
+                "Ansible 不支持与 Terraform 集成",
+                "需要特殊配置才能触发"
+            ],
+            answer: 1,
+            rationale: "Terraform 和 Ansible 是独立工具，Terraform 只跟踪基础设施状态，不关心 Ansible 配置变更。"
+        },
+        {
+            id: "w8-4-q10",
+            question: "Terraform 模块可以从哪些来源引用？",
+            options: [
+                "只能从本地路径",
+                "本地路径、Terraform Registry、Git 仓库、S3 存储桶等",
+                "只能从 Terraform Registry",
+                "只能从 Git 仓库"
+            ],
+            answer: 1,
+            rationale: "Terraform 支持多种模块来源：本地文件系统、公共/私有 Registry、VCS 仓库（Git）、S3 存储桶等。"
+        },
+        {
+            id: "w8-4-q11",
+            question: "Day 2 运维阶段主要包含什么工作？",
+            options: [
+                "创建基础设施",
+                "初始配置管理",
+                "漂移检测、补丁管理、持续配置管理",
+                "销毁所有资源"
+            ],
+            answer: 2,
+            rationale: "Day 2 是持续运维阶段，包括漂移检测（Terraform）、补丁管理、应用更新、配置变更等日常维护工作。"
+        },
+        {
+            id: "w8-4-q12",
+            question: "在 CI/CD 流水线中，Terraform 和 Ansible 阶段应该如何编排？",
+            options: [
+                "并行执行",
+                "Terraform 阶段必须在 Ansible 阶段之前完成",
+                "Ansible 阶段必须先执行",
+                "随机顺序"
+            ],
+            answer: 1,
+            rationale: "Terraform 必须先创建基础设施，Ansible 才能配置这些资源。CI/CD 中需要明确这个依赖顺序。"
+        },
+        {
+            id: "w8-4-q13",
+            question: "使用 terraform output -json 的目的是什么？",
+            options: [
+                "生成 JSON 格式的配置文件",
+                "以 JSON 格式导出输出值，便于脚本解析和 Ansible 消费",
+                "验证 JSON 语法",
+                "将 HCL 转换为 JSON"
+            ],
+            answer: 1,
+            rationale: "terraform output -json 以 JSON 格式导出输出值，便于脚本解析，可用于生成 Ansible inventory 或传递变量。"
+        },
+        {
+            id: "w8-4-q14",
+            question: "Terraform 和 Ansible 的职责边界划分原则是什么？",
+            options: [
+                "没有明确边界",
+                "Terraform 管理云资源，Ansible 管理资源内部配置",
+                "都可以管理所有内容",
+                "按文件大小划分"
+            ],
+            answer: 1,
+            rationale: "Terraform 管理云资源的生命周期（创建/销毁 VM、网络），Ansible 管理资源内部的配置（包管理、服务配置）。"
+        },
+        {
+            id: "w8-4-q15",
+            question: "site.yml 在 Ansible 项目中通常是什么角色？",
+            options: [
+                "存储变量",
+                "主 Playbook，导入其他功能性 Playbook",
+                "定义 Inventory",
+                "存储密钥"
+            ],
+            answer: 1,
+            rationale: "site.yml 通常是主 Playbook，导入其他功能性 Playbook（如 webservers.yml、dbservers.yml），作为整个基础设施的入口点。"
+        }
+    ],
     "w8-3": [
         {
             id: "w8-3-q1",
