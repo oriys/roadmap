@@ -79,6 +79,45 @@ export const week4Guides: Record<string, LessonGuide> = {
             "https://kubernetes.io/docs/reference/networking/virtual-ips/",
             "https://kubernetes.io/docs/tutorials/stateless-application/guestbook/"
         ]
+    },
+    "w4-3": {
+        lessonId: "w4-3",
+        background: [
+            "Ingress 是 Kubernetes 中管理集群外部访问的 API 对象，提供 HTTP/HTTPS 路由、负载均衡、SSL/TLS 终止和虚拟主机功能。Ingress 通过声明式规则将外部流量路由到内部 Service。",
+            "Ingress 本身只是一个资源定义，需要 Ingress Controller 来实现其功能。常见的 Ingress Controller 包括 NGINX Ingress Controller、Traefik、Istio Ingress Gateway、AWS ALB Controller 等。",
+            "Ingress 规则（rules）定义路由逻辑：host 指定域名（虚拟主机），paths 定义 URL 路径到后端 Service 的映射。pathType 有三种：Exact（精确匹配）、Prefix（前缀匹配）、ImplementationSpecific（由控制器决定）。",
+            "TLS 配置通过 spec.tls 字段实现，引用 kubernetes.io/tls 类型的 Secret 存储证书和私钥。Ingress Controller 在边界处理 SSL 终止，后端 Service 通常接收 HTTP 流量。"
+        ],
+        keyDifficulties: [
+            "Ingress Controller 选型：NGINX Ingress Controller 功能丰富、社区活跃；Traefik 原生支持动态配置；云厂商控制器（如 AWS ALB）深度集成云负载均衡器。选型需考虑功能需求、性能和运维复杂度。",
+            "路径匹配优先级：多个规则匹配时，最长路径优先；同等长度时 Exact 优先于 Prefix。理解匹配顺序对调试路由问题至关重要。注意：Prefix /foo 会匹配 /foo、/foo/、/foo/bar，但不匹配 /foobar。",
+            "常见 4xx/5xx 错误排查：502 Bad Gateway（后端 Service 不可达或 Pod 未就绪）、503 Service Unavailable（没有健康的后端）、404 Not Found（路由规则不匹配）、400 Bad Request（请求格式问题或 TLS 配置错误）。",
+            "Annotations 的控制器依赖性：不同 Ingress Controller 使用不同的 annotations（如 nginx.ingress.kubernetes.io/rewrite-target）。迁移控制器时需要调整 annotations，这是常见的兼容性问题。"
+        ],
+        handsOnPath: [
+            "在 minikube 上启用 Ingress 插件（minikube addons enable ingress），部署示例应用和 Service，创建 Ingress 资源验证路由功能。",
+            "配置基于路径的路由：将 /api 路由到 api-service，将 /web 路由到 web-service，使用 curl 测试不同路径访问。",
+            "配置基于主机名的虚拟主机：为 api.example.com 和 web.example.com 配置不同的后端，通过修改 /etc/hosts 或 curl -H 'Host: xxx' 测试。",
+            "创建 TLS Secret 并配置 HTTPS：使用 openssl 生成自签名证书，创建 kubernetes.io/tls 类型 Secret，在 Ingress 中启用 TLS 并验证 HTTPS 访问。"
+        ],
+        selfCheck: [
+            "Ingress 和 Service 的区别是什么？为什么需要 Ingress？",
+            "Ingress Controller 的作用是什么？仅创建 Ingress 资源能否工作？",
+            "pathType 的三种类型（Exact、Prefix、ImplementationSpecific）有什么区别？路径 /foo 和 /foo/ 的匹配行为是什么？",
+            "遇到 502 Bad Gateway 错误时，应该如何排查？可能的原因有哪些？",
+            "如何为 Ingress 配置 TLS？证书和私钥存储在什么类型的资源中？"
+        ],
+        extensions: [
+            "研究 Gateway API（Kubernetes 推荐的 Ingress 替代方案），了解 Gateway、HTTPRoute 等资源的设计理念和优势。",
+            "探索 NGINX Ingress Controller 的高级 annotations：限流（rate-limiting）、重写规则（rewrite-target）、跨域配置（CORS）。",
+            "学习使用 cert-manager 自动管理 TLS 证书，实现 Let's Encrypt 证书的自动签发和续期。",
+            "研究 Ingress 的高可用部署模式：多副本控制器、负载均衡器健康检查、跨可用区部署。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+            "https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/",
+            "https://v1-32.docs.kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/"
+        ]
     }
 }
 
@@ -445,6 +484,188 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "kubectl get endpoints 或 kubectl get endpointslices 可以查看 Service 关联的所有后端 Pod IP 和端口。"
+        }
+    ],
+    "w4-3": [
+        {
+            id: "w4-3-q1",
+            question: "Ingress 在 Kubernetes 中的核心作用是什么？",
+            options: [
+                "运行容器化应用",
+                "管理集群外部到内部 Service 的 HTTP/HTTPS 访问路由",
+                "存储应用配置",
+                "调度 Pod 到节点"
+            ],
+            answer: 1,
+            rationale: "Ingress 提供 HTTP/HTTPS 路由、负载均衡、SSL 终止和虚拟主机功能，将外部流量路由到集群内部的 Service。"
+        },
+        {
+            id: "w4-3-q2",
+            question: "仅创建 Ingress 资源能否使路由生效？",
+            options: [
+                "可以，Ingress 资源会自动处理路由",
+                "不能，必须部署 Ingress Controller 来实现 Ingress 功能",
+                "可以，但需要等待几分钟",
+                "不能，还需要创建 LoadBalancer Service"
+            ],
+            answer: 1,
+            rationale: "Ingress 只是资源定义，需要 Ingress Controller（如 NGINX Ingress Controller）来实际执行路由逻辑。"
+        },
+        {
+            id: "w4-3-q3",
+            question: "pathType: Prefix 的匹配规则是什么？",
+            options: [
+                "精确匹配 URL 路径",
+                "基于 / 分隔的路径元素前缀匹配",
+                "正则表达式匹配",
+                "后缀匹配"
+            ],
+            answer: 1,
+            rationale: "Prefix 以 / 分隔的路径元素为单位匹配。例如 /foo 会匹配 /foo、/foo/、/foo/bar，但不匹配 /foobar。"
+        },
+        {
+            id: "w4-3-q4",
+            question: "pathType: Exact 和 Prefix 的主要区别是什么？",
+            options: [
+                "Exact 区分大小写，Prefix 不区分",
+                "Exact 精确匹配 URL 路径，Prefix 匹配路径前缀",
+                "Exact 更快，Prefix 更慢",
+                "Exact 只能用于根路径"
+            ],
+            answer: 1,
+            rationale: "Exact 要求 URL 路径与规则完全匹配；Prefix 匹配以规则路径开头的所有请求（以 / 为边界）。"
+        },
+        {
+            id: "w4-3-q5",
+            question: "Ingress 的 TLS 证书存储在什么类型的资源中？",
+            options: [
+                "ConfigMap",
+                "kubernetes.io/tls 类型的 Secret",
+                "PersistentVolume",
+                "ServiceAccount"
+            ],
+            answer: 1,
+            rationale: "TLS 证书和私钥存储在 kubernetes.io/tls 类型的 Secret 中，包含 tls.crt 和 tls.key 两个字段。"
+        },
+        {
+            id: "w4-3-q6",
+            question: "502 Bad Gateway 错误通常表示什么问题？",
+            options: [
+                "客户端请求格式错误",
+                "后端 Service 不可达或 Pod 未就绪",
+                "Ingress 规则配置错误",
+                "TLS 证书过期"
+            ],
+            answer: 1,
+            rationale: "502 Bad Gateway 通常表示 Ingress Controller 无法连接到后端 Service，可能是 Pod 未运行、未就绪或网络问题。"
+        },
+        {
+            id: "w4-3-q7",
+            question: "以下哪个是常见的 Ingress Controller？",
+            options: [
+                "kube-proxy",
+                "NGINX Ingress Controller",
+                "CoreDNS",
+                "kubelet"
+            ],
+            answer: 1,
+            rationale: "NGINX Ingress Controller 是最常用的 Ingress Controller 之一，其他还有 Traefik、Istio、AWS ALB Controller 等。"
+        },
+        {
+            id: "w4-3-q8",
+            question: "Ingress 规则中的 host 字段用于什么？",
+            options: [
+                "指定后端 Pod 的主机名",
+                "基于请求的 Host 头进行虚拟主机路由",
+                "配置 Ingress Controller 运行的节点",
+                "设置 DNS 服务器地址"
+            ],
+            answer: 1,
+            rationale: "host 字段实现虚拟主机功能，根据 HTTP 请求的 Host 头将流量路由到不同的后端 Service。"
+        },
+        {
+            id: "w4-3-q9",
+            question: "defaultBackend 的作用是什么？",
+            options: [
+                "设置默认的容器镜像",
+                "处理与任何规则都不匹配的请求",
+                "配置默认的 TLS 证书",
+                "指定默认的 Namespace"
+            ],
+            answer: 1,
+            rationale: "defaultBackend 定义当请求不匹配任何 host 或 path 规则时的后端 Service，类似于 catch-all 路由。"
+        },
+        {
+            id: "w4-3-q10",
+            question: "ingressClassName 字段的作用是什么？",
+            options: [
+                "设置 Ingress 的名称",
+                "指定使用哪个 Ingress Controller 处理此 Ingress",
+                "定义 Ingress 的优先级",
+                "配置 Ingress 的访问权限"
+            ],
+            answer: 1,
+            rationale: "ingressClassName 指定 IngressClass，决定由哪个 Ingress Controller 处理此 Ingress 资源。"
+        },
+        {
+            id: "w4-3-q11",
+            question: "503 Service Unavailable 错误通常表示什么？",
+            options: [
+                "路由规则配置错误",
+                "没有健康的后端 Pod 可用",
+                "TLS 握手失败",
+                "请求超时"
+            ],
+            answer: 1,
+            rationale: "503 表示服务暂时不可用，通常是因为后端所有 Pod 都不健康或 Endpoints 为空。"
+        },
+        {
+            id: "w4-3-q12",
+            question: "如何在 minikube 上启用 Ingress 功能？",
+            options: [
+                "minikube start --ingress",
+                "minikube addons enable ingress",
+                "kubectl apply -f ingress.yaml",
+                "minikube tunnel"
+            ],
+            answer: 1,
+            rationale: "minikube addons enable ingress 命令启用内置的 NGINX Ingress Controller 插件。"
+        },
+        {
+            id: "w4-3-q13",
+            question: "Ingress 的 annotations 有什么特点？",
+            options: [
+                "所有 Ingress Controller 使用相同的 annotations",
+                "不同的 Ingress Controller 可能使用不同的 annotations",
+                "annotations 不影响 Ingress 行为",
+                "annotations 只能用于 TLS 配置"
+            ],
+            answer: 1,
+            rationale: "annotations 是控制器相关的，不同 Ingress Controller 使用不同的 annotations 前缀和功能，迁移时需要调整。"
+        },
+        {
+            id: "w4-3-q14",
+            question: "Kubernetes 官方推荐用什么替代 Ingress？",
+            options: [
+                "LoadBalancer Service",
+                "Gateway API",
+                "NodePort Service",
+                "ExternalName Service"
+            ],
+            answer: 1,
+            rationale: "Kubernetes 官方推荐使用 Gateway API 替代 Ingress，因为它提供更强大和灵活的功能，Ingress API 已冻结不再接收新功能。"
+        },
+        {
+            id: "w4-3-q15",
+            question: "多个 Ingress 规则匹配时，优先级如何确定？",
+            options: [
+                "按创建时间排序",
+                "最长路径优先，同等长度时 Exact 优先于 Prefix",
+                "按字母顺序排序",
+                "随机选择"
+            ],
+            answer: 1,
+            rationale: "路由优先级：最长路径优先匹配；相同长度时，Exact 类型优先于 Prefix 类型。"
         }
     ]
 }
