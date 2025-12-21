@@ -79,10 +79,231 @@ export const week8Guides: Record<string, LessonGuide> = {
             "https://developer.hashicorp.com/terraform/tutorials/kubernetes/gke",
             "https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest"
         ]
+    },
+    "w8-3": {
+        lessonId: "w8-3",
+        background: [
+            "Ansible 是 Red Hat 开发的开源自动化平台，用于配置管理、应用部署和任务编排。其核心特点是无代理（Agentless）架构，通过 SSH（Linux）或 WinRM（Windows）连接目标主机，无需在被管理节点安装任何软件。",
+            "Ansible 使用 YAML 格式的 Playbook 定义自动化任务。Playbook 包含一个或多个 Play，每个 Play 针对一组主机执行一系列 Task。Task 调用 Module 完成具体操作，如安装软件包、复制文件、启动服务等。",
+            "Inventory（清单）定义 Ansible 管理的主机和分组。可以是静态文件（INI 或 YAML 格式）列出主机 IP/域名，也可以是动态清单脚本从云 API（如 AWS、Azure）自动发现主机。",
+            "Ansible 内置 3000+ 模块覆盖系统管理、云服务、容器、网络设备等场景。模块设计遵循幂等性原则——重复执行 Playbook 不会改变已达成期望状态的系统，安全可靠。"
+        ],
+        keyDifficulties: [
+            "Playbook 结构：Playbook 包含 hosts（目标主机模式）、vars（变量）、tasks（任务列表）、handlers（处理器）。Task 按顺序执行，某主机失败后会被排除出后续任务。handlers 用于响应变更（如配置修改后重启服务）。",
+            "变量优先级：Ansible 有复杂的变量优先级，从低到高：role defaults → inventory → playbook vars → extra vars（-e）。理解优先级对调试变量覆盖问题很重要。group_vars 和 host_vars 目录组织主机/组级别变量。",
+            "幂等性实践：模块应检查当前状态并仅在需要时执行变更。使用 changed_when 和 failed_when 控制任务状态；register 捕获任务输出供后续条件判断；使用 when 实现条件执行。",
+            "Role 组织：Role 是组织 Playbook 的标准方式，包含 tasks、handlers、files、templates、vars、defaults、meta 等目录。使用 Ansible Galaxy 分享和重用社区 Role。"
+        ],
+        handsOnPath: [
+            "安装 Ansible（pip install ansible），创建 inventory 文件定义本地主机（localhost），编写第一个 Playbook 使用 debug 模块输出 Hello World。",
+            "创建一个安装 Nginx 的 Playbook：使用 apt/yum 模块安装软件包，copy/template 模块部署配置文件，service 模块启动服务，定义 handler 在配置变更时重启 Nginx。",
+            "使用 ansible-playbook --check（dry-run）和 --diff 预览变更，使用 ansible-lint 检查 Playbook 最佳实践，理解测试和验证流程。",
+            "将 Playbook 重构为 Role：创建标准目录结构，分离 tasks、handlers、templates、defaults，使用 ansible-galaxy init 生成 Role 骨架。"
+        ],
+        selfCheck: [
+            "Ansible 的无代理架构有什么优势？它如何连接被管理节点？",
+            "Playbook、Play、Task、Module 之间的关系是什么？",
+            "什么是幂等性？为什么它对配置管理很重要？",
+            "Inventory 的作用是什么？静态清单和动态清单有什么区别？",
+            "Handler 和普通 Task 有什么区别？什么时候使用 Handler？"
+        ],
+        extensions: [
+            "研究 Ansible Vault 加密敏感数据（密码、密钥），了解如何在 Playbook 中安全管理机密。",
+            "探索 Ansible Tower/AWX（Web UI 和 API），了解企业级 Ansible 管理平台的功能。",
+            "学习 Ansible 集合（Collections），了解模块和 Role 的新分发机制。",
+            "研究 Ansible 与容器的集成，了解如何管理 Docker 容器和 Kubernetes 资源。"
+        ],
+        sourceUrls: [
+            "https://docs.ansible.com/projects/ansible/latest/getting_started/get_started_ansible.html",
+            "https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html",
+            "https://docs.ansible.com/ansible/latest/dev_guide/overview_architecture.html"
+        ]
     }
 }
 
 export const week8Quizzes: Record<string, QuizQuestion[]> = {
+    "w8-3": [
+        {
+            id: "w8-3-q1",
+            question: "Ansible 的核心架构特点是什么？",
+            options: [
+                "需要在所有节点安装 Agent",
+                "无代理（Agentless），通过 SSH/WinRM 连接",
+                "使用专用网络协议",
+                "需要中央数据库"
+            ],
+            answer: 1,
+            rationale: "Ansible 是无代理架构，通过 SSH（Linux）或 WinRM（Windows）连接目标主机，无需在被管理节点安装软件。"
+        },
+        {
+            id: "w8-3-q2",
+            question: "Ansible Playbook 使用什么格式编写？",
+            options: [
+                "JSON",
+                "XML",
+                "YAML",
+                "HCL"
+            ],
+            answer: 2,
+            rationale: "Ansible Playbook 使用 YAML 格式编写，易于阅读和编写，支持丰富的数据结构。"
+        },
+        {
+            id: "w8-3-q3",
+            question: "Playbook、Play、Task 之间的关系是什么？",
+            options: [
+                "Playbook 包含 Task，Task 包含 Play",
+                "Playbook 包含 Play，Play 包含 Task",
+                "三者是平级关系",
+                "Play 包含 Playbook"
+            ],
+            answer: 1,
+            rationale: "Playbook 包含一个或多个 Play，每个 Play 针对一组主机执行一系列 Task，Task 调用 Module 完成操作。"
+        },
+        {
+            id: "w8-3-q4",
+            question: "Inventory 文件的作用是什么？",
+            options: [
+                "存储 Playbook 代码",
+                "定义 Ansible 管理的主机和分组",
+                "存储密码和密钥",
+                "定义 Module 参数"
+            ],
+            answer: 1,
+            rationale: "Inventory 定义 Ansible 管理的目标主机及其分组，可以是静态文件或从云 API 动态生成。"
+        },
+        {
+            id: "w8-3-q5",
+            question: "什么是幂等性（Idempotency）？",
+            options: [
+                "每次执行结果不同",
+                "重复执行不会改变已达成期望状态的系统",
+                "只能执行一次",
+                "必须按顺序执行"
+            ],
+            answer: 1,
+            rationale: "幂等性意味着重复执行 Playbook 不会改变已达成期望状态的系统，模块会检查当前状态并仅在需要时执行变更。"
+        },
+        {
+            id: "w8-3-q6",
+            question: "Handler 和普通 Task 的区别是什么？",
+            options: [
+                "Handler 总是执行",
+                "Handler 只在被通知（notify）且有变更时执行，在 Play 末尾运行",
+                "Handler 比 Task 执行更快",
+                "Handler 不支持条件判断"
+            ],
+            answer: 1,
+            rationale: "Handler 是特殊的 Task，只在被 notify 触发且实际发生变更时执行，常用于配置修改后重启服务。"
+        },
+        {
+            id: "w8-3-q7",
+            question: "Ansible 内置大约多少个模块？",
+            options: [
+                "约 100 个",
+                "约 500 个",
+                "约 3000+ 个",
+                "约 10 个"
+            ],
+            answer: 2,
+            rationale: "Ansible 内置 3000+ 模块覆盖系统管理、云服务、容器、网络设备等各种场景。"
+        },
+        {
+            id: "w8-3-q8",
+            question: "ansible-playbook --check 参数的作用是什么？",
+            options: [
+                "检查语法错误",
+                "dry-run 模式，预览变更但不实际执行",
+                "检查主机连通性",
+                "检查模块是否存在"
+            ],
+            answer: 1,
+            rationale: "--check 是 dry-run 模式，模拟执行 Playbook 并显示将要进行的变更，但不实际修改系统。"
+        },
+        {
+            id: "w8-3-q9",
+            question: "Role 的作用是什么？",
+            options: [
+                "定义用户权限",
+                "组织和重用 Playbook 内容的标准方式",
+                "管理 Ansible 配置文件",
+                "定义主机分组"
+            ],
+            answer: 1,
+            rationale: "Role 是组织 Playbook 的标准方式，包含 tasks、handlers、templates、vars 等目录，便于复用和分享。"
+        },
+        {
+            id: "w8-3-q10",
+            question: "register 关键字的作用是什么？",
+            options: [
+                "注册新模块",
+                "捕获 Task 执行结果供后续使用",
+                "注册主机到 Inventory",
+                "注册 Ansible 许可证"
+            ],
+            answer: 1,
+            rationale: "register 将 Task 的执行结果（stdout、stderr、rc 等）保存到变量中，供后续条件判断或输出使用。"
+        },
+        {
+            id: "w8-3-q11",
+            question: "when 关键字的作用是什么？",
+            options: [
+                "定义执行时间",
+                "条件执行，只在条件为真时运行 Task",
+                "设置超时时间",
+                "定义变量生效时机"
+            ],
+            answer: 1,
+            rationale: "when 实现条件执行，只有当指定条件为真时才运行该 Task，支持 Jinja2 表达式。"
+        },
+        {
+            id: "w8-3-q12",
+            question: "Ansible Galaxy 是什么？",
+            options: [
+                "Ansible 的图形界面",
+                "分享和下载社区 Role 的平台",
+                "Ansible 的云服务",
+                "Ansible 的测试框架"
+            ],
+            answer: 1,
+            rationale: "Ansible Galaxy 是社区 Role 分享平台，可以使用 ansible-galaxy 命令下载和管理社区贡献的 Role。"
+        },
+        {
+            id: "w8-3-q13",
+            question: "group_vars 目录的作用是什么？",
+            options: [
+                "存储主机组定义",
+                "存储特定主机组的变量",
+                "存储全局变量",
+                "存储 Role 变量"
+            ],
+            answer: 1,
+            rationale: "group_vars 目录存储按主机组组织的变量文件，文件名与组名对应，变量自动应用到该组所有主机。"
+        },
+        {
+            id: "w8-3-q14",
+            question: "ansible-lint 工具的作用是什么？",
+            options: [
+                "加密敏感数据",
+                "检查 Playbook 最佳实践和常见错误",
+                "测试主机连通性",
+                "生成文档"
+            ],
+            answer: 1,
+            rationale: "ansible-lint 是 Playbook 静态分析工具，检查语法、最佳实践、潜在问题，帮助提高代码质量。"
+        },
+        {
+            id: "w8-3-q15",
+            question: "Ansible Vault 的作用是什么？",
+            options: [
+                "备份 Playbook",
+                "加密敏感数据（密码、密钥等）",
+                "管理 SSH 密钥",
+                "存储执行日志"
+            ],
+            answer: 1,
+            rationale: "Ansible Vault 用于加密敏感数据，如密码、API 密钥等，加密后的文件可以安全存储在版本控制系统中。"
+        }
+    ],
     "w8-2": [
         {
             id: "w8-2-q1",
