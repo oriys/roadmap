@@ -118,6 +118,45 @@ export const week4Guides: Record<string, LessonGuide> = {
             "https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/",
             "https://v1-32.docs.kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/"
         ]
+    },
+    "w4-4": {
+        lessonId: "w4-4",
+        background: [
+            "Kubernetes 通过 requests 和 limits 管理容器资源。requests 是容器需要的最小资源量，用于调度决策；limits 是容器可使用的最大资源量，由内核强制执行。合理配置两者对集群稳定性至关重要。",
+            "CPU 资源是可压缩的（compressible），超出 limit 时容器会被限流（throttle）但不会被杀死；内存资源是不可压缩的（incompressible），超出 limit 时容器会被 OOM Killer 终止。",
+            "Kubernetes 根据 requests/limits 配置将 Pod 分为三个 QoS 类别：Guaranteed（requests=limits）、Burstable（有 requests 但不等于 limits）、BestEffort（无 requests/limits）。QoS 决定节点资源紧张时的驱逐优先级。",
+            "ResourceQuota 和 LimitRange 是 Namespace 级别的资源治理工具。ResourceQuota 限制 Namespace 的总资源使用量和对象数量；LimitRange 为容器设置默认值和强制范围，确保所有 Pod 都有资源配置。"
+        ],
+        keyDifficulties: [
+            "资源单位理解：CPU 使用毫核（m），1000m = 1 核；内存使用二进制单位（Mi/Gi）而非十进制（M/G）。常见错误：400m 内存实际是 0.4 字节，应写 400Mi。",
+            "QoS 与驱逐：节点资源紧张时，BestEffort 最先被驱逐，其次是超出 requests 的 Burstable，最后是 Guaranteed。理解 QoS 对生产环境的 Pod 稳定性至关重要。",
+            "ResourceQuota 的连锁效应：当 Namespace 启用 ResourceQuota 限制 CPU/内存时，所有 Pod 必须指定 requests/limits，否则创建失败。需要配合 LimitRange 设置默认值。",
+            "超额分配（Overcommitment）：requests 用于调度，limits 用于运行时限制。如果 Σrequests < Σlimits，节点可能超额分配，在高负载时触发驱逐。生产环境建议 requests ≈ limits。"
+        ],
+        handsOnPath: [
+            "创建一个 Pod 分别设置 requests 和 limits，使用 kubectl describe pod 查看 QoS Class，观察不同配置如何影响 QoS 分类。",
+            "创建一个内存 limit 较小的 Pod 并运行内存密集型任务，观察 OOMKilled 事件；创建 CPU limit 较小的 Pod 观察 throttling 现象。",
+            "在一个 Namespace 中创建 ResourceQuota 限制总 CPU 和内存，然后创建超出配额的 Pod 观察拒绝行为；使用 kubectl describe quota 查看使用情况。",
+            "创建 LimitRange 设置默认 requests/limits，然后创建不指定资源的 Pod，验证默认值是否被自动应用。"
+        ],
+        selfCheck: [
+            "requests 和 limits 的区别是什么？它们分别在什么时候起作用？",
+            "三种 QoS 类别的判定条件是什么？节点资源紧张时驱逐顺序是什么？",
+            "CPU 资源和内存资源在超出 limits 时的行为有什么不同？为什么？",
+            "ResourceQuota 和 LimitRange 各自的作用是什么？为什么通常需要同时使用？",
+            "如何确保一个 Pod 获得 Guaranteed QoS 级别？这样做有什么好处？"
+        ],
+        extensions: [
+            "研究 Vertical Pod Autoscaler（VPA），了解如何自动调整 Pod 的 requests/limits 配置。",
+            "探索节点级别的资源预留（kube-reserved、system-reserved），了解如何保护系统组件免受用户 Pod 影响。",
+            "学习 PriorityClass 和 Pod 抢占（Preemption），了解高优先级 Pod 如何抢占低优先级 Pod 的资源。",
+            "研究 cgroup v2 的内存 QoS 特性（memory.min、memory.high），了解更精细的内存管理机制。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+            "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+            "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/"
+        ]
     }
 }
 
@@ -666,6 +705,188 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "路由优先级：最长路径优先匹配；相同长度时，Exact 类型优先于 Prefix 类型。"
+        }
+    ],
+    "w4-4": [
+        {
+            id: "w4-4-q1",
+            question: "resources.requests 的作用是什么？",
+            options: [
+                "限制容器可使用的最大资源量",
+                "用于调度决策，表示容器需要的最小资源量",
+                "设置容器启动时的初始资源",
+                "定义容器的默认资源配置"
+            ],
+            answer: 1,
+            rationale: "requests 表示容器需要的最小资源量，kube-scheduler 根据 requests 决定 Pod 调度到哪个节点。"
+        },
+        {
+            id: "w4-4-q2",
+            question: "resources.limits 的作用是什么？",
+            options: [
+                "用于调度决策",
+                "限制容器可使用的最大资源量，由内核强制执行",
+                "设置资源的默认值",
+                "定义 Namespace 的资源配额"
+            ],
+            answer: 1,
+            rationale: "limits 定义容器可使用的资源上限，CPU 超限会被 throttle，内存超限会被 OOM Killer 终止。"
+        },
+        {
+            id: "w4-4-q3",
+            question: "CPU 资源超出 limits 时会发生什么？",
+            options: [
+                "容器被终止（OOMKilled）",
+                "容器被限流（throttled），但不会被杀死",
+                "Pod 被驱逐",
+                "节点崩溃"
+            ],
+            answer: 1,
+            rationale: "CPU 是可压缩资源，超出 limits 时内核会限制 CPU 时间片分配（throttling），容器继续运行但变慢。"
+        },
+        {
+            id: "w4-4-q4",
+            question: "内存资源超出 limits 时会发生什么？",
+            options: [
+                "容器被限流",
+                "容器被 OOM Killer 终止",
+                "自动扩展内存限制",
+                "请求被拒绝"
+            ],
+            answer: 1,
+            rationale: "内存是不可压缩资源，超出 limits 时容器会被 OOM Killer 终止，Pod 状态显示 OOMKilled。"
+        },
+        {
+            id: "w4-4-q5",
+            question: "Guaranteed QoS 级别需要满足什么条件？",
+            options: [
+                "只设置 requests",
+                "只设置 limits",
+                "所有容器的 requests 和 limits 都相等（且都设置了 CPU 和内存）",
+                "不设置任何资源配置"
+            ],
+            answer: 2,
+            rationale: "Guaranteed 要求 Pod 中所有容器的 CPU 和内存的 requests 都等于 limits。"
+        },
+        {
+            id: "w4-4-q6",
+            question: "BestEffort QoS 级别的 Pod 有什么特点？",
+            options: [
+                "资源得到最好的保障",
+                "没有设置任何 requests 和 limits，最先被驱逐",
+                "有最高的调度优先级",
+                "使用固定的资源配额"
+            ],
+            answer: 1,
+            rationale: "BestEffort Pod 没有任何资源配置，在节点资源紧张时会被最先驱逐。"
+        },
+        {
+            id: "w4-4-q7",
+            question: "节点资源紧张时，Pod 的驱逐顺序是什么？",
+            options: [
+                "Guaranteed → Burstable → BestEffort",
+                "BestEffort → Burstable → Guaranteed",
+                "随机驱逐",
+                "按创建时间驱逐"
+            ],
+            answer: 1,
+            rationale: "驱逐优先级：BestEffort 最先被驱逐，其次是超出 requests 的 Burstable，最后是 Guaranteed。"
+        },
+        {
+            id: "w4-4-q8",
+            question: "CPU 资源的单位 500m 表示什么？",
+            options: [
+                "500 MB 内存",
+                "500 毫核，即 0.5 个 CPU 核心",
+                "500 分钟 CPU 时间",
+                "500 个 CPU 周期"
+            ],
+            answer: 1,
+            rationale: "m 表示毫核（milli-core），500m = 0.5 核。1000m = 1 个完整的 CPU 核心。"
+        },
+        {
+            id: "w4-4-q9",
+            question: "内存资源 400m 和 400Mi 有什么区别？",
+            options: [
+                "完全相同",
+                "400m 是 0.4 字节，400Mi 是 400 MiB（约 419 MB）",
+                "400m 更大",
+                "400Mi 是 400 毫秒"
+            ],
+            answer: 1,
+            rationale: "这是常见错误！m 表示毫（milli），400m = 0.4 字节；Mi 表示 MiB，400Mi = 419,430,400 字节。"
+        },
+        {
+            id: "w4-4-q10",
+            question: "ResourceQuota 的作用是什么？",
+            options: [
+                "为单个容器设置资源限制",
+                "限制 Namespace 的总资源使用量和对象数量",
+                "设置节点的资源容量",
+                "配置 Pod 的 QoS 级别"
+            ],
+            answer: 1,
+            rationale: "ResourceQuota 在 Namespace 级别限制资源总量（如总 CPU、内存）和对象数量（如 Pod 数、Service 数）。"
+        },
+        {
+            id: "w4-4-q11",
+            question: "LimitRange 的主要作用是什么？",
+            options: [
+                "限制 Namespace 的总资源",
+                "为容器设置默认的 requests/limits 和强制范围",
+                "配置节点的资源预留",
+                "设置 Pod 的优先级"
+            ],
+            answer: 1,
+            rationale: "LimitRange 为 Namespace 中的容器设置默认 requests/limits 值，以及允许的最大/最小值范围。"
+        },
+        {
+            id: "w4-4-q12",
+            question: "当 Namespace 有 ResourceQuota 限制 CPU/内存时，创建不指定资源的 Pod 会怎样？",
+            options: [
+                "自动分配默认资源",
+                "创建失败（除非有 LimitRange 设置默认值）",
+                "使用 Namespace 的全部配额",
+                "Pod 被标记为 BestEffort"
+            ],
+            answer: 1,
+            rationale: "启用 ResourceQuota 后，所有 Pod 必须指定 requests/limits，否则会被拒绝。需要配合 LimitRange 设置默认值。"
+        },
+        {
+            id: "w4-4-q13",
+            question: "如何查看 Namespace 的资源配额使用情况？",
+            options: [
+                "kubectl get pods",
+                "kubectl describe quota -n <namespace>",
+                "kubectl top nodes",
+                "kubectl get limitrange"
+            ],
+            answer: 1,
+            rationale: "kubectl describe quota 显示 ResourceQuota 的已使用量和硬限制，便于监控 Namespace 的资源消耗。"
+        },
+        {
+            id: "w4-4-q14",
+            question: "超额分配（Overcommitment）是什么意思？",
+            options: [
+                "Pod 数量超过节点容量",
+                "Σlimits > Σrequests，允许节点运行的 Pod 总 limits 超过实际容量",
+                "创建超过配额的资源",
+                "CPU 使用率超过 100%"
+            ],
+            answer: 1,
+            rationale: "超额分配指 requests < limits，调度基于 requests，但 Pod 可能使用更多资源。高负载时可能触发驱逐。"
+        },
+        {
+            id: "w4-4-q15",
+            question: "生产环境中推荐如何配置 requests 和 limits？",
+            options: [
+                "只设置 limits",
+                "只设置 requests",
+                "requests ≈ limits（接近或相等），确保 Guaranteed QoS",
+                "不设置任何资源配置"
+            ],
+            answer: 2,
+            rationale: "生产环境推荐 requests ≈ limits，这样 Pod 获得 Guaranteed QoS，资源预留明确，不易被驱逐。"
         }
     ]
 }
