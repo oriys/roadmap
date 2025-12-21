@@ -29,7 +29,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { docQuestionMap } from "@/lib/doc-questions"
 
 import {
-  type Resource,
   type Lesson,
   type Week,
   type Stage,
@@ -55,6 +54,8 @@ import {
   ROADMAP_LIST,
   DEFAULT_ROADMAP_ID,
 } from "@/lib/roadmaps"
+import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
+import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
 const ACTIVE_ROADMAP_KEY = "roadmap-active-id"
@@ -199,6 +200,7 @@ export default function App() {
   const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
   const [lessonQuizView, setLessonQuizView] = React.useState<{ lesson: Lesson; week: Week; stage: Stage } | null>(null)
+  const [lessonGuideView, setLessonGuideView] = React.useState<{ lesson: Lesson; week: Week; stage: Stage; guide: LessonGuide } | null>(null)
 
   const totalLessons = React.useMemo(
     () =>
@@ -532,9 +534,6 @@ export default function App() {
   const showQuizFeedback = quizState.lastScore != null
   const lastScore = quizState.lastScore ?? 0
   const bestScore = quizState.bestScore ?? lastScore
-  const handleResourceOpen = (resource: Resource, lesson: Lesson, week: Week, stage: Stage) => {
-    setResourceView({ resource, lesson, week, stage })
-  }
 
   return (
     <div className="min-h-screen bg-background/80 text-foreground relative">
@@ -726,16 +725,31 @@ export default function App() {
                                     <div className="flex flex-wrap gap-2">
                                       {lesson.resources?.length
                                         ? lesson.resources.map((res) => (
-                                          <button
+                                          <a
                                             key={res.url}
-                                            onClick={() => handleResourceOpen(res, lesson, week, stage)}
+                                            href={res.url}
+                                            target="_blank"
+                                            rel="noreferrer"
                                             className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-background/60 px-2 py-1 text-[11px] text-muted-foreground transition hover:border-accent/60 hover:text-foreground"
                                           >
                                             <ArrowUpRight className="h-3 w-3" />
                                             {res.title}
-                                          </button>
+                                          </a>
                                         ))
                                         : null}
+                                      {(() => {
+                                        const guide = activeRoadmapId === "technical-writer" ? technicalWriterGuides[lesson.id] : null
+                                        return guide ? (
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-7 px-2 text-xs"
+                                            onClick={() => setLessonGuideView({ lesson, week, stage, guide })}
+                                          >
+                                            主题讲解
+                                          </Button>
+                                        ) : null
+                                      })()}
                                       <Button
                                         size="sm"
                                         variant="outline"
@@ -1241,6 +1255,100 @@ export default function App() {
                 </div>
               )
             })()}
+          </div>
+        </div>
+      )}
+
+      {lessonGuideView && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-10 backdrop-blur">
+          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-6 shadow-glow overflow-y-auto max-h-[90vh]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">主题讲解</p>
+                <h3 className="text-xl font-semibold text-foreground">{lessonGuideView.lesson.title}</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {lessonGuideView.stage.title} · {lessonGuideView.week.title}
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => setLessonGuideView(null)}>
+                关闭
+              </Button>
+            </div>
+
+            <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground">
+              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">背景补充</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  {lessonGuideView.guide.background.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">重难点拆解</p>
+                <ul className="space-y-1 text-foreground/90">
+                  {lessonGuideView.guide.keyDifficulties.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">动手路径</p>
+                <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
+                  {lessonGuideView.guide.handsOnPath.map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+
+              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">自检/质询</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  {lessonGuideView.guide.selfCheck.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">扩展与衍生</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  {lessonGuideView.guide.extensions.map((item, idx) => (
+                    <li key={idx} className="flex gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {lessonGuideView.guide.sourceUrls.length > 0 && (
+                <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">参考来源</p>
+                  <ul className="space-y-1 text-muted-foreground">
+                    {lessonGuideView.guide.sourceUrls.map((url, idx) => (
+                      <li key={idx} className="flex gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                        <a href={url} target="_blank" rel="noreferrer" className="text-accent hover:underline break-all">
+                          {url}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
