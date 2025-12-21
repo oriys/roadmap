@@ -2,6 +2,44 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week6Guides: Record<string, LessonGuide> = {
+    "w6-3": {
+        lessonId: "w6-3",
+        background: [
+            "NetworkPolicy 是 Kubernetes 中控制 Pod 间网络流量的 API 对象，工作在 OSI 第 3/4 层（IP/端口级别）。它允许定义哪些 Pod 可以与哪些网络实体通信，实现网络微分割和隔离。",
+            "Pod 默认是非隔离的，允许所有入站（Ingress）和出站（Egress）流量。一旦 Pod 被任何 NetworkPolicy 选中，就变为隔离状态，只有策略明确允许的流量才能通过。",
+            "NetworkPolicy 使用选择器（Selector）定义规则：podSelector（同命名空间的 Pod）、namespaceSelector（特定命名空间的所有 Pod）、ipBlock（CIDR 范围的 IP 地址）。",
+            "NetworkPolicy 需要 CNI 插件支持才能生效。Calico、Cilium、Weave Net 等支持，但 Flannel 默认不支持。创建策略前需确认 CNI 支持。"
+        ],
+        keyDifficulties: [
+            "选择器逻辑：from/to 数组中多个选择器是 OR 关系（满足任一即可）；同一选择器内的 namespaceSelector 和 podSelector 是 AND 关系（必须同时满足）。注意 YAML 缩进影响语义。",
+            "空选择器含义：空 podSelector: {} 表示选择命名空间内所有 Pod；spec 中空 podSelector 表示策略应用于命名空间所有 Pod；空 from/to 表示不允许任何流量。",
+            "双向规则要求：连接需要两端都允许。如果 Pod A 的 Egress 允许到 Pod B，但 Pod B 的 Ingress 不允许来自 Pod A，连接仍会失败。回复流量是隐式允许的。",
+            "默认拒绝策略：创建空 ingress/egress 规则的 NetworkPolicy 可实现默认拒绝。但这可能影响 DNS 解析（53 端口），需要额外允许 DNS 流量。"
+        ],
+        handsOnPath: [
+            "在命名空间中创建默认拒绝入站的策略（podSelector: {} + policyTypes: Ingress + 空 ingress），验证 Pod 变为隔离状态，无法从外部访问。",
+            "创建策略允许特定标签的 Pod 访问数据库 Pod 的 3306 端口，使用 podSelector 和 ports 字段，从允许的和不允许的 Pod 分别测试连接。",
+            "配置命名空间级别的隔离：使用 namespaceSelector 只允许带有特定标签的命名空间访问，测试跨命名空间的网络策略效果。",
+            "创建 Egress 策略限制 Pod 的出站流量，但确保允许 DNS 解析（kube-system 命名空间的 53 端口），验证 Pod 仍能解析域名。"
+        ],
+        selfCheck: [
+            "NetworkPolicy 的 Ingress 和 Egress 分别控制什么方向的流量？Pod 默认是隔离还是非隔离的？",
+            "podSelector、namespaceSelector、ipBlock 三种选择器的作用分别是什么？",
+            "如何创建'默认拒绝所有入站流量'的策略？空 podSelector 在不同位置的含义是什么？",
+            "多个 NetworkPolicy 选中同一个 Pod 时，规则如何合并？是 AND 还是 OR 关系？",
+            "为什么 NetworkPolicy 可能导致 DNS 解析失败？如何解决？"
+        ],
+        extensions: [
+            "研究 Cilium 的 CiliumNetworkPolicy，了解 L7（HTTP/gRPC）级别的网络策略能力。",
+            "探索 Kubernetes Network Policy API 的局限性，如不支持日志、不支持优先级、不支持拒绝规则。",
+            "学习网络策略的测试工具（如 netpol-visualizer、network-policy-viewer），可视化策略效果。",
+            "研究 AdminNetworkPolicy 和 BaselineAdminNetworkPolicy（KEP-2091），了解集群级别网络策略的发展。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+            "https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/"
+        ]
+    },
     "w6-2": {
         lessonId: "w6-2",
         background: [
@@ -82,6 +120,188 @@ export const week6Guides: Record<string, LessonGuide> = {
 }
 
 export const week6Quizzes: Record<string, QuizQuestion[]> = {
+    "w6-3": [
+        {
+            id: "w6-3-q1",
+            question: "NetworkPolicy 工作在 OSI 模型的哪一层？",
+            options: [
+                "第 1-2 层（物理/数据链路层）",
+                "第 3-4 层（网络/传输层，IP/端口级别）",
+                "第 7 层（应用层）",
+                "所有层"
+            ],
+            answer: 1,
+            rationale: "NetworkPolicy 工作在 OSI 第 3/4 层，控制 IP 地址和端口级别的网络流量。L7 级别控制需要使用 Cilium 等扩展。"
+        },
+        {
+            id: "w6-3-q2",
+            question: "Pod 在没有任何 NetworkPolicy 选中时的默认行为是什么？",
+            options: [
+                "拒绝所有入站和出站流量",
+                "允许所有入站和出站流量（非隔离状态）",
+                "只允许同命名空间的流量",
+                "只允许入站流量"
+            ],
+            answer: 1,
+            rationale: "Pod 默认是非隔离的，允许所有入站和出站连接。只有被 NetworkPolicy 选中后才变为隔离状态。"
+        },
+        {
+            id: "w6-3-q3",
+            question: "NetworkPolicy 的 policyTypes 可以包含哪些值？",
+            options: [
+                "Allow 和 Deny",
+                "Ingress 和 Egress",
+                "Input 和 Output",
+                "Inbound 和 Outbound"
+            ],
+            answer: 1,
+            rationale: "policyTypes 可以是 Ingress（控制入站流量）、Egress（控制出站流量）或两者都包含。"
+        },
+        {
+            id: "w6-3-q4",
+            question: "from 数组中多个选择器的逻辑关系是什么？",
+            options: [
+                "AND 关系（必须全部满足）",
+                "OR 关系（满足任一即可）",
+                "XOR 关系（只能满足一个）",
+                "NOT 关系（排除匹配的）"
+            ],
+            answer: 1,
+            rationale: "from/to 数组中的多个选择器是 OR 关系，流量来源满足任意一个选择器即可通过。"
+        },
+        {
+            id: "w6-3-q5",
+            question: "同一个选择器内的 namespaceSelector 和 podSelector 是什么关系？",
+            options: [
+                "OR 关系",
+                "AND 关系（必须同时满足命名空间和 Pod 标签）",
+                "namespaceSelector 优先",
+                "podSelector 优先"
+            ],
+            answer: 1,
+            rationale: "当 namespaceSelector 和 podSelector 在同一个选择器内（无 - 分隔），它们是 AND 关系，必须同时满足。"
+        },
+        {
+            id: "w6-3-q6",
+            question: "空的 podSelector: {} 在 spec 中表示什么？",
+            options: [
+                "不选择任何 Pod",
+                "选择命名空间内所有 Pod",
+                "只选择没有标签的 Pod",
+                "选择所有命名空间的 Pod"
+            ],
+            answer: 1,
+            rationale: "空的 podSelector: {} 表示选择当前命名空间内的所有 Pod，常用于创建默认拒绝策略。"
+        },
+        {
+            id: "w6-3-q7",
+            question: "如何创建默认拒绝所有入站流量的策略？",
+            options: [
+                "创建 policyTypes: Ingress 但不指定 ingress 规则",
+                "设置 ingress: deny",
+                "使用 defaultDeny: true",
+                "删除所有现有的 NetworkPolicy"
+            ],
+            answer: 0,
+            rationale: "创建包含 policyTypes: Ingress 但 ingress 字段为空的策略，会拒绝所有入站流量。"
+        },
+        {
+            id: "w6-3-q8",
+            question: "ipBlock 选择器的作用是什么？",
+            options: [
+                "选择特定标签的 Pod",
+                "基于 CIDR 范围选择 IP 地址",
+                "选择特定命名空间",
+                "阻止特定 IP 地址"
+            ],
+            answer: 1,
+            rationale: "ipBlock 使用 CIDR 表示法选择 IP 地址范围，常用于允许/限制与集群外部实体的通信。"
+        },
+        {
+            id: "w6-3-q9",
+            question: "多个 NetworkPolicy 选中同一个 Pod 时，规则如何合并？",
+            options: [
+                "后创建的策略覆盖先创建的",
+                "规则相加（OR 关系），任何策略允许的流量都可通过",
+                "规则取交集（AND 关系）",
+                "随机选择一个策略生效"
+            ],
+            answer: 1,
+            rationale: "多个 NetworkPolicy 的规则是相加的（OR 关系），只要任何策略允许该流量，连接就可以建立。"
+        },
+        {
+            id: "w6-3-q10",
+            question: "NetworkPolicy 生效需要什么前提条件？",
+            options: [
+                "只需要安装 Kubernetes",
+                "需要使用支持 NetworkPolicy 的 CNI 插件（如 Calico、Cilium）",
+                "需要购买企业版 Kubernetes",
+                "需要启用 RBAC"
+            ],
+            answer: 1,
+            rationale: "NetworkPolicy 需要 CNI 插件支持才能生效。Flannel 默认不支持，需要使用 Calico、Cilium 等插件。"
+        },
+        {
+            id: "w6-3-q11",
+            question: "创建 Egress 策略限制出站流量时，为什么可能导致 DNS 解析失败？",
+            options: [
+                "DNS 不需要网络连接",
+                "Egress 策略可能阻止了到 DNS 服务器（通常是 53 端口）的流量",
+                "DNS 只使用入站规则",
+                "Egress 策略不影响系统服务"
+            ],
+            answer: 1,
+            rationale: "DNS 解析需要 Pod 能够连接到 kube-dns/CoreDNS 服务的 53 端口。严格的 Egress 策略需要显式允许 DNS 流量。"
+        },
+        {
+            id: "w6-3-q12",
+            question: "NetworkPolicy 中回复流量（response）的处理方式是什么？",
+            options: [
+                "需要单独配置规则允许",
+                "隐式允许，不需要额外配置",
+                "总是被拒绝",
+                "取决于 CNI 插件"
+            ],
+            answer: 1,
+            rationale: "NetworkPolicy 是有状态的，已允许连接的回复流量是隐式允许的，不需要额外配置规则。"
+        },
+        {
+            id: "w6-3-q13",
+            question: "Pod 能否使用 NetworkPolicy 阻止对自身的访问？",
+            options: [
+                "可以完全阻止",
+                "不能，Pod 无法阻止对自身的访问",
+                "只能阻止外部访问",
+                "只能阻止内部访问"
+            ],
+            answer: 1,
+            rationale: "Pod 无法使用 NetworkPolicy 阻止对自身的访问，来自 Pod 自身的流量始终被允许。"
+        },
+        {
+            id: "w6-3-q14",
+            question: "以下哪个 CNI 插件默认不支持 NetworkPolicy？",
+            options: [
+                "Calico",
+                "Cilium",
+                "Flannel",
+                "Weave Net"
+            ],
+            answer: 2,
+            rationale: "Flannel 是一个简单的 overlay 网络方案，默认不支持 NetworkPolicy。需要配合 Calico 等使用。"
+        },
+        {
+            id: "w6-3-q15",
+            question: "连接要成功建立，需要满足什么条件？",
+            options: [
+                "只需要源 Pod 的 Egress 策略允许",
+                "只需要目标 Pod 的 Ingress 策略允许",
+                "源 Pod 的 Egress 和目标 Pod 的 Ingress 都需要允许",
+                "不需要任何策略允许"
+            ],
+            answer: 2,
+            rationale: "连接需要两端都允许：源 Pod 的 Egress 规则允许出站，目标 Pod 的 Ingress 规则允许入站。"
+        }
+    ],
     "w6-2": [
         {
             id: "w6-2-q1",
