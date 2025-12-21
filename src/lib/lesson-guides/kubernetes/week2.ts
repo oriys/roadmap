@@ -41,6 +41,45 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://docs.docker.com/build/ci/"
         ]
     },
+    "w2-4": {
+        lessonId: "w2-4",
+        background: [
+            "OCI（Open Container Initiative）是 Linux 基金会下的开放治理项目，定义容器行业标准。三大规范：Image Spec（镜像格式）、Runtime Spec（运行时行为）、Distribution Spec（分发协议）共同构成容器互操作的基础。",
+            "OCI Image Spec 定义容器镜像的结构：manifest（描述镜像内容）、config（运行时配置）、layers（文件系统层）。采用内容寻址（content-addressable）机制，通过 SHA256 哈希引用各组件，确保完整性和可验证性。",
+            "OCI Runtime Spec 定义容器的执行标准：bundle 目录结构、config.json 配置格式、容器生命周期操作（create/start/kill/delete）。runc 是参考实现，containerd/CRI-O 调用它执行容器。",
+            "OCI Distribution Spec 定义镜像仓库的 HTTP API：push（上传镜像）、pull（拉取镜像）、content discovery（发现内容）。Docker Hub、Harbor、ghcr.io 等仓库都实现此规范，实现镜像跨平台流转。"
+        ],
+        keyDifficulties: [
+            "Image Manifest 结构：包含 mediaType（内容类型）、config（镜像配置引用）、layers（层列表）。Image Index 支持多架构镜像（如同时包含 amd64 和 arm64），客户端根据平台选择合适的 manifest。",
+            "Runtime Bundle 与 config.json：bundle 是包含 rootfs 和 config.json 的目录。config.json 定义 process（要执行的进程）、mounts（挂载点）、linux（namespace/cgroups/seccomp）等，是容器运行的完整描述。",
+            "容器生命周期状态机：creating → created → running → stopped。运行时必须支持 create（准备容器）、start（启动进程）、kill（发送信号）、delete（清理资源）操作，并通过 state 命令查询状态。",
+            "Distribution API 核心端点：GET /v2/<name>/manifests/<reference> 拉取 manifest，PUT 上传 manifest，GET/HEAD /v2/<name>/blobs/<digest> 操作 blob。支持分块上传大层，支持 cross-repository blob mounting 优化。"
+        ],
+        handsOnPath: [
+            "使用 skopeo inspect docker://nginx:latest 查看镜像的 OCI manifest 结构，观察 layers、config digest 和 mediaType 字段。",
+            "使用 docker save nginx:latest -o nginx.tar && tar -xvf nginx.tar 解包镜像，查看 manifest.json、layer tar 文件和 config json 的实际内容。",
+            "使用 runc spec 生成默认的 config.json，阅读其中的 process、mounts、linux 配置，理解 OCI Runtime Spec 的配置模型。",
+            "使用 curl 或 oras 命令直接与 OCI 兼容仓库交互（如 ghcr.io），体验 Distribution API 的 manifest 和 blob 操作。"
+        ],
+        selfCheck: [
+            "OCI 的三大规范（Image/Runtime/Distribution）各自解决什么问题？它们之间如何协作？",
+            "什么是内容寻址（content-addressable）？为什么 OCI 镜像使用 SHA256 digest 而不是文件名引用内容？",
+            "OCI Image Index 的作用是什么？如何支持多架构镜像（multi-platform images）？",
+            "config.json 中的 process、mounts、linux 字段分别定义什么？它们对应容器的哪些运行时行为？",
+            "OCI Distribution API 如何实现镜像的增量传输？cross-repository blob mounting 是什么？"
+        ],
+        extensions: [
+            "阅读 OCI Image Spec 的 descriptor 和 mediaType 设计，理解 OCI Artifacts（非容器镜像的通用制品）如何复用分发基础设施。",
+            "研究 ORAS（OCI Registry As Storage）项目，了解如何将 Helm Chart、WASM 模块等任意制品存储到 OCI 仓库。",
+            "探索 OCI Runtime Spec 的 hooks 机制（prestart/poststart/poststop），了解如何在容器生命周期中注入自定义逻辑。",
+            "对比 Docker Image Format v1/v2 和 OCI Image Format 的差异，理解向 OCI 标准迁移的历史背景。"
+        ],
+        sourceUrls: [
+            "https://github.com/opencontainers/runtime-spec",
+            "https://github.com/opencontainers/image-spec",
+            "https://github.com/opencontainers/distribution-spec"
+        ]
+    },
     "w2-3": {
         lessonId: "w2-3",
         background: [
@@ -122,6 +161,188 @@ export const week2Guides: Record<string, LessonGuide> = {
 }
 
 export const week2Quizzes: Record<string, QuizQuestion[]> = {
+    "w2-4": [
+        {
+            id: "w2-4-q1",
+            question: "OCI（Open Container Initiative）包含哪三大核心规范？",
+            options: [
+                "Build Spec、Deploy Spec、Monitor Spec",
+                "Image Spec、Runtime Spec、Distribution Spec",
+                "Container Spec、Network Spec、Storage Spec",
+                "Docker Spec、Kubernetes Spec、Cloud Spec"
+            ],
+            answer: 1,
+            rationale: "OCI 定义三大规范：Image Spec（镜像格式）、Runtime Spec（运行时行为）、Distribution Spec（分发协议），共同构成容器互操作基础。"
+        },
+        {
+            id: "w2-4-q2",
+            question: "OCI Image Spec 采用什么机制引用镜像组件？",
+            options: [
+                "文件名引用",
+                "内容寻址（content-addressable），使用 SHA256 digest",
+                "UUID 标识",
+                "序列号"
+            ],
+            answer: 1,
+            rationale: "OCI 镜像使用内容寻址机制，通过 SHA256 哈希值引用 manifest、config 和 layer，确保完整性和可验证性。"
+        },
+        {
+            id: "w2-4-q3",
+            question: "OCI Runtime Spec 中的 bundle 是什么？",
+            options: [
+                "压缩的镜像文件",
+                "包含 rootfs 和 config.json 的目录，是容器运行的完整描述",
+                "网络配置文件",
+                "日志收集配置"
+            ],
+            answer: 1,
+            rationale: "bundle 是 OCI Runtime Spec 定义的容器运行单元，包含 rootfs 目录和 config.json 配置文件。"
+        },
+        {
+            id: "w2-4-q4",
+            question: "OCI Runtime Spec 定义的容器生命周期状态包括哪些？",
+            options: [
+                "init → running → done",
+                "creating → created → running → stopped",
+                "pending → active → terminated",
+                "new → ready → executing → finished"
+            ],
+            answer: 1,
+            rationale: "OCI Runtime Spec 定义容器状态机：creating（准备中）→ created（已创建）→ running（运行中）→ stopped（已停止）。"
+        },
+        {
+            id: "w2-4-q5",
+            question: "OCI Image Index 的作用是什么？",
+            options: [
+                "索引镜像仓库中的所有镜像",
+                "支持多架构镜像，让客户端根据平台选择合适的 manifest",
+                "记录镜像的历史版本",
+                "优化镜像搜索性能"
+            ],
+            answer: 1,
+            rationale: "Image Index（也叫 manifest list）包含多个平台的 manifest 引用，支持同一个镜像标签对应多个架构（如 amd64、arm64）。"
+        },
+        {
+            id: "w2-4-q6",
+            question: "config.json 中的 linux 字段定义什么内容？",
+            options: [
+                "Linux 发行版信息",
+                "namespace、cgroups、seccomp 等 Linux 特有的隔离和安全配置",
+                "Linux 内核版本要求",
+                "Linux 文件系统类型"
+            ],
+            answer: 1,
+            rationale: "config.json 的 linux 字段定义 Linux 特有配置：namespaces（隔离）、cgroups（资源限制）、seccomp（系统调用过滤）等。"
+        },
+        {
+            id: "w2-4-q7",
+            question: "runc 与 OCI Runtime Spec 的关系是什么？",
+            options: [
+                "runc 定义了 OCI Runtime Spec",
+                "runc 是 OCI Runtime Spec 的参考实现",
+                "runc 与 OCI 无关",
+                "runc 已被 OCI 废弃"
+            ],
+            answer: 1,
+            rationale: "runc 是 OCI Runtime Spec 的参考实现，由 Docker 贡献给 OCI，containerd 和 CRI-O 都使用它执行容器。"
+        },
+        {
+            id: "w2-4-q8",
+            question: "OCI Distribution Spec 定义的三个核心操作是什么？",
+            options: [
+                "build、test、deploy",
+                "push、pull、content discovery",
+                "create、update、delete",
+                "upload、download、sync"
+            ],
+            answer: 1,
+            rationale: "OCI Distribution Spec 定义 push（上传镜像）、pull（拉取镜像）、content discovery（发现内容）三个核心操作。"
+        },
+        {
+            id: "w2-4-q9",
+            question: "如何通过 Distribution API 获取镜像 manifest？",
+            options: [
+                "POST /v2/<name>/manifests/<reference>",
+                "GET /v2/<name>/manifests/<reference>",
+                "FETCH /v2/<name>/manifests/<reference>",
+                "PULL /v2/<name>/manifests/<reference>"
+            ],
+            answer: 1,
+            rationale: "OCI Distribution API 使用标准 HTTP 方法，GET /v2/<name>/manifests/<reference> 用于拉取 manifest。"
+        },
+        {
+            id: "w2-4-q10",
+            question: "OCI Image Manifest 中的 layers 字段包含什么？",
+            options: [
+                "镜像的所有文件",
+                "文件系统层的引用列表，每层用 digest 标识",
+                "容器运行时的日志",
+                "镜像的元数据标签"
+            ],
+            answer: 1,
+            rationale: "layers 是一个描述符数组，每个元素包含层的 mediaType、size 和 digest（SHA256 哈希），用于按序组装文件系统。"
+        },
+        {
+            id: "w2-4-q11",
+            question: "什么是 cross-repository blob mounting？",
+            options: [
+                "跨仓库复制整个镜像",
+                "在同一个 registry 中，引用已存在的 blob 而无需重新上传",
+                "挂载远程仓库到本地",
+                "合并多个仓库的内容"
+            ],
+            answer: 1,
+            rationale: "cross-repository blob mounting 允许在推送镜像时引用同一 registry 中已存在的 blob，避免重复上传相同的层。"
+        },
+        {
+            id: "w2-4-q12",
+            question: "OCI Runtime Spec 中的 hooks 机制用于什么？",
+            options: [
+                "挂载文件系统",
+                "在容器生命周期的特定阶段执行自定义脚本（如 prestart、poststart、poststop）",
+                "配置网络钩子",
+                "监控容器性能"
+            ],
+            answer: 1,
+            rationale: "hooks 允许在容器生命周期的 prestart、poststart、poststop 等阶段注入自定义逻辑，如网络配置、清理等。"
+        },
+        {
+            id: "w2-4-q13",
+            question: "使用什么工具可以查看 OCI 镜像的 manifest 结构？",
+            options: [
+                "docker build",
+                "skopeo inspect",
+                "kubectl describe",
+                "runc run"
+            ],
+            answer: 1,
+            rationale: "skopeo 是专门操作容器镜像的工具，skopeo inspect 可以查看远程镜像的 manifest、层信息和配置。"
+        },
+        {
+            id: "w2-4-q14",
+            question: "OCI Artifacts 是什么概念？",
+            options: [
+                "OCI 定义的容器运行时",
+                "利用 OCI Distribution 规范存储非容器镜像的通用制品（如 Helm Chart、WASM）",
+                "OCI 的官方镜像仓库",
+                "OCI 的构建工具"
+            ],
+            answer: 1,
+            rationale: "OCI Artifacts 复用 OCI Distribution 基础设施存储任意制品，如 Helm Chart、Cosign 签名、WASM 模块等。"
+        },
+        {
+            id: "w2-4-q15",
+            question: "以下哪个仓库实现了 OCI Distribution Spec？",
+            options: [
+                "只有 Docker Hub",
+                "Docker Hub、Harbor、ghcr.io、quay.io 等主流仓库",
+                "只有私有仓库",
+                "只有云厂商的仓库"
+            ],
+            answer: 1,
+            rationale: "OCI Distribution Spec 被广泛实现，Docker Hub、Harbor、ghcr.io、quay.io、各云厂商 registry 都兼容这一规范。"
+        }
+    ],
     "w2-3": [
         {
             id: "w2-3-q1",
