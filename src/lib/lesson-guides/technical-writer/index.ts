@@ -6,6 +6,7 @@ import { week4Guides } from "./week4"
 import { week5Guides } from "./week5"
 import { week6Guides } from "./week6"
 import { week7Guides } from "./week7"
+import { week8Guides } from "./week8"
 
 // Week 1-8 guides will be imported and merged here
 export const technicalWriterGuides: Record<string, LessonGuide> = {
@@ -16,4 +17,5 @@ export const technicalWriterGuides: Record<string, LessonGuide> = {
     ...week5Guides,
     ...week6Guides,
     ...week7Guides,
+    ...week8Guides,
 }
