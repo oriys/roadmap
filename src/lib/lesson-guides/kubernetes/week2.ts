@@ -2,6 +2,45 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week2Guides: Record<string, LessonGuide> = {
+    "w2-2": {
+        lessonId: "w2-2",
+        background: [
+            "多阶段构建（Multi-Stage Build）允许在一个 Dockerfile 中使用多个 FROM 指令，每个 FROM 开始一个新的构建阶段。可以选择性地从一个阶段复制产物到另一个阶段，丢弃不需要的构建工具。",
+            "典型用法：第一阶段使用完整的编译环境（如 golang:1.24）构建二进制文件，第二阶段使用最小的运行环境（如 scratch 或 alpine）只复制最终产物，最终镜像不包含编译器、源码等。",
+            "镜像瘦身的核心原则：选择最小的基础镜像（Alpine < 6MB）、合并 RUN 指令减少层数、使用 .dockerignore 排除无关文件、清理包管理器缓存、不安装不必要的工具。",
+            "BuildKit（Docker 现代构建器）会自动并行构建独立的阶段，只构建目标依赖的阶段，相比传统构建器更高效。使用 DOCKER_BUILDKIT=1 或 Docker 23.0+ 默认启用。"
+        ],
+        keyDifficulties: [
+            "阶段引用语法：使用 AS <name> 命名阶段，COPY --from=<stage> 从指定阶段复制。也可以从外部镜像复制：COPY --from=nginx:latest /etc/nginx/nginx.conf /etc/nginx/。",
+            "层缓存优化：RUN apt-get update && apt-get install 必须写在一行，否则 update 的缓存可能过时。频繁变化的指令（如 COPY . /app）放在 Dockerfile 末尾，利用缓存加速构建。",
+            "基础镜像选择：scratch（空镜像，只能放静态编译的二进制）、alpine（musl libc，小但可能有兼容性问题）、distroless（Google 维护，无 shell）、debian-slim（glibc 兼容，略大）。",
+            "镜像安全与可复现性：使用镜像摘要（SHA256）而非标签固定版本，确保构建可复现。但固定版本意味着需要主动更新以获取安全补丁。"
+        ],
+        handsOnPath: [
+            "编写一个多阶段 Dockerfile：第一阶段用 golang 编译程序，第二阶段用 scratch 或 alpine 只复制二进制，对比最终镜像大小。",
+            "使用 docker build --target <stage> 只构建到指定阶段，观察 BuildKit 如何跳过不相关的阶段。",
+            "使用 docker history <image> 分析镜像层，找出占用空间大的层，尝试合并 RUN 指令或清理缓存来优化。",
+            "使用 dive 工具（wagoodman/dive）可视化分析镜像层内容，找出可删除的文件和优化机会。"
+        ],
+        selfCheck: [
+            "多阶段构建如何帮助减小镜像体积？为什么不把所有命令写在一个 FROM 下面？",
+            "COPY --from=build /app/main /app/main 中的 build 是什么？如何定义？可以从外部镜像复制吗？",
+            "为什么 RUN apt-get update && apt-get install -y package 要写在一行？分开写会有什么问题？",
+            "scratch、alpine、distroless、debian-slim 这几个基础镜像有什么区别？各适合什么场景？",
+            ".dockerignore 文件的作用是什么？忘记配置会有什么问题？"
+        ],
+        extensions: [
+            "研究 BuildKit 的高级特性：--mount=type=cache（缓存目录）、--mount=type=secret（安全地传入密钥）、--mount=type=ssh（SSH agent 转发）。",
+            "探索 Dockerfile 的 heredoc 语法（Docker 1.40+），在 RUN 中编写多行脚本更清晰。",
+            "学习使用 docker sbom 和 docker scout 分析镜像的软件物料清单（SBOM）和漏洞。",
+            "研究 Chainguard Images 和 Google Distroless，了解'无 shell'镜像的安全优势和使用限制。"
+        ],
+        sourceUrls: [
+            "https://docs.docker.com/build/building/multi-stage/",
+            "https://docs.docker.com/build/building/best-practices/",
+            "https://docs.docker.com/build/ci/"
+        ]
+    },
     "w2-1": {
         lessonId: "w2-1",
         background: [
@@ -44,6 +83,188 @@ export const week2Guides: Record<string, LessonGuide> = {
 }
 
 export const week2Quizzes: Record<string, QuizQuestion[]> = {
+    "w2-2": [
+        {
+            id: "w2-2-q1",
+            question: "多阶段构建（Multi-Stage Build）的核心优势是什么？",
+            options: [
+                "加快镜像拉取速度",
+                "允许选择性复制产物，丢弃构建工具，减小最终镜像体积",
+                "自动修复安全漏洞",
+                "支持多平台构建"
+            ],
+            answer: 1,
+            rationale: "多阶段构建的核心价值是将构建环境与运行环境分离，只复制需要的产物到最终镜像，不包含编译器、源码等构建工具。"
+        },
+        {
+            id: "w2-2-q2",
+            question: "在多阶段构建中，如何给一个阶段命名？",
+            options: [
+                "FROM golang:1.24 NAME build",
+                "FROM golang:1.24 AS build",
+                "FROM golang:1.24 --name=build",
+                "STAGE build FROM golang:1.24"
+            ],
+            answer: 1,
+            rationale: "使用 FROM <image> AS <name> 语法给阶段命名，后续可以用 COPY --from=<name> 引用该阶段的产物。"
+        },
+        {
+            id: "w2-2-q3",
+            question: "COPY --from=build /app/main /app/ 中的 build 可以是什么？",
+            options: [
+                "只能是前面定义的阶段名",
+                "可以是阶段名，也可以是外部镜像名（如 nginx:latest）",
+                "只能是阶段序号（如 0、1）",
+                "只能是外部镜像名"
+            ],
+            answer: 1,
+            rationale: "--from 可以引用 Dockerfile 中的命名阶段，也可以引用外部镜像，如 COPY --from=nginx:latest /etc/nginx/nginx.conf。"
+        },
+        {
+            id: "w2-2-q4",
+            question: "为什么 RUN apt-get update && apt-get install 要写在一行？",
+            options: [
+                "减少 Dockerfile 行数",
+                "防止 update 的缓存过时，确保安装最新版本的包",
+                "加快构建速度",
+                "减少内存使用"
+            ],
+            answer: 1,
+            rationale: "如果分开写，apt-get update 的层会被缓存。下次构建时如果包列表已更新，缓存的 update 层可能包含过时的包索引。"
+        },
+        {
+            id: "w2-2-q5",
+            question: "以下哪个是最小的 Docker 基础镜像？",
+            options: [
+                "alpine",
+                "debian-slim",
+                "scratch",
+                "ubuntu:minimal"
+            ],
+            answer: 2,
+            rationale: "scratch 是一个空镜像（0 字节），只能放静态编译的二进制文件。alpine 约 5MB，已经是最小的有用系统镜像。"
+        },
+        {
+            id: "w2-2-q6",
+            question: "docker build --target build 的作用是什么？",
+            options: [
+                "指定构建的目标平台",
+                "只构建到指定阶段，不构建后续阶段",
+                "指定构建的目标目录",
+                "设置构建的目标标签"
+            ],
+            answer: 1,
+            rationale: "--target 允许只构建到指定阶段，常用于调试构建过程或只需要中间产物的场景。BuildKit 会自动跳过不相关的阶段。"
+        },
+        {
+            id: "w2-2-q7",
+            question: ".dockerignore 文件的作用是什么？",
+            options: [
+                "列出不需要运行的容器",
+                "排除文件和目录，不将它们发送到构建上下文",
+                "列出已废弃的 Docker 命令",
+                "配置 Docker 忽略的错误类型"
+            ],
+            answer: 1,
+            rationale: ".dockerignore 排除不需要的文件（如 .git、node_modules、日志），减小构建上下文大小，加速构建并避免敏感信息泄露。"
+        },
+        {
+            id: "w2-2-q8",
+            question: "Alpine Linux 作为基础镜像的潜在问题是什么？",
+            options: [
+                "镜像太大",
+                "使用 musl libc 而非 glibc，可能有兼容性问题",
+                "不支持多阶段构建",
+                "没有包管理器"
+            ],
+            answer: 1,
+            rationale: "Alpine 使用 musl libc 代替 glibc，某些依赖 glibc 特性的程序可能无法正常运行或需要静态编译。"
+        },
+        {
+            id: "w2-2-q9",
+            question: "如何确保镜像构建的可复现性？",
+            options: [
+                "使用 latest 标签",
+                "使用镜像摘要（SHA256 digest）而非标签固定版本",
+                "不指定基础镜像版本",
+                "使用本地缓存"
+            ],
+            answer: 1,
+            rationale: "镜像标签（如 latest 或 1.0）可能指向不同的镜像。使用摘要（如 @sha256:abc...）可以精确固定版本，确保构建可复现。"
+        },
+        {
+            id: "w2-2-q10",
+            question: "BuildKit 相比传统 Docker 构建器的优势是什么？",
+            options: [
+                "只支持单阶段构建",
+                "并行构建独立阶段，只构建目标依赖的阶段",
+                "不支持缓存",
+                "只能在 Linux 上运行"
+            ],
+            answer: 1,
+            rationale: "BuildKit 可以并行执行独立的构建阶段，智能地只构建目标依赖的阶段，显著加速多阶段构建过程。"
+        },
+        {
+            id: "w2-2-q11",
+            question: "Google Distroless 镜像的特点是什么？",
+            options: [
+                "包含完整的 Linux 发行版",
+                "不包含 shell 和包管理器，只有应用运行时需要的最小依赖",
+                "专门用于开发环境",
+                "只支持 Java 应用"
+            ],
+            answer: 1,
+            rationale: "Distroless 镜像不包含 shell、包管理器等工具，只有应用需要的运行时依赖，减少攻击面，提高安全性。"
+        },
+        {
+            id: "w2-2-q12",
+            question: "以下哪个 Dockerfile 指令顺序更利于缓存？",
+            options: [
+                "COPY . /app → RUN npm install",
+                "COPY package*.json /app/ → RUN npm install → COPY . /app",
+                "RUN npm install → COPY . /app",
+                "顺序不影响缓存"
+            ],
+            answer: 1,
+            rationale: "先复制 package.json 并安装依赖，再复制源码。这样源码变化不会使依赖安装层失效，利用缓存加速构建。"
+        },
+        {
+            id: "w2-2-q13",
+            question: "使用 scratch 作为基础镜像时需要注意什么？",
+            options: [
+                "需要安装基本系统工具",
+                "只能放静态编译的二进制文件，没有 libc 和其他运行时依赖",
+                "必须配合 alpine 使用",
+                "只支持 Go 语言程序"
+            ],
+            answer: 1,
+            rationale: "scratch 是空镜像，没有任何文件系统内容。只有完全静态编译、不依赖动态库的二进制文件才能直接在 scratch 上运行。"
+        },
+        {
+            id: "w2-2-q14",
+            question: "如何在 RUN 指令中清理 apt 缓存以减小镜像体积？",
+            options: [
+                "单独写一个 RUN rm -rf /var/lib/apt/lists/*",
+                "在同一个 RUN 中执行：apt-get install && rm -rf /var/lib/apt/lists/*",
+                "使用 apt-get clean 作为独立层",
+                "Docker 会自动清理"
+            ],
+            answer: 1,
+            rationale: "必须在同一个 RUN 中清理缓存，否则清理操作只是在新层中标记删除，下层的缓存数据仍然存在于镜像中。"
+        },
+        {
+            id: "w2-2-q15",
+            question: "dive 工具的作用是什么？",
+            options: [
+                "潜入运行中的容器进行调试",
+                "可视化分析镜像每一层的内容，找出优化机会",
+                "测试容器的网络连通性",
+                "监控容器资源使用"
+            ],
+            answer: 1,
+            rationale: "dive 是一个镜像分析工具，可以逐层查看镜像内容，显示每层增加/删除的文件，帮助发现可优化的地方。"
+        }
+    ],
     "w2-1": [
         {
             id: "w2-1-q1",
