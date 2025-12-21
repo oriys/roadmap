@@ -117,5 +117,44 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://www.mkdocs.org/",
             "https://vitepress.dev/"
         ]
+    },
+    "tw-w2-4": {
+        lessonId: "tw-w2-4",
+        background: [
+            "CONTRIBUTING.md 是开源项目的核心文档之一——'help collaborators make meaningful, useful contributions to a project'（帮助协作者做出有意义的贡献）。",
+            "Changelog 是'a curated, chronologically ordered list of notable changes for each version'——按时间顺序记录每个版本重要变化的精选文档。",
+            "Write the Docs 社区强调建立'文档文化'：从工程团队开始推动文档意识，定期举行会议，收集多方意见，降低参与门槛。",
+            "健康的开源项目需要一套完整的社区文档：README、CONTRIBUTING、CODE_OF_CONDUCT、LICENSE、CHANGELOG、Issue/PR 模板。"
+        ],
+        keyDifficulties: [
+            "CONTRIBUTING 的粒度：太简单没有指导作用，太复杂吓跑贡献者。关键是覆盖'如何开始'、'代码/文档规范'、'提交流程'三个核心问题。",
+            "Changelog 的维护成本：手动维护容易遗漏或过时。建议维护一个'Unreleased'部分追踪待发布变更，发布时再移至新版本。",
+            "规范的执行：有规范但没人遵守等于没有。需要通过 CI 检查（linter、模板）和 PR 审查强制执行。",
+            "平衡灵活性与一致性：规范太死板会限制创造力，太灵活又导致混乱。核心规则强制执行，细节留有余地。"
+        ],
+        handsOnPath: [
+            "为你的项目创建 CONTRIBUTING.md：包含开发环境设置、代码规范、提交信息格式、PR 流程、沟通渠道。",
+            "创建 CHANGELOG.md：按 Keep a Changelog 格式，用 Added/Changed/Deprecated/Removed/Fixed/Security 分类记录变更。",
+            "配置 Issue 和 PR 模板（.github/ISSUE_TEMPLATE/、.github/PULL_REQUEST_TEMPLATE.md），引导贡献者提供必要信息。",
+            "用 commitlint 或类似工具强制提交信息格式（如 Conventional Commits：feat:/fix:/docs:）。"
+        ],
+        selfCheck: [
+            "新贡献者能否通过 CONTRIBUTING.md 独立完成第一次贡献？",
+            "你的 Changelog 是否清晰记录了每个版本的重要变化？用户能否快速了解版本差异？",
+            "你的 Issue/PR 模板是否引导贡献者提供足够的信息？",
+            "你的提交信息是否有统一的格式？能否从提交历史快速了解变更类型？",
+            "规范是否通过 CI 检查自动执行？"
+        ],
+        extensions: [
+            "学习 Conventional Commits 规范：https://www.conventionalcommits.org/ —— 结构化的提交信息格式。",
+            "了解 Semantic Versioning：https://semver.org/ —— 版本号的语义化规则。",
+            "研究优秀开源项目的 CONTRIBUTING（如 React、Vue、Kubernetes），学习它们的组织方式。",
+            "配置自动生成 Changelog 的工具（如 standard-version、semantic-release）。"
+        ],
+        sourceUrls: [
+            "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions",
+            "https://keepachangelog.com/en/1.1.0/",
+            "https://www.writethedocs.org/guide/index.html"
+        ]
     }
 }
