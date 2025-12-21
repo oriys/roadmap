@@ -4,6 +4,7 @@ import { week1Guides, week1Quizzes } from "./week1"
 import { week2Guides, week2Quizzes } from "./week2"
 import { week3Guides, week3Quizzes } from "./week3"
 import { week4Guides, week4Quizzes } from "./week4"
+import { week5Guides, week5Quizzes } from "./week5"
 
 // 课时测验接口
 export interface LessonQuiz {
@@ -17,6 +18,7 @@ export const kubernetesGuides: Record<string, LessonGuide> = {
     ...week2Guides,
     ...week3Guides,
     ...week4Guides,
+    ...week5Guides,
 }
 
 // 课时测验汇总
@@ -25,4 +27,5 @@ export const kubernetesLessonQuizzes: Record<string, QuizQuestion[]> = {
     ...week2Quizzes,
     ...week3Quizzes,
     ...week4Quizzes,
+    ...week5Quizzes,
 }
