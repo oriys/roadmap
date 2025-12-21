@@ -2,6 +2,45 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week6Guides: Record<string, LessonGuide> = {
+    "w6-4": {
+        lessonId: "w6-4",
+        background: [
+            "CNI（Container Network Interface）是容器网络的标准规范，定义了容器运行时调用网络插件的接口。Kubernetes 依赖 CNI 插件实现 Pod 网络，不同的 CNI 插件提供不同的网络模式和功能。",
+            "Kubernetes 网络模型有四个核心需求：容器到容器通信（通过 localhost）、Pod 到 Pod 通信（CNI 负责）、Pod 到 Service（kube-proxy）、外部到 Service（Ingress/LoadBalancer）。所有 Pod 需要有唯一的 IP 地址，无需 NAT 即可互相通信。",
+            "常见 CNI 插件各有特点：Calico（高性能、BGP 路由、强大的网络策略）、Cilium（eBPF 驱动、L7 策略、服务网格集成）、Flannel（简单、overlay 网络）、Weave Net（全网格、内置加密）。",
+            "CNI 选型需要考虑多个因素：性能（overlay vs 路由模式、eBPF 加速）、安全（NetworkPolicy 支持、加密能力）、可扩展性（大规模集群支持）、运维复杂度（学习曲线、调试工具）。"
+        ],
+        keyDifficulties: [
+            "Overlay vs Routing 模式：Overlay（如 VXLAN）在现有网络上封装流量，兼容性好但有封装开销；Routing 模式（如 BGP）直接路由，性能更好但需要网络设备配合。Calico 支持两种模式。",
+            "eBPF 的优势：eBPF 是 Linux 内核的高效网络处理技术。Cilium 和 Calico 都支持 eBPF，可以绕过 iptables 提高性能，实现更精细的可观测性和策略控制。",
+            "IP 地址规划：集群需要三个不重叠的 CIDR：Pod CIDR（CNI 分配）、Service CIDR（apiserver 配置）、Node CIDR。规划时需考虑与现有网络的冲突和未来扩展需求。",
+            "CNI 故障排查：常见问题包括 Pod 无法获取 IP（IPAM 问题）、Pod 间无法通信（路由/封装问题）、跨节点通信失败（overlay 配置问题）。需要熟悉 CNI 日志和网络调试工具。"
+        ],
+        handsOnPath: [
+            "使用 kubectl get pods -n kube-system 查看 CNI 组件 Pod，使用 ls /opt/cni/bin/ 查看安装的 CNI 插件二进制，使用 cat /etc/cni/net.d/* 查看网络配置。",
+            "在测试集群中对比 Flannel（简单部署）和 Calico（完整功能）的安装过程和功能差异，理解不同 CNI 的配置方式。",
+            "使用 kubectl exec 进入 Pod 执行网络诊断：ip addr（查看网络接口）、ip route（查看路由表）、ping/curl（测试连通性）。",
+            "模拟网络故障场景：删除 CNI Pod 观察新 Pod 创建失败，检查 kubelet 和 CNI 日志定位问题，恢复 CNI 后验证网络恢复。"
+        ],
+        selfCheck: [
+            "CNI 在 Kubernetes 网络架构中的作用是什么？CNI 插件被谁调用？",
+            "Kubernetes 网络模型的四个核心需求是什么？为什么 Pod 需要唯一 IP 且无需 NAT？",
+            "Calico、Cilium、Flannel 各自的特点是什么？如何根据需求选择 CNI？",
+            "Overlay 和 Routing 网络模式的区别是什么？各自的优缺点？",
+            "如何诊断 CNI 相关的网络问题？需要查看哪些日志和配置？"
+        ],
+        extensions: [
+            "研究 Cilium 的 eBPF 实现，了解如何使用 Hubble 进行网络可观测性监控。",
+            "探索 Multus CNI 实现 Pod 多网卡场景，了解网络功能虚拟化（NFV）和电信场景的需求。",
+            "学习 CNI 链（CNI Chaining），了解如何组合多个 CNI 插件实现复杂网络功能。",
+            "研究 Service Mesh（Istio、Linkerd）与 CNI 的关系，了解 sidecar 模式 vs eBPF 模式的演进。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+            "https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy",
+            "https://github.com/containernetworking/cni"
+        ]
+    },
     "w6-3": {
         lessonId: "w6-3",
         background: [
@@ -120,6 +159,188 @@ export const week6Guides: Record<string, LessonGuide> = {
 }
 
 export const week6Quizzes: Record<string, QuizQuestion[]> = {
+    "w6-4": [
+        {
+            id: "w6-4-q1",
+            question: "CNI（Container Network Interface）的作用是什么？",
+            options: [
+                "管理容器存储",
+                "定义容器网络接口标准，让 Kubernetes 调用网络插件配置 Pod 网络",
+                "管理容器镜像",
+                "调度 Pod 到节点"
+            ],
+            answer: 1,
+            rationale: "CNI 是容器网络的标准规范，定义了容器运行时调用网络插件的接口，负责 Pod 的网络配置。"
+        },
+        {
+            id: "w6-4-q2",
+            question: "Kubernetes 网络模型要求 Pod 具有什么网络特性？",
+            options: [
+                "必须通过 NAT 才能通信",
+                "每个 Pod 有唯一 IP，无需 NAT 即可与其他 Pod 通信",
+                "所有 Pod 共享同一个 IP",
+                "Pod 只能通过 Service 通信"
+            ],
+            answer: 1,
+            rationale: "Kubernetes 网络模型要求所有 Pod 有唯一 IP 地址，并且可以直接互相通信，无需网络地址转换（NAT）。"
+        },
+        {
+            id: "w6-4-q3",
+            question: "以下哪个 CNI 插件以 eBPF 技术著称？",
+            options: [
+                "Flannel",
+                "Cilium",
+                "Weave Net",
+                "bridge"
+            ],
+            answer: 1,
+            rationale: "Cilium 是 eBPF 驱动的 CNI 插件，利用 eBPF 技术实现高性能网络、L7 策略和可观测性。"
+        },
+        {
+            id: "w6-4-q4",
+            question: "Flannel CNI 的主要特点是什么？",
+            options: [
+                "功能最全面",
+                "配置简单，使用 overlay 网络（如 VXLAN）",
+                "原生支持 BGP 路由",
+                "内置服务网格功能"
+            ],
+            answer: 1,
+            rationale: "Flannel 是一个简单的 overlay 网络方案，配置简单，适合入门，但功能相对有限（如不支持 NetworkPolicy）。"
+        },
+        {
+            id: "w6-4-q5",
+            question: "Calico CNI 支持哪两种网络模式？",
+            options: [
+                "桥接和 NAT",
+                "Overlay（VXLAN）和 Routing（BGP）",
+                "只支持 Overlay",
+                "只支持 Routing"
+            ],
+            answer: 1,
+            rationale: "Calico 支持 Overlay 模式（使用 VXLAN 封装）和 Routing 模式（使用 BGP 直接路由），可根据环境选择。"
+        },
+        {
+            id: "w6-4-q6",
+            question: "Overlay 网络模式的特点是什么？",
+            options: [
+                "性能最好，无封装开销",
+                "在现有网络上封装流量，兼容性好但有封装开销",
+                "需要网络设备支持 BGP",
+                "不需要任何额外配置"
+            ],
+            answer: 1,
+            rationale: "Overlay 模式将 Pod 流量封装在外层网络包中（如 VXLAN），对底层网络要求低，但有封装/解封装的性能开销。"
+        },
+        {
+            id: "w6-4-q7",
+            question: "eBPF 在 CNI 中的主要优势是什么？",
+            options: [
+                "简化配置",
+                "绕过 iptables，提高网络性能和可观测性",
+                "减少内存使用",
+                "自动修复网络故障"
+            ],
+            answer: 1,
+            rationale: "eBPF 是 Linux 内核的高效网络处理技术，可以绕过 iptables 实现更高性能，并提供精细的网络可观测性。"
+        },
+        {
+            id: "w6-4-q8",
+            question: "Kubernetes 集群需要规划哪些不重叠的 CIDR？",
+            options: [
+                "只需要 Pod CIDR",
+                "Pod CIDR、Service CIDR 和 Node CIDR",
+                "只需要 Service CIDR",
+                "Pod CIDR 和 Node CIDR"
+            ],
+            answer: 1,
+            rationale: "集群需要三个不重叠的 IP 范围：Pod CIDR（CNI 管理）、Service CIDR（apiserver 配置）、Node CIDR。"
+        },
+        {
+            id: "w6-4-q9",
+            question: "CNI 插件的二进制文件通常存放在哪个目录？",
+            options: [
+                "/etc/kubernetes/",
+                "/opt/cni/bin/",
+                "/var/lib/kubelet/",
+                "/usr/local/bin/"
+            ],
+            answer: 1,
+            rationale: "CNI 插件的二进制文件通常存放在 /opt/cni/bin/ 目录，配置文件在 /etc/cni/net.d/ 目录。"
+        },
+        {
+            id: "w6-4-q10",
+            question: "CNI 插件由哪个组件调用？",
+            options: [
+                "kube-apiserver",
+                "容器运行时（如 containerd、CRI-O）",
+                "kube-scheduler",
+                "kube-proxy"
+            ],
+            answer: 1,
+            rationale: "CNI 插件由容器运行时（containerd、CRI-O 等）在创建和删除 Pod 时调用，用于配置网络接口。"
+        },
+        {
+            id: "w6-4-q11",
+            question: "如果 Pod 无法获取 IP 地址，最可能是什么问题？",
+            options: [
+                "kube-scheduler 故障",
+                "CNI 插件故障或 IPAM（IP 地址管理）问题",
+                "Service 配置错误",
+                "Ingress 配置错误"
+            ],
+            answer: 1,
+            rationale: "Pod IP 由 CNI 插件的 IPAM 组件分配，无法获取 IP 通常是 CNI 故障或 IP 地址池耗尽。"
+        },
+        {
+            id: "w6-4-q12",
+            question: "Multus CNI 的作用是什么？",
+            options: [
+                "替代所有其他 CNI 插件",
+                "作为元 CNI，允许 Pod 拥有多个网络接口",
+                "提供更好的性能",
+                "简化 CNI 配置"
+            ],
+            answer: 1,
+            rationale: "Multus 是一个元 CNI（meta-CNI），可以协调多个 CNI 插件，让 Pod 拥有多个网络接口。"
+        },
+        {
+            id: "w6-4-q13",
+            question: "选择 CNI 时需要考虑哪些因素？",
+            options: [
+                "只考虑安装难度",
+                "性能、安全性、可扩展性、运维复杂度",
+                "只考虑是否免费",
+                "只考虑品牌知名度"
+            ],
+            answer: 1,
+            rationale: "CNI 选型需要综合考虑：网络性能、NetworkPolicy 支持、大规模集群支持、运维复杂度、与现有环境的集成等。"
+        },
+        {
+            id: "w6-4-q14",
+            question: "BGP 路由模式相比 Overlay 模式的优势是什么？",
+            options: [
+                "配置更简单",
+                "无封装开销，网络性能更好",
+                "兼容性更好",
+                "不需要任何网络设备支持"
+            ],
+            answer: 1,
+            rationale: "BGP 路由模式直接路由 Pod 流量，无需封装/解封装，性能更好；但需要网络设备支持或配合。"
+        },
+        {
+            id: "w6-4-q15",
+            question: "如何查看节点上安装的 CNI 配置？",
+            options: [
+                "kubectl get cni",
+                "cat /etc/cni/net.d/*",
+                "kubectl describe node",
+                "docker network ls"
+            ],
+            answer: 1,
+            rationale: "CNI 配置文件存放在 /etc/cni/net.d/ 目录，可以使用 cat 或 ls 查看配置内容。"
+        }
+    ],
     "w6-3": [
         {
             id: "w6-3-q1",
