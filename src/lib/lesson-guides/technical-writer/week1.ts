@@ -78,5 +78,44 @@ export const week1Guides: Record<string, LessonGuide> = {
             "https://www.nngroup.com/articles/persona/",
             "https://diataxis.fr/foundations/"
         ]
+    },
+    "tw-w1-3": {
+        lessonId: "tw-w1-3",
+        background: [
+            "Diátaxis 是一个系统化的技术文档创作方法论，解决三个维度问题：内容（写什么）、风格（如何写）和架构（如何组织）。",
+            "结构化写作（Structured Writing）强调内容与格式分离，以话题（Topic）为单位组织信息，每个话题自包含、可重用、可独立更新。",
+            "'Every Page is Page One'原则：假设用户可能通过搜索直接降落在任何页面，因此每个页面都需具备自包含的上下文，不依赖'从头读到尾'的假设。",
+            "Google 技术写作强调：在文档开头陈述关键要点（State key points at the start），将长主题分解为适当的章节（Break long topics into appropriate sections）。"
+        ],
+        keyDifficulties: [
+            "区分四种文档类型的边界：Tutorial（学习导向，循序渐进）、How-to Guide（任务导向，解决具体问题）、Reference（信息导向，完整准确）、Explanation（理解导向，讲清为什么）。",
+            "避免'意识流'写作：不要想到哪写到哪，而是先用大纲规划结构，再填充内容。每个段落聚焦单一主题（Focus each paragraph on a single topic）。",
+            "处理'长页面 vs 多页面'的取舍：相关内容放一页便于上下文连贯，但过长的页面会让用户迷失。需要根据内容性质和用户习惯权衡。",
+            "保持结构一致性：同类文档（如所有 API 端点的参考文档）应使用相同的结构模板，降低用户的认知负担。"
+        ],
+        handsOnPath: [
+            "用 Diátaxis 四象限审视你现有的文档：列出每个页面属于哪个象限，识别缺失的象限和边界模糊的页面。",
+            "为一个功能创建完整的四类文档：一份 Tutorial（从零到一的学习路径）、一份 How-to（解决具体问题）、一份 Reference（参数/API 说明）、一份 Explanation（原理/架构解释）。",
+            "重构一份'意识流'文档：先提炼大纲，确保每个小节标题清晰表达该节内容，然后让每个段落只讲一件事。",
+            "检查你的文档是否满足'Every Page is Page One'：随机选一个页面，假设用户直接跳到这里，他们能理解上下文吗？需要补充什么背景链接？"
+        ],
+        selfCheck: [
+            "你能否清晰说明每个文档页面属于 Diátaxis 的哪个象限？",
+            "你的文档是否有一个清晰的大纲？读者能否通过标题快速定位所需内容？",
+            "每个段落是否只讲一件事？段落首句是否概括了该段的核心观点？",
+            "如果用户通过搜索直接跳到某个页面，他们能否理解上下文？",
+            "同类文档（如多个 API 端点）是否使用了一致的结构模板？"
+        ],
+        extensions: [
+            "深入学习 Diátaxis 框架：https://diataxis.fr/ —— 理解四种文档类型的边界、关系和最佳实践。",
+            "阅读 Diátaxis 的'教程 vs How-to 指南'对比：https://diataxis.fr/tutorials-how-to/ —— 这是最容易混淆的两种类型。",
+            "学习信息架构（Information Architecture）基础，理解如何设计文档的导航结构。",
+            "研究优秀的开源项目文档（如 Stripe、Twilio），分析它们如何组织不同类型的内容。"
+        ],
+        sourceUrls: [
+            "https://diataxis.fr/",
+            "https://developers.google.com/tech-writing/one",
+            "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/"
+        ]
     }
 }
