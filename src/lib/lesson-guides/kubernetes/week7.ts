@@ -80,6 +80,46 @@ export const week7Guides: Record<string, LessonGuide> = {
             "https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/"
         ]
     },
+    "w7-4": {
+        lessonId: "w7-4",
+        background: [
+            "Helm 使用 Go template 语言渲染 Kubernetes 清单文件。模板文件位于 Chart 的 templates/ 目录，使用 {{ }} 分隔符标记模板指令，支持变量插入、条件判断、循环遍历等功能。",
+            "Helm 提供多个内置对象供模板访问：Release（发布信息）、Values（配置值）、Chart（元数据）、Files（非模板文件）、Capabilities（集群能力）、Template（当前模板信息）。",
+            "模板函数来自 Go template 语言和 Sprig 库，提供 60+ 函数用于数据转换。常用函数包括 quote（引号包裹）、default（默认值）、upper/lower（大小写转换）、indent/nindent（缩进）等。",
+            "命名模板（Named Templates）允许定义可复用的模板片段，通常存放在 _helpers.tpl 文件中。使用 define 定义、template 或 include 调用。include 比 template 更推荐，因为它支持管道操作。"
+        ],
+        keyDifficulties: [
+            "作用域与点号（.）：点号表示当前作用域。在顶层 . 代表根对象，在 with 块中 . 变为指定对象，在 range 循环中 . 变为当前元素。$ 始终指向根作用域，用于在嵌套块中访问全局对象。",
+            "空白控制：模板引擎保留模板指令外的空白，可能导致 YAML 格式错误。使用 {{- 删除左侧空白，-}} 删除右侧空白。注意换行也是空白，需要谨慎处理以生成有效 YAML。",
+            "流程控制语句：if/else 用于条件判断，判断为假的值包括 false、0、空字符串、nil、空集合。with 改变当前作用域。range 遍历列表或映射，循环中 . 被设置为当前元素。",
+            "template vs include：template 直接渲染命名模板但不能链接管道；include 渲染后可继续处理（如 | indent 4）。Helm 推荐使用 include 以便更好控制输出格式，特别是处理 YAML 缩进时。"
+        ],
+        handsOnPath: [
+            "使用 helm create mychart 创建示例 Chart，查看 templates/ 目录结构，理解 deployment.yaml、service.yaml、_helpers.tpl 等文件的作用。",
+            "修改 values.yaml 添加自定义配置，在模板中使用 {{ .Values.xxx }} 引用，使用 helm template mychart 预览渲染结果，验证配置生效。",
+            "在 _helpers.tpl 中定义命名模板（如通用标签），使用 include 在 deployment.yaml 中调用并添加适当缩进，对比 template 和 include 的输出差异。",
+            "使用 helm lint mychart 检查 Chart 语法，使用 helm install --debug --dry-run 验证模板渲染，观察错误信息学习调试方法。"
+        ],
+        selfCheck: [
+            "Helm 模板的分隔符是什么？如何在模板中访问 values.yaml 中定义的值？",
+            "点号（.）在不同上下文中分别代表什么？$ 的作用是什么？",
+            "if 条件判断中，哪些值被认为是假（false）？空列表是真还是假？",
+            "如何控制模板生成的 YAML 中的空白？{{- 和 -}} 各自的作用是什么？",
+            "template 和 include 指令的区别是什么？为什么推荐使用 include？"
+        ],
+        extensions: [
+            "研究 Helm Chart 测试（helm test），了解如何编写测试 Pod 验证 Chart 部署的正确性。",
+            "探索 Chart Hooks（pre-install、post-upgrade 等），了解如何在 Release 生命周期的特定时间点执行任务。",
+            "学习 Helm Library Charts，了解如何创建只包含命名模板的共享库，供多个 Chart 引用。",
+            "研究 Helm Schema Validation（values.schema.json），了解如何定义 JSON Schema 验证用户输入的 values。"
+        ],
+        sourceUrls: [
+            "https://helm.sh/docs/chart_template_guide/getting_started/",
+            "https://helm.sh/docs/chart_template_guide/builtin_objects/",
+            "https://helm.sh/docs/chart_template_guide/functions_and_pipelines/",
+            "https://helm.sh/docs/chart_template_guide/named_templates/"
+        ]
+    },
     "w7-1": {
         lessonId: "w7-1",
         background: [
@@ -121,6 +161,188 @@ export const week7Guides: Record<string, LessonGuide> = {
 }
 
 export const week7Quizzes: Record<string, QuizQuestion[]> = {
+    "w7-4": [
+        {
+            id: "w7-4-q1",
+            question: "Helm 模板使用什么语法标记模板指令？",
+            options: [
+                "<% %>",
+                "{{ }}",
+                "[[ ]]",
+                "${ }"
+            ],
+            answer: 1,
+            rationale: "Helm 使用 Go template 语言，模板指令使用双花括号 {{ }} 作为分隔符。"
+        },
+        {
+            id: "w7-4-q2",
+            question: "如何在模板中访问 values.yaml 中定义的值？",
+            options: [
+                "{{ values.key }}",
+                "{{ .Values.key }}",
+                "{{ $values.key }}",
+                "{{ @values.key }}"
+            ],
+            answer: 1,
+            rationale: ".Values 是 Helm 内置对象，用于访问 values.yaml 中定义的配置值，如 {{ .Values.replicaCount }}。"
+        },
+        {
+            id: "w7-4-q3",
+            question: "点号（.）在 Helm 模板顶层代表什么？",
+            options: [
+                "当前文件路径",
+                "根作用域，包含所有内置对象",
+                "null 值",
+                "当前命名空间"
+            ],
+            answer: 1,
+            rationale: "在模板顶层，点号（.）代表根作用域，可以访问 .Release、.Values、.Chart 等所有内置对象。"
+        },
+        {
+            id: "w7-4-q4",
+            question: "以下哪个是 Helm 的内置对象？",
+            options: [
+                "Pod、Service、Deployment",
+                "Release、Values、Chart、Capabilities",
+                "Namespace、Node、Cluster",
+                "Config、Secret、Volume"
+            ],
+            answer: 1,
+            rationale: "Helm 内置对象包括 Release（发布信息）、Values（配置值）、Chart（元数据）、Files、Capabilities、Template。"
+        },
+        {
+            id: "w7-4-q5",
+            question: "{{- 和 -}} 的作用是什么？",
+            options: [
+                "注释模板代码",
+                "控制空白，删除左侧或右侧的空白字符",
+                "转义特殊字符",
+                "定义变量"
+            ],
+            answer: 1,
+            rationale: "{{- 删除左侧空白，-}} 删除右侧空白。用于控制生成的 YAML 格式，避免不必要的空行。"
+        },
+        {
+            id: "w7-4-q6",
+            question: "if 条件判断中，以下哪个值被认为是假（false）？",
+            options: [
+                "字符串 \"false\"",
+                "数字 1",
+                "空字符串 \"\"",
+                "非空列表"
+            ],
+            answer: 2,
+            rationale: "Helm 中判断为假的值包括：布尔 false、数字 0、空字符串、nil、空集合（空列表、空映射）。"
+        },
+        {
+            id: "w7-4-q7",
+            question: "with 语句的作用是什么？",
+            options: [
+                "定义循环",
+                "改变当前作用域（.）为指定对象",
+                "导入外部文件",
+                "定义函数"
+            ],
+            answer: 1,
+            rationale: "with 语句将当前作用域（.）改为指定对象，在块内可以直接访问该对象的属性，简化代码。"
+        },
+        {
+            id: "w7-4-q8",
+            question: "在 with 或 range 块内，如何访问根作用域？",
+            options: [
+                "使用 .root",
+                "使用 $ 符号",
+                "使用 @root",
+                "无法访问"
+            ],
+            answer: 1,
+            rationale: "$ 符号始终指向模板的根作用域，在 with 或 range 块内使用 $.Values 可以访问全局对象。"
+        },
+        {
+            id: "w7-4-q9",
+            question: "range 语句用于什么？",
+            options: [
+                "定义数值范围",
+                "遍历列表或映射",
+                "限制资源使用",
+                "设置版本范围"
+            ],
+            answer: 1,
+            rationale: "range 用于遍历集合（列表或映射），循环中 . 被设置为当前元素，可以对每个元素进行操作。"
+        },
+        {
+            id: "w7-4-q10",
+            question: "命名模板通常存放在哪个文件中？",
+            options: [
+                "values.yaml",
+                "_helpers.tpl",
+                "Chart.yaml",
+                "templates.yaml"
+            ],
+            answer: 1,
+            rationale: "以下划线开头的文件（如 _helpers.tpl）被认为不包含 Kubernetes 清单，用于存放命名模板和辅助函数。"
+        },
+        {
+            id: "w7-4-q11",
+            question: "template 和 include 指令的主要区别是什么？",
+            options: [
+                "template 更快",
+                "include 可以将输出传递给其他函数（支持管道）",
+                "template 支持更多参数",
+                "include 是 Helm 2 的语法"
+            ],
+            answer: 1,
+            rationale: "include 渲染命名模板后可以继续通过管道处理（如 | indent 4），而 template 不支持，推荐使用 include。"
+        },
+        {
+            id: "w7-4-q12",
+            question: "如何定义一个命名模板？",
+            options: [
+                "{{ template \"name\" }}",
+                "{{ define \"name\" }}...{{ end }}",
+                "{{ func \"name\" }}...{{ end }}",
+                "{{ partial \"name\" }}...{{ end }}"
+            ],
+            answer: 1,
+            rationale: "使用 {{ define \"name\" }}...{{ end }} 定义命名模板，模板名应包含 Chart 名称前缀以避免冲突。"
+        },
+        {
+            id: "w7-4-q13",
+            question: "quote 函数的作用是什么？",
+            options: [
+                "删除引号",
+                "将值用双引号包裹",
+                "转换为整数",
+                "计算字符串长度"
+            ],
+            answer: 1,
+            rationale: "quote 函数将值用双引号包裹，确保字符串在 YAML 中被正确解析，避免特殊字符导致的问题。"
+        },
+        {
+            id: "w7-4-q14",
+            question: "default 函数的作用是什么？",
+            options: [
+                "设置全局默认值",
+                "当值为空或未定义时提供默认值",
+                "重置所有配置",
+                "删除默认命名空间"
+            ],
+            answer: 1,
+            rationale: "default 函数在给定值为空时返回默认值，如 {{ .Values.name | default \"nginx\" }}，常用于处理可选配置。"
+        },
+        {
+            id: "w7-4-q15",
+            question: "如何在不实际安装的情况下预览 Helm 模板渲染结果？",
+            options: [
+                "helm show template",
+                "helm template <chart> 或 helm install --dry-run --debug",
+                "helm preview",
+                "helm render"
+            ],
+            answer: 1,
+            rationale: "helm template 渲染模板并输出结果，helm install --dry-run --debug 模拟安装过程，两者都不会实际部署。"
+        }
+    ],
     "w7-3": [
         {
             id: "w7-3-q1",
