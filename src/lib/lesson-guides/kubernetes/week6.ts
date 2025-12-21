@@ -2,6 +2,44 @@ import type { LessonGuide } from "../types"
 import type { QuizQuestion } from "@/lib/types"
 
 export const week6Guides: Record<string, LessonGuide> = {
+    "w6-2": {
+        lessonId: "w6-2",
+        background: [
+            "污点（Taint）和容忍（Toleration）是 Kubernetes 调度机制的重要组成部分，与节点亲和性相反：亲和性是吸引 Pod，污点是排斥 Pod。污点应用于节点，容忍配置在 Pod 上。",
+            "污点的 effect 决定排斥行为：NoSchedule（硬性阻止新 Pod 调度）、PreferNoSchedule（软性偏好，尽量避免）、NoExecute（阻止调度且驱逐已运行的 Pod）。",
+            "Kubernetes 在特定情况下自动添加内置污点：node.kubernetes.io/not-ready（节点未就绪）、node.kubernetes.io/unreachable（节点不可达）、node.kubernetes.io/memory-pressure（内存压力）等。",
+            "容忍通过 operator 匹配污点：Equal（键、值、effect 完全匹配）、Exists（只检查键是否存在）。tolerationSeconds 指定 NoExecute 污点下 Pod 的驱逐延迟时间。"
+        ],
+        keyDifficulties: [
+            "effect 类型选择：NoSchedule 用于严格隔离（如专用节点）；PreferNoSchedule 用于弹性调度（资源紧张时仍可调度）；NoExecute 用于主动驱逐场景（如节点维护、故障处理）。",
+            "多污点处理逻辑：节点可以有多个污点，Pod 必须容忍所有污点才能调度。处理顺序：移除 Pod 能容忍的污点 → 检查剩余污点 → 任一 NoSchedule 剩余则拒绝调度。",
+            "内置污点与自动驱逐：节点故障时 node-controller 自动添加 not-ready/unreachable 污点（默认 tolerationSeconds=300）。DaemonSet Pod 默认容忍这些污点，不会被驱逐。",
+            "tolerationSeconds 的作用：仅对 NoExecute 生效，指定 Pod 在被驱逐前可以继续运行的秒数。不设置则永久容忍，设置为 0 则立即驱逐。"
+        ],
+        handsOnPath: [
+            "给节点添加污点（kubectl taint nodes <name> dedicated=gpu:NoSchedule），尝试调度普通 Pod 观察 Pending 状态，然后创建带 toleration 的 Pod 验证成功调度。",
+            "测试 NoExecute 效果：在已运行 Pod 的节点上添加 NoExecute 污点，观察 Pod 被驱逐；添加带 tolerationSeconds 的容忍，验证延迟驱逐行为。",
+            "使用 Exists operator：配置空 key 的 toleration（operator: Exists）创建'超级容忍'Pod，验证它可以调度到任何有污点的节点。",
+            "实验内置污点：使用 kubectl cordon <node> 标记节点不可调度，查看自动添加的 node.kubernetes.io/unschedulable 污点，观察现有 Pod 和新 Pod 的行为差异。"
+        ],
+        selfCheck: [
+            "污点的三种 effect（NoSchedule、PreferNoSchedule、NoExecute）各自的行为是什么？",
+            "容忍的 Equal 和 Exists 操作符有什么区别？如何配置'容忍所有污点'？",
+            "tolerationSeconds 参数的作用是什么？它只对哪种 effect 生效？",
+            "Kubernetes 在什么情况下会自动给节点添加污点？DaemonSet 如何处理这些污点？",
+            "污点与节点亲和性的配合使用场景是什么？如何实现'专用节点'？"
+        ],
+        extensions: [
+            "研究 DaemonSet 的默认容忍配置，了解系统守护进程如何保证在所有节点上运行。",
+            "探索基于污点的节点维护流程：drain vs cordon vs taint，了解优雅驱逐和服务迁移策略。",
+            "学习 PodDisruptionBudget（PDB）与污点驱逐的交互，了解如何保护应用可用性。",
+            "研究集群自动伸缩器（Cluster Autoscaler）如何使用污点标记即将下线的节点。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+            "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/"
+        ]
+    },
     "w6-1": {
         lessonId: "w6-1",
         background: [
@@ -44,6 +82,188 @@ export const week6Guides: Record<string, LessonGuide> = {
 }
 
 export const week6Quizzes: Record<string, QuizQuestion[]> = {
+    "w6-2": [
+        {
+            id: "w6-2-q1",
+            question: "污点（Taint）和容忍（Toleration）的关系是什么？",
+            options: [
+                "两者功能相同",
+                "污点应用于节点排斥 Pod，容忍配置在 Pod 上允许调度到有污点的节点",
+                "污点应用于 Pod，容忍配置在节点上",
+                "污点和容忍都用于吸引 Pod"
+            ],
+            answer: 1,
+            rationale: "污点（Taint）施加在节点上，用于排斥 Pod；容忍（Toleration）配置在 Pod 上，允许 Pod 被调度到有相应污点的节点。"
+        },
+        {
+            id: "w6-2-q2",
+            question: "NoSchedule effect 的行为是什么？",
+            options: [
+                "驱逐节点上所有现有 Pod",
+                "阻止新 Pod 调度到该节点，但不影响已运行的 Pod",
+                "尽量避免调度，但不强制",
+                "立即删除节点"
+            ],
+            answer: 1,
+            rationale: "NoSchedule 是硬性约束，新的 Pod 如果不能容忍该污点则无法调度到此节点，但已经在节点上运行的 Pod 不受影响。"
+        },
+        {
+            id: "w6-2-q3",
+            question: "NoExecute effect 与 NoSchedule 的主要区别是什么？",
+            options: [
+                "NoExecute 只影响新 Pod",
+                "NoExecute 不仅阻止新 Pod 调度，还会驱逐不能容忍该污点的已运行 Pod",
+                "NoExecute 是软约束",
+                "两者完全相同"
+            ],
+            answer: 1,
+            rationale: "NoExecute 会驱逐节点上不能容忍该污点的 Pod，而 NoSchedule 只影响新 Pod 的调度，不驱逐已运行的 Pod。"
+        },
+        {
+            id: "w6-2-q4",
+            question: "PreferNoSchedule effect 的行为是什么？",
+            options: [
+                "严格禁止调度",
+                "尽量避免调度，但如果没有其他选择仍可调度",
+                "立即驱逐 Pod",
+                "完全忽略该污点"
+            ],
+            answer: 1,
+            rationale: "PreferNoSchedule 是软约束，调度器会尽量避免将 Pod 调度到该节点，但在资源紧张时仍然可以调度。"
+        },
+        {
+            id: "w6-2-q5",
+            question: "如何给节点添加污点？",
+            options: [
+                "kubectl label node <name> key=value:NoSchedule",
+                "kubectl taint nodes <name> key=value:NoSchedule",
+                "kubectl annotate node <name> key=value:NoSchedule",
+                "kubectl mark node <name> key=value:NoSchedule"
+            ],
+            answer: 1,
+            rationale: "使用 kubectl taint nodes <node-name> key=value:effect 命令给节点添加污点。"
+        },
+        {
+            id: "w6-2-q6",
+            question: "如何移除节点上的污点？",
+            options: [
+                "kubectl taint nodes <name> key=value:NoSchedule --remove",
+                "kubectl taint nodes <name> key=value:NoSchedule-",
+                "kubectl untaint nodes <name> key=value:NoSchedule",
+                "kubectl delete taint <name> key=value:NoSchedule"
+            ],
+            answer: 1,
+            rationale: "在污点末尾加上减号（-）即可移除污点：kubectl taint nodes <name> key=value:effect-"
+        },
+        {
+            id: "w6-2-q7",
+            question: "容忍的 operator: Equal 和 operator: Exists 有什么区别？",
+            options: [
+                "Equal 检查键是否存在，Exists 检查值是否匹配",
+                "Equal 要求键和值都匹配，Exists 只检查键是否存在（忽略值）",
+                "两者完全相同",
+                "Equal 用于 NoSchedule，Exists 用于 NoExecute"
+            ],
+            answer: 1,
+            rationale: "Equal 要求 key 和 value 都完全匹配；Exists 只检查 key 是否存在，不关心 value 是什么。"
+        },
+        {
+            id: "w6-2-q8",
+            question: "tolerationSeconds 参数的作用是什么？",
+            options: [
+                "设置容忍的超时时间，对所有 effect 生效",
+                "仅对 NoExecute 生效，指定 Pod 被驱逐前可以继续运行的秒数",
+                "设置 Pod 的启动超时",
+                "设置调度的等待时间"
+            ],
+            answer: 1,
+            rationale: "tolerationSeconds 仅对 NoExecute effect 生效，指定 Pod 在被添加该污点后可以继续运行多少秒后再被驱逐。"
+        },
+        {
+            id: "w6-2-q9",
+            question: "如何配置一个容忍所有污点的 Pod？",
+            options: [
+                "不配置任何 toleration",
+                "配置 key 为空且 operator: Exists 的 toleration",
+                "配置 effect: All",
+                "设置 spec.tolerateAll: true"
+            ],
+            answer: 1,
+            rationale: "配置空 key 且 operator: Exists 的 toleration 会匹配所有污点的键，再配合空 effect 可以容忍所有污点。"
+        },
+        {
+            id: "w6-2-q10",
+            question: "Kubernetes 在什么情况下会自动给节点添加 node.kubernetes.io/not-ready 污点？",
+            options: [
+                "节点 CPU 使用率过高",
+                "节点的 Ready 条件为 False（节点未就绪）",
+                "节点上没有运行任何 Pod",
+                "节点被手动标记为不可调度"
+            ],
+            answer: 1,
+            rationale: "当节点的 Ready 条件变为 False（如 kubelet 停止响应）时，node-controller 会自动添加 not-ready 污点。"
+        },
+        {
+            id: "w6-2-q11",
+            question: "DaemonSet Pod 对内置污点的默认行为是什么？",
+            options: [
+                "不容忍任何内置污点",
+                "默认容忍 node.kubernetes.io/not-ready 等内置污点，不会被驱逐",
+                "只容忍 NoSchedule 污点",
+                "需要手动配置容忍"
+            ],
+            answer: 1,
+            rationale: "DaemonSet Pod 默认配置了对 not-ready、unreachable 等内置污点的容忍，确保系统守护进程在节点故障时不会被驱逐。"
+        },
+        {
+            id: "w6-2-q12",
+            question: "一个节点有多个污点时，Pod 需要满足什么条件才能调度？",
+            options: [
+                "容忍任意一个污点即可",
+                "必须容忍所有污点",
+                "只需要容忍 NoSchedule 类型的污点",
+                "不需要容忍任何污点"
+            ],
+            answer: 1,
+            rationale: "节点的所有污点都会被检查，Pod 必须容忍全部污点才能被调度到该节点。"
+        },
+        {
+            id: "w6-2-q13",
+            question: "kubectl cordon <node> 命令会添加什么污点？",
+            options: [
+                "node.kubernetes.io/not-ready:NoSchedule",
+                "node.kubernetes.io/unschedulable:NoSchedule",
+                "node.kubernetes.io/disk-pressure:NoSchedule",
+                "node.kubernetes.io/memory-pressure:NoSchedule"
+            ],
+            answer: 1,
+            rationale: "kubectl cordon 将节点标记为不可调度，会添加 node.kubernetes.io/unschedulable:NoSchedule 污点。"
+        },
+        {
+            id: "w6-2-q14",
+            question: "污点与节点亲和性如何配合实现'专用节点'？",
+            options: [
+                "只使用污点就足够了",
+                "污点阻止普通 Pod 调度，节点亲和性确保特定 Pod 只调度到该节点",
+                "只使用节点亲和性就足够了",
+                "两者不能一起使用"
+            ],
+            answer: 1,
+            rationale: "专用节点需要双向控制：污点阻止普通 Pod 调度到专用节点，节点亲和性（或 nodeSelector）确保特定 Pod 只调度到专用节点。"
+        },
+        {
+            id: "w6-2-q15",
+            question: "当手动指定 spec.nodeName 时，污点检查的行为是什么？",
+            options: [
+                "仍然检查污点",
+                "跳过污点检查，直接调度到指定节点",
+                "只检查 NoExecute 污点",
+                "报错，不允许指定 nodeName"
+            ],
+            answer: 1,
+            rationale: "手动指定 spec.nodeName 会绕过调度器，跳过污点检查直接将 Pod 绑定到指定节点。"
+        }
+    ],
     "w6-1": [
         {
             id: "w6-1-q1",
