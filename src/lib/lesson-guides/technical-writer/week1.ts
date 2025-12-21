@@ -117,5 +117,44 @@ export const week1Guides: Record<string, LessonGuide> = {
             "https://developers.google.com/tech-writing/one",
             "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/"
         ]
+    },
+    "tw-w1-4": {
+        lessonId: "tw-w1-4",
+        background: [
+            "清晰性（Clarity）是技术文档的第一原则。Google Style Guide 强调：'清晰性和一致性优先于严格遵循规则'（Clarity and consistency over strict adherence）。",
+            "风格指南（Style Guide）通过维持一致的风格、声音和语调来减少认知负担（Cognitive Load），提升内容的权威性和可信度。",
+            "Microsoft 现代声调三要素：Warm and relaxed（温暖放松）、Crisp and clear（简洁清晰）、Ready to lend a hand（乐于助人）。",
+            "主流风格指南参考等级：项目特定指南 > Google/Microsoft Style Guide > Chicago Manual of Style > Merriam-Webster（拼写）。"
+        ],
+        keyDifficulties: [
+            "主动语态 vs 被动语态：主动语态更直接、更清晰（'Click the button' 优于 'The button should be clicked'），但被动语态在强调结果或隐藏主体时仍有用。",
+            "术语一致性：同一个概念在整个文档中必须使用相同的术语。建立术语表（Glossary）并严格执行，避免同义词混用造成混淆。",
+            "避免行话陷阱：对内部团队显而易见的术语对外部读者可能完全陌生。需要定义首次出现的专业术语，或提供链接到术语表。",
+            "打破'文字墙'（Wall of Text）：大段落让读者望而却步。使用标题、列表、表格、代码块等视觉元素提高可扫描性（Scannability）。"
+        ],
+        handsOnPath: [
+            "选择一份你写过的文档，用以下清单检查：是否使用主动语态？是否使用第二人称（you）？是否使用现在时？术语是否一致？",
+            "为你的项目创建一份最小风格指南：列出 5-10 个最常用术语的统一写法、大小写规则、缩写规范。",
+            "重写一段'文字墙'：将一个超过 5 行的段落拆分成更短的段落、列表或表格，确保每个段落只讲一件事。",
+            "做一次'行话审计'：找一个不熟悉你项目的人阅读文档，让他们标记所有不理解的术语，然后补充解释或链接。"
+        ],
+        selfCheck: [
+            "你的文档是否主要使用主动语态？被动语态的使用是否有明确的理由？",
+            "你是否有一份术语表或风格指南？团队成员是否知道并遵循它？",
+            "首次出现的专业术语是否有定义或链接？",
+            "你的文档是否有'文字墙'？能否用列表、表格或更短的段落替代？",
+            "如果一个完全不了解你项目的人阅读文档，他们能理解吗？"
+        ],
+        extensions: [
+            "阅读完整的 Google Developer Style Guide：https://developers.google.com/style —— 作为技术写作的权威参考。",
+            "阅读 Microsoft Writing Style Guide：https://learn.microsoft.com/en-us/style-guide/ —— 学习'现代声调'的写作方式。",
+            "学习无偏见写作（Bias-free Communication）：检查你的文档是否使用了包容性语言。",
+            "为你的团队创建一份项目级风格指南，从常见决策开始，逐步完善。"
+        ],
+        sourceUrls: [
+            "https://developers.google.com/style",
+            "https://learn.microsoft.com/en-us/style-guide/welcome/",
+            "https://www.writethedocs.org/guide/writing/style-guides/"
+        ]
     }
 }
