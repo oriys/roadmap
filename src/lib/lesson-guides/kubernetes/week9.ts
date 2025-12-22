@@ -1,6 +1,170 @@
-import type { QuizQuestion } from "../types";
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
-export const week9: Record<string, QuizQuestion[]> = {
+export const week9Guides: Record<string, LessonGuide> = {
+    "w9-1": {
+        lessonId: "w9-1",
+        background: [
+            "CI/CD（持续集成/持续交付）是现代软件开发的核心实践，通过自动化构建、测试和部署流程，显著提升交付效率和代码质量。持续集成强调频繁将代码合并到主干并自动验证，持续交付则确保代码随时可部署到生产环境。",
+            "不可变制品（Immutable Artifact）是云原生 CI/CD 的核心原则：一旦构建完成，制品（如 Docker 镜像）不应被修改。同一个制品从测试环境一直部署到生产环境，确保环境一致性和可追溯性。制品通过唯一标签（如 Git commit SHA）标识，避免使用 latest 等可变标签。",
+            "版本策略是 CI/CD 的关键组成部分。语义化版本（SemVer）使用 MAJOR.MINOR.PATCH 格式传达变更含义；Git 标签与镜像标签对应便于追溯；分支保护策略确保主干代码质量，PR 合并前必须通过 CI 检查。",
+            "审计与合规在企业级 CI/CD 中至关重要。流水线日志记录每次构建的触发者、时间、变更内容；制品签名（如 Cosign）证明来源可信；SLSA（Supply-chain Levels for Software Artifacts）框架定义了供应链安全等级，帮助组织评估和提升安全成熟度。"
+        ],
+        keyDifficulties: [
+            "理解 CI 与 CD 的边界：CI 结束于可部署制品的产出，CD 负责将制品部署到目标环境。持续交付（Continuous Delivery）需要人工审批后部署，持续部署（Continuous Deployment）则完全自动化。选择哪种模式取决于组织的风险承受能力和合规要求。",
+            "不可变制品 vs 配置分离：制品本身不可变，但运行时配置（环境变量、ConfigMap、Secret）应该与制品分离。这样同一个镜像可以在 dev/staging/prod 环境运行，只需注入不同配置。理解这一点对 Kubernetes 部署至关重要。",
+            "流水线触发策略设计：不同事件应触发不同流程。Push 到 feature 分支运行单元测试；PR 合并到 main 构建并推送镜像；Tag 创建触发 release 流程。合理设计触发条件可以平衡 CI 资源消耗和反馈速度。",
+            "安全左移（Shift Left Security）：将安全扫描、依赖检查、静态分析等放在流水线早期阶段，尽早发现问题。研究表明，问题发现越早，修复成本越低。但过多的检查会拖慢反馈速度，需要权衡。"
+        ],
+        handsOnPath: [
+            "在 GitHub 创建示例仓库，添加简单的 Node.js 或 Go 应用。创建 .github/workflows/ci.yml 文件，配置在 push 和 pull_request 事件时运行单元测试。观察 Actions 面板的运行结果和日志。",
+            "扩展工作流：添加构建 Docker 镜像的步骤。使用 docker/build-push-action，配置使用 ${{ github.sha }} 作为镜像标签。设置只在 main 分支 push 时才推送镜像到 registry。",
+            "配置分支保护规则：在仓库 Settings → Branches 中，要求 PR 合并前必须通过 CI 检查。尝试提交一个会导致测试失败的 PR，观察保护规则的效果。",
+            "添加缓存优化：使用 actions/cache 缓存依赖（node_modules 或 Go modules）。对比添加缓存前后的构建时间，理解缓存对 CI 效率的影响。",
+            "查看构建历史和审计日志：在 Actions 面板查看历史运行记录，了解谁触发了构建、使用了什么 commit、耗时多久。这些信息对于问题排查和合规审计都很重要。"
+        ],
+        selfCheck: [
+            "持续集成（CI）和持续交付（CD）各自解决什么问题？持续交付和持续部署有什么区别？",
+            "什么是不可变制品？为什么要避免使用 latest 标签？如何保证同一个制品在不同环境运行时使用不同配置？",
+            "流水线应该在哪些事件时触发？如何避免不必要的 CI 运行消耗资源？",
+            "安全左移是什么意思？在 CI 流水线中通常包含哪些安全相关的检查？",
+            "如何通过 CI/CD 日志和制品元数据实现审计追溯？SLSA 框架的目的是什么？"
+        ],
+        extensions: [
+            "研究 GitHub Actions 的可重用工作流（Reusable Workflows）和组合操作（Composite Actions），了解如何在多个仓库间共享 CI 逻辑，减少重复代码。",
+            "探索 OIDC（OpenID Connect）与云厂商的集成，了解如何在 GitHub Actions 中无需存储长期凭证即可安全访问 AWS/GCP/Azure 资源。",
+            "学习 SLSA 框架的不同等级要求，了解如何提升项目的供应链安全成熟度。研究 SBOM（Software Bill of Materials）的生成和使用。",
+            "对比 GitHub Actions、GitLab CI、Jenkins、CircleCI 等不同 CI/CD 工具的特点和适用场景，了解它们在语法、运行模式、生态系统方面的差异。"
+        ],
+        sourceUrls: [
+            "https://docs.github.com/en/actions/about-github-actions/understanding-github-actions",
+            "https://www.jenkins.io/doc/book/pipeline/",
+            "https://slsa.dev/"
+        ]
+    },
+    "w9-2": {
+        lessonId: "w9-2",
+        background: [
+            "容器镜像是云原生应用交付的标准单元。CI 流水线的核心任务之一是将源代码构建成可部署的容器镜像，并推送到镜像仓库（Registry）。常见的 Registry 包括 Docker Hub、GitHub Container Registry（ghcr.io）、AWS ECR、Google GCR 等。",
+            "Docker 镜像构建在 CI 中通常使用 BuildKit（docker buildx）以获得更好的性能和功能。BuildKit 支持并行构建、高效缓存、多架构镜像（linux/amd64、linux/arm64）等特性，是现代容器构建的推荐方案。",
+            "镜像标签（Tag）策略直接影响部署的可追溯性和回滚能力。推荐使用 Git commit SHA 作为唯一标签，语义化版本（v1.2.3）作为发布标签。docker/metadata-action 可以根据 Git 事件自动生成合适的标签。",
+            "镜像推送后会返回 Digest（sha256 哈希），这是镜像内容的唯一标识。即使标签被覆盖，Digest 也不会变化。在 Kubernetes 部署清单中使用 image:tag@sha256:digest 可以确保部署精确的镜像版本。"
+        ],
+        keyDifficulties: [
+            "Registry 认证方式：Docker Hub 使用用户名/密码或 Access Token；GitHub Packages 使用 GITHUB_TOKEN 或 PAT；云厂商 Registry（ECR/GCR）通常使用 OIDC 或服务账号密钥。在 CI 中需要正确配置 Secrets 并使用 docker/login-action 登录。",
+            "构建缓存策略：BuildKit 支持多种缓存模式。inline 缓存将缓存元数据写入镜像层；registry 缓存将缓存存储在远程仓库；GitHub Actions 的 gha 缓存使用 Actions Cache。合理配置缓存可以将构建时间从几分钟缩短到几十秒。",
+            "多架构镜像构建：使用 docker buildx 可以在 x86 机器上构建 ARM 镜像（通过 QEMU 模拟）。配置 platforms: linux/amd64,linux/arm64 后，推送到 Registry 的是一个 manifest list，拉取时会自动选择匹配的架构。",
+            "镜像体积优化：使用多阶段构建（multi-stage build）分离编译环境和运行环境；选择精简的基础镜像（alpine、distroless）；合理组织 Dockerfile 指令顺序以利用缓存；使用 .dockerignore 排除不必要的文件。"
+        ],
+        handsOnPath: [
+            "在 GitHub 仓库中创建 .github/workflows/docker-publish.yml，配置使用 docker/login-action 登录到 GitHub Container Registry（ghcr.io）。使用 GITHUB_TOKEN 无需额外配置 Secrets。",
+            "使用 docker/metadata-action 配置标签策略：push 到 main 分支时标签为 sha-<commit>；创建 tag 时生成语义化版本标签（v1.0.0）和 latest。观察生成的标签列表。",
+            "配置 docker/build-push-action 构建并推送镜像。添加 cache-from 和 cache-to 配置使用 GitHub Actions 缓存。对比有无缓存时的构建时间差异。",
+            "尝试构建多架构镜像：设置 platforms: linux/amd64,linux/arm64。推送后在 Registry 查看 manifest，确认包含两个架构的镜像。注意多架构构建会显著增加构建时间。",
+            "在工作流输出中使用 ${{ steps.push.outputs.digest }} 获取镜像 Digest。可以将 Digest 写入文件或传递给后续的部署步骤，确保部署的是刚构建的精确版本。"
+        ],
+        selfCheck: [
+            "CI 中登录不同 Registry（Docker Hub、ghcr.io、ECR）分别需要什么凭证？如何安全地存储这些凭证？",
+            "docker/metadata-action 如何根据 Git 事件（push、tag、PR）自动生成不同的镜像标签？",
+            "BuildKit 的缓存模式有哪些？在 GitHub Actions 中如何配置高效的构建缓存？",
+            "什么是镜像 Digest？它与 Tag 有什么区别？为什么在部署时建议使用 Digest？",
+            "多架构镜像是如何工作的？为什么需要构建多架构镜像？"
+        ],
+        extensions: [
+            "研究 GitHub Actions 的 artifact attestation 功能，了解如何为镜像生成 SLSA 证明，增强供应链安全。",
+            "探索 Kaniko、Buildah 等不需要 Docker daemon 的镜像构建工具，了解它们在 Kubernetes 环境中的应用场景。",
+            "学习 Harbor、Nexus 等企业级私有 Registry 的功能，如镜像扫描、复制策略、访问控制等。",
+            "研究 OCI 镜像规范和 Distribution 规范，理解镜像存储和分发的底层原理。"
+        ],
+        sourceUrls: [
+            "https://docs.github.com/en/actions/publishing-packages/publishing-docker-images",
+            "https://www.jenkins.io/doc/book/pipeline/docker/",
+            "https://docs.docker.com/build/building/multi-stage/"
+        ]
+    },
+    "w9-3": {
+        lessonId: "w9-3",
+        background: [
+            "安全扫描是 CI/CD 流水线的关键环节，通过自动化检测漏洞、错误配置和敏感信息泄露，在代码进入生产环境前阻断安全风险。这种「安全左移」（Shift Left Security）的做法可以显著降低修复成本。",
+            "Trivy 是目前最流行的开源安全扫描工具之一，支持扫描容器镜像、文件系统、Git 仓库、Kubernetes 集群等多种目标。它可以检测三类安全问题：已知漏洞（CVE）、IaC 配置错误（Terraform/K8s YAML）、敏感信息泄露（API 密钥、密码）。",
+            "质量门禁（Quality Gate）是流水线中的检查点，只有满足预设条件的构建才能继续后续阶段。常见的质量门禁包括：测试覆盖率阈值、静态代码分析通过、无高危漏洞、代码评审通过等。质量门禁确保交付物满足最低质量标准。",
+            "SARIF（Static Analysis Results Interchange Format）是安全扫描结果的标准格式，GitHub Code Scanning、GitLab、Azure DevOps 等平台都支持上传 SARIF 报告，在 PR 中直接显示安全问题，方便开发者修复。"
+        ],
+        keyDifficulties: [
+            "漏洞严重级别与处理策略：CVE 按 CVSS 评分分为 CRITICAL/HIGH/MEDIUM/LOW。通常 CI 配置为发现 HIGH 或 CRITICAL 漏洞时失败（exit-code: 1）。但有时基础镜像的漏洞暂无补丁，可以使用 ignore-unfixed 参数跳过，或使用 .trivyignore 文件临时豁免特定 CVE。",
+            "误报处理与豁免机制：安全扫描可能产生误报，或者某些漏洞在特定上下文下不可利用。需要建立豁免审批流程，记录豁免原因和有效期。VEX（Vulnerability Exploitability eXchange）是新兴的标准，用于声明漏洞的可利用性状态。",
+            "扫描性能优化：漏洞数据库更新和镜像分析可能耗时较长。使用缓存（cache: true）可以避免每次构建都下载数据库；扫描时机选择很重要，可以在构建后、推送前扫描，避免污染 Registry。",
+            "多工具协同：Trivy 擅长漏洞扫描，但完整的安全流水线还需要 SAST（静态代码分析如 SonarQube、CodeQL）、DAST（动态测试如 OWASP ZAP）、依赖检查（Dependabot、Snyk）等工具配合使用。"
+        ],
+        handsOnPath: [
+            "在本地安装 Trivy，使用 trivy image <your-image> 扫描一个公共镜像（如 nginx:latest），观察输出的漏洞列表、严重级别和修复建议。",
+            "在 GitHub Actions 工作流中添加 aquasecurity/trivy-action。配置 severity: 'CRITICAL,HIGH' 和 exit-code: '1'，当发现高危漏洞时让 CI 失败。推送代码观察效果。",
+            "配置 SARIF 输出格式，使用 github/codeql-action/upload-sarif@v4 将扫描结果上传到 GitHub Code Scanning。在仓库的 Security 标签页查看漏洞报告。",
+            "创建 .trivyignore 文件豁免某个特定的 CVE（出于学习目的）。观察豁免生效后扫描结果的变化。讨论在生产环境中如何管理豁免。",
+            "扩展流水线添加额外的质量门禁：使用 actions/setup-node 运行 npm audit，使用静态分析工具（如 ESLint 的安全规则）检查代码。体验多层防护的效果。"
+        ],
+        selfCheck: [
+            "Trivy 可以扫描哪些类型的目标？它能检测哪三类安全问题？",
+            "如何配置 Trivy 在发现高危漏洞时让 CI 流水线失败？severity 和 exit-code 参数的作用是什么？",
+            "什么是 SARIF 格式？它如何与 GitHub Code Scanning 集成？",
+            "如何处理暂时无法修复的漏洞？.trivyignore 文件和 VEX 分别是什么？",
+            "完整的安全流水线除了漏洞扫描外还需要哪些工具？SAST 和 DAST 的区别是什么？"
+        ],
+        extensions: [
+            "研究 Trivy 的 IaC 扫描功能，了解如何检测 Terraform、Kubernetes YAML 中的配置错误，如过于宽松的权限、未加密的存储等。",
+            "探索 Trivy Operator，了解如何在 Kubernetes 集群中持续扫描运行中的工作负载，而不仅仅是 CI 阶段的镜像扫描。",
+            "学习 SBOM（Software Bill of Materials）的生成和使用，了解如何使用 Trivy 生成 SPDX 或 CycloneDX 格式的 SBOM。",
+            "研究 GitHub Advanced Security 的 Dependabot 和 Code Scanning 功能，了解如何建立完整的软件供应链安全体系。"
+        ],
+        sourceUrls: [
+            "https://trivy.dev/docs/latest/",
+            "https://github.com/aquasecurity/trivy-action",
+            "https://docs.github.com/en/code-security/code-scanning"
+        ]
+    },
+    "w9-4": {
+        lessonId: "w9-4",
+        background: [
+            "GitOps 是一种以 Git 为唯一真相源（Single Source of Truth）的运维模式。所有配置（Kubernetes 清单、Helm Chart、Kustomize）都存储在 Git 仓库中，集群状态通过自动化工具与 Git 中的声明保持同步。",
+            "GitOps 的核心原则包括：声明式配置（所有配置以声明式方式定义）、版本控制（所有变更通过 Git 提交，有完整的审计追踪）、自动同步（控制器持续对比期望状态和实际状态，自动调和差异）、安全性（操作人员不直接访问集群，而是通过 Git 进行变更）。",
+            "Push 模式 vs Pull 模式：传统 CI/CD 采用 Push 模式，由流水线直接向集群推送变更；GitOps 采用 Pull 模式，由集群内的控制器（ArgoCD/Flux）主动从 Git 拉取配置并应用。Pull 模式不需要暴露集群 API，安全性更高。",
+            "ArgoCD 和 Flux 是两个主流的 GitOps 工具。ArgoCD 提供丰富的 Web UI 和可视化能力；Flux 采用模块化设计，更加轻量灵活。两者都支持多集群、多租户、渐进式交付等企业级功能。"
+        ],
+        keyDifficulties: [
+            "Git 仓库结构设计：应用配置（App Repo）与基础设施配置（Infra Repo）是否分离？多环境（dev/staging/prod）如何组织？Kustomize overlays 和 Helm values 各有什么适用场景？这些设计决策影响团队协作和变更管理。",
+            "漂移检测与自愈：GitOps 控制器会检测集群状态与 Git 定义的差异（漂移），可以配置自动修复（Self-Heal）或仅告警。理解什么情况下应该自动修复，什么情况下需要人工介入，是运维的关键。",
+            "Secret 管理挑战：敏感信息不应明文存储在 Git 中。常见方案包括：Sealed Secrets（加密后存储在 Git）、External Secrets Operator（从 Vault/AWS Secrets Manager 同步）、SOPS（加密文件）。每种方案有不同的复杂度和安全权衡。",
+            "CI 与 CD 的边界：CI 负责构建和测试，产出镜像；CD 负责部署。在 GitOps 模式下，CI 完成后应该更新 Git 仓库中的镜像标签，由 GitOps 工具完成部署。避免 CI 直接 kubectl apply 破坏 GitOps 模式。"
+        ],
+        handsOnPath: [
+            "在本地 Kubernetes 集群（minikube/kind）中安装 ArgoCD。访问 Web UI，熟悉界面布局，了解 Application、Project、Repository 等核心概念。",
+            "创建第一个 ArgoCD Application，指向一个包含 Kubernetes 清单的 Git 仓库。观察 ArgoCD 如何同步配置到集群，理解 Sync Status 和 Health Status 的含义。",
+            "模拟漂移场景：使用 kubectl 直接修改集群中的资源（如 Deployment 的副本数）。观察 ArgoCD 如何检测到 OutOfSync 状态，手动触发 Sync 恢复期望状态。",
+            "配置自动同步（Auto-Sync）和自愈（Self-Heal）：在 Application 中启用 automated.prune 和 automated.selfHeal，观察 ArgoCD 如何自动处理漂移和删除多余资源。",
+            "设置 Webhook：配置 Git 仓库的 Webhook 指向 ArgoCD，实现 push 后立即触发同步，减少轮询延迟。"
+        ],
+        selfCheck: [
+            "GitOps 的核心原则是什么？为什么说 Git 是唯一真相源？",
+            "Push 模式和 Pull 模式有什么区别？为什么 GitOps 推荐 Pull 模式？",
+            "ArgoCD 和 Flux 各有什么特点？它们分别适用于什么场景？",
+            "如何在 GitOps 模式下管理 Secret？Sealed Secrets 和 External Secrets Operator 有什么区别？",
+            "CI 完成后应该如何触发 GitOps 部署？为什么不应该在 CI 中直接 kubectl apply？"
+        ],
+        extensions: [
+            "研究 ArgoCD 的 App of Apps 模式，了解如何用一个 Application 管理多个 Application，实现集群引导和多应用编排。",
+            "探索 Flux 的 Image Automation 功能，了解如何自动检测新镜像并更新 Git 仓库中的镜像标签。",
+            "学习渐进式交付（Progressive Delivery）工具如 Argo Rollouts 和 Flagger，了解如何实现金丝雀发布和蓝绿部署。",
+            "研究 GitOps 在多集群场景下的应用，了解 ArgoCD ApplicationSet 和 Flux 的多集群管理能力。"
+        ],
+        sourceUrls: [
+            "https://argo-cd.readthedocs.io/en/stable/",
+            "https://fluxcd.io/flux/",
+            "https://opengitops.dev/"
+        ]
+    }
+}
+
+export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-1": [
         {
             id: "w9-1-q1",
@@ -729,4 +893,4 @@ export const week9: Record<string, QuizQuestion[]> = {
             rationale: "App of Apps 是 ArgoCD 的高级模式，通过一个父 Application 定义和管理多个子 Application。"
         }
     ]
-};
+}
