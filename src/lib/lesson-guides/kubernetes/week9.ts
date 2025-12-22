@@ -90,36 +90,37 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-3": {
         lessonId: "w9-3",
         background: [
-            "安全扫描是 CI/CD 流水线的关键环节，通过自动化检测漏洞、错误配置和敏感信息泄露，在代码进入生产环境前阻断安全风险。这种「安全左移」（Shift Left Security）的做法可以显著降低修复成本。",
-            "Trivy 是目前最流行的开源安全扫描工具之一，支持扫描容器镜像、文件系统、Git 仓库、Kubernetes 集群等多种目标。它可以检测三类安全问题：已知漏洞（CVE）、IaC 配置错误（Terraform/K8s YAML）、敏感信息泄露（API 密钥、密码）。",
-            "质量门禁（Quality Gate）是流水线中的检查点，只有满足预设条件的构建才能继续后续阶段。常见的质量门禁包括：测试覆盖率阈值、静态代码分析通过、无高危漏洞、代码评审通过等。质量门禁确保交付物满足最低质量标准。",
-            "SARIF（Static Analysis Results Interchange Format）是安全扫描结果的标准格式，GitHub Code Scanning、GitLab、Azure DevOps 等平台都支持上传 SARIF 报告，在 PR 中直接显示安全问题，方便开发者修复。"
+            "【来源: Trivy 文档】Trivy 是一个全面的安全扫描工具，支持多种扫描目标：容器镜像、文件系统、代码仓库、IaC 配置（Terraform/Kubernetes/Docker/CloudFormation/Helm）、虚拟机镜像、Kubernetes 集群和 SBOM。它能检测三类安全问题：依赖和包中的漏洞（CVE）、IaC 配置错误、代码中暴露的敏感信息（Secrets）。",
+            "【来源: Trivy GitHub Action】Trivy Action 的核心输入参数包括：scan-type（扫描模式：image/fs/repo）、image-ref（镜像引用）、format（输出格式：table/json/sarif/template）、severity（漏洞级别过滤：CRITICAL/HIGH/MEDIUM/LOW）、exit-code（发现漏洞时的退出码）、ignore-unfixed（忽略无补丁的漏洞）。配置优先级：Action 参数 → 环境变量 → 配置文件 → 默认值。",
+            "【来源: GitHub Code Scanning 文档】Code Scanning 是 GitHub 的安全工具，用于识别代码中的安全漏洞和错误。SARIF（Static Analysis Results Interchange Format）是上传扫描结果的标准格式。扫描结果会在 PR 中显示，允许开发者在合并前修复安全问题。公共仓库免费可用，组织仓库需要 GitHub Code Security 许可。",
+            "【来源: Trivy 文档】Trivy 覆盖广泛的操作系统（Alpine、Debian、Ubuntu、RHEL 等）和编程语言（Go、Java、Python、Node.js、Ruby 等）。支持单机模式和客户端/服务器架构，可集成到 CI/CD 流水线、Kubernetes 环境和企业级部署中。",
+            "【来源: Trivy GitHub Action】Action 内置漏洞数据库缓存功能，在扫描前自动恢复缓存，避免重复下载导致的速率限制问题。SARIF 格式输出可与 GitHub 的 upload-sarif action 配合，将扫描结果显示在仓库的 Security 标签页。"
         ],
         keyDifficulties: [
-            "漏洞严重级别与处理策略：CVE 按 CVSS 评分分为 CRITICAL/HIGH/MEDIUM/LOW。通常 CI 配置为发现 HIGH 或 CRITICAL 漏洞时失败（exit-code: 1）。但有时基础镜像的漏洞暂无补丁，可以使用 ignore-unfixed 参数跳过，或使用 .trivyignore 文件临时豁免特定 CVE。",
-            "误报处理与豁免机制：安全扫描可能产生误报，或者某些漏洞在特定上下文下不可利用。需要建立豁免审批流程，记录豁免原因和有效期。VEX（Vulnerability Exploitability eXchange）是新兴的标准，用于声明漏洞的可利用性状态。",
-            "扫描性能优化：漏洞数据库更新和镜像分析可能耗时较长。使用缓存（cache: true）可以避免每次构建都下载数据库；扫描时机选择很重要，可以在构建后、推送前扫描，避免污染 Registry。",
-            "多工具协同：Trivy 擅长漏洞扫描，但完整的安全流水线还需要 SAST（静态代码分析如 SonarQube、CodeQL）、DAST（动态测试如 OWASP ZAP）、依赖检查（Dependabot、Snyk）等工具配合使用。"
+            "【漏洞严重级别处理】配置 severity: 'CRITICAL,HIGH' 过滤关注的漏洞级别，exit-code: '1' 让发现高危漏洞时 CI 失败。但基础镜像中的漏洞可能暂无补丁，此时可使用 ignore-unfixed: true 跳过，或通过 .trivyignore 文件临时豁免特定 CVE。",
+            "【配置优先级理解】Trivy 的配置优先级为：Action 参数 → 环境变量 → 配置文件 → 默认值。复杂场景可使用 trivy-config 参数指向 YAML 配置文件，实现更精细的扫描控制。",
+            "【SARIF 集成流程】分两步完成：1) Trivy 扫描时设置 format: 'sarif' 输出到文件；2) 使用 github/codeql-action/upload-sarif 上传结果到 GitHub Code Scanning。扫描结果会在 PR 中显示，支持按严重级别排序和过滤。",
+            "【多扫描类型选择】image 扫描容器镜像中的漏洞；fs 扫描本地文件系统；repo 扫描代码仓库；config 扫描 IaC 配置错误。根据 CI 阶段选择合适的扫描类型：构建后扫描镜像，提交前扫描代码和配置。"
         ],
         handsOnPath: [
-            "在本地安装 Trivy，使用 trivy image <your-image> 扫描一个公共镜像（如 nginx:latest），观察输出的漏洞列表、严重级别和修复建议。",
-            "在 GitHub Actions 工作流中添加 aquasecurity/trivy-action。配置 severity: 'CRITICAL,HIGH' 和 exit-code: '1'，当发现高危漏洞时让 CI 失败。推送代码观察效果。",
-            "配置 SARIF 输出格式，使用 github/codeql-action/upload-sarif@v4 将扫描结果上传到 GitHub Code Scanning。在仓库的 Security 标签页查看漏洞报告。",
-            "创建 .trivyignore 文件豁免某个特定的 CVE（出于学习目的）。观察豁免生效后扫描结果的变化。讨论在生产环境中如何管理豁免。",
-            "扩展流水线添加额外的质量门禁：使用 actions/setup-node 运行 npm audit，使用静态分析工具（如 ESLint 的安全规则）检查代码。体验多层防护的效果。"
+            "在本地安装 Trivy：使用包管理器（brew/apt）或下载二进制文件。运行 `trivy image nginx:latest` 扫描公共镜像，观察输出的漏洞列表、严重级别（CRITICAL/HIGH/MEDIUM/LOW）和修复建议。",
+            "在 GitHub Actions 工作流中添加 Trivy 扫描：使用 aquasecurity/trivy-action，配置 scan-type: 'image'、severity: 'CRITICAL,HIGH'、exit-code: '1'。推送带有已知漏洞的镜像，观察 CI 失败效果。",
+            "配置 SARIF 输出并上传到 GitHub Code Scanning：设置 format: 'sarif'、output: 'trivy-results.sarif'，添加 github/codeql-action/upload-sarif@v3 步骤。在仓库 Security → Code scanning alerts 查看结果。",
+            "创建 .trivyignore 文件临时豁免特定 CVE（用于学习目的）：添加一行 CVE ID（如 CVE-2021-44228）。观察豁免生效后扫描结果的变化，记录豁免原因和计划修复时间。",
+            "扩展扫描类型：使用 scan-type: 'fs' 扫描代码仓库中的依赖漏洞，使用 scan-type: 'config' 扫描 Kubernetes YAML 或 Terraform 文件中的配置错误。"
         ],
         selfCheck: [
             "Trivy 可以扫描哪些类型的目标？它能检测哪三类安全问题？",
-            "如何配置 Trivy 在发现高危漏洞时让 CI 流水线失败？severity 和 exit-code 参数的作用是什么？",
-            "什么是 SARIF 格式？它如何与 GitHub Code Scanning 集成？",
-            "如何处理暂时无法修复的漏洞？.trivyignore 文件和 VEX 分别是什么？",
-            "完整的安全流水线除了漏洞扫描外还需要哪些工具？SAST 和 DAST 的区别是什么？"
+            "如何配置 Trivy Action 在发现高危漏洞时让 CI 失败？severity 和 exit-code 参数的作用是什么？",
+            "Trivy 的配置优先级是什么？如何使用配置文件进行复杂扫描设置？",
+            "什么是 SARIF 格式？如何将 Trivy 扫描结果上传到 GitHub Code Scanning？",
+            "如何处理暂时无法修复的漏洞？.trivyignore 文件和 ignore-unfixed 参数的区别是什么？"
         ],
         extensions: [
-            "研究 Trivy 的 IaC 扫描功能，了解如何检测 Terraform、Kubernetes YAML 中的配置错误，如过于宽松的权限、未加密的存储等。",
-            "探索 Trivy Operator，了解如何在 Kubernetes 集群中持续扫描运行中的工作负载，而不仅仅是 CI 阶段的镜像扫描。",
-            "学习 SBOM（Software Bill of Materials）的生成和使用，了解如何使用 Trivy 生成 SPDX 或 CycloneDX 格式的 SBOM。",
-            "研究 GitHub Advanced Security 的 Dependabot 和 Code Scanning 功能，了解如何建立完整的软件供应链安全体系。"
+            "研究 Trivy 的 IaC 扫描功能：了解如何检测 Terraform、Kubernetes YAML 中的配置错误，如过于宽松的权限、未加密的存储。",
+            "探索 Trivy Operator：了解如何在 Kubernetes 集群中部署 Trivy，持续扫描运行中的工作负载而非仅 CI 阶段的镜像扫描。",
+            "学习 SBOM（Software Bill of Materials）生成：使用 Trivy 生成 SPDX 或 CycloneDX 格式的 SBOM，满足供应链透明度要求。",
+            "研究 GitHub Advanced Security：了解 Dependabot、CodeQL 和 Secret Scanning 如何与 Trivy 配合构建完整的安全体系。"
         ],
         sourceUrls: [
             "https://trivy.dev/docs/latest/",
@@ -537,183 +538,183 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-3": [
         {
             id: "w9-3-q1",
-            question: "Trivy 可以扫描哪些类型的目标？",
+            question: "根据 Trivy 文档，Trivy 能检测哪三类安全问题？",
             options: [
-                "容器镜像、文件系统、Git 仓库、Kubernetes 集群等",
-                "仅容器镜像",
-                "仅源代码",
-                "仅 Kubernetes Pod"
+                "依赖漏洞（CVE）、IaC 配置错误、敏感信息泄露（Secrets）",
+                "只能检测漏洞",
+                "只能检测配置错误",
+                "只能检测密码泄露"
             ],
             answer: 0,
-            rationale: "Trivy 是全面的安全扫描工具，支持多种扫描目标类型。"
+            rationale: "Trivy 文档说明它能检测三类安全问题：「漏洞」、「配置错误」和「Secrets」。"
         },
         {
             id: "w9-3-q2",
-            question: "Trivy 可以检测哪三类安全问题？",
+            question: "根据 Trivy GitHub Action 文档，scan-type 参数支持哪些扫描模式？",
             options: [
-                "已知漏洞（CVE）、IaC 配置错误、敏感信息泄露",
-                "只能检测漏洞",
-                "只能检测密码泄露",
-                "只能检测配置错误"
+                "image（镜像）、fs（文件系统）、repo（代码仓库）",
+                "只支持 image 模式",
+                "只支持 fs 模式",
+                "只支持 config 模式"
             ],
             answer: 0,
-            rationale: "Trivy 提供全面的安全检测，涵盖漏洞、配置和敏感信息三个维度。"
+            rationale: "Trivy Action 文档指出 scan-type 定义扫描模式，包括 image、fs、repo 等。"
         },
         {
             id: "w9-3-q3",
-            question: "如何配置 Trivy 在发现高危漏洞时让 CI 失败？",
+            question: "根据 Trivy GitHub Action 文档，配置的优先级顺序是什么？",
             options: [
-                "设置 severity: 'CRITICAL,HIGH' 和 exit-code: '1'",
-                "设置 fail-on-vuln: true",
-                "不需要配置，默认就会失败",
-                "只能通过命令行参数配置"
+                "Action 参数 → 环境变量 → 配置文件 → 默认值",
+                "配置文件 → 环境变量 → Action 参数",
+                "默认值 → 配置文件 → 环境变量",
+                "所有配置优先级相同"
             ],
             answer: 0,
-            rationale: "severity 指定关注的漏洞级别，exit-code: 1 让发现问题时返回非零退出码导致 CI 失败。"
+            rationale: "Trivy Action 文档明确说明配置优先级为：「GitHub Action flag → Environment variable → Config file → Default」。"
         },
         {
             id: "w9-3-q4",
-            question: "什么是 SARIF 格式？",
+            question: "根据 GitHub Code Scanning 文档，SARIF 是什么？",
             options: [
-                "静态分析结果交换格式，用于在 CI 平台中展示安全扫描结果",
+                "Static Analysis Results Interchange Format，上传扫描结果的标准格式",
                 "一种镜像格式",
                 "一种容器运行时",
                 "一种编程语言"
             ],
             answer: 0,
-            rationale: "SARIF（Static Analysis Results Interchange Format）是安全工具结果的标准格式，GitHub 等平台支持上传和展示。"
+            rationale: "GitHub 文档说明 SARIF（Static Analysis Results Interchange Format）是上传 Code Scanning 结果的标准格式。"
         },
         {
             id: "w9-3-q5",
-            question: "如何将 Trivy 扫描结果上传到 GitHub Code Scanning？",
+            question: "根据 Trivy GitHub Action 文档，如何让 CI 在发现高危漏洞时失败？",
             options: [
-                "配置 format: 'sarif' 输出，然后使用 github/codeql-action/upload-sarif 上传",
-                "Trivy 自动上传",
-                "使用 git push 上传",
-                "需要手动复制粘贴"
+                "设置 severity: 'CRITICAL,HIGH' 和 exit-code: '1'",
+                "设置 fail-on-vuln: true",
+                "不需要配置，默认就会失败",
+                "只能手动检查结果"
             ],
             answer: 0,
-            rationale: "需要两个步骤：Trivy 生成 SARIF 格式报告，然后使用 CodeQL action 上传到 GitHub。"
+            rationale: "Trivy Action 文档说明 severity 过滤漏洞级别，exit-code 控制「whether the action fails on detected vulnerabilities」。"
         },
         {
             id: "w9-3-q6",
-            question: ".trivyignore 文件的作用是什么？",
+            question: "根据 Trivy 文档，Trivy 支持扫描哪些类型的目标？",
             options: [
-                "临时豁免特定的 CVE，避免已知但暂时无法修复的漏洞阻塞 CI",
-                "忽略所有漏洞",
-                "配置扫描目标",
-                "存储 Trivy 凭证"
+                "容器镜像、文件系统、代码仓库、IaC 配置、K8s 集群、SBOM",
+                "只支持容器镜像",
+                "只支持代码仓库",
+                "只支持 Kubernetes 集群"
             ],
             answer: 0,
-            rationale: ".trivyignore 允许在有合理理由时跳过特定漏洞，但应谨慎使用并记录豁免原因。"
+            rationale: "Trivy 文档列出支持的扫描目标包括：Container Images、Filesystems、Code Repositories、IaC、Kubernetes Clusters、SBOMs。"
         },
         {
             id: "w9-3-q7",
-            question: "为什么要在 CI 中启用 Trivy 的数据库缓存？",
+            question: "根据 Trivy GitHub Action 文档，ignore-unfixed 参数的作用是什么？",
             options: [
-                "避免每次构建都下载漏洞数据库，加快扫描速度",
-                "增加扫描准确性",
-                "减少漏洞数量",
-                "隐藏扫描结果"
-            ],
-            answer: 0,
-            rationale: "缓存漏洞数据库可以显著减少扫描时间，特别是在频繁构建的场景下。"
-        },
-        {
-            id: "w9-3-q8",
-            question: "什么是质量门禁（Quality Gate）？",
-            options: [
-                "流水线中的检查点，只有满足预设条件的构建才能继续后续阶段",
-                "一种防火墙",
-                "一种镜像仓库",
-                "一种测试框架"
-            ],
-            answer: 0,
-            rationale: "质量门禁确保交付物满足最低质量标准，如无高危漏洞、测试通过等。"
-        },
-        {
-            id: "w9-3-q9",
-            question: "SAST 和 DAST 的区别是什么？",
-            options: [
-                "SAST 是静态代码分析（不运行代码），DAST 是动态测试（运行中的应用）",
-                "两者完全相同",
-                "SAST 更快，DAST 更慢",
-                "SAST 只检测漏洞，DAST 只检测配置"
-            ],
-            answer: 0,
-            rationale: "SAST 分析源代码或字节码，DAST 通过网络请求测试运行中的应用，各有优缺点。"
-        },
-        {
-            id: "w9-3-q10",
-            question: "ignore-unfixed 参数的作用是？",
-            options: [
-                "跳过目前没有可用补丁的漏洞",
+                "排除目前没有可用补丁的漏洞",
                 "忽略所有漏洞",
                 "只显示未修复的漏洞",
                 "自动修复漏洞"
             ],
             answer: 0,
-            rationale: "某些漏洞可能存在于基础镜像中且暂无补丁，ignore-unfixed 可以过滤这类无法立即解决的问题。"
+            rationale: "Trivy Action 文档说明 ignore-unfixed「when enabled, excludes unpatched vulnerabilities from results」。"
+        },
+        {
+            id: "w9-3-q8",
+            question: "根据 GitHub Code Scanning 文档，Code Scanning 对什么类型的仓库免费可用？",
+            options: [
+                "公共仓库（Public repositories）",
+                "所有仓库都免费",
+                "只有企业版才能使用",
+                "需要额外付费订阅"
+            ],
+            answer: 0,
+            rationale: "GitHub 文档说明 Code Scanning「available for public repositories on GitHub.com」，组织仓库需要 GitHub Code Security。"
+        },
+        {
+            id: "w9-3-q9",
+            question: "根据 Trivy GitHub Action 文档，如何将扫描结果上传到 GitHub Code Scanning？",
+            options: [
+                "设置 format: 'sarif' 输出文件，使用 upload-sarif action 上传",
+                "Trivy 自动上传",
+                "使用 git push 上传",
+                "需要手动复制粘贴"
+            ],
+            answer: 0,
+            rationale: "Trivy Action 文档说明 SARIF 格式输出可与 upload-sarif action 配合，显示在 Security 标签页。"
+        },
+        {
+            id: "w9-3-q10",
+            question: "根据 Trivy 文档，Trivy 覆盖哪些操作系统和编程语言？",
+            options: [
+                "多种 Linux 发行版（Alpine、Debian、Ubuntu 等）和编程语言（Go、Java、Python 等）",
+                "只支持 Ubuntu",
+                "只支持 Python",
+                "只支持 Windows"
+            ],
+            answer: 0,
+            rationale: "Trivy 文档说明覆盖「多种 Linux 发行版」和「编程语言（Go、Java、Python、Node.js、Ruby 等）」。"
         },
         {
             id: "w9-3-q11",
-            question: "CVE 按 CVSS 评分分为哪些严重级别？",
+            question: "根据 Trivy GitHub Action 文档，format 参数支持哪些输出格式？",
             options: [
-                "CRITICAL、HIGH、MEDIUM、LOW",
-                "只有 HIGH 和 LOW",
-                "1-10 数字级别",
-                "A、B、C、D 等级"
+                "table、json、sarif、template",
+                "只支持 table",
+                "只支持 json",
+                "只支持 xml"
             ],
             answer: 0,
-            rationale: "CVSS 评分对应不同的严重级别，帮助确定漏洞处理的优先级。"
+            rationale: "Trivy Action 文档列出 format 支持的格式包括 table、json、sarif、template。"
         },
         {
             id: "w9-3-q12",
-            question: "VEX（Vulnerability Exploitability eXchange）的作用是？",
+            question: "根据 Trivy GitHub Action 文档，Action 如何处理漏洞数据库？",
             options: [
-                "声明漏洞的可利用性状态，帮助判断漏洞在特定上下文下是否真正有风险",
-                "自动修复漏洞",
-                "生成漏洞报告",
-                "扫描容器镜像"
+                "内置缓存功能，扫描前自动恢复缓存避免速率限制",
+                "每次都重新下载完整数据库",
+                "不需要数据库",
+                "需要手动上传数据库"
             ],
             answer: 0,
-            rationale: "VEX 是新兴标准，允许供应商声明某个漏洞在其产品中不可利用，减少误报噪音。"
+            rationale: "Trivy Action 文档说明 Action「includes built-in caching for vulnerability databases and automatically restores them before scanning」。"
         },
         {
             id: "w9-3-q13",
-            question: "Trivy 扫描应该在流水线的哪个阶段执行？",
+            question: "根据 GitHub Code Scanning 文档，扫描结果在哪里显示？",
             options: [
-                "构建后、推送到生产 Registry 前",
-                "只在部署后",
-                "只在本地开发时",
-                "只在年度审计时"
+                "在 PR 中显示，允许开发者在合并前修复安全问题",
+                "只在邮件中通知",
+                "只在日志中显示",
+                "不会显示任何结果"
             ],
             answer: 0,
-            rationale: "在推送前扫描可以阻止有漏洞的镜像进入 Registry，是安全左移的体现。"
+            rationale: "GitHub 文档说明「Code scanning alerts appear in pull requests」，允许在合并前处理问题。"
         },
         {
             id: "w9-3-q14",
-            question: "完整的安全流水线除了漏洞扫描还需要哪些工具？",
+            question: "根据 Trivy GitHub Action 文档，如何使用配置文件进行高级设置？",
             options: [
-                "SAST（静态代码分析）、DAST（动态测试）、依赖检查、Secret 扫描等",
-                "只需要 Trivy 就够了",
-                "只需要防火墙",
-                "只需要杀毒软件"
+                "使用 trivy-config 参数指向 YAML 配置文件",
+                "只能通过 Action 参数配置",
+                "不支持配置文件",
+                "只能通过环境变量配置"
             ],
             answer: 0,
-            rationale: "多层安全防护（Defense in Depth）需要多种工具配合，覆盖不同类型的安全风险。"
+            rationale: "Trivy Action 文档说明支持 trivy-config 参数指向「YAML configuration file containing detailed options」。"
         },
         {
             id: "w9-3-q15",
-            question: "Trivy 的 IaC 扫描功能可以检测什么问题？",
+            question: "根据 Trivy 文档，Trivy 支持哪些运行模式？",
             options: [
-                "Terraform、Kubernetes YAML 中的配置错误，如过于宽松的权限",
-                "只能检测漏洞",
-                "只能检测代码语法错误",
-                "只能检测性能问题"
+                "单机模式和客户端/服务器架构",
+                "只支持单机模式",
+                "只支持云端模式",
+                "只支持命令行模式"
             ],
             answer: 0,
-            rationale: "Trivy 使用内置的 Rego 规则检测 IaC 配置中的安全隐患和最佳实践违规。"
+            rationale: "Trivy 文档说明支持「standalone and client/server architectures」两种运行模式。"
         }
     ],
     "w9-4": [
