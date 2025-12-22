@@ -90,35 +90,41 @@ export const week6Guides: Record<string, LessonGuide> = {
     "tw-w6-3": {
         lessonId: "tw-w6-3",
         background: [
-            "三个关键概念：本地化（Localization）——适应特定国家的货币、度量衡；翻译（Translation）——语言转换并考虑本地化；国际化（Internationalization）——设计文档以最小化翻译工作。",
-            "为翻译写作的核心原则：'句子越短，翻译越容易'——英语长句翻译成其他语言后往往更长，影响理解和成本。",
-            "一致性至关重要：'使用完全相同的术语，包括相同的大小写'——术语变化会混淆译者，增加成本，尤其影响机器翻译工具。",
-            "避免文化特定内容：避免习语、俚语、幽默、季节引用和文化特定的参考。使用多样化的示例名字，提供上下文而非假设读者知识。"
+            "【W3C 国际化使命】确保'网络技术为所有人服务，无论其语言、文字或文化'——这是网络设计的核心原则。",
+            "【翻译与本地化区别】Microsoft：翻译（Translation）是语言转换，通常可自动化；本地化（Localization）是适应特定地区的语言、文化和政治期望，由熟悉当地的人完成。",
+            "【句子长度影响】Google：'Keep sentences brief'——英语长句翻译成其他语言后往往更长，增加翻译成本和理解难度。",
+            "【术语一致性成本】Google：'Inconsistency in terminology and phrasing can greatly increase translation costs'——术语不一致会大幅增加翻译成本。",
+            "【简单词汇原则】Google：'Choose simple, precise words'——使用'start'而非'commence'，使用主动语态，直接称呼读者为'you'。"
         ],
         keyDifficulties: [
-            "写'可翻译'的原文：使用简单词汇（'start' 而非 'commence'）、主动语态、直接称呼读者（'you'）、包含关系代词（'that'、'which'）。",
-            "术语表的翻译管理：技术术语是否翻译？如何确保所有语言使用一致的术语翻译？需要建立多语言术语表。",
-            "占位符的处理：URL、代码、变量名通常不翻译，需要在源文件中明确标记。",
-            "翻译流程的集成：如何与翻译服务/团队协作？何时冻结原文？如何处理原文更新后的同步？"
+            "【关系代词保留】Google：包含'that'、'which'等关系代词以防止歧义——翻译时需要明确的句法结构。",
+            "【避免俚语习语】Google：避免 colloquialisms（'ballpark figure'）、idioms、slang 和 humor——这些文化特定表达难以翻译。",
+            "【避免方向性词汇】Google：避免'above'或'below'等方向性术语——不同语言的阅读方向和布局可能不同。",
+            "【首次定义缩写】Google：'Define all abbreviations on first use'——确保非母语读者和翻译者能理解术语。",
+            "【文化敏感性】Microsoft：'Be curious about target audiences'——订阅当地新闻、访问当地网站、关注目标地区的动态。"
         ],
         handsOnPath: [
-            "审查你的文档的可翻译性：检查句子长度、是否使用简单词汇、是否避免习语和文化引用。",
-            "为术语表添加翻译列：标记每个术语是否翻译、翻译版本是什么。",
-            "标记不翻译的内容：代码块、变量名、URL、品牌名——确保翻译流程能识别。",
-            "模拟翻译流程：将一页文档用 Google Translate 翻译成另一种语言，观察哪些内容翻译得不好，反向优化原文。"
+            "检查句子长度：将过长的句子（超过 25 个词）拆分为多个短句，便于翻译。",
+            "替换复杂词汇：用简单词（'start'、'end'、'use'）替换正式词（'commence'、'terminate'、'utilize'）。",
+            "消除习语和俚语：搜索并替换'ballpark'、'back burner'、'out of the box'等表达。",
+            "添加关系代词：检查省略'that'、'which'的句子，补充完整以消除歧义。",
+            "验证术语一致性：确保同一概念在全文使用完全相同的术语和大小写。",
+            "标记不翻译内容：明确标注代码、变量名、URL、品牌名等不需要翻译的内容。"
         ],
         selfCheck: [
-            "你的句子是否足够短？是否使用简单词汇和主动语态？",
-            "你是否避免了习语、俚语、幽默和文化特定引用？",
-            "同一术语在全文是否使用完全一致的表述和大小写？",
-            "不翻译的内容（代码、URL）是否明确标记？",
-            "你的术语表是否包含翻译指导？"
+            "【句子长度】句子是否足够短（通常不超过 25 词）？",
+            "【词汇选择】是否使用了简单、精确的词汇？是否避免了 phrasal verbs？",
+            "【习语检查】是否避免了习语、俚语、幽默和文化特定引用？",
+            "【缩写定义】所有缩写是否在首次使用时定义？",
+            "【术语一致性】同一术语是否在全文使用完全一致的表述和大小写？",
+            "【关系代词】是否保留了必要的关系代词（that、which）？",
+            "【方向性词汇】是否避免了'above'、'below'等方向性引用？"
         ],
         extensions: [
-            "学习 W3C 国际化资源：https://www.w3.org/International/",
-            "研究 Google 的全球写作指南：https://developers.google.com/style/translation",
-            "了解翻译记忆（Translation Memory）和 CAT 工具的工作原理。",
-            "探索 Crowdin、Transifex 等翻译管理平台的文档本地化流程。"
+            "【W3C 国际化资源】深入学习：https://www.w3.org/International/ —— 语言支持、双向文本、字符编码等专题。",
+            "【推荐阅读】《The Global English Style Guide》by John R. Kohl —— Microsoft 推荐的全球化写作指南。",
+            "【推荐阅读】《The Elements of International English Style》by Edmond H. Weiss。",
+            "【Plain Language】美国 Plain Language 行动与信息网络：https://www.plainlanguage.gov/"
         ],
         sourceUrls: [
             "https://www.w3.org/International/",
