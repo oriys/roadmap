@@ -1,6 +1,174 @@
-import type { QuizQuestion } from "../types";
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
-export const week15: Record<string, QuizQuestion[]> = {
+export const week15Guides: Record<string, LessonGuide> = {
+    "w15-1": {
+        lessonId: "w15-1",
+        background: [
+            "Kubernetes 提供多层次的弹性伸缩能力：HPA（Horizontal Pod Autoscaler）水平扩展 Pod 数量、VPA（Vertical Pod Autoscaler）调整单 Pod 资源配额、Cluster Autoscaler 动态调整节点数量。三者协同工作，实现从 Pod 到节点的全栈弹性。",
+            "HPA 是最常用的自动扩缩器，根据 CPU、内存或自定义指标调整 Pod 副本数。核心算法是：desiredReplicas = ceil(currentReplicas × currentMetric / desiredMetric)。默认同步周期 15 秒，缩容有 5 分钟稳定窗口防止抖动。",
+            "VPA 解决的是「资源配额不准确」问题。很多团队凭经验设置 requests/limits，导致过度分配（浪费）或不足（OOM）。VPA 分析历史使用数据，推荐合理的资源配置。注意：VPA 和 HPA 不能同时基于 CPU/内存工作。",
+            "Cluster Autoscaler 在节点层面工作：当 Pod 因资源不足无法调度时自动扩容节点；当节点长时间利用率低且 Pod 可迁移时自动缩容。它与 HPA 形成闭环：HPA 扩 Pod → 资源不足 → CA 扩节点 → Pod 调度成功。",
+            "三者的协同策略：HPA 响应业务流量变化（秒级）；CA 响应资源容量变化（分钟级）；VPA 优化资源配置（可离线分析）。生产环境通常 HPA + CA 组合使用，VPA 仅用于推荐模式或无状态工作负载。"
+        ],
+        keyDifficulties: [
+            "HPA 算法细节：容忍度（tolerance）默认 0.1，指标比率在 0.9-1.1 之间不触发伸缩。缩容稳定窗口防止抖动，但可能导致缩容滞后。多指标时取最大副本数。理解这些机制有助于调优伸缩行为。",
+            "VPA 的三种模式：Off（仅推荐）、Initial（仅新 Pod 生效）、Auto（自动更新，会重启 Pod）。Auto 模式会驱逐 Pod 应用新配置，对有状态服务需谨慎。VPA 由 Recommender、Updater、Admission Controller 三组件构成。",
+            "Cluster Autoscaler 与调度器的关系：CA 内置调度器模拟器，预测 Pod 能否调度。版本不匹配可能导致判断错误。CA 不会移除运行非镜像 kube-system Pod 的节点（除非有 PDB）。理解缩容条件避免节点「缩不下去」。",
+            "HPA + VPA 冲突：两者都可以基于 CPU 指标工作，但逻辑冲突（一个加 Pod，一个加资源）。解决方案：VPA 用 Off 模式仅提供推荐；或 HPA 使用自定义指标，VPA 管理资源。Multidimensional Pod Autoscaler 是未来方向。"
+        ],
+        handsOnPath: [
+            "配置 HPA 基础场景：部署一个 CPU 密集型应用，创建 HPA 目标 50% CPU 利用率。使用压测工具（如 hey、wrk）模拟负载，观察 Pod 扩容。停止压测观察缩容（等待 5 分钟稳定窗口）。",
+            "实验 HPA 多指标：配置 HPA 同时基于 CPU 和自定义指标（如 QPS）。安装 Prometheus Adapter 暴露自定义指标。观察多指标下的伸缩决策（取最大值）。",
+            "部署 VPA 推荐模式：安装 VPA 组件（Recommender 必须，Updater 和 Admission Controller 可选）。创建 VPA 对象设置 updateMode: Off。运行应用一段时间后查看推荐值（kubectl describe vpa）。",
+            "配置 Cluster Autoscaler：在云环境（EKS/GKE/AKS）配置 CA，设置节点组的 min/max。部署大量 Pod 触发扩容。减少 Pod 观察缩容（可能需要等待 10 分钟）。检查 CA 日志理解决策过程。",
+            "端到端弹性测试：结合 HPA 和 CA，模拟业务高峰：HPA 扩 Pod → 资源不足 → CA 扩节点 → Pod 调度 → 处理流量。验证整个链路的响应时间和稳定性。"
+        ],
+        selfCheck: [
+            "HPA 的核心算法是什么？容忍度和稳定窗口如何影响伸缩行为？多指标场景下如何决策？",
+            "VPA 的三种模式（Off/Initial/Auto）分别适用于什么场景？为什么 Auto 模式需要谨慎使用？",
+            "Cluster Autoscaler 的扩容和缩容触发条件分别是什么？为什么某些节点「缩不下去」？",
+            "HPA 和 VPA 为什么不能同时基于 CPU 工作？有什么解决方案？",
+            "设计一个生产级弹性方案：如何组合 HPA、VPA、CA？各自的配置要点是什么？"
+        ],
+        extensions: [
+            "研究 KEDA（Kubernetes Event-driven Autoscaling），了解如何基于事件源（如 Kafka 队列深度、Prometheus 指标）进行弹性伸缩。",
+            "探索 Multidimensional Pod Autoscaler（MPA），了解同时调整 Pod 数量和资源的方向。",
+            "学习 Cluster Autoscaler 的 Expander 策略（random、most-pods、least-waste、priority），理解多节点组场景下的扩容决策。",
+            "研究 Karpenter（AWS）或其他下一代节点自动扩缩器，了解与 Cluster Autoscaler 的差异和优势。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+            "https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler",
+            "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler"
+        ]
+    },
+    "w15-2": {
+        lessonId: "w15-2",
+        background: [
+            "Knative Serving 是 Kubernetes 上的 Serverless 平台，提供自动扩缩容（包括缩至零）、流量路由、版本管理等能力。核心理念是「代码即服务」：开发者只需提供容器镜像，Knative 处理所有运维细节。",
+            "Knative Serving 的核心资源：Service（顶层抽象，管理整个生命周期）、Configuration（期望状态，代码+配置）、Revision（不可变快照，每次变更生成新版本）、Route（流量路由，支持金丝雀和蓝绿）。四者形成完整的部署模型。",
+            "自动扩缩容是 Knative 的核心能力。默认使用 KPA（Knative Pod Autoscaler），支持缩至零（scale-to-zero）。当请求到来时，Activator 组件拦截请求并唤醒 Pod，实现冷启动。也可以配置使用 Kubernetes HPA。",
+            "并发（Concurrency）是 Knative 扩缩容的核心指标。containerConcurrency 定义单 Pod 处理的最大并发请求数，软限制用于扩缩决策，硬限制用于实际限流。理解并发模型是调优性能的关键。",
+            "Knative 与 Istio/Kourier/Contour 等网络层集成，提供 L7 流量管理。支持 HTTPS、自定义域名、流量分割等企业级特性。选择合适的网络层影响功能范围和资源消耗。"
+        ],
+        keyDifficulties: [
+            "Revision 的不可变性：每次 Configuration 变更都生成新 Revision，旧 Revision 保留可回滚。Revision 名称自动生成或可指定。理解 Revision 与 Deployment/Pod 的映射关系有助于排查问题。",
+            "KPA vs HPA：KPA 支持缩至零和基于并发的扩缩，响应更快；HPA 基于 CPU/内存，更通用但不支持缩至零。选择取决于场景：事件驱动选 KPA，CPU 密集选 HPA。可以通过注解切换。",
+            "冷启动优化：缩至零节省资源但有冷启动延迟（通常 1-3 秒）。优化方向：保留最小副本（minScale）、优化镜像大小、使用 preStop 延迟缩容、选择快速启动的运行时。权衡成本与延迟。",
+            "并发调优：软并发（target）是扩缩目标，默认 100；硬并发（containerConcurrency）是上限，默认 0（无限）。设置硬并发可以保护应用不被压垮，但过低会导致过度扩容。需要根据应用特性调整。"
+        ],
+        handsOnPath: [
+            "部署第一个 Knative Service：安装 Knative Serving 和网络层（如 Kourier）。使用 kn CLI 或 YAML 部署一个简单应用。访问服务 URL，观察 Pod 创建和自动缩放。",
+            "实验 Revision 和流量分割：修改 Service 生成新 Revision。配置 Route 将流量 90/10 分割到两个版本。验证流量分配，实现金丝雀发布。使用 kn revision list 查看版本。",
+            "配置并发和扩缩参数：设置 containerConcurrency、autoscaling.knative.dev/target、minScale、maxScale。压测观察扩缩行为。对比不同参数下的性能和资源消耗。",
+            "冷启动分析：配置 minScale=0 观察缩至零。请求触发冷启动，测量延迟。尝试 minScale=1 对比。分析 Activator 日志理解请求缓冲机制。",
+            "集成自定义域名和 HTTPS：配置 Knative 使用自定义域名。设置 cert-manager 自动管理 TLS 证书。验证 HTTPS 访问。"
+        ],
+        selfCheck: [
+            "Knative Serving 的四个核心资源（Service/Configuration/Revision/Route）各自的职责是什么？它们如何协同工作？",
+            "KPA 和 HPA 的区别是什么？什么场景下应该选择哪个？如何切换？",
+            "什么是冷启动？如何优化冷启动延迟？minScale 和缩至零如何权衡？",
+            "containerConcurrency 和 autoscaling.knative.dev/target 的区别是什么？如何调优并发参数？",
+            "如何实现 Knative 的金丝雀发布？Revision 和 Route 如何配合？"
+        ],
+        extensions: [
+            "研究 Knative Serving 的 PodAutoscaler (PA) 资源，了解扩缩器的内部实现和调优参数。",
+            "探索 Knative 的 DomainMapping 功能，了解如何将自定义域名映射到服务。",
+            "学习 Knative 与 GitOps 的集成，了解如何使用 ArgoCD 管理 Knative 资源。",
+            "研究 Knative 的可观测性集成，了解如何配置 Prometheus 指标和分布式追踪。"
+        ],
+        sourceUrls: [
+            "https://knative.dev/docs/serving/",
+            "https://knative.dev/docs/serving/autoscaling/",
+            "https://knative.dev/docs/serving/services/"
+        ]
+    },
+    "w15-3": {
+        lessonId: "w15-3",
+        background: [
+            "Knative Eventing 提供事件驱动架构的基础设施，实现生产者和消费者的松耦合。核心理念是「发布-订阅」模式：事件源产生事件，通过 Broker 路由，Trigger 过滤后投递给服务。组件可以独立开发和部署。",
+            "CloudEvents 是 CNCF 的事件规范标准，定义了事件的通用格式（包含 type、source、id、time 等元数据）。Knative Eventing 完全遵循 CloudEvents 规范，使用 HTTP POST 传输事件，实现跨语言、跨平台的事件互操作。",
+            "Knative Eventing 的核心组件：Source（事件源，如 PingSource、ApiServerSource、Kafka）、Broker（事件枢纽，接收和分发事件）、Trigger（订阅规则，基于属性过滤事件）、Sink（事件消费者，通常是 Knative Service）。",
+            "Channel 和 Subscription 是另一种事件传递模式，更接近传统消息队列。Channel 负责事件持久化和传递，Subscription 定义消费关系。Broker/Trigger 更适合复杂路由，Channel/Subscription 更适合简单点对点。",
+            "事件驱动架构的优势：松耦合（生产者不需要知道消费者）、可扩展（新增消费者不影响生产者）、异步处理（削峰填谷）、可追溯（事件日志）。挑战包括：调试困难、最终一致性、事件顺序保证。"
+        ],
+        keyDifficulties: [
+            "Broker 的实现选择：Knative 提供多种 Broker 实现：内存 Broker（开发测试）、Kafka Broker（生产推荐，持久化）、RabbitMQ Broker 等。选择影响事件持久性、顺序保证和性能。生产环境必须使用持久化 Broker。",
+            "Trigger 过滤语法：Trigger 可以基于 CloudEvents 属性过滤（type、source 等）。支持精确匹配和前缀匹配。复杂过滤逻辑需要多个 Trigger 或应用层处理。理解过滤机制避免事件丢失或重复消费。",
+            "事件投递保证：Knative 提供至少一次投递（at-least-once），消费者需要处理重复事件（幂等性）。死信队列（Dead Letter Sink）处理投递失败的事件。理解重试策略和失败处理是生产落地的关键。",
+            "事件追踪和调试：事件的异步特性使调试困难。CloudEvents 的 traceparent 扩展支持分布式追踪。使用 Knative 的事件日志和 Jaeger 追踪定位问题。事件 ID 的唯一性是关联上下游的关键。"
+        ],
+        handsOnPath: [
+            "部署最小事件闭环：安装 Knative Eventing，创建 Broker。部署一个 Knative Service 作为 Sink。创建 PingSource 定时发送事件，创建 Trigger 订阅。验证事件从 Source → Broker → Trigger → Sink 的完整链路。",
+            "实验 CloudEvents 格式：编写一个简单的事件消费者，打印收到的 CloudEvents 元数据（type、source、id、time）。发送自定义事件，观察格式。尝试不同的 Content-Type（structured vs binary mode）。",
+            "配置 Trigger 过滤：创建多个 Trigger 基于不同 type 过滤事件。发送不同类型的事件，验证只有匹配的 Trigger 触发。实现事件路由到不同的处理服务。",
+            "集成 Kafka Source：部署 Kafka（或使用托管服务）。安装 KafkaSource。配置从 Kafka Topic 消费事件到 Broker。验证消息从 Kafka → Knative Eventing → Service 的流转。",
+            "配置死信队列：为 Subscription 配置 deadLetterSink。模拟消费者失败（返回 500）。观察事件重试和最终进入死信队列。分析死信事件用于问题排查。"
+        ],
+        selfCheck: [
+            "Knative Eventing 的核心组件（Source/Broker/Trigger/Sink）各自的职责是什么？事件如何流转？",
+            "CloudEvents 规范定义了哪些核心属性？为什么需要标准化事件格式？",
+            "Broker/Trigger 和 Channel/Subscription 两种模式的区别是什么？各自适用于什么场景？",
+            "如何保证事件的可靠投递？消费者如何处理重复事件？死信队列的作用是什么？",
+            "事件驱动架构的调试挑战是什么？如何追踪一个事件的完整处理链路？"
+        ],
+        extensions: [
+            "研究 Knative Eventing 的 Sequence 和 Parallel 资源，了解如何编排复杂的事件处理流程。",
+            "探索 Event Mesh 概念，了解如何在多集群环境中实现事件的跨集群路由。",
+            "学习 Knative Eventing 与 Serverless 工作流（如 AWS Step Functions、Azure Durable Functions）的对比。",
+            "研究 AsyncAPI 规范，了解如何定义和文档化事件驱动 API。"
+        ],
+        sourceUrls: [
+            "https://knative.dev/docs/eventing/",
+            "https://cloudevents.io/",
+            "https://knative.dev/docs/eventing/brokers/"
+        ]
+    },
+    "w15-4": {
+        lessonId: "w15-4",
+        background: [
+            "Operator 是 Kubernetes 的扩展模式，用于管理复杂的有状态应用。核心思想是「将运维知识编码」：把人类运维专家的经验（如数据库备份、故障恢复、版本升级）写成代码，让软件自动执行。",
+            "Operator 的技术基础是 CRD（Custom Resource Definition）和 Controller。CRD 定义应用特定的资源类型（如 MySQLCluster），Controller 监听资源变化并执行调和逻辑（Reconciliation），确保实际状态符合期望状态。",
+            "Controller 的调和循环（Reconcile Loop）是 Operator 的核心：监听 CR 变化 → 比较期望状态和实际状态 → 执行必要操作 → 更新状态。循环持续运行，处理任何偏离期望的情况。这是 Kubernetes 声明式 API 的实现机制。",
+            "Operator 的成熟度模型（Operator Capability Levels）分为五级：Basic Install → Seamless Upgrades → Full Lifecycle → Deep Insights → Auto Pilot。不同级别代表不同的自动化程度，从简单安装到完全自治。",
+            "Operator 适用于有复杂运维需求的应用：数据库（MySQL、PostgreSQL、MongoDB）、消息队列（Kafka、RabbitMQ）、监控系统（Prometheus）等。简单无状态应用不需要 Operator，用 Deployment 足够。"
+        ],
+        keyDifficulties: [
+            "CRD 设计原则：好的 CRD 应该是声明式的（描述期望状态，而非操作）、版本化的（支持 v1beta1 → v1 升级）、有 status 子资源的（分离 spec 和 status）。遵循 Kubernetes API 约定使用户体验一致。",
+            "调和逻辑的幂等性：Reconcile 函数必须是幂等的，同样的输入多次执行结果一致。原因是 Controller 会因为各种事件（资源变化、定时重试、重启）多次调用 Reconcile。幂等性避免重复创建资源或错误状态。",
+            "错误处理和重试：Reconcile 返回错误时 Controller 会重试。使用指数退避避免风暴。区分可恢复错误（网络超时）和不可恢复错误（配置错误）。在 status 中记录错误信息便于用户排查。",
+            "多 CR 的所有权和级联删除：Operator 创建的子资源（如 Deployment、Service）应设置 OwnerReference 指向 CR。这实现级联删除（删除 CR 自动删除子资源）和垃圾回收。理解所有权机制避免资源泄漏。"
+        ],
+        handsOnPath: [
+            "探索现有 Operator：在 OperatorHub.io 浏览常用 Operator（如 Prometheus Operator）。安装一个 Operator，创建 CR，观察 Operator 如何创建底层资源。阅读 CR 的 status 理解状态报告。",
+            "使用 Kubebuilder 创建 Operator：初始化项目（kubebuilder init），创建 API（kubebuilder create api）。定义 CRD 的 Spec 和 Status 结构。实现简单的 Reconcile 逻辑（如创建 Deployment）。",
+            "实现调和循环：在 Reconcile 函数中实现：检查 CR 是否存在 → 创建/更新子资源 → 更新 CR status。使用 controllerutil.CreateOrUpdate 实现幂等创建。添加 OwnerReference 实现级联删除。",
+            "测试 Operator：使用 make run 本地运行 Operator。创建 CR 验证资源创建。修改 CR 验证更新逻辑。删除 CR 验证级联删除。编写单元测试和集成测试（envtest）。",
+            "打包和分发：构建 Operator 镜像。创建 Deployment 部署 Operator。使用 OLM（Operator Lifecycle Manager）管理 Operator 生命周期。了解 OperatorHub 发布流程。"
+        ],
+        selfCheck: [
+            "什么是 Operator？它解决什么问题？与 Helm Chart 有什么区别？",
+            "CRD 和 Controller 的关系是什么？调和循环（Reconcile Loop）如何工作？",
+            "Reconcile 函数为什么必须是幂等的？如何实现幂等性？",
+            "OwnerReference 的作用是什么？如何实现资源的级联删除？",
+            "Operator 成熟度模型的五个级别分别代表什么能力？如何评估 Operator 的成熟度？"
+        ],
+        extensions: [
+            "研究 Operator SDK（包含 Go、Ansible、Helm 三种开发方式），对比不同方式的适用场景和权衡。",
+            "探索 OLM（Operator Lifecycle Manager），了解如何管理 Operator 的安装、升级和依赖。",
+            "学习 Finalizer 机制，了解如何实现自定义的删除前清理逻辑。",
+            "研究 Controller Runtime 和 Client-go 库，深入理解 Controller 的底层实现。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/concepts/extend-kubernetes/operator/",
+            "https://book.kubebuilder.io/",
+            "https://operatorframework.io/"
+        ]
+    }
+}
+
+export const week15Quizzes: Record<string, QuizQuestion[]> = {
     "w15-1": [
         {
             id: "w15-1-q1",
@@ -729,4 +897,4 @@ export const week15: Record<string, QuizQuestion[]> = {
             rationale: "Operator 通常以 Deployment 形式部署，运行 Controller 进程。一般单副本即可，配合 Leader Election 实现高可用。"
         }
     ]
-};
+}
