@@ -5,10 +5,10 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-1": {
         lessonId: "w9-1",
         background: [
-            "CI/CD（持续集成/持续交付）是现代软件开发的核心实践，通过自动化构建、测试和部署流程，显著提升交付效率和代码质量。持续集成强调频繁将代码合并到主干并自动验证，持续交付则确保代码随时可部署到生产环境。",
-            "不可变制品（Immutable Artifact）是云原生 CI/CD 的核心原则：一旦构建完成，制品（如 Docker 镜像）不应被修改。同一个制品从测试环境一直部署到生产环境，确保环境一致性和可追溯性。制品通过唯一标签（如 Git commit SHA）标识，避免使用 latest 等可变标签。",
-            "版本策略是 CI/CD 的关键组成部分。语义化版本（SemVer）使用 MAJOR.MINOR.PATCH 格式传达变更含义；Git 标签与镜像标签对应便于追溯；分支保护策略确保主干代码质量，PR 合并前必须通过 CI 检查。",
-            "审计与合规在企业级 CI/CD 中至关重要。流水线日志记录每次构建的触发者、时间、变更内容；制品签名（如 Cosign）证明来源可信；SLSA（Supply-chain Levels for Software Artifacts）框架定义了供应链安全等级，帮助组织评估和提升安全成熟度。"
+            "CI/CD（持续集成/持续交付）是现代软件开发的核心实践。Twelve-Factor App 方法论强调「严格分离构建和运行阶段」，确保应用与底层操作系统之间有清晰的契约，实现执行环境之间的最大可移植性。持续集成强调频繁将代码合并到主干并自动验证，持续交付则通过「最大化敏捷性的持续部署」确保代码随时可部署。",
+            "不可变制品（Immutable Artifact）是云原生 CI/CD 的核心原则。Twelve-Factor 强调「将配置存储在环境中而非代码中」，使同一个制品（如 Docker 镜像）可以在不同部署环境中运行而无需修改。制品一旦构建完成就不应被修改，从测试环境一直部署到生产环境，通过唯一标签（如 Git commit SHA）标识，避免使用 latest 等可变标签。",
+            "语义化版本（SemVer）使用 MAJOR.MINOR.PATCH 格式：MAJOR 版本在有不兼容的 API 变更时递增；MINOR 版本在以向后兼容方式添加功能时递增；PATCH 版本在进行向后兼容的 bug 修复时递增。0.y.z 版本保留给初始开发阶段，此时「任何东西都可能随时改变」。版本 1.0.0 标志着公共 API 的正式定义和稳定性承诺的开始。",
+            "审计与合规在企业级 CI/CD 中至关重要。流水线日志记录每次构建的触发者、时间、变更内容；制品签名（如 Cosign/Sigstore）证明来源可信；SLSA（Supply-chain Levels for Software Artifacts）框架定义了供应链安全等级，帮助组织系统性评估和提升安全成熟度。"
         ],
         keyDifficulties: [
             "理解 CI 与 CD 的边界：CI 结束于可部署制品的产出，CD 负责将制品部署到目标环境。持续交付（Continuous Delivery）需要人工审批后部署，持续部署（Continuous Deployment）则完全自动化。选择哪种模式取决于组织的风险承受能力和合规要求。",
