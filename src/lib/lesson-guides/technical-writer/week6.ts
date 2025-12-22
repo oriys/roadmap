@@ -45,35 +45,41 @@ export const week6Guides: Record<string, LessonGuide> = {
     "tw-w6-2": {
         lessonId: "tw-w6-2",
         background: [
-            "Web 可访问性意味着'网站、工具和技术被设计和开发成残障人士可以使用'——让所有人都能感知、理解、导航和贡献。",
-            "可访问性涵盖：听觉、认知、神经、身体、言语和视觉障碍，同时也惠及非残障用户（老年人、移动用户、临时受伤者、特殊情境用户）。",
-            "包容性写作要求：消除有害语言模式（避免 'crazy'、'insane'、'blind to' 等词）、使用多样化的示例、尊重社区偏好的称呼方式。",
-            "可访问性最佳实践：图片提供替代文本、支持键盘导航、音频提供文字稿、使用清晰的标题层级。"
+            "【W3C 可访问性定义】网页可访问性意味着'网站、工具和技术的设计与开发使残障人士能够使用'——具体包括能够感知、理解、导航和与网络互动，以及为网络做出贡献。",
+            "【网络的通用性】Tim Berners-Lee：'网络的力量在于其通用性。无论是否有残障，每个人都能访问是一个基本要素。'——这是网络设计的核心理念。",
+            "【涵盖的残障类型】可访问性涉及六大类：听觉、认知、神经、身体、言语和视觉障碍。但受益群体远不止残障人士。",
+            "【非残障受益群体】小屏幕设备用户、老龄人群、临时性残障患者（如骨折）、特定环境限制下的人（强光、嘈杂环境）、网络连接受限的用户。",
+            "【包容性语言核心】Google：消除排斥或伤害特定社区的语言——ableist（'crazy'、'insane'）、gendered（'man-hours'）、violent（暴力隐喻）。"
         ],
         keyDifficulties: [
-            "从项目开始就考虑可访问性：可访问性在项目初期融入最有效，而非后期改造。这需要在规划阶段就考虑。",
-            "替代文本的撰写：好的 alt 文本应描述图片的功能和信息，而非外观。装饰性图片应使用空 alt 属性。",
-            "包容性语言的敏感度：研究你写作对象社区的偏好称呼——自闭症、盲人、聋人社区可能有不同的身份优先语言偏好。",
-            "技术术语的处理：对于已建立但不包容的行业术语（如 blacklist/whitelist），首次提及时承认，然后全文使用包容性替代词。"
+            "【早期融入原则】W3C：可访问性在项目初期融入最有效且成本最低，事后补救代价高昂。这需要在规划阶段就考虑无障碍需求。",
+            "【替代文本撰写】核心实践之一：为图像提供替代文本。好的 alt 文本应描述图片的功能和信息，而非仅描述外观。装饰性图片应使用空 alt 属性。",
+            "【社区偏好研究】Google：'research the ways that the people in the communities that you're writing about prefer to be identified'——尊重身份优先语言偏好。",
+            "【非包容行业术语】Google：对于'whitelist'等已建立的非包容术语，首次提及时在括号中说明，然后全文使用包容性替代词如'allowlist'。",
+            "【避免'正常'表述】描述非残障人士时避免使用'normal'或'healthy'——这会边缘化残障人士。使用'nondisabled person'或'person without disabilities'。"
         ],
         handsOnPath: [
-            "审查你的文档的可访问性：检查图片是否有 alt 文本、标题层级是否正确、链接文本是否有意义。",
-            "检查语言包容性：搜索潜在的有害词汇（ableist、gendered、violent metaphors），替换为包容性表达。",
-            "多样化你的示例：检查示例中的名字、性别、年龄、地理位置是否多样化，避免美国中心主义。",
-            "使用屏幕阅读器测试文档：体验视觉障碍用户的阅读体验，识别导航和理解的障碍。"
+            "审查文档的三个核心可访问性实践：图片替代文本、键盘功能可用性、音频内容文字稿。",
+            "搜索并替换 ableist 语言：用'final check for completeness'替代'sanity-check'，用'unresponsive'替代'blind to'。",
+            "搜索并替换 gendered 语言：用'person-hours'替代'man-hours'，用'humanity'替代'mankind'。",
+            "多样化示例：检查名字、性别、年龄、地理位置的多样性。避免美国中心的文化引用和节日假设。",
+            "处理非包容技术术语：将'whitelist/blacklist'替换为'allowlist/denylist'，首次出现时可在括号中提及原术语。",
+            "使用屏幕阅读器测试文档：体验视觉障碍用户的阅读体验，识别导航和理解的障碍点。"
         ],
         selfCheck: [
-            "你的图片是否都有有意义的 alt 文本？装饰性图片是否使用空 alt？",
-            "你的标题层级是否正确（h1 → h2 → h3，不跳级）？",
-            "你是否避免了 ableist、gendered 或暴力隐喻的语言？",
-            "你的示例是否反映了多样化的受众？是否避免了文化特定的引用？",
-            "用户能否仅用键盘导航你的文档？"
+            "【图片检查】所有信息性图片是否有有意义的 alt 文本？装饰性图片是否使用空 alt？",
+            "【键盘导航】用户能否仅用键盘完成所有操作？焦点顺序是否合理？",
+            "【标题层级】是否使用正确的标题层级（h1 → h2 → h3，不跳级）？",
+            "【ableist 语言】是否避免了'crazy'、'insane'、'blind to'、'cripple'等 ableist 表达？",
+            "【gendered 语言】是否使用了性别中立的表达？'man-hours'是否改为'person-hours'？",
+            "【多样化示例】示例中的人物是否反映了多样化的名字、性别、年龄和地理位置？",
+            "【文化敏感性】是否避免了美国中心的文化引用？是否使用'older adults'而非'the elderly'？"
         ],
         extensions: [
-            "学习 W3C Web Accessibility Initiative (WAI) 资源：https://www.w3.org/WAI/",
-            "了解 WCAG 2.1 标准：https://www.w3.org/WAI/WCAG21/quickref/",
-            "研究 Microsoft 的无障碍写作指南：https://learn.microsoft.com/en-us/style-guide/accessibility/",
-            "使用 axe、WAVE 等工具检查网页可访问性问题。"
+            "【W3C WAI 完整资源】深入学习：https://www.w3.org/WAI/ —— 网页可访问性的权威资源。",
+            "【WCAG 2.1 快速参考】标准规范：https://www.w3.org/WAI/WCAG21/quickref/ —— 可访问性的技术标准。",
+            "【Microsoft 无障碍术语库】参考：https://learn.microsoft.com/en-us/style-guide/a-z-word-list-term-collections/term-collections/accessibility-terms",
+            "【自动化检查工具】使用 axe、WAVE、Lighthouse 等工具检查网页可访问性问题。"
         ],
         sourceUrls: [
             "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
