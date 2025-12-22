@@ -5,36 +5,37 @@ export const week10Guides: Record<string, LessonGuide> = {
     "w10-1": {
         lessonId: "w10-1",
         background: [
-            "ArgoCD 是 Kubernetes 原生的持续交付工具，实现 GitOps 模式。它将 Git 仓库作为应用期望状态的唯一真相源，持续监控并自动同步集群状态与 Git 定义保持一致。",
-            "ArgoCD 由三个核心组件构成：API Server（提供 gRPC/REST 接口，处理 Web UI、CLI 和 CI/CD 系统的请求）、Repository Server（维护 Git 仓库缓存并生成 Kubernetes 清单）、Application Controller（持续监控应用状态并执行同步操作）。",
-            "Application CRD 是 ArgoCD 的核心资源，定义了应用的来源（source：Git 仓库 URL、分支/标签、路径）、目标（destination：集群 API、命名空间）和同步策略（syncPolicy）。每个 Application 代表一个需要部署的应用。",
-            "ArgoCD 采用声明式方式管理应用。与传统 CI/CD 的 Push 模式不同，ArgoCD 采用 Pull 模式：控制器主动从 Git 拉取配置并调和到集群，CI 流水线只需提交到 Git，无需直接访问集群 API。"
+            "【来源: ArgoCD 架构文档】ArgoCD 由三个核心组件构成：API Server 作为 gRPC/REST 端点，处理「应用管理和状态报告」以及「调用应用操作（如 sync、rollback、用户定义的操作）」；Repository Server 是内部服务，「维护包含应用清单的 Git 仓库的本地缓存」；Application Controller 作为 Kubernetes 控制器，「持续监控运行中的应用并比较当前实际状态与期望目标状态」。",
+            "【来源: ArgoCD 架构文档】API Server 管理凭证、执行 RBAC 策略、处理 Git webhook 事件。Repository Server 根据仓库 URL、版本、应用路径和模板配置（如 Helm values）生成 Kubernetes 清单。Application Controller 识别同步差异并执行纠正操作，包括 PreSync、Sync 和 PostSync 的生命周期钩子。",
+            "【来源: ArgoCD 声明式配置文档】Application CRD 需要两个关键部分：source（Git 仓库详情：URL、revision、path）和 destination（目标集群和命名空间）。对于 Helm，使用 chart 属性替代 path。destination 使用 server 或 name（不能同时使用）以及 namespace。",
+            "【来源: ArgoCD 声明式配置文档】AppProject 通过 sourceRepos（允许的 Git 仓库）、destinations（允许的部署目标）、roles（访问控制定义）组织应用。部署到 ArgoCD 命名空间的项目授予管理员级别访问权限，需要谨慎的 RBAC 限制。",
+            "【来源: ArgoCD 声明式配置文档】关于 finalizer 的重要说明：「没有 resources-finalizer.argocd.argoproj.io finalizer，删除 Application 不会删除它管理的资源」。"
         ],
         keyDifficulties: [
-            "理解三组件的职责分工：API Server 负责认证授权和外部接口；Repository Server 负责克隆仓库、缓存和模板渲染（Helm/Kustomize）；Application Controller 是核心调和循环，检测 OutOfSync 并执行同步。三者通过 gRPC 通信。",
-            "Application CRD 关键字段：source.repoURL（仓库地址）、source.targetRevision（分支/标签/commit）、source.path（应用路径）、destination.server（集群 API）、destination.namespace（目标命名空间）、project（项目权限边界）。",
-            "同步状态与健康状态的区别：Sync Status 表示集群状态与 Git 的一致性（Synced/OutOfSync）；Health Status 表示应用资源的运行状态（Healthy/Progressing/Degraded/Suspended）。两者独立判断。",
-            "ArgoCD 的认证方式：Web UI/CLI 使用 SSO 或本地账户认证；集群访问使用 ServiceAccount；Git 仓库访问使用 SSH 密钥或 HTTPS Token。不同认证用于不同场景。"
+            "【三组件职责分工】API Server 负责认证授权、外部接口和 webhook 处理；Repository Server 负责克隆仓库、缓存和模板渲染（Helm/Kustomize）生成清单；Application Controller 是核心调和循环，持续比较实际状态与期望状态，检测 OutOfSync 并执行同步。",
+            "【Application CRD 关键字段】source 配置来源（repoURL、targetRevision、path/chart）；destination 配置目标（server/name、namespace）；project 定义权限边界；syncPolicy 配置同步策略。Git 源和 Helm 源的配置方式不同。",
+            "【同步状态与健康状态】Sync Status 表示集群状态与 Git 的一致性（Synced/OutOfSync）；Health Status 表示应用资源的运行状态（Healthy/Progressing/Degraded/Suspended）。两者独立判断，应用可能 Synced 但 Degraded。",
+            "【AppProject 安全边界】Project 控制应用可以访问的源仓库和目标集群。部署到 ArgoCD 命名空间的 Project 具有特殊权限，需要严格限制。通过 roles 实现细粒度访问控制。"
         ],
         handsOnPath: [
-            "在本地 Kubernetes 集群（kind/minikube）安装 ArgoCD：kubectl create namespace argocd && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml。等待所有 Pod Running。",
-            "获取初始管理员密码：argocd admin initial-password -n argocd。通过端口转发访问 UI：kubectl port-forward svc/argocd-server -n argocd 8080:443。登录 https://localhost:8080。",
-            "使用 CLI 创建第一个应用：argocd app create guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path guestbook --dest-server https://kubernetes.default.svc --dest-namespace default。在 UI 中观察应用状态。",
-            "手动触发同步：argocd app sync guestbook。观察同步过程和资源创建。使用 argocd app get guestbook 查看详细状态，理解 Sync Status 和 Health Status 的含义。",
-            "尝试修改 Git 仓库中的 Deployment 副本数（fork 后修改），观察 ArgoCD 检测到 OutOfSync，手动同步后副本数更新。体验 GitOps 工作流。"
+            "【来源: ArgoCD 快速入门】在本地 Kubernetes 集群安装 ArgoCD：kubectl create namespace argocd && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml。前提条件包括 kubectl 命令行工具、kubeconfig 文件和集群启用的 CoreDNS。",
+            "【来源: ArgoCD 快速入门】访问 API Server：可选择 LoadBalancer（修改 Service 类型获取外部 IP）、Ingress 或端口转发（kubectl port-forward svc/argocd-server -n argocd 8080:443）。",
+            "【来源: ArgoCD 快速入门】CLI 设置和登录：从 releases 页面下载 CLI 或通过 Homebrew 安装；使用 argocd admin initial-password -n argocd 获取初始密码；使用 argocd login <ARGOCD_SERVER> 登录；使用 argocd account update-password 更新密码。",
+            "【来源: ArgoCD 快速入门】注册外部集群（可选）：使用 kubectl config get-contexts -o name 列出可用上下文，使用 argocd cluster add CONTEXTNAME 添加集群。",
+            "【来源: ArgoCD 快速入门】创建并部署应用：argocd app create guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path guestbook --dest-server https://kubernetes.default.svc --dest-namespace default。使用 argocd app sync guestbook 同步部署。UI 也支持通过 +New App 按钮创建应用。"
         ],
         selfCheck: [
-            "ArgoCD 的三个核心组件（API Server、Repository Server、Application Controller）各自的职责是什么？它们如何协同工作？",
-            "Application CRD 的 source、destination、project 字段分别定义什么？如何理解 targetRevision 可以是分支、标签或 commit SHA？",
-            "Sync Status 和 Health Status 有什么区别？一个应用可能处于什么状态组合（如 Synced+Degraded、OutOfSync+Healthy）？",
-            "为什么说 ArgoCD 是 Pull 模式？与 Jenkins 等 Push 模式的 CD 工具相比，安全性上有什么优势？",
-            "argocd app sync 和 argocd app refresh 命令有什么区别？什么时候使用哪个？"
+            "根据 ArgoCD 架构文档，三个核心组件（API Server、Repository Server、Application Controller）各自的职责是什么？",
+            "根据声明式配置文档，Application CRD 的 source 和 destination 字段分别需要配置什么信息？",
+            "对于 Helm 类型的应用，source 配置与 Git 源有什么不同？",
+            "AppProject 的 sourceRepos、destinations、roles 字段分别控制什么？为什么部署到 ArgoCD 命名空间的项目需要谨慎？",
+            "根据声明式配置文档，如何确保删除 Application 时级联删除其管理的资源？"
         ],
         extensions: [
             "研究 ArgoCD 的 SSO 集成（Dex/OIDC），了解如何与企业身份提供商（Okta、Azure AD、GitHub）集成实现统一认证。",
             "探索 ArgoCD Notifications，了解如何配置 Slack、Email、Webhook 等通知渠道，在同步失败或应用状态变化时发送告警。",
-            "学习 ArgoCD 的 RBAC 模型，了解如何通过 Project 和 AppProject CRD 实现多租户隔离和细粒度权限控制。",
-            "研究 ArgoCD Image Updater，了解如何自动检测 Registry 中的新镜像并更新 Git 仓库中的镜像标签，实现端到端自动化。"
+            "学习 ArgoCD 的高可用部署，了解如何在生产环境部署多副本 ArgoCD，实现控制平面的高可用。",
+            "研究 ArgoCD Image Updater，了解如何自动检测 Registry 中的新镜像并更新 Git 仓库中的镜像标签。"
         ],
         sourceUrls: [
             "https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/",
