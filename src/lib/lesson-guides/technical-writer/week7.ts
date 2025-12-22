@@ -130,35 +130,39 @@ export const week7Guides: Record<string, LessonGuide> = {
     "tw-w7-4": {
         lessonId: "tw-w7-4",
         background: [
-            "DocsOps 是将 DevOps 实践应用于文档的理念：自动化构建、测试、部署，减少手动操作和沟通成本。",
-            "预览部署（Preview Deployments）：每个 PR 自动生成一个预览链接，审查者可以看到实际效果，而非想象 Markdown 渲染后的样子。",
-            "持续部署（Continuous Deployment）：合并到主分支后自动发布到生产环境，确保文档与代码同步更新。",
-            "常用平台：GitHub Pages（免费、简单）、Netlify（预览部署、表单）、Vercel（高性能、分析）、Cloudflare Pages（全球 CDN）。"
+            "【DocsOps 理念】将 DevOps 实践应用于文档：自动化构建、测试、部署，减少手动操作和沟通成本。文档与代码享有同等的 CI/CD 待遇。",
+            "【GitHub Actions 核心】'A workflow is a configurable automated process made up of one or more jobs'——工作流由 Triggers、Jobs、Steps、Actions、Runners 组成。",
+            "【Preview Deployments】Vercel/Netlify 的核心价值：每个 PR 自动生成预览 URL，审查者无需本地构建即可看到实际渲染效果，'Share in-progress content before production launch'。",
+            "【Instant Rollback】Vercel：支持即时回滚到之前的部署，'swift recovery from production incidents'——让团队敢于频繁发布，出问题时能立即恢复。",
+            "【Git 集成自动化】Vercel/Netlify 支持 GitHub、GitLab、Bitbucket 等平台的原生集成，push 到 main 分支自动触发生产部署，PR 自动创建预览环境。"
         ],
         keyDifficulties: [
-            "CI/CD 配置：GitHub Actions、GitLab CI 的 YAML 语法学习曲线。需要理解触发条件、构建步骤、部署目标。",
-            "预览部署的权限控制：公开仓库的 PR 预览谁都能访问。敏感内容需要考虑访问控制或延迟发布。",
-            "构建失败的处理：链接检查、Markdown 校验失败时如何处理？是阻止合并还是仅发出警告？",
-            "多环境管理：开发、预览、生产环境的配置差异（API endpoint、分析 ID 等）如何管理？"
+            "【YAML 工作流配置】GitHub Actions 使用 YAML 定义工作流，需要理解触发条件（on: push/pull_request）、jobs、steps、环境变量、secrets 管理等概念。",
+            "【预览环境权限控制】公开仓库的 PR 预览谁都能访问。Vercel 提供 Deployment Protection：密码保护、可信 IP、身份验证等方式保护敏感预览内容。",
+            "【多环境配置管理】开发、预览、生产环境的配置差异（API endpoint、分析 ID、功能开关）如何管理？Vercel 支持 environment-specific 的环境变量。",
+            "【构建失败处理策略】链接检查、Markdown 校验、拼写检查失败时如何处理？是阻止合并（blocking）还是仅发出警告（non-blocking）？需要根据规则重要性决定。"
         ],
         handsOnPath: [
-            "配置 GitHub Actions 自动构建：每次 push 运行 build，验证文档能成功生成。",
-            "配置预览部署：使用 Netlify 或 Vercel，每个 PR 自动生成预览链接，链接显示在 PR 评论中。",
-            "添加构建前检查：在部署前运行 markdownlint、链接检查、拼写检查，失败时阻止部署。",
-            "配置自动发布：合并到 main 分支后自动部署到生产环境，配置自定义域名和 HTTPS。"
+            "配置 GitHub Actions：创建 .github/workflows/docs.yml，定义 push/PR 触发的自动化构建和检查流程。",
+            "连接托管平台：在 Vercel/Netlify 中导入 Git 仓库，配置自动部署触发条件和环境变量。",
+            "验证预览部署：提交 PR 后确认预览 URL 自动生成并显示在 PR 评论中，测试预览环境的渲染效果。",
+            "添加质量门禁：在工作流中集成 markdownlint、链接检查、拼写检查，配置 branch protection 要求检查通过才能合并。",
+            "配置回滚策略：了解 Instant Rollback 功能，测试从生产问题快速恢复到上一个稳定版本。",
+            "设置自定义域名：配置 HTTPS、DNS 指向托管平台，验证 SSL 证书自动配置。"
         ],
         selfCheck: [
-            "你的文档是否有自动构建？每次 push 是否验证构建成功？",
-            "PR 是否有预览部署？审查者能否看到实际渲染效果？",
-            "构建前是否运行了质量检查（lint、链接检查）？失败是否阻止合并？",
-            "合并后是否自动部署到生产？文档与代码是否同步更新？",
-            "你是否配置了自定义域名和 HTTPS？"
+            "【CI 配置】你的文档是否有 GitHub Actions 工作流？每次 push 是否验证构建成功？",
+            "【预览部署】PR 是否有自动预览部署？审查者能否看到实际渲染效果而非 Markdown 源码？",
+            "【质量门禁】构建前是否运行了 lint、链接检查？失败是否阻止 PR 合并？",
+            "【生产部署】合并到 main 后是否自动部署到生产？文档与代码更新是否同步？",
+            "【回滚能力】如果新部署有问题，能否快速回滚到之前的版本？",
+            "【域名 HTTPS】是否配置了自定义域名？HTTPS 是否自动配置和续期？"
         ],
         extensions: [
-            "学习 GitHub Actions 文档：https://docs.github.com/en/actions",
-            "探索 Netlify 的文档部署功能：https://docs.netlify.com/",
-            "研究 Vercel 的 Preview Deployments：https://vercel.com/docs/deployments/preview-deployments",
-            "配置 Slack/Discord 通知：部署成功或失败时通知团队。"
+            "【GitHub Actions 文档】深入学习：https://docs.github.com/en/actions —— 工作流语法、secrets 管理、矩阵构建。",
+            "【Vercel Preview Deployments】详细配置：https://vercel.com/docs/deployments/preview-deployments —— 预览保护、评论集成。",
+            "【Netlify Build Hooks】探索：https://docs.netlify.com/configure-builds/build-hooks/ —— 程序化触发部署的 webhook。",
+            "【Rolling Releases】Vercel 的渐进式发布：逐步将流量切换到新版本，降低全量发布风险。"
         ],
         sourceUrls: [
             "https://docs.github.com/en/actions",
