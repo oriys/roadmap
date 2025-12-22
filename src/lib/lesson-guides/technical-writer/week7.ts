@@ -46,35 +46,38 @@ export const week7Guides: Record<string, LessonGuide> = {
     "tw-w7-2": {
         lessonId: "tw-w7-2",
         background: [
-            "Changelog 是'为人类编写的、按时间顺序排列的每个版本重要变化的精选列表'——不是 git log 的复制粘贴，而是经过筛选的用户视角变更。",
-            "Keep a Changelog 的六类变更：Added（新功能）、Changed（现有功能修改）、Deprecated（即将移除）、Removed（已移除）、Fixed（bug 修复）、Security（安全补丁）。",
-            "语义化版本号（Semantic Versioning）规则：MAJOR.MINOR.PATCH。主版本：不兼容变更；次版本：向后兼容的新功能；补丁：向后兼容的 bug 修复。",
-            "维护一个 'Unreleased' 部分追踪即将发布的变更——既能让用户预知变化，也能简化发布准备工作。"
+            "【Changelog 核心原则】Keep a Changelog：'Changelogs are for humans, not machines'——变更日志是为人类编写的，不是 git log 的复制粘贴。",
+            "【六类变更分类】标准分类：Added（新功能）、Changed（功能修改）、Deprecated（即将移除）、Removed（已移除）、Fixed（bug修复）、Security（安全补丁）。",
+            "【语义化版本格式】SemVer：MAJOR.MINOR.PATCH。主版本=不兼容变更，次版本=向后兼容的新功能，补丁=向后兼容的 bug 修复。",
+            "【Unreleased 部分】保持顶部的 Unreleased 部分追踪即将发布的变更——用户可预览未来版本，也简化版本发布准备工作。",
+            "【日期格式】Keep a Changelog：使用 YYYY-MM-DD 格式（如 2017-07-17），遵循 ISO 8601 标准，从大到小排列单位。"
         ],
         keyDifficulties: [
-            "筛选'重要'变更：不是所有 commit 都应进入 changelog。用户关心的是行为变化，不是内部重构或代码清理。",
-            "Breaking Changes 的处理：主版本升级时必须清晰说明不兼容变更、影响范围、迁移步骤。这是用户最需要的信息。",
-            "版本号的决策：这次发布是 patch、minor 还是 major？需要理解 SemVer 的规则，并与团队达成共识。",
-            "发布说明 vs Changelog：Changelog 是累积的变更记录，发布说明是单个版本的详细描述。两者可以结合使用。"
+            "【版本号决策】次版本递增时应重置补丁版本为 0；主版本递增时应重置次和补丁版本为 0。",
+            "【预发布版本】通过连字符和标识符表示，如 1.0.0-alpha、1.0.0-alpha.1。预发布版本优先级低于正式版本。",
+            "【变更筛选】不是所有 commit 都应进入 changelog——用户关心行为变化，不是内部重构或代码清理。",
+            "【反模式避免】避免：使用 commit log diff、忽略 deprecations、使用模糊日期格式、维护不一致的变更文档。"
         ],
         handsOnPath: [
-            "为你的项目创建 CHANGELOG.md：使用 Keep a Changelog 格式，按六类分组，最新版本在最前面。",
-            "为下一个版本写发布说明：包含新功能亮点、Breaking Changes 和迁移指南、已知问题、感谢贡献者。",
-            "审查 Breaking Changes：列出所有不兼容变更，每个都要说明：旧行为、新行为、迁移步骤。",
-            "建立 Unreleased 工作流：每个 PR 合并时更新 Unreleased 部分，发布时移至新版本。"
+            "创建 CHANGELOG.md：使用 Keep a Changelog 格式，按六类分组，最新版本在最前面，每个版本有日期。",
+            "添加 Unreleased 部分：在顶部维护未发布变更，每个 PR 合并时更新，发布时移至新版本。",
+            "审查 Breaking Changes：列出所有不兼容变更，每个都说明：旧行为、新行为、迁移步骤。",
+            "验证版本号：检查版本号是否遵循 SemVer——主次补丁版本递增规则是否正确。",
+            "为变更添加链接：使版本号和章节可链接，便于用户直接跳转到特定版本。"
         ],
         selfCheck: [
-            "你的 Changelog 是否使用了 Added/Changed/Deprecated/Removed/Fixed/Security 分类？",
-            "每个版本是否有日期？是否使用 ISO 8601 格式（YYYY-MM-DD）？",
-            "Breaking Changes 是否有明确的迁移指南？用户能否知道如何升级？",
-            "你是否维护了 Unreleased 部分？每个 PR 是否更新它？",
-            "版本号是否遵循语义化版本规范？"
+            "【变更分类】是否使用了 Added/Changed/Deprecated/Removed/Fixed/Security 标准分类？",
+            "【日期格式】每个版本是否有日期？是否使用 ISO 8601 格式（YYYY-MM-DD）？",
+            "【版本顺序】是否最新版本在最前面？",
+            "【Unreleased】是否维护了 Unreleased 部分？",
+            "【Breaking Changes】不兼容变更是否有明确的迁移指南？",
+            "【版本号规范】版本号是否遵循语义化版本规范？"
         ],
         extensions: [
-            "学习 Keep a Changelog 规范：https://keepachangelog.com/",
-            "深入理解语义化版本：https://semver.org/",
-            "研究自动生成 Changelog 的工具：Conventional Commits + standard-version。",
-            "阅读优秀的发布说明示例：Tailwind CSS、Next.js、Stripe 的版本发布公告。"
+            "【Keep a Changelog】完整规范：https://keepachangelog.com/ —— Changelog 的事实标准。",
+            "【Semantic Versioning】深入理解：https://semver.org/ —— 版本号的权威规范。",
+            "【自动生成工具】探索 Conventional Commits + standard-version 自动生成 Changelog。",
+            "【优秀案例】研究 Tailwind CSS、Next.js、Stripe 的版本发布公告。"
         ],
         sourceUrls: [
             "https://keepachangelog.com/en/1.1.0/",
