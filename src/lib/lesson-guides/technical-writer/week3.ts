@@ -44,35 +44,37 @@ export const week3Guides: Record<string, LessonGuide> = {
     "tw-w3-2": {
         lessonId: "tw-w3-2",
         background: [
-            "命令行是技术文档中最常见的示例形式——用户需要复制粘贴命令来完成任务。可复现的命令示例是文档可用性的关键。",
-            "curl 是命令行数据传输工具，支持 HTTP、FTP 等多种协议。它是测试 API 和演示请求的标准工具。",
-            "环境变量（如 API_KEY、BASE_URL）让命令示例更安全、更灵活。用户可以替换自己的值而不需要修改命令。",
-            "管道（|）和重定向（>、<）是命令行的核心概念——将一个命令的输出传递给另一个命令，或保存到文件。"
+            "【Bash 基础】The Art of Command Line 强调：'type `man bash` and at least skim the whole thing; it's pretty easy to follow and not that long'——系统学习 Bash 是命令行熟练的基础，而非零散技巧。",
+            "【curl 定位】curl 是命令行数据传输的标准工具，支持 HTTP、FTP 等协议。它是 API 文档中演示请求的事实标准——几乎所有 API 文档都用 curl 示例。",
+            "【管道与重定向】'`>` overwrites output files while `>>` appends, `|` chains commands'——管道连接命令形成数据处理流水线，重定向控制输出去向。stdout 和 stderr 需要区分处理。",
+            "【可复现性原则】技术文档中的命令示例必须'可复制粘贴即运行'——用户不应该需要猜测、调整或补充任何内容。这是文档可用性的硬指标。",
+            "【环境变量模式】用 $API_KEY、$BASE_URL 等环境变量替代硬编码值，让命令示例更安全（不暴露密钥）、更灵活（用户替换自己的值），也更易于跨环境复用。"
         ],
         keyDifficulties: [
-            "命令的可复现性：示例命令必须能直接复制粘贴执行。需要注意：路径（相对 vs 绝对）、环境变量、权限要求、依赖工具版本。",
-            "占位符的表示：用户需要替换的部分（如 API_KEY、YOUR_USERNAME）应该明确标注，通常用大写或尖括号（<your-api-key>）表示。",
-            "多行命令的换行：长命令需要换行时，注意使用反斜杠（\\）续行，并说明这是一个完整命令。",
-            "输出的呈现：命令输出应该包含足够信息让用户验证成功，但不要太长。可以用省略号（...）表示截断。"
+            "【复现性三要素】路径（相对 vs 绝对）、环境配置（依赖、版本）、权限要求（sudo、文件权限）——任一缺失都会导致'在我机器上能跑'但读者失败。",
+            "【占位符标注】用户需要替换的值必须明确标注：大写变量名（API_KEY）、尖括号（<your-token>）、或行内注释说明。不能假设用户能'猜到'哪些需要替换。",
+            "【多行命令续行】长命令换行时用反斜杠（\\\\）续行，但必须明确说明这是'一条完整命令'。Windows 和 Unix 续行符不同（^ vs \\\\），跨平台文档需要注明。",
+            "【输出呈现平衡】命令输出应足够让用户验证成功，但不能太长。curl -v 的完整输出可能有 50+ 行，文档中应截取关键部分并用省略号（...）标记。"
         ],
         handsOnPath: [
-            "用 curl 测试一个公开 API，写出完整的命令示例，包含所有必要的参数（-H、-d 等），确保可以直接复制执行。",
-            "为同一个 API 调用写两个版本的命令：一个使用硬编码值，一个使用环境变量（如 $API_KEY），说明如何设置环境变量。",
-            "写一个多步骤的命令行教程：每步一个命令，附上预期输出，解释每个参数的作用。",
-            "用 jq 处理 JSON 响应（如 curl ... | jq '.data'），展示如何提取特定字段，让输出更易读。"
+            "用 curl -v https://api.github.com 观察完整的 HTTP 交互：请求头、响应头、响应体。理解 -v 输出中 > 表示发送、< 表示接收的含义。",
+            "用 curl -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' 发送 POST 请求，对比 -d 和 -F 的区别（表单 vs JSON）。",
+            "为同一 API 写两版命令：硬编码版（curl -H 'Authorization: Bearer sk-xxx'）和环境变量版（curl -H \"Authorization: Bearer $API_KEY\"），并说明 export API_KEY=xxx 的设置方式。",
+            "使用管道处理 JSON 响应：curl -s https://api.github.com | jq '.current_user_url'，展示 -s（静默）和 jq 的组合用法。",
+            "写一个三步骤的命令教程：(1) 检查工具版本 curl --version，(2) 发送请求，(3) 验证响应。每步附上预期输出的关键行。"
         ],
         selfCheck: [
-            "你的命令示例是否可以直接复制粘贴执行？是否有遗漏的参数或前置条件？",
-            "用户需要替换的部分是否明确标注？（如 API_KEY、<your-token>）",
-            "你是否说明了命令需要的工具版本和安装方式？",
-            "多行命令是否正确使用了续行符（\\）？",
-            "命令输出是否包含足够信息让用户验证成功？是否过长需要截断？"
+            "【复制测试】你的命令示例是否可以直接复制粘贴执行？找一个没看过文档的人测试。",
+            "【占位符清晰】用户需要替换的部分是否用大写或尖括号明确标注？是否说明了替换规则？",
+            "【依赖说明】你是否说明了命令需要的工具（curl、jq）及其版本要求？是否提供了安装指引？",
+            "【输出验证】你的预期输出是否足够让用户确认成功？是否截取了关键部分而非全量输出？",
+            "【跨平台兼容】你的命令在 macOS、Linux、Windows（Git Bash/WSL）上都能运行吗？是否注明了平台差异？"
         ],
         extensions: [
-            "学习更多 curl 技巧：https://curl.se/docs/manual.html —— 代理、Cookie、上传、限速等。",
-            "掌握 jq 命令行 JSON 处理：https://stedolan.github.io/jq/ —— 提取、过滤、转换 JSON 数据。",
-            "学习命令行艺术：https://github.com/jlevy/the-art-of-command-line —— 提升命令行效率。",
-            "为命令示例添加语法高亮和复制按钮（使用 SSG 的代码块功能）。"
+            "【curl 高级】学习 curl 的代理（-x）、Cookie（-c/-b）、限速（--limit-rate）、断点续传（-C -）等高级功能：https://curl.se/docs/manual.html",
+            "【jq 处理】掌握 jq 命令行 JSON 处理：https://stedolan.github.io/jq/ —— 提取（.field）、过滤（select）、转换（map）JSON 数据。",
+            "【命令行艺术】The Art of Command Line 完整指南：https://github.com/jlevy/the-art-of-command-line —— 键盘快捷键、历史搜索、进程管理等效率技巧。",
+            "【httpie 替代】现代 HTTP 客户端 httpie：语法更简洁（http GET api.com）、输出更美观（自动语法高亮），适合教学场景。"
         ],
         sourceUrls: [
             "https://github.com/jlevy/the-art-of-command-line",
