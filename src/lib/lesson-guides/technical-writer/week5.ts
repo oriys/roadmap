@@ -129,35 +129,37 @@ export const week5Guides: Record<string, LessonGuide> = {
     "tw-w5-4": {
         lessonId: "tw-w5-4",
         background: [
-            "Explanation（概念解释）是'一种深入讨论的处理方式，允许反思'，其本质是以理解为导向。它旨在加深和拓展读者对主题的认知。",
-            "Explanation 的核心特征：反思性质——发生在其他活动之后，能带来新的视角；宽阔视角——比操作指南或参考采取更高更广的立场。",
-            "Explanation 是独立的：可在远离产品的环境中阅读（甚至可以在浴室读），不依赖于立即的实践。",
-            "Explanation 的独特价值：'为读者编织理解的网络，与其他事物相关联'——建立概念之间的联系，提供背景和历史。"
+            "【Explanation 定义】Diátaxis：'Explanation is a discursive treatment of a subject, that permits reflection'——允许反思的论述性处理，以理解为导向，提供概念层面的背景和清晰度。",
+            "【核心问题】Explanation 回答的问题是：'Can you tell me about...?'——告诉我关于 X 的事情。它通过反思而非即时行动来加深读者理解。",
+            "【宽阔视角】Diátaxis：Explanation 采用比 Tutorial、How-to、Reference 更宽阔的视角——它站得更高，看得更广，将主题放在更大的背景下讨论。",
+            "【独立可读】Explanation 可以在远离产品的环境中阅读（甚至可以在浴室读）——它不依赖于立即的实践，是'反思性的'而非'行动性的'。",
+            "【知识凝聚】Diátaxis：没有 Explanation，从业者的知识会'松散、碎片化和脆弱'——Explanation 创造知识的凝聚力，将片段连接成整体。"
         ],
         keyDifficulties: [
-            "与教程和操作指南的区分：Explanation 不应包含步骤式指导。如果你发现自己在写'首先做 X，然后做 Y'，那应该是操作指南。",
-            "避免变成参考文档：Explanation 是讨论和反思，不是列举参数和选项。它应该回答'为什么'而非'是什么'。",
-            "范围控制：Explanation 容易发散。需要严格界定范围，防止说明性或技术性内容混入，保持焦点。",
-            "观点的呈现：Explanation 可以考虑替代方案、反例或不同方法。但要平衡呈现，不要变成单方面的辩护。"
+            "【与其他文档类型的边界】Explanation 不应包含步骤式指导（那是 How-to）或纯粹的技术描述（那是 Reference）。如果发现自己在写'首先做 X'，应该停下来重新定位。",
+            "【范围控制】Explanation 容易发散。需要严格界定范围（keep boundaries tight），防止说明性或技术性内容混入，保持焦点在理解上。",
+            "【观点的平衡呈现】Diátaxis：Explanation 可以'admit opinion and perspective'，但要同时考虑多种观点。不要变成单方面的辩护或推销。",
+            "【讨论而非指导】使用论述性、讨论式的语言。承认系统中嵌入的人类创造性和决策过程——这是 Explanation 独有的空间。"
         ],
         handsOnPath: [
             "选择一个设计决策（如'为什么用 X 而不用 Y'），写一篇 Explanation：背景、权衡、选择的原因、局限性。",
-            "用图表辅助解释：画一张架构图或流程图，展示组件之间的关系和数据流向。",
-            "建立概念联系：在 Explanation 中链接到相关的教程、操作指南和参考文档，编织知识网络。",
+            "用图表辅助解释：画一张架构图或流程图，展示组件之间的关系和数据流向——视觉化帮助建立心智模型。",
+            "建立概念联系：在 Explanation 中链接到相关的 Tutorial、How-to 和 Reference 文档，编织知识网络。",
+            "用名词短语写标题：'认证架构'而非'如何配置认证'。Google：概念性文档使用名词短语标题。",
             "让一个知道'怎么用'但不知道'为什么这样设计'的人阅读你的 Explanation，检验是否回答了他们的疑问。"
         ],
         selfCheck: [
-            "你的 Explanation 是否回答'为什么'而非'怎么做'？是否避免了步骤式指导？",
-            "你是否提供了设计决策的背景和历史？读者能否理解选择的原因？",
-            "你是否讨论了替代方案和权衡？是否平衡呈现了不同观点？",
-            "你的范围是否明确？是否避免了变成参考文档或操作指南？",
-            "你是否使用了图表来辅助概念解释？"
+            "【内容定位】你的 Explanation 是否回答'为什么'而非'怎么做'？是否避免了步骤式指导？",
+            "【背景提供】你是否提供了设计决策的背景和历史？读者能否理解选择的原因？",
+            "【观点平衡】你是否讨论了替代方案和权衡？是否平衡呈现了不同观点？",
+            "【范围控制】你的范围是否明确？是否避免了变成 Reference 或 How-to？",
+            "【视觉辅助】你是否使用了图表来辅助概念解释？"
         ],
         extensions: [
-            "深入学习 Diátaxis 的 Explanation 规范：https://diataxis.fr/explanation/",
-            "研究架构决策记录（ADR）的写法：https://adr.github.io/ —— 结构化记录设计决策。",
-            "学习 C4 Model 画架构图：https://c4model.com/ —— 从上下文到代码分层展示系统架构。",
-            "阅读优秀的技术博客（如 Martin Fowler、Netflix Tech Blog），学习如何解释复杂概念。"
+            "【Diátaxis Explanation 规范】深入学习：https://diataxis.fr/explanation/ —— 理解五大核心实践。",
+            "【架构决策记录 ADR】学习 ADR 写法：https://adr.github.io/ —— 结构化记录设计决策的标准格式。",
+            "【C4 Model 架构图】学习用 C4 画架构图：https://c4model.com/ —— 从上下文到代码分层展示系统架构。",
+            "【优秀范例】Harold McGee 的《On Food and Cooking》是 Explanation 的典范——它通过多角度阐释烹饪技艺，不提供食谱或步骤指导。"
         ],
         sourceUrls: [
             "https://diataxis.fr/explanation/",
