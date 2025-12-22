@@ -5,37 +5,37 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-1": {
         lessonId: "w9-1",
         background: [
-            "【来源: GitHub Actions 文档】GitHub Actions 是一个持续集成和持续交付（CI/CD）平台，允许自动化构建、测试和部署流水线。工作流（Workflows）是定义在 `.github/workflows/` 目录下的 YAML 文件，由仓库事件（push、pull_request）、手动触发或定时计划激活执行。",
-            "【来源: Jenkins Pipeline 文档】Jenkins Pipeline 是一套插件，支持将持续交付流水线以代码形式实现。核心概念包括：Pipeline（整个构建过程的模型）、Node（执行 Pipeline 的机器）、Stage（任务的逻辑分组如 Build/Test/Deploy）、Step（单个执行任务如 `sh 'make'`）。Pipeline 支持声明式（Declarative）和脚本式（Scripted）两种语法。",
-            "【来源: Twelve-Factor App】Twelve-Factor 方法论强调「严格分离构建和运行阶段」（Build, Release, Run），确保构建产物的不可变性。第三条原则「配置存储在环境中」使同一制品可在不同部署环境运行。第十条「开发/生产一致性」要求保持各环境尽可能相似，减少差异导致的问题。",
-            "【来源: SemVer 规范】语义化版本使用 MAJOR.MINOR.PATCH 格式：MAJOR 在有不兼容 API 变更时递增；MINOR 在向后兼容地添加功能时递增；PATCH 在向后兼容的 bug 修复时递增。版本 0.y.z 用于初始开发阶段，任何东西都可能随时改变；版本 1.0.0 标志着公共 API 的正式定义。",
-            "【来源: SLSA 框架】SLSA（Supply-chain Levels for Software Artifacts）是防止篡改、改进完整性、保护软件包和基础设施的安全框架。它定义了四个递进的合规等级，从基础措施到高级抗篡改能力，涵盖源代码、构建流程和依赖管理。SLSA 由 Google、Intel 等领导，属于 OpenSSF 框架的一部分。"
+            "CI/CD（持续集成/持续交付）是现代软件开发的核心实践。持续集成强调开发者频繁地将代码合并到主分支，每次合并都通过自动化构建和测试来验证，尽早发现集成问题。持续交付则确保代码始终处于可部署状态，通过自动化流水线将经过验证的代码交付到各个环境。",
+            "GitHub Actions 是目前最流行的 CI/CD 平台之一，工作流定义在 .github/workflows/ 目录的 YAML 文件中。核心概念包括：Workflow（工作流，由事件触发的自动化流程）、Job（作业，在同一运行器上执行的步骤集合）、Step（步骤，单个任务）、Action（操作，可复用的最小单元）。工作流可由 push、pull_request、schedule 等事件触发。",
+            "Jenkins 是企业级 CI/CD 的经典选择，Pipeline as Code 是其核心理念。Pipeline 定义在 Jenkinsfile 中，支持声明式（Declarative）和脚本式（Scripted）两种语法。声明式语法结构清晰，使用 pipeline、stages、steps 等块；脚本式语法基于 Groovy，灵活性更高但学习曲线陡峭。",
+            "Twelve-Factor App 方法论为 CI/CD 提供了重要指导：第五条「构建、发布、运行」要求严格分离这三个阶段，确保构建产物不可变；第三条「配置」要求将配置存储在环境变量中，使同一制品可在不同环境运行；第十条「开发/生产一致性」要求减少各环境差异。",
+            "语义化版本（SemVer）是版本管理的行业标准，格式为 MAJOR.MINOR.PATCH。MAJOR 在有破坏性变更时递增，MINOR 在添加向后兼容的新功能时递增，PATCH 在修复 bug 时递增。版本 0.x.x 表示初始开发阶段 API 不稳定，1.0.0 标志着 API 正式稳定。预发布版本使用连字符标记如 1.0.0-alpha。"
         ],
         keyDifficulties: [
-            "【GitHub Actions vs Jenkins】GitHub Actions 提供 GitHub 托管的运行器（Ubuntu/Windows/macOS），每次执行在全新虚拟机中运行，配置简单但自定义受限；Jenkins Pipeline 需要自行维护节点，但灵活性更高，适合复杂企业场景。理解两者的取舍对于选型至关重要。",
-            "【CI 与 CD 边界】持续集成（CI）强调频繁将代码合并到主干并自动验证，产出可部署制品；持续交付（Continuous Delivery）需人工审批后部署；持续部署（Continuous Deployment）则完全自动化。根据风险承受能力和合规要求选择合适模式。",
-            "【不可变制品与配置分离】Twelve-Factor 强调制品一旦构建完成就不应被修改，同一制品从测试到生产环境使用。运行时配置（环境变量、ConfigMap）与制品分离，避免为每个环境重新构建。使用 Git commit SHA 而非 latest 标签确保可追溯性。",
-            "【Pipeline as Code】将 Jenkinsfile 或 GitHub Actions YAML 提交到源代码仓库，使流水线定义可版本控制、代码评审，并自动为所有分支和 PR 运行。Jenkins Pipeline 的核心优势包括：Code（版本化）、Durable（重启后恢复）、Pausable（人工审批门）、Versatile（并行/分叉）。"
+            "CI 与 CD 的边界区分：持续集成（CI）关注代码合并和自动化验证，产出可部署制品；持续交付（Continuous Delivery）确保代码随时可以部署，但需要人工审批；持续部署（Continuous Deployment）完全自动化，代码通过测试后直接部署到生产。根据业务风险和合规要求选择合适模式。",
+            "GitHub Actions vs Jenkins 选型：GitHub Actions 提供托管运行器，配置简单、与 GitHub 深度集成，适合中小项目和开源项目；Jenkins 需要自建基础设施，但灵活性极高，插件生态丰富，适合有复杂定制需求的企业。关键考量因素包括：团队规模、已有基础设施、定制需求、成本预算。",
+            "不可变制品原则：构建产物一旦生成就不应被修改，同一个镜像或包从测试环境一直用到生产环境。运行时配置（环境变量、Kubernetes ConfigMap/Secret）与制品分离，避免为每个环境重新构建。使用 Git commit SHA 或不可变标签确保版本可追溯，避免使用 latest 等可变标签。",
+            "流水线设计模式：典型的 CI/CD 流水线包括代码检查（lint）、单元测试、构建、集成测试、安全扫描、部署等阶段。使用 Job 依赖（needs）控制执行顺序，使用 Matrix 策略实现多版本并行测试。缓存依赖项（node_modules、Maven 本地仓库）可显著提升构建速度。"
         ],
         handsOnPath: [
-            "在 GitHub 创建示例仓库，添加 `.github/workflows/ci.yml` 文件。配置在 push 和 pull_request 事件时触发，运行单元测试。观察 Actions 面板的运行结果、作业依赖和日志输出。",
-            "扩展工作流添加多个 Job：lint 检查 → 构建 → 测试，配置 `needs` 依赖关系确保顺序执行。使用 `matrix` 策略在多个 Node.js 版本上并行测试。",
-            "配置分支保护规则：在仓库 Settings → Branches 中，要求 PR 合并前必须通过 CI 检查（Status Checks）。尝试提交会导致测试失败的 PR，观察保护规则效果。",
-            "使用 `actions/cache` 缓存依赖项（node_modules 或 Go modules），对比添加缓存前后的构建时间。理解缓存 key 的设计对命中率的影响。",
-            "（可选）在本地安装 Jenkins，创建 Declarative Pipeline 项目。编写包含 Build、Test、Deploy 三个 stage 的 Jenkinsfile，体验声明式语法的结构化特点。"
+            "创建第一个 GitHub Actions 工作流：在仓库中添加 .github/workflows/ci.yml，配置在 push 和 pull_request 时触发，运行 lint 和测试。观察 Actions 面板的执行过程、日志输出和状态标记。",
+            "设计多阶段流水线：添加多个 Job（lint → build → test → deploy），使用 needs 配置依赖关系。实现 Matrix 策略在 Node.js 16/18/20 三个版本上并行测试。理解并行执行和顺序执行的场景。",
+            "配置分支保护规则：在仓库 Settings → Branches 中启用分支保护，要求 PR 必须通过所有 CI 检查才能合并。故意提交一个会导致测试失败的 PR，验证保护规则生效。",
+            "优化构建性能：使用 actions/cache 缓存 node_modules 或其他依赖目录，设计合理的缓存 key（基于 lock 文件 hash）。对比缓存前后的构建时间，理解缓存命中率的影响因素。",
+            "体验 Jenkins Pipeline（可选）：使用 Docker 快速启动 Jenkins，创建 Pipeline 项目并编写 Jenkinsfile。实现包含 Build、Test、Deploy 三个 stage 的声明式流水线，体验与 GitHub Actions 的差异。"
         ],
         selfCheck: [
-            "GitHub Actions 的工作流（Workflow）、作业（Job）、步骤（Step）和操作（Action）分别是什么？它们之间的关系是怎样的？",
-            "Jenkins Pipeline 的声明式（Declarative）和脚本式（Scripted）语法各有什么特点？适用于什么场景？",
-            "Twelve-Factor App 的哪些原则与 CI/CD 直接相关？为什么强调构建和运行阶段的严格分离？",
-            "语义化版本的 MAJOR.MINOR.PATCH 各在什么情况下递增？版本 0.y.z 和 1.0.0 有什么区别？",
-            "SLSA 框架的四个等级分别解决什么问题？它如何帮助组织提升供应链安全成熟度？"
+            "GitHub Actions 中 Workflow、Job、Step、Action 的层级关系是什么？一个 Workflow 可以包含多个 Job 吗？Job 之间如何建立依赖？",
+            "持续集成、持续交付、持续部署三者的区别是什么？为什么有些团队选择持续交付而不是持续部署？",
+            "为什么 Twelve-Factor App 强调构建和运行阶段的严格分离？不可变制品原则带来什么好处？",
+            "Jenkins 的声明式和脚本式 Pipeline 各有什么优缺点？什么场景下应该选择哪种？",
+            "语义化版本中 0.x.x 和 1.x.x 的区别是什么？预发布版本（如 1.0.0-beta）如何与正式版本比较大小？"
         ],
         extensions: [
-            "研究 GitHub Actions 的可重用工作流（Reusable Workflows）和组合操作（Composite Actions），了解如何在多个仓库间共享 CI 逻辑。",
-            "探索 GitHub Actions 的 OIDC 与云厂商集成，了解如何无需存储长期凭证即可安全访问 AWS/GCP/Azure 资源。",
-            "学习 Jenkins 的 Shared Libraries 机制，理解如何在组织内标准化和复用 Pipeline 代码。",
-            "对比 GitHub Actions、GitLab CI、CircleCI、Azure Pipelines 等不同 CI/CD 工具的特点，了解它们在语法、运行模式、生态系统方面的差异。"
+            "研究 GitHub Actions 的可重用工作流（Reusable Workflows）和组合操作（Composite Actions），实现跨仓库共享 CI 逻辑，减少重复配置。",
+            "探索 OIDC 无密钥认证：GitHub Actions 可以通过 OIDC 向 AWS/GCP/Azure 获取临时凭证，无需在仓库中存储长期密钥，大幅提升安全性。",
+            "学习 Jenkins Shared Libraries，了解如何在组织内创建标准化的流水线模板，统一构建规范并降低维护成本。",
+            "研究 SLSA（Supply-chain Levels for Software Artifacts）框架，了解如何通过构建来源证明（provenance）提升软件供应链安全等级。"
         ],
         sourceUrls: [
             "https://docs.github.com/en/actions/about-github-actions/understanding-github-actions",
@@ -176,183 +176,183 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-1": [
         {
             id: "w9-1-q1",
-            question: "根据 GitHub Actions 文档，工作流（Workflow）文件应该存放在哪个目录？",
+            question: "GitHub Actions 工作流文件应该存放在哪个目录？",
             options: [
-                ".github/workflows/ 目录下的 YAML 文件",
-                ".ci/ 目录下的 JSON 文件",
-                "项目根目录的 workflow.yml 文件",
-                ".actions/ 目录下的配置文件"
+                ".github/workflows/ 目录",
+                ".ci/ 目录",
+                "项目根目录",
+                ".actions/ 目录"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档明确指出，工作流是定义在 `.github/workflows/` 目录下的 YAML 文件。"
+            rationale: "GitHub Actions 的工作流文件必须放在 .github/workflows/ 目录下，使用 YAML 格式定义。"
         },
         {
             id: "w9-1-q2",
-            question: "根据 Jenkins Pipeline 文档，Pipeline 的核心概念中，Stage 是什么？",
+            question: "Jenkins Pipeline 中 Stage 的作用是什么？",
             options: [
-                "任务的逻辑分组，如 Build、Test、Deploy 阶段",
-                "执行 Pipeline 的物理机器",
-                "单个执行任务如 sh 'make'",
-                "整个构建过程的完整模型"
+                "将任务逻辑分组，如 Build、Test、Deploy 阶段",
+                "指定执行 Pipeline 的物理机器",
+                "定义单个执行命令",
+                "定义整个构建过程的入口"
             ],
             answer: 0,
-            rationale: "Jenkins 文档定义 Stage 为「概念上不同的任务子集，贯穿整个 Pipeline（如 Build、Test、Deploy 阶段）」。"
+            rationale: "Stage 用于将 Pipeline 中的任务按逻辑分组，使流水线结构更清晰，便于查看各阶段执行状态。"
         },
         {
             id: "w9-1-q3",
-            question: "根据 Twelve-Factor App 方法论，第五条原则「Build, Release, Run」强调什么？",
+            question: "Twelve-Factor App 的「Build, Release, Run」原则强调什么？",
             options: [
-                "严格分离构建和运行阶段，确保构建产物的不可变性",
+                "严格分离构建、发布和运行阶段",
                 "将所有代码放在一个仓库中",
-                "使用相同的配置文件在所有环境运行",
-                "手动部署到生产环境"
+                "在所有环境使用相同配置文件",
+                "手动执行每个部署步骤"
             ],
             answer: 0,
-            rationale: "Twelve-Factor 第五条原则明确要求「严格分离构建和运行阶段」（Strictly separate build and run stages）。"
+            rationale: "该原则要求严格分离三个阶段：构建产出制品，发布组合制品与配置，运行启动进程。确保制品不可变。"
         },
         {
             id: "w9-1-q4",
-            question: "根据语义化版本（SemVer）规范，MAJOR 版本号在什么情况下递增？",
+            question: "语义化版本中，MAJOR 版本号在什么情况下递增？",
             options: [
                 "有不兼容的 API 变更时",
-                "向后兼容地添加新功能时",
-                "向后兼容的 bug 修复时",
-                "文档更新时"
+                "添加向后兼容的新功能时",
+                "修复 bug 时",
+                "更新文档时"
             ],
             answer: 0,
-            rationale: "SemVer 规范明确定义：MAJOR 在「incompatible API changes」（不兼容的 API 变更）时递增。"
+            rationale: "MAJOR 版本在引入破坏性变更（不兼容的 API 修改）时递增，表示升级可能需要调整代码。"
         },
         {
             id: "w9-1-q5",
-            question: "根据 SemVer 规范，版本 0.y.z 和 1.0.0 的区别是什么？",
+            question: "语义化版本中 0.x.x 和 1.x.x 的区别是什么？",
             options: [
-                "0.y.z 用于初始开发阶段，任何东西都可能改变；1.0.0 标志公共 API 正式定义",
-                "0.y.z 表示稳定版本，1.0.0 表示测试版本",
-                "两者没有区别，只是数字不同",
-                "0.y.z 只能用于内部项目"
+                "0.x.x 表示初始开发阶段 API 不稳定，1.x.x 表示 API 已稳定",
+                "0.x.x 表示稳定版本，1.x.x 表示测试版本",
+                "两者没有本质区别",
+                "0.x.x 只能用于私有项目"
             ],
             answer: 0,
-            rationale: "SemVer 规范指出：版本 0.y.z 用于初始开发，「任何东西都可能随时改变」；版本 1.0.0 标志着公共 API 的正式定义。"
+            rationale: "版本 0.x.x 表示初始开发阶段，API 可能随时变化；1.0.0 及以上表示公共 API 已正式定义并趋于稳定。"
         },
         {
             id: "w9-1-q6",
-            question: "根据 SLSA 框架文档，SLSA 的主要目标是什么？",
+            question: "持续集成（CI）、持续交付（Continuous Delivery）、持续部署（Continuous Deployment）的主要区别是什么？",
             options: [
-                "防止篡改、改进完整性、保护软件包和基础设施",
-                "加速软件构建速度",
-                "减少代码行数",
-                "自动生成文档"
+                "CI 自动验证代码，交付需人工审批部署，部署完全自动化",
+                "三者完全相同",
+                "CI 包含部署，交付只做测试",
+                "只有持续部署需要自动化测试"
             ],
             answer: 0,
-            rationale: "SLSA 官网明确指出其目标是「防止篡改、改进完整性、保护软件包和基础设施」。"
+            rationale: "CI 关注自动化验证；持续交付确保代码随时可部署但需人工触发；持续部署则完全自动化到生产环境。"
         },
         {
             id: "w9-1-q7",
-            question: "根据 Jenkins Pipeline 文档，Pipeline as Code 的核心优势是什么？",
+            question: "Pipeline as Code 的核心优势是什么？",
             options: [
-                "Code（版本化）、Durable（重启恢复）、Pausable（审批门）、Versatile（并行）",
+                "流水线定义可版本控制、代码评审、自动为所有分支运行",
+                "不需要编写任何配置",
                 "只能在 Windows 上运行",
-                "不需要任何配置文件",
                 "自动修复代码 bug"
             ],
             answer: 0,
-            rationale: "Jenkins 文档列出 Pipeline 的核心优势：Code、Durable、Pausable、Versatile 和 Extensible。"
+            rationale: "Pipeline as Code 将流水线定义存储在代码仓库中，享受版本控制、变更追踪、代码评审等软件工程最佳实践。"
         },
         {
             id: "w9-1-q8",
-            question: "根据 GitHub Actions 文档，Runner 是什么？",
+            question: "GitHub Actions 中 Runner 是什么？",
             options: [
-                "执行工作流的服务器，GitHub 提供 Ubuntu/Windows/macOS 运行器",
+                "执行工作流的服务器",
                 "编写工作流的编辑器",
                 "存储代码的仓库",
-                "管理权限的控制台"
+                "管理 Secrets 的服务"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档定义 Runner 为执行工作流的服务器，GitHub 提供 Linux、Windows 和 macOS 虚拟机。"
+            rationale: "Runner 是执行 GitHub Actions 工作流的服务器。GitHub 提供托管的 Ubuntu、Windows、macOS 运行器，也支持自托管运行器。"
         },
         {
             id: "w9-1-q9",
-            question: "根据 Twelve-Factor App，第三条原则「Config」要求什么？",
+            question: "为什么不推荐使用 latest 作为镜像标签？",
             options: [
-                "将配置存储在环境中，使同一制品可在不同部署环境运行",
-                "将配置硬编码在代码中",
-                "每个环境使用不同的代码仓库",
-                "配置文件必须使用 JSON 格式"
+                "latest 是可变标签，无法保证可重复性和可追溯性",
+                "latest 标签会导致构建变慢",
+                "latest 不被镜像仓库支持",
+                "latest 只能用于开发环境"
             ],
             answer: 0,
-            rationale: "Twelve-Factor 第三条「Config」明确要求「Store config in the environment」（将配置存储在环境中）。"
+            rationale: "latest 标签会被覆盖，无法追溯具体版本。推荐使用 Git commit SHA 或语义化版本作为不可变标签。"
         },
         {
             id: "w9-1-q10",
-            question: "根据 Jenkins Pipeline 文档，声明式（Declarative）和脚本式（Scripted）语法的主要区别是？",
+            question: "Jenkins 声明式和脚本式 Pipeline 的主要区别是什么？",
             options: [
-                "声明式更易读有结构化 pipeline 块，脚本式使用 node 块更灵活但需要 Groovy 知识",
-                "两者完全相同",
+                "声明式结构化易读，脚本式基于 Groovy 更灵活",
+                "两者语法完全相同",
                 "声明式只能在 Linux 上运行",
-                "脚本式不支持并行执行"
+                "脚本式不支持 Stage"
             ],
             answer: 0,
-            rationale: "Jenkins 文档指出：声明式使用 pipeline 块结构，易读性好；脚本式使用 node 块，更灵活但需要 Groovy 知识。"
+            rationale: "声明式 Pipeline 使用 pipeline {} 结构，语法受限但易于理解；脚本式使用 Groovy 语法，灵活性高但学习曲线陡峭。"
         },
         {
             id: "w9-1-q11",
-            question: "根据 GitHub Actions 文档，Job 之间如何建立依赖关系？",
+            question: "GitHub Actions 中如何让 Job B 在 Job A 完成后才执行？",
             options: [
-                "使用 needs 关键字指定依赖的 Job",
-                "按字母顺序自动排序",
-                "无法建立依赖关系",
-                "使用 depends 关键字"
+                "在 Job B 中使用 needs: [A]",
+                "按字母顺序命名 Job",
+                "使用 depends-on 关键字",
+                "无法实现 Job 依赖"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档说明 Job 可以并行运行或通过 needs 关键字建立依赖关系，依赖其他 Job 完成。"
+            rationale: "使用 needs 关键字可以指定 Job 的依赖关系，被依赖的 Job 必须成功完成后，当前 Job 才会开始执行。"
         },
         {
             id: "w9-1-q12",
-            question: "根据 SemVer 规范，预发布版本（Pre-release）如何表示？",
+            question: "预发布版本号应该如何表示？",
             options: [
-                "在版本号后追加连字符和标识符，如 1.0.0-alpha、1.0.0-beta.1",
-                "使用负数版本号",
+                "在版本号后追加连字符和标识符，如 1.0.0-alpha",
+                "使用负数版本号如 -1.0.0",
                 "在版本号前加 pre- 前缀",
-                "使用特殊字符 @ 分隔"
+                "使用括号标记如 1.0.0(alpha)"
             ],
             answer: 0,
-            rationale: "SemVer 规范定义预发布版本「通过追加连字符和标识符表示」，如 1.0.0-alpha。"
+            rationale: "预发布版本通过在正式版本号后追加连字符和标识符表示，如 1.0.0-alpha、1.0.0-beta.2、1.0.0-rc.1。"
         },
         {
             id: "w9-1-q13",
-            question: "根据 SLSA 框架，其四个等级是如何设计的？",
+            question: "GitHub Actions Matrix 策略的用途是什么？",
             options: [
-                "递进式设计，从基础措施到高级抗篡改能力",
-                "四个等级完全独立，没有递进关系",
-                "只有第四级有实际意义",
-                "等级越低安全性越高"
+                "使用不同变量组合并行运行同一个 Job",
+                "加密工作流中的敏感信息",
+                "限制并发运行的 Job 数量",
+                "自动合并 Pull Request"
             ],
             answer: 0,
-            rationale: "SLSA 官网说明采用「递进式的四个合规等级设计」，从基础措施到高级抗篡改能力。"
+            rationale: "Matrix 策略允许用不同的变量组合（如多个 Node.js 版本、多个操作系统）并行运行同一个 Job，实现多维度测试。"
         },
         {
             id: "w9-1-q14",
-            question: "根据 Twelve-Factor App，第十条原则「Dev/prod parity」的目的是什么？",
+            question: "Twelve-Factor App 的「Config」原则要求什么？",
             options: [
-                "保持开发、预发布和生产环境尽可能相似，减少环境差异导致的问题",
-                "开发环境和生产环境必须使用不同的代码",
-                "只在生产环境运行测试",
-                "禁止使用预发布环境"
+                "将配置存储在环境变量中，与代码分离",
+                "将配置硬编码在源代码中",
+                "每个环境使用独立的代码分支",
+                "配置必须使用 YAML 格式"
             ],
             answer: 0,
-            rationale: "Twelve-Factor 第十条要求「Keep development, staging, and production as similar as possible」。"
+            rationale: "Config 原则要求将配置（数据库连接、API 密钥等）存储在环境变量中，使同一制品可以在不同环境运行而无需修改。"
         },
         {
             id: "w9-1-q15",
-            question: "根据 GitHub Actions 文档，Matrix 策略的作用是什么？",
+            question: "为什么要使用缓存来优化 CI/CD 流水线？",
             options: [
-                "使用不同的变量组合运行同一个 Job，如在多个版本上并行测试",
-                "加密工作流中的敏感信息",
-                "限制并发运行的 Job 数量",
-                "自动合并 PR"
+                "避免重复下载依赖，显著减少构建时间",
+                "缓存可以替代测试",
+                "缓存可以自动修复构建错误",
+                "缓存是强制要求的配置"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档说明 Matrix 策略「enables running the same job with different variable combinations」。"
+            rationale: "缓存依赖项（如 node_modules、Maven 仓库）可以避免每次构建都重新下载，大幅缩短构建时间，节省网络带宽。"
         }
     ],
     "w9-2": [
