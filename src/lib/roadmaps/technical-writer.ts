@@ -46,7 +46,7 @@ export const technicalWriterStages: Stage[] = [
                         resources: [
                             { title: "Google: Audience", url: "https://developers.google.com/tech-writing/one#audience" },
                             { title: "NN/G: User Personas", url: "https://www.nngroup.com/articles/persona/" },
-                            { title: "Diátaxis: User Needs", url: "https://diataxis.fr/needs/" },
+                            { title: "Diátaxis: User Needs", url: "https://diataxis.fr/" },
                         ],
                     },
                     {
@@ -61,7 +61,7 @@ export const technicalWriterStages: Stage[] = [
                         resources: [
                             { title: "Diátaxis Framework", url: "https://diataxis.fr/" },
                             { title: "Google: Organizing Documents", url: "https://developers.google.com/tech-writing/one#organizing_documents" },
-                            { title: "Write the Docs: Structured Writing", url: "https://www.writethedocs.org/guide/writing/structured-content/" },
+                            { title: "Write the Docs: Documentation Guide", url: "https://www.writethedocs.org/guide/" },
                         ],
                     },
                     {
