@@ -1,111 +1,163 @@
 import type { QuizQuestion } from "../types";
 
 export const week4: Record<string, QuizQuestion[]> = {
-  // Lesson 1: API 文档结构与规范 (8题)
+  // Lesson 1: API 文档结构与规范 (12题，答案随机分布)
   "tw-w4-1": [
     {
       id: "tw-w4-1-q1",
-      question: "一份完整的 API 文档应该包含哪些核心部分？",
+      question: "根据 Google API 文档规范，方法描述应该以什么形式开头？",
       options: [
-        "概览、认证方式、端点参考、请求/响应示例、错误处理、版本说明",
-        "只需要端点列表和参数说明",
-        "代码实现和数据库结构",
-        "公司介绍和联系方式",
+        "以'This method will...'开头",
+        "动作动词开头，如 'Gets'、'Creates'、'Deletes'、'Updates'",
+        "以方法名本身开头",
+        "以名词短语'The method...'开头",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "完整的 API 文档需要帮助开发者理解如何认证、调用端点、处理响应和错误，以及版本兼容性。",
+        "Google API Style: 方法描述应以动作动词开头——操作并返回数据用动作动词，Getter 用'Gets the...'，无返回值用'Sets'/'Updates'/'Deletes'等。",
     },
     {
       id: "tw-w4-1-q2",
-      question: "根据 Google API 文档规范，方法描述应该以什么开头？",
+      question: "RFC 7807 Problem Details 标准定义的 API 错误响应中，哪个字段是主标识符？",
       options: [
-        "动作动词，如 'Gets'、'Creates'、'Deletes'、'Updates'",
-        "名词，如 'The method...'",
-        "'This method will...'",
-        "方法名本身",
+        "type（问题类型 URI）是主标识符，客户端必须用它来识别错误类型",
+        "title 是主标识符，因为它是人可读的",
+        "status 是主标识符，因为它是 HTTP 状态码",
+        "detail 是主标识符，因为它包含具体错误信息",
       ],
       answer: 0,
       rationale:
-        "Google API Style: 方法描述应以动作动词开头，如 Getter 用 'Gets the...'，操作用 'Adds...and returns...'。",
+        "RFC 7807 明确规定：'Consumers MUST use the type string as the primary identifier'——type 是主标识符，title 是辅助说明。",
     },
     {
       id: "tw-w4-1-q3",
-      question: "API 文档中的认证（Authentication）部分应该说明什么？",
+      question: "Google API 文档规范对布尔类型参数的描述有什么要求？",
       options: [
-        "支持的认证方式、如何获取凭证、如何在请求中传递凭证",
-        "只需要说明使用 API Key",
-        "公司的安全政策",
-        "用户的密码复杂度要求",
+        "假设开发者知道布尔值的含义即可",
+        "只需要说明参数名称和类型",
+        "只描述 true 的情况",
+        "必须说明 true 和 false 两种情况：'If true, ...; if false, ...'",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "认证文档应完整说明支持的方式（如 OAuth、API Key）、凭证获取流程，以及具体的使用示例。",
+        "Google API Style: 布尔参数需说明 true/false 两种情况——'If true, ...; if false, ...'，包含默认值说明'Default: ...'。",
     },
     {
       id: "tw-w4-1-q4",
-      question: "API 错误响应文档应该包含哪些信息？",
+      question: "RFC 7807 Problem Details 标准包含哪五个核心字段？",
       options: [
-        "错误码、错误消息、可能的原因、建议的解决方案",
-        "只需要列出 HTTP 状态码",
-        "只需要说'请联系技术支持'",
-        "错误的内部堆栈跟踪",
+        "error、message、code、data、timestamp",
+        "type、title、status、detail、instance",
+        "name、description、http_code、info、url",
+        "kind、summary、code、explanation、path",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "错误文档应帮助开发者理解错误原因并知道如何处理，包含错误码、消息、原因和解决建议。",
+        "RFC 7807 定义五个核心字段：type（问题类型 URI）、title（人可读摘要）、status（HTTP 状态码）、detail（具体说明）、instance（实例 URI）。",
     },
     {
       id: "tw-w4-1-q5",
-      question: "Google API 文档规范对弃用（Deprecated）的 API 有什么要求？",
+      question: "Google API 文档规范对弃用（Deprecated）元素的首句有什么特殊要求？",
       options: [
-        "必须明确说明替代方案，并提供迁移指导",
-        "只需要标记为弃用即可",
-        "立即删除相关文档",
-        "弃用的 API 不需要文档",
+        "弃用说明不需要特殊格式",
+        "可以在任何位置说明弃用信息",
+        "首句应包含完整的迁移步骤",
+        "仅首句出现在摘要中，必须告知替代方案和首次弃用版本",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "Google API Style: 弃用的元素必须说明替代方案（what to use as a replacement）并提供迁移指导。",
+        "Google：弃用时必须'告知用户应使用何种替代方案'，说明首次弃用的版本，且仅第一句出现在摘要中。",
     },
     {
       id: "tw-w4-1-q6",
-      question: "API 参数文档中，布尔类型参数应该如何描述？",
+      question: "Stripe OpenAPI 规范中定义的自定义扩展字段 x-expandableFields 的作用是什么？",
       options: [
-        "明确说明 true 和 false 各自的行为，如 'If true, ...; if false, ...'",
-        "只需要说明参数名称和类型",
-        "假设开发者知道布尔值的含义",
-        "只描述 true 的情况",
+        "定义可以自动展开的嵌套对象字段",
+        "标记已弃用的字段",
+        "指定必填字段",
+        "配置字段的验证规则",
       ],
       answer: 0,
       rationale:
-        "Google API Style: 布尔参数必须清晰说明 true/false 的具体行为差异。",
+        "Stripe OpenAPI 规范定义了 x-expandableFields、x-expansionResources 等自定义扩展字段，支持对象扩展功能，是业界典范。",
     },
     {
       id: "tw-w4-1-q7",
-      question: "API 文档中的速率限制（Rate Limiting）说明应该包含什么？",
+      question: "API 文档中描述非布尔类型参数时，应该以什么开头？",
       options: [
-        "限制阈值、时间窗口、超限时的响应、如何处理限流",
-        "只需要说'有速率限制'",
-        "不应该公开速率限制信息",
-        "只在错误发生时才说明",
+        "以参数类型开头",
+        "以参数名称开头",
+        "以'The'或'A'开头",
+        "以动作动词开头",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "开发者需要知道具体的限制规则才能设计合理的调用策略，包括阈值、窗口和处理方法。",
+        "Google API Style: 非布尔参数以'The'或'A'开头；布尔参数需说明 true/false 两种情况。",
     },
     {
       id: "tw-w4-1-q8",
-      question: "API 文档中，类描述的首句应该遵循什么原则？",
+      question: "一份完整的 API 文档应该包含哪些核心结构部分？",
       options: [
-        "简洁说明用途，不重复类名，因为首句会出现在摘要中",
-        "尽可能详细地描述所有功能",
-        "以'This class is...'开头",
-        "只写类名和版本号",
+        "只需要端点列表和参数说明",
+        "代码实现和数据库结构",
+        "概览、认证、速率限制、错误模型、版本与变更——缺一不可",
+        "公司介绍和技术团队信息",
+      ],
+      answer: 2,
+      rationale:
+        "API 文档核心结构：概览（Overview）、认证（Authentication）、速率限制（Rate Limiting）、错误模型（Error Model）、版本与变更（Versioning）。",
+    },
+    {
+      id: "tw-w4-1-q9",
+      question: "Google API 文档规范要求每个接口必须完整描述哪些内容？",
+      options: [
+        "只需要描述公开的方法",
+        "只需要描述主要功能",
+        "每个类/接口、每个常量/字段/枚举、每个方法及其参数/返回值/异常",
+        "只需要描述可能出错的地方",
+      ],
+      answer: 2,
+      rationale:
+        "Google 规范要求：每个类/接口、每个常量/字段/枚举、每个方法及其参数/返回值/异常都必须有完整描述。",
+    },
+    {
+      id: "tw-w4-1-q10",
+      question: "Google API 文档规范对方法描述的时态有什么要求？",
+      options: [
+        "可以使用任何时态",
+        "使用现在时态，如'Returns a bird'而非'Returned a bird'",
+        "使用将来时态，如'This method will return...'",
+        "使用过去时态描述已完成的操作",
+      ],
+      answer: 1,
+      rationale:
+        "Google 规范要求描述一致性：使用现在时态（'Returns a bird' 非 'Returned'），首句简洁独特，避免重复类名。",
+    },
+    {
+      id: "tw-w4-1-q11",
+      question: "RFC 7807 Problem Details 中的 type 字段应该是什么格式？",
+      options: [
+        "纯文本错误码",
+        "数字错误码",
+        "JSON 对象",
+        "指向问题类型定义的 URI",
+      ],
+      answer: 3,
+      rationale:
+        "RFC 7807：type 是问题类型的 URI，指向描述该错误类型的文档。客户端使用 type 作为主标识符来识别和处理不同类型的错误。",
+    },
+    {
+      id: "tw-w4-1-q12",
+      question: "根据 Google API 文档规范，布尔类型的 getter 方法应该如何描述？",
+      options: [
+        "用'Checks whether...'开头",
+        "用'Gets the boolean...'开头",
+        "用'Returns true if...'开头",
+        "用'Verifies that...'开头",
       ],
       answer: 0,
       rationale:
-        "Google API Style: 首句出现在摘要中，必须简洁独特，不重复类名，避免'this class will...'等模式。",
+        "Google 规范：布尔 getter 用'Checks whether...'开头；其他 getter 用'Gets the...'开头；操作并返回数据用动作动词开头。",
     },
   ],
   // Lesson 2: OpenAPI / Swagger 入门 (8题)

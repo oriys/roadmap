@@ -4,35 +4,36 @@ export const week4Guides: Record<string, LessonGuide> = {
     "tw-w4-1": {
         lessonId: "tw-w4-1",
         background: [
-            "API 参考文档必须包含：类/接口描述、方法说明、参数文档、返回值、异常/错误。每个公开成员都需要完整描述。",
-            "API 文档的核心结构：概览（Overview）、认证（Authentication）、速率限制（Rate Limiting）、错误模型（Error Model）、版本与变更（Versioning）。",
-            "RFC 7807 Problem Details 定义了 API 错误响应的标准格式：type、title、status、detail、instance——让错误响应可预测、可解析。",
-            "Stripe API Docs 是业界公认的 API 文档典范：清晰的导航、可交互的示例、多语言代码片段、详细的错误说明。"
+            "【API 文档必需内容】Google 规范要求：每个类/接口、每个常量/字段/枚举、每个方法及其参数/返回值/异常都必须有完整描述。",
+            "【方法描述动词选择】Google：操作并返回数据用动作动词开头；布尔 getter 用'Checks whether...'；其他 getter 用'Gets the...'；无返回值用'Sets'/'Updates'/'Deletes'等。",
+            "【RFC 7807 Problem Details】标准化 API 错误响应格式：type（问题类型 URI）、title（人可读摘要）、status（HTTP 状态码）、detail（具体说明）、instance（实例 URI）。",
+            "【Stripe OpenAPI 参考】Stripe 维护的 OpenAPI 规范是业界典范，定义了 x-expandableFields、x-expansionResources 等自定义扩展字段，支持对象扩展功能。",
+            "【API 文档核心结构】概览（Overview）、认证（Authentication）、速率限制（Rate Limiting）、错误模型（Error Model）、版本与变更（Versioning）——缺一不可。"
         ],
         keyDifficulties: [
-            "描述的一致性：用现在时态（'Returns a bird' 而非 'Returned'）、首句简洁独特、避免重复类名。",
-            "参数文档的完整性：非布尔参数以 'The' 或 'A' 开头，布尔参数需说明 true/false 两种情况，包含默认值说明。",
-            "错误模型的设计：统一的错误响应格式（如 RFC 7807）、清晰的错误码体系、每个错误的原因和解决方案。",
-            "版本控制策略：如何标记版本（URL vs Header）、如何处理废弃（Deprecation）、如何提供迁移指南。"
+            "【描述一致性】现在时态（'Returns a bird' 非 'Returned'）、首句简洁独特、避免重复类名、避免'this class will...'等模式。",
+            "【参数文档完整性】非布尔参数以'The'或'A'开头；布尔参数需说明 true/false 两种情况（'If true, ...; if false, ...'）；包含默认值说明（'Default: ...'）。",
+            "【弃用处理】Google：弃用时必须'告知用户应使用何种替代方案'，说明首次弃用的版本，仅第一句出现在摘要中。",
+            "【错误响应设计】RFC 7807：'Consumers MUST use the type string as the primary identifier'——type 是主标识符，title 是辅助说明。"
         ],
         handsOnPath: [
-            "为一个 API 端点写完整文档：描述、请求参数（路径/查询/请求体）、响应字段、状态码、错误响应、示例。",
-            "设计一个错误响应格式（参考 RFC 7807）：包含 error_code、message、details 字段，为常见错误定义标准码。",
-            "研究 Stripe、Twilio、GitHub 的 API 文档，记录它们的结构、导航、示例展示方式。",
-            "为你的 API 添加废弃标记：说明替代方案、废弃时间线、迁移步骤。"
+            "为一个 API 端点写完整文档：方法描述（动词开头）、请求参数（类型/必需/默认值）、响应字段、状态码、错误响应（RFC 7807 格式）。",
+            "设计错误响应格式（参考 RFC 7807）：包含 type（问题类型 URI）、title、status、detail、instance，为常见错误定义标准类型 URI。",
+            "研究 Stripe API 文档：观察其端点组织、参数描述、响应示例、错误处理的呈现方式。",
+            "为一个方法添加弃用标记：说明替代方案、废弃版本、迁移步骤，确保首句可独立出现在摘要中。"
         ],
         selfCheck: [
-            "每个 API 端点是否有完整描述：用途、参数、响应、错误？",
-            "参数文档是否包含：类型、是否必需、默认值、约束条件？",
-            "错误响应是否有统一格式？用户能否根据错误码快速定位问题？",
-            "版本变更是否有记录？废弃的 API 是否提供了替代方案？",
-            "文档是否使用了一致的术语和描述风格？"
+            "【动词使用】你的方法描述是否以正确的动词开头？Getter 用'Gets'，操作用动作动词？",
+            "【参数完整】参数文档是否包含：类型、是否必需、默认值、约束条件？布尔参数是否说明了两种情况？",
+            "【错误格式】错误响应是否使用统一格式（如 RFC 7807）？type 字段是否指向可解析的 URI？",
+            "【弃用处理】废弃的 API 是否明确说明了替代方案和迁移路径？",
+            "【首句独立】类/方法的首句是否可以独立出现在摘要中？是否简洁且不重复名称？"
         ],
         extensions: [
-            "学习 RFC 7807 Problem Details：https://www.rfc-editor.org/rfc/rfc7807 —— API 错误响应的标准格式。",
-            "研究 API 设计最佳实践：https://google.aip.dev/ —— Google 的 API 改进提案。",
-            "了解 API 版本控制策略：URL 路径、Header、查询参数各有优劣。",
-            "学习使用 Postman/Swagger UI 生成交互式 API 文档。"
+            "【RFC 7807 深入】学习 Problem Details 完整规范：https://www.rfc-editor.org/rfc/rfc7807 —— 理解扩展成员和安全考量。",
+            "【Google AIP】API 改进提案：https://google.aip.dev/ —— Google 的 API 设计最佳实践集合。",
+            "【Stripe 学习】研究 Stripe OpenAPI 仓库：https://github.com/stripe/openapi —— 理解其自定义扩展字段的设计。",
+            "【版本控制策略】学习 API 版本管理：URL 路径 vs Header vs 查询参数的优劣对比。"
         ],
         sourceUrls: [
             "https://developers.google.com/style/api-reference-comments",
