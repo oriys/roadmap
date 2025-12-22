@@ -66,7 +66,7 @@ const LEGACY_K8S_STORAGE_KEY = "k8s-roadmap-progress-v2"
 function getRoadmapIdFromPath(pathname: string): RoadmapId | null {
   const normalized = pathname.replace(/^\/+|\/+$/g, "")
   const [first] = normalized.split("/")
-  return first === "kubernetes" || first === "technical-writer" || first === "git-github" ? (first as RoadmapId) : null
+  return first === "kubernetes" || first === "technical-writer" ? (first as RoadmapId) : null
 }
 
 function storageKeyForRoadmap(roadmapId: RoadmapId) {
@@ -183,7 +183,7 @@ export default function App() {
     const stored = typeof window === "undefined" ? null : localStorage.getItem(ACTIVE_ROADMAP_KEY)
     const roadmapId: RoadmapId =
       pathRoadmapId ||
-      (stored === "kubernetes" || stored === "technical-writer" || stored === "git-github" ? stored : DEFAULT_ROADMAP_ID)
+      (stored === "kubernetes" || stored === "technical-writer" ? stored : DEFAULT_ROADMAP_ID)
     const roadmap = ROADMAPS[roadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
     const page: "landing" | "roadmap" = pathRoadmapId ? "roadmap" : "landing"
     return { roadmapId: roadmap.id, roadmap, persisted: loadPersisted(roadmap), page }
