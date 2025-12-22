@@ -46,35 +46,38 @@ export const week5Guides: Record<string, LessonGuide> = {
     "tw-w5-2": {
         lessonId: "tw-w5-2",
         background: [
-            "操作指南（How-to Guide）是'目标导向的实践指导'，帮助用户完成特定任务或解决具体问题。其核心目的是指导'用户的行动'，而非教学。",
-            "与教程的关键区别：教程面向初学者，提供完整的学习路径；操作指南面向已有基础的用户，假设用户知道想要达成什么目标。",
-            "食谱是操作指南的典范——清晰定义目标、假设基本能力、排除教学内容。用户来找操作指南时，他们知道自己要什么。",
-            "操作指南的命名要精准：'如何集成应用性能监控'优于模糊的'监控指南'。标题应直接回答'如何做 X'。"
+            "【How-to 定义】Diátaxis：'How-to guides are directions that guide the reader through a problem or towards a result. How-to guides are goal-oriented.'——目标导向的方向指引，引导读者解决问题或达成结果。",
+            "【与 Tutorial 的关键区别】Tutorial 面向学习者（不知道要什么），How-to 面向有目标的用户（知道要什么）。如同食谱——读者知道想做什么菜，只需要步骤。",
+            "【用户假设】How-to 假设读者已具备基本能力（basic competence），知道自己想要达成什么目标。不需要从零教起。",
+            "【食谱类比】Diátaxis 将食谱作为 How-to 的理想模型——它们回答特定问题、排除教学和讨论、专注于执行步骤。",
+            "【标题精准性】标题应直接回答'如何做 X'：'How to integrate APM' 优于模糊的'Monitoring guide'。用户通过标题判断是否是他们要找的。"
         ],
         keyDifficulties: [
-            "区分教程与操作指南：最常见的错误是混淆两者。教程教'是什么'，操作指南告诉'怎么做'。如果用户需要先学习才能理解，那应该是教程。",
-            "避免过度解释：操作指南应专注于行动，无教学或解释。'为什么'的问题应链接到 Explanation 文档。",
-            "实用性优于完整性：无需覆盖所有可能性，应聚焦最常见的场景。用户可以在此基础上适应自己的情况。",
-            "前置条件的明确性：用户开始操作前需要什么？环境、权限、依赖、已有知识——都要在开头清晰列出。"
+            "【聚焦问题而非工具】Diátaxis 强调 How-to 应聚焦人的问题（human problem），而非工具机制。'turn the tap clockwise' 是无用信息，因为它只描述机械动作而非有意义的目标。",
+            "【省略优于完整】Google：'Omit unnecessary information; prioritize practical usability over completeness'——省略不必要的信息，实用性优先于完整性。",
+            "【动作优先原则】Google：'State the action first and the result second'——先陈述动作，再陈述结果。先给位置/上下文，再给动作；先给目标，再给动作。",
+            "【步骤数量控制】Microsoft：'限制在 7 步以内，最好更少'——尽量在同一屏幕显示所有步骤，减少用户的认知负担。",
+            "【前置条件明确】用户开始操作前需要什么？环境、权限、依赖、已有知识——都要在开头清晰列出，让用户判断是否准备就绪。"
         ],
         handsOnPath: [
-            "选择一个用户常问的'如何做 X'问题，写一份操作指南：包含前置条件、步骤、验证方法、常见问题。",
-            "使用 Google 的步骤格式：编号步骤、位置优先（在哪里操作）、祈使动词开头、可选步骤用 'Optional:' 标记。",
-            "为操作指南添加'常见坑'部分：列出 2-3 个用户经常遇到的问题和解决方案。",
+            "选择一个用户常问的'如何做 X'问题，用 Diátaxis 原则写操作指南：包含前置条件、编号步骤、验证方法、常见问题。",
+            "使用 Google 的步骤格式：编号步骤、祈使动词开头（如 Select、Open、Enter）、位置优先（如'On the Design tab, select...'）。",
+            "为操作指南添加'常见坑'部分：列出 2-3 个用户经常遇到的问题和解决方案——这是区分优秀 How-to 的关键。",
+            "用右角括号简化简单序列：'File > New > Document'。注意 Microsoft 提醒：屏幕阅读器可能跳过括号，影响无障碍性。",
             "让一个有基础但没做过这个任务的人测试你的指南：观察他们是否能独立完成，哪里需要更多细节。"
         ],
         selfCheck: [
-            "你的标题是否清晰回答'如何做 X'？用户能否通过标题判断这是不是他们要找的？",
-            "你是否列出了所有前置条件？用户开始前是否知道需要准备什么？",
-            "你的步骤是否专注于行动？是否避免了长段解释？",
-            "每个步骤是否有验证方法？用户如何知道这步做对了？",
-            "你是否包含了常见问题和解决方案？"
+            "【标题检验】你的标题是否清晰回答'如何做 X'？用户能否通过标题判断这是不是他们要找的？",
+            "【前置条件】你是否列出了所有前置条件？用户开始前是否知道需要准备什么？",
+            "【步骤聚焦】你的步骤是否专注于行动？是否避免了长段解释和背景知识？",
+            "【动作验证】每个步骤是否有验证方法？用户如何知道这步做对了？",
+            "【步骤数量】步骤是否控制在 7 步以内？是否能在一屏内显示？"
         ],
         extensions: [
-            "深入学习 Diátaxis 的操作指南规范：https://diataxis.fr/how-to-guides/",
-            "阅读 Google 的步骤式说明指南：https://developers.google.com/style/procedures",
-            "研究 Microsoft 的程序写作指南：https://learn.microsoft.com/en-us/style-guide/procedures-instructions/",
-            "比较同一主题的教程和操作指南：例如 Django 的官方教程 vs 操作指南，观察差异。"
+            "【Diátaxis How-to 规范】深入学习：https://diataxis.fr/how-to-guides/ —— 理解 How-to 与其他文档类型的边界。",
+            "【Google 步骤式说明】完整指南：https://developers.google.com/style/procedures —— 编号、子步骤、可选步骤的格式规范。",
+            "【Microsoft 程序写作】详细规范：https://learn.microsoft.com/en-us/style-guide/procedures-instructions/ —— 位置说明、简化序列、无障碍考量。",
+            "【比较同一主题】找一个技术话题，比较其官方 Tutorial 和 How-to（如 Django、React），观察两者在假设、深度、风格上的差异。"
         ],
         sourceUrls: [
             "https://diataxis.fr/how-to-guides/",
