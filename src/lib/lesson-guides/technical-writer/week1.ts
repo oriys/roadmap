@@ -131,35 +131,38 @@ export const week1Guides: Record<string, LessonGuide> = {
     "tw-w1-4": {
         lessonId: "tw-w1-4",
         background: [
-            "清晰性（Clarity）是技术文档的第一原则。Google Style Guide 强调：'清晰性和一致性优先于严格遵循规则'（Clarity and consistency over strict adherence）。",
-            "风格指南（Style Guide）通过维持一致的风格、声音和语调来减少认知负担（Cognitive Load），提升内容的权威性和可信度。",
-            "Microsoft 现代声调三要素：Warm and relaxed（温暖放松）、Crisp and clear（简洁清晰）、Ready to lend a hand（乐于助人）。",
-            "主流风格指南参考等级：项目特定指南 > Google/Microsoft Style Guide > Chicago Manual of Style > Merriam-Webster（拼写）。"
+            "【清晰性第一原则】Google Style Guide 明确：'Break any of these rules sooner than say anything outright barbarous'——清晰性和一致性优先于严格遵循规则。当规则与可读性冲突时，选择可读性。",
+            "【风格指南的认知价值】Write the Docs 指出：一致的语调和风格'减少用户的认知负荷'（reduce cognitive load）。风格指南不是美学问题，而是效率问题——用户不必适应不同的表达方式。",
+            "【Microsoft 现代声调三要素】Warm and relaxed（温暖放松）、Crisp and clear（简洁清晰）、Ready to lend a hand（乐于助人）。这三个原则塑造了技术写作的人性化方向。",
+            "【参考等级层次】项目特定指南 > Google/Microsoft Style Guide > Chicago Manual of Style > Merriam-Webster（拼写）。当不同来源有冲突时，按此优先级选择。",
+            "【主动语态的心理学基础】主动语态明确'谁做了什么'（who does what），减少解析负担。'The system deletes the file' 比 'The file is deleted by the system' 更直接，信息密度更高。"
         ],
         keyDifficulties: [
-            "主动语态 vs 被动语态：主动语态更直接、更清晰（'Click the button' 优于 'The button should be clicked'），但被动语态在强调结果或隐藏主体时仍有用。",
-            "术语一致性：同一个概念在整个文档中必须使用相同的术语。建立术语表（Glossary）并严格执行，避免同义词混用造成混淆。",
-            "避免行话陷阱：对内部团队显而易见的术语对外部读者可能完全陌生。需要定义首次出现的专业术语，或提供链接到术语表。",
-            "打破'文字墙'（Wall of Text）：大段落让读者望而却步。使用标题、列表、表格、代码块等视觉元素提高可扫描性（Scannability）。"
+            "【主动语态 vs 被动语态的边界】主动语态是默认选择，但被动语态在特定场景仍有用：(1) 强调结果而非行动者，(2) 行动者未知或不重要，(3) 避免指责。关键是有意识地选择，而非随意使用。",
+            "【术语一致性的系统工程】同一个概念必须使用相同的术语——'click/tap/select' 选一个并坚持。建立术语表（Glossary）并用工具（如 Vale）强制执行。术语不一致会让用户怀疑是否在说同一件事。",
+            "【行话陷阱的识别与处理】对团队显而易见的术语对外部读者可能完全陌生。原则：首次出现时定义或链接到术语表。识别方法：让非专家读者标记所有不理解的词。",
+            "【打破文字墙的视觉层级】大段落让读者望而却步。解决方案：(1) 每段只讲一件事，(2) 用列表替代连续的'和'，(3) 用表格替代重复的模式，(4) 用代码块隔离命令/输出。目标是提高可扫描性（Scannability）。"
         ],
         handsOnPath: [
-            "选择一份你写过的文档，用以下清单检查：是否使用主动语态？是否使用第二人称（you）？是否使用现在时？术语是否一致？",
-            "为你的项目创建一份最小风格指南：列出 5-10 个最常用术语的统一写法、大小写规则、缩写规范。",
-            "重写一段'文字墙'：将一个超过 5 行的段落拆分成更短的段落、列表或表格，确保每个段落只讲一件事。",
-            "做一次'行话审计'：找一个不熟悉你项目的人阅读文档，让他们标记所有不理解的术语，然后补充解释或链接。"
+            "对一份现有文档执行'语态审计'：标记所有被动语态使用，评估每处是否有明确理由。将无理由的被动语态改为主动语态。",
+            "创建项目级最小风格指南：(1) 10 个常用术语的统一写法，(2) 大小写规则（如 'Kubernetes' vs 'kubernetes'），(3) 缩写规范（首次全拼），(4) 人称（'you' vs 'the user'），(5) 时态（现在时）。",
+            "执行'文字墙狩猎'：找出所有超过 5 行的段落，应用拆分技术——列表化、表格化、子标题化。确保每段首句能概括段落内容。",
+            "执行'行话审计'：邀请一个不熟悉项目的人阅读文档，让他们标记所有不理解的术语。为每个术语添加定义或链接。",
+            "用 Vale 或类似工具设置自动化风格检查：配置项目特定的规则（如禁止被动语态、术语一致性检查）。"
         ],
         selfCheck: [
-            "你的文档是否主要使用主动语态？被动语态的使用是否有明确的理由？",
-            "你是否有一份术语表或风格指南？团队成员是否知道并遵循它？",
-            "首次出现的专业术语是否有定义或链接？",
-            "你的文档是否有'文字墙'？能否用列表、表格或更短的段落替代？",
-            "如果一个完全不了解你项目的人阅读文档，他们能理解吗？"
+            "【语态检查】你的文档是否主要使用主动语态？每处被动语态是否有明确的理由？",
+            "【术语一致性检查】你是否有术语表？同一个概念是否在所有地方使用相同的词？",
+            "【行话检查】首次出现的专业术语是否有定义或链接？非专家能否理解你的文档？",
+            "【视觉层级检查】你的文档是否有'文字墙'？列表、表格、代码块是否被充分使用？",
+            "【人称和时态检查】你是否统一使用第二人称'you'和现在时态？",
+            "【可扫描性检查】读者能否通过只看标题和首句快速了解内容结构？"
         ],
         extensions: [
-            "阅读完整的 Google Developer Style Guide：https://developers.google.com/style —— 作为技术写作的权威参考。",
-            "阅读 Microsoft Writing Style Guide：https://learn.microsoft.com/en-us/style-guide/ —— 学习'现代声调'的写作方式。",
-            "学习无偏见写作（Bias-free Communication）：检查你的文档是否使用了包容性语言。",
-            "为你的团队创建一份项目级风格指南，从常见决策开始，逐步完善。"
+            "【权威参考】完整阅读 Google Developer Style Guide（https://developers.google.com/style）——作为技术写作的黄金标准。",
+            "【现代声调】学习 Microsoft Writing Style Guide（https://learn.microsoft.com/en-us/style-guide/）——理解如何让技术文档更人性化。",
+            "【自动化工具】探索 Vale（https://vale.sh/）——学习如何用自动化工具强制执行风格规则。",
+            "【包容性写作】学习 Bias-free Communication——检查你的文档是否使用了包容性语言，避免性别、年龄、能力等方面的偏见表达。"
         ],
         sourceUrls: [
             "https://developers.google.com/style",
