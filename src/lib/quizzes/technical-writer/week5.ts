@@ -1,111 +1,163 @@
 import type { QuizQuestion } from "../types";
 
 export const week5: Record<string, QuizQuestion[]> = {
-  // Lesson 1: Tutorial（教程）写作 (8题)
+  // Lesson 1: Tutorial（教程）写作 (12题，答案随机分布)
   "tw-w5-1": [
     {
       id: "tw-w5-1-q1",
-      question: "Diátaxis 对 Tutorial 的核心定义是什么？",
+      question: "Diátaxis 对 Tutorial 的定义中，核心关键词是什么？",
       options: [
-        "在导师指导下的学习体验，目标是帮助学习者获得技能而非完成任务",
-        "解决具体问题的步骤指南",
-        "API 参数的详细说明",
-        "产品功能的完整列表",
+        "task-oriented——以任务为导向完成具体工作",
+        "information-oriented——以信息为导向提供参考",
+        "learning-oriented——以学习为导向，在导师指导下获得技能",
+        "understanding-oriented——以理解为导向解释原理",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Diátaxis: Tutorial 是'在导师指导下的经验'，以学习为导向，通过做事来获得技能。",
+        "Diátaxis 明确定义：'A tutorial is always learning-oriented'——教程始终以学习为导向，目标是获得技能而非完成任务。",
     },
     {
       id: "tw-w5-1-q2",
-      question: "Diátaxis 提出的教学第一原则是什么？",
+      question: "根据 Diátaxis，教程写作者常犯的最大错误是什么？",
       options: [
-        "不要试图教学（Don't try to teach），而是提供让学习者自己发现的体验",
-        "尽可能多地解释概念",
-        "让学习者自己探索",
-        "使用最先进的教学技术",
+        "步骤太少，内容不够详细",
+        "没有提供足够的替代方案",
+        "解释太多——教程的目标是让学习者'做'，而非'理解'",
+        "使用了太多代码示例",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Diátaxis: 'The first rule of teaching is simply: don't try to teach.' 提供体验让学习自然发生。",
+        "Diátaxis 强调：教程写作者常犯的错误是解释太多。教程的目标是让学习者'做'，长解释应链接到 Explanation 文档。",
     },
     {
       id: "tw-w5-1-q3",
-      question: "Tutorial 写作中为什么要'尽早且频繁地展示可见结果'？",
+      question: "Diátaxis 关于教程可靠性的要求是什么？",
       options: [
-        "让学习者看到行动与结果的联系，保持学习动力和信心",
-        "为了增加截图数量",
-        "为了让文档更长",
-        "为了减少需要解释的内容",
+        "教程必须每次都能成功运行——'A tutorial must inspire confidence'",
+        "允许偶尔失败，用户可以自行调试",
+        "只需要在作者的环境中能运行",
+        "可靠性由用户自行保证",
       ],
       answer: 0,
       rationale:
-        "Diátaxis: 'Deliver visible results early and often' 让用户看到行动与结果的连接，维持学习动力。",
+        "Diátaxis：'A tutorial must inspire confidence.'——教程必须每次都能成功运行，无法像真实教师那样在现场纠正错误。",
     },
     {
       id: "tw-w5-1-q4",
-      question: "Tutorial 为什么需要'完美的可靠性'（Perfect Reliability）？",
+      question: "教程中关于'展示结果'的原则是什么？",
       options: [
-        "学习者按照指示操作必须得到承诺的结果，否则会丧失信心",
-        "为了减少支持工单",
-        "为了满足合规要求",
-        "为了节省更新成本",
+        "只在最后展示最终结果即可",
+        "不需要展示中间结果，避免分散注意力",
+        "只展示错误情况的结果",
+        "'Every step the learner follows should produce a comprehensible result'——每一步都应产生可理解的结果",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "Diátaxis: Tutorial 必须确保学习者成功，失败会破坏学习体验和信心。",
+        "Diátaxis：'Every step the learner follows should produce a comprehensible result, however small.'——每一步都应产生可理解的结果，建立因果关系的理解。",
     },
     {
       id: "tw-w5-1-q5",
-      question: "Tutorial 中的叙事线索（Narrative Cues）如'你会注意到...'的作用是什么？",
+      question: "教程中的叙事线索（如'Notice that...'、'Remember that...'）的作用是什么？",
       options: [
-        "确认学习者在正确的轨道上，引导他们观察重要细节",
-        "增加文档的篇幅",
-        "展示作者的写作技巧",
-        "替代代码示例",
+        "增加文档的专业感",
+        "保持学习者在正轨上的确认，引导观察重要细节",
+        "替代代码注释的功能",
+        "满足文档字数要求",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Diátaxis: 叙事线索确认学习者在正确轨道上，并引导他们主动观察和反思。",
+        "通过示例输出、警告标志和解释性提示（如'Notice that...'、'Remember that...'），保持学习者在正轨上的确认。",
     },
     {
       id: "tw-w5-1-q6",
-      question: "Tutorial 应该使用什么人称？",
+      question: "Diátaxis 明确列出教程应该避免的内容不包括以下哪项？",
       options: [
-        "第一人称复数（我们 / We will...），营造师生共同学习的氛围",
-        "第三人称（用户应该...）",
-        "第二人称祈使句（做这个...）",
-        "被动语态",
+        "抽象化和泛化概念",
+        "过度解释",
+        "提供可见的预期输出",
+        "提供选项和替代方案",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Diátaxis: 使用第一人称复数'我们'，创造导师与学习者共同学习的氛围。",
+        "Diátaxis 明确要避免：抽象化和泛化概念、过度解释、提供选项和替代方案、过多信息。提供可见的预期输出恰恰是应该做的。",
     },
     {
       id: "tw-w5-1-q7",
-      question: "为什么 Tutorial 要'消除可选的替代方案'？",
+      question: "教程应该使用什么语言风格？",
       options: [
-        "保持清晰聚焦，避免学习者在选择中迷失",
-        "减少文档维护工作",
-        "因为替代方案都不好用",
-        "为了减少翻译成本",
+        "第三人称客观描述（'用户应该...'）",
+        "被动语态（'应该被点击...'）",
+        "第一人称复数（'我们 / We will...'）建立师生关系",
+        "纯命令式（'点击这里'）无任何人称",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Diátaxis: 消除可选项保持路径清晰，让学习者专注于学习本身而非做选择。",
+        "使用第一人称复数'我们'（We will...）建立师生关系，让学习者感到有导师陪伴。",
     },
     {
       id: "tw-w5-1-q8",
-      question: "Tutorial 与 How-to Guide 的本质区别是什么？",
+      question: "关于教程中'忽略选项'的原则，以下说法正确的是？",
       options: [
-        "Tutorial 面向学习，How-to 面向完成特定任务",
-        "Tutorial 更短，How-to 更长",
-        "Tutorial 用于新手，How-to 用于专家",
-        "两者没有本质区别",
+        "应该列出所有可能的选项让用户选择最适合的",
+        "只在高级教程中讨论替代方案",
+        "教程中不应讨论替代方案或高级选项——保持单一路径",
+        "替代方案应该放在脚注中",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Tutorial 的目的是学习技能，How-to 的目的是解决具体问题。用户状态和目标完全不同。",
+        "Diátaxis：教程中不应讨论替代方案或高级选项——这会分散注意力。保持单一路径，让学习者专注于当前任务。",
+    },
+    {
+      id: "tw-w5-1-q9",
+      question: "教程中'从具体到抽象'原则意味着什么？",
+      options: [
+        "先解释理论原理，再给出具体操作",
+        "只讲具体操作，永远不提抽象原理",
+        "先让学习者做具体的事，再引导他们理解抽象原理",
+        "具体和抽象应该交替进行",
+      ],
+      answer: 2,
+      rationale:
+        "先让学习者做具体的事，再引导他们理解抽象原理。过早讲原理会让初学者迷失。",
+    },
+    {
+      id: "tw-w5-1-q10",
+      question: "教程与操作指南（How-to Guide）的根本区别是什么？",
+      options: [
+        "教程更长，操作指南更短",
+        "教程面向初学者，操作指南面向有基础的用户完成特定任务",
+        "教程用中文，操作指南用英文",
+        "教程有代码，操作指南没有代码",
+      ],
+      answer: 1,
+      rationale:
+        "教程面向初学者，提供完整的学习路径；操作指南面向已有基础的用户，假设用户知道想要达成什么目标。",
+    },
+    {
+      id: "tw-w5-1-q11",
+      question: "根据 Diátaxis，教程中教师承担的责任包括以下哪些？",
+      options: [
+        "只需要提供操作步骤，其他由学习者自行负责",
+        "确保内容有意义、可成功完成、逻辑清晰、内容完整",
+        "让学习者自主决定学习路径",
+        "提供尽可能多的背景知识",
+      ],
+      answer: 1,
+      rationale:
+        "教师承担几乎所有责任：确保内容有意义（学生能获得成就感）、可成功完成、逻辑清晰、内容完整（涵盖必要的行动、概念和工具）。",
+    },
+    {
+      id: "tw-w5-1-q12",
+      question: "测试教程有效性的最佳方法是什么？",
+      options: [
+        "让作者自己反复阅读检查",
+        "使用自动化工具验证代码语法",
+        "让一个完全不了解该功能的人测试，观察他们在哪里卡住",
+        "检查文档的字数是否达标",
+      ],
+      answer: 2,
+      rationale:
+        "找一个完全不了解该功能的人测试你的教程：观察他们在哪里卡住、困惑或跳过。记录问题点并修订。",
     },
   ],
   // Lesson 2: How-to（操作指南）写作 (8题)
