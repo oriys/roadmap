@@ -475,9 +475,11 @@ export const kubernetesStages: Stage[] = [
                         title: "CI/CD 原则：不可变制品、版本策略与审计",
                         detail: "云原生环境下的持续集成与交付挑战。",
                         resources: [
-                            { title: "GitHub Actions CI 概览", url: "https://docs.github.com/en/actions/get-started/continuous-integration" },
+                            { title: "GitHub Actions 概念", url: "https://docs.github.com/en/actions/about-github-actions/understanding-github-actions" },
                             { title: "Jenkins Pipeline 概览", url: "https://www.jenkins.io/doc/book/pipeline/" },
-                            { title: "部署到 Kubernetes（GH Actions）", url: "https://docs.github.com/en/actions/how-tos/deploy/deploy-to-third-party-platforms" },
+                            { title: "Twelve-Factor App 方法论", url: "https://12factor.net/" },
+                            { title: "语义化版本规范", url: "https://semver.org/" },
+                            { title: "SLSA 供应链安全框架", url: "https://slsa.dev/" },
                         ],
                     },
                     {
