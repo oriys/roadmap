@@ -1,6 +1,170 @@
-import type { QuizQuestion } from "../types";
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
-export const week13: Record<string, QuizQuestion[]> = {
+export const week13Guides: Record<string, LessonGuide> = {
+    "w13-1": {
+        lessonId: "w13-1",
+        background: [
+            "服务网格（Service Mesh）是处理服务间通信的基础设施层，将流量管理、安全通信和可观测性等能力从应用代码下沉到基础设施。核心理念是让应用专注于业务逻辑，网络治理交给网格统一处理。",
+            "服务网格的典型架构由数据面（Data Plane）和控制面（Control Plane）组成。数据面由 Sidecar 代理（如 Envoy）构成，拦截所有进出服务的流量；控制面（如 Istio 的 istiod）负责配置管理、证书签发和策略下发。",
+            "服务网格提供的核心能力包括：零信任安全（mTLS 加密、身份认证、访问控制）、流量治理（金丝雀发布、熔断、限流、故障注入）、可观测性（自动生成指标、追踪、访问日志）。这些能力对应用透明，无需修改业务代码。",
+            "服务网格并非银弹，引入成本包括：资源开销（每个 Pod 一个 Sidecar）、延迟增加（多一跳代理）、运维复杂度（需要专业知识管理网格）。应根据实际需求评估是否引入，不是所有场景都需要服务网格。"
+        ],
+        keyDifficulties: [
+            "理解下沉治理的价值：传统方式需要在每个服务中实现重试、超时、熔断等逻辑（如 Netflix OSS 套件）。服务网格将这些能力下沉到代理层，应用只需 HTTP/gRPC 调用，网络弹性由网格保证。跨语言一致性是最大优势。",
+            "适用场景判断：多语言微服务架构、需要强安全合规（mTLS）、需要统一流量治理的场景适合服务网格。单体应用、服务数量少（< 10 个）、团队无运维能力的场景可能不值得引入的复杂度。",
+            "Sidecar vs Ambient 模式：传统 Sidecar 模式每个 Pod 注入代理，资源消耗大但功能完整。Istio Ambient 模式（新）使用共享的节点级代理，降低资源开销但仍在演进中。选择取决于资源敏感度和功能需求。",
+            "网格的性能影响：Sidecar 增加约 1-3ms 延迟（取决于配置）、每 Pod 约 50-100MB 内存。高性能场景需要权衡。可以选择性启用网格功能（如只用 mTLS 不用复杂路由）来平衡。"
+        ],
+        handsOnPath: [
+            "评估当前架构：列出服务数量、编程语言、现有的服务治理方案（如 Spring Cloud、gRPC 拦截器）。评估哪些能力已经有，哪些需要网格提供。讨论引入网格的预期收益和成本。",
+            "对比方案调研：了解 Istio（功能全面但复杂）、Linkerd（轻量但功能少）、Cilium Service Mesh（基于 eBPF）的差异。根据团队能力和需求选择合适方案。",
+            "规划落地策略：从非核心服务开始试点；先启用可观测性（最低风险），再逐步启用 mTLS（安全）和流量治理（最后）。定义回滚策略和成功指标。",
+            "性能基线测试：在引入网格前后分别进行压测，测量延迟 P50/P99、吞吐量、资源消耗。量化网格的性能影响，确保在可接受范围内。",
+            "运维准备：团队学习网格核心概念和工具（istioctl、Kiali）；建立监控告警（控制面健康、代理注入状态）；制定故障排查手册（常见问题和解决方案）。"
+        ],
+        selfCheck: [
+            "服务网格解决的核心问题是什么？为什么说它实现了「下沉治理」？与传统的服务治理方案（如 Spring Cloud）有什么区别？",
+            "什么场景适合引入服务网格？什么场景可能不值得引入的复杂度？如何做出决策？",
+            "Sidecar 模式和 Ambient 模式的区别是什么？各有什么优缺点？",
+            "服务网格会带来哪些性能开销？如何量化和优化这些开销？",
+            "如果你要在团队中推广服务网格，会采取什么策略？如何平衡收益和风险？"
+        ],
+        extensions: [
+            "研究 eBPF 对服务网格的影响，了解 Cilium Service Mesh 如何用 eBPF 实现 Sidecar-less 架构，以及与传统 Sidecar 模式的性能对比。",
+            "探索 CNCF 的服务网格接口（SMI）标准，了解它如何提供跨服务网格实现的抽象层，以及各网格对 SMI 的支持程度。",
+            "学习 Gateway API 与服务网格的关系，了解 Kubernetes Gateway API 如何统一 Ingress 和网格网关的配置模型。",
+            "研究多集群服务网格的挑战，了解 Istio Multi-Cluster 的架构模式（共享控制面 vs 独立控制面）和跨集群服务发现机制。"
+        ],
+        sourceUrls: [
+            "https://istio.io/latest/docs/concepts/what-is-istio/",
+            "https://linkerd.io/2/overview/",
+            "https://istio.io/latest/docs/ops/deployment/architecture/"
+        ]
+    },
+    "w13-2": {
+        lessonId: "w13-2",
+        background: [
+            "Istio 是目前最流行的服务网格实现，由 Google、Lyft 和 IBM 联合开发，现为 CNCF 毕业项目。核心架构分为控制面（istiod）和数据面（Envoy Sidecar），通过声明式配置实现复杂的流量治理。",
+            "控制面 istiod 是 Istio 的「大脑」，整合了 Pilot（配置下发）、Citadel（证书管理）、Galley（配置验证）三个组件。istiod 监听 Kubernetes API，将 VirtualService、DestinationRule 等 CRD 转换为 Envoy 配置，通过 xDS 协议推送到数据面。",
+            "数据面由 Envoy Sidecar 代理构成，作为每个 Pod 的「贴身保镖」拦截所有网络流量。Envoy 是高性能的 C++ 代理，支持 HTTP/1.1、HTTP/2、gRPC、TCP 等协议，通过 xDS API 动态接收配置，无需重启即可更新路由规则。",
+            "Sidecar 注入是 Istio 的核心机制。通过 Kubernetes Admission Controller，在 Pod 创建时自动注入 Envoy 容器和 init 容器。init 容器配置 iptables 规则，将 Pod 的所有入站出站流量重定向到 Envoy。"
+        ],
+        keyDifficulties: [
+            "理解 xDS 协议：Envoy 通过 xDS（LDS/RDS/CDS/EDS/SDS）协议从控制面获取配置。LDS（监听器）、RDS（路由）、CDS（集群）、EDS（端点）、SDS（密钥）分别管理代理的不同层面。理解这些概念有助于调试配置问题。",
+            "Sidecar 注入条件：命名空间需要标记 istio-injection=enabled，或 Pod 添加 sidecar.istio.io/inject=true 注解。某些系统 Pod（如 DaemonSet）可能不应该注入。验证注入状态：kubectl get pods -l app=xxx -o jsonpath='{.items[*].spec.containers[*].name}'。",
+            "Envoy 配置调试：使用 istioctl proxy-config 命令查看 Envoy 的实际配置（clusters、routes、listeners、endpoints）。当路由不生效时，通过这些命令排查配置是否正确下发到代理。",
+            "资源配置优化：Sidecar 默认资源可能过大或过小，需要根据流量调整。使用 Sidecar CRD 限制代理只监听需要的服务，减少配置大小和内存消耗。大型集群尤其重要。"
+        ],
+        handsOnPath: [
+            "安装 Istio：下载 istioctl，执行 istioctl install --set profile=demo。验证安装：kubectl get pods -n istio-system。了解不同 profile（minimal/default/demo）的差异。",
+            "启用 Sidecar 注入：为命名空间添加标签 kubectl label namespace default istio-injection=enabled。部署示例应用，验证 Pod 中包含 istio-proxy 容器。使用 kubectl describe pod 查看 init 容器。",
+            "验证流量拦截：进入应用容器执行 curl 其他服务，观察请求经过 Envoy（通过访问日志或 Kiali）。使用 istioctl proxy-config clusters <pod> 查看代理知道的服务列表。",
+            "部署可观测性组件：安装 Kiali（网格可视化）、Jaeger（追踪）、Prometheus/Grafana（指标）。在 Kiali 中查看服务拓扑图，发送请求观察追踪数据。",
+            "调试配置下发：创建一个 VirtualService，使用 istioctl proxy-config routes <pod> 验证路由是否下发到代理。如果不生效，使用 istioctl analyze 检查配置问题。"
+        ],
+        selfCheck: [
+            "Istio 的控制面和数据面分别由什么组成？istiod 整合了哪些功能？Envoy 在网格中扮演什么角色？",
+            "xDS 协议是什么？LDS、RDS、CDS、EDS 分别管理什么配置？为什么 Envoy 需要动态配置？",
+            "Sidecar 注入的工作原理是什么？init 容器做了什么？如何验证 Pod 是否正确注入了 Sidecar？",
+            "如何调试 Istio 配置问题？istioctl proxy-config 命令有哪些常用子命令？istioctl analyze 的作用是什么？",
+            "大型集群中如何优化 Istio 的资源消耗？Sidecar CRD 的作用是什么？"
+        ],
+        extensions: [
+            "研究 Istio CNI 插件，了解如何使用 CNI 替代 init 容器进行流量重定向，避免 NET_ADMIN 权限需求。",
+            "探索 WebAssembly（Wasm）扩展 Envoy，了解如何编写自定义过滤器实现业务特定的流量处理逻辑。",
+            "学习 Istio 的多集群安装模式，了解主-从、多主、外部控制面等架构的适用场景和配置方法。",
+            "研究 istioctl 的高级用法，如 istioctl bug-report（收集调试信息）、istioctl experimental（实验功能）等。"
+        ],
+        sourceUrls: [
+            "https://istio.io/latest/docs/ops/deployment/architecture/",
+            "https://istio.io/latest/docs/setup/install/istioctl/",
+            "https://istio.io/latest/docs/ops/diagnostic-tools/proxy-cmd/"
+        ]
+    },
+    "w13-3": {
+        lessonId: "w13-3",
+        background: [
+            "Istio 的流量治理通过 VirtualService 和 DestinationRule 两个核心 CRD 实现。VirtualService 定义流量路由规则（如何到达服务），DestinationRule 定义目标策略（到达后如何处理）。两者配合实现金丝雀、熔断、故障注入等高级功能。",
+            "VirtualService 支持基于请求属性的路由：按权重（金丝雀）、按 Header（A/B 测试）、按 URI（路径路由）。路由规则按顺序匹配，第一个匹配的规则生效。未匹配的请求走默认路由或返回错误。",
+            "DestinationRule 定义服务子集（subsets）和流量策略。子集通过 Pod 标签选择不同版本（如 v1/v2）；流量策略包括负载均衡（ROUND_ROBIN/LEAST_CONN/RANDOM）、连接池、熔断器等。这些策略应用于到达目标服务的流量。",
+            "熔断和故障注入是提高系统韧性的关键能力。熔断器通过限制连接数和请求队列防止级联故障；故障注入（延迟和中止）用于混沌工程测试，验证系统在异常条件下的行为。"
+        ],
+        keyDifficulties: [
+            "理解 VirtualService 和 DestinationRule 的关系：VirtualService 的 destination.subset 引用 DestinationRule 定义的子集。没有 DestinationRule，VirtualService 的子集路由不会生效。常见错误是只配置了一个而忘记另一个。",
+            "金丝雀发布的配置：VirtualService 使用 weight 字段分配流量比例（如 v1: 90%, v2: 10%）。权重必须加起来等于 100。DestinationRule 定义 v1 和 v2 子集对应的 Pod 标签（如 version: v1）。",
+            "熔断器参数调优：connectionPool 控制连接限制（tcp.maxConnections、http.h2UpgradePolicy）；outlierDetection 配置异常检测（连续错误数、驱逐时间）。参数需要根据服务特性调整，过严会误伤正常请求，过松则失去保护作用。",
+            "故障注入的使用场景：延迟注入（fault.delay）测试超时处理；中止注入（fault.abort）测试错误处理。建议在测试环境或 A/B 测试中使用，生产环境需谨慎。percentage 字段控制影响范围。"
+        ],
+        handsOnPath: [
+            "部署多版本应用：创建同一服务的 v1 和 v2 版本（只有 Pod 标签 version 不同）。创建 DestinationRule 定义两个子集。验证两个版本都能正常访问。",
+            "配置金丝雀发布：创建 VirtualService 将 10% 流量路由到 v2，90% 到 v1。发送多个请求，验证流量分配比例。逐步调整权重（20%, 50%, 100%）模拟完整发布过程。",
+            "配置基于 Header 的路由：创建规则将带有 x-user: test 头的请求路由到 v2（内部测试），其他请求路由到 v1。使用 curl -H 'x-user: test' 验证路由生效。",
+            "配置熔断器：在 DestinationRule 中设置 connectionPool 和 outlierDetection。使用压测工具（如 fortio）模拟高负载，观察熔断器触发（返回 503）。调整参数观察行为变化。",
+            "实践故障注入：在 VirtualService 中添加 5 秒延迟（影响 50% 请求）。观察客户端超时处理。再添加 HTTP 500 中止，验证错误处理逻辑。测试完成后移除故障注入。"
+        ],
+        selfCheck: [
+            "VirtualService 和 DestinationRule 各自的职责是什么？它们如何配合实现流量治理？",
+            "如何配置金丝雀发布？VirtualService 的 weight 和 DestinationRule 的 subsets 如何关联？",
+            "熔断器的工作原理是什么？connectionPool 和 outlierDetection 分别控制什么？如何调优这些参数？",
+            "故障注入有哪些类型？在什么场景下使用？如何控制故障注入的影响范围？",
+            "如果金丝雀路由不生效，应该从哪些方面排查？常见的配置错误有哪些？"
+        ],
+        extensions: [
+            "研究 Istio 的流量镜像（Mirror）功能，了解如何将生产流量复制到测试环境进行验证，而不影响用户。",
+            "探索 Istio 的请求重试和超时配置，了解如何在 VirtualService 中设置重试策略和超时，以及与应用层重试的关系。",
+            "学习 EnvoyFilter CRD，了解如何直接修改 Envoy 配置实现 VirtualService/DestinationRule 不支持的高级功能。",
+            "研究 Istio 与 Flagger 的集成，了解如何实现自动化的金丝雀发布，根据指标自动晋级或回滚。"
+        ],
+        sourceUrls: [
+            "https://istio.io/latest/docs/concepts/traffic-management/",
+            "https://istio.io/latest/docs/tasks/traffic-management/traffic-shifting/",
+            "https://istio.io/latest/docs/tasks/traffic-management/circuit-breaking/"
+        ]
+    },
+    "w13-4": {
+        lessonId: "w13-4",
+        background: [
+            "Istio 的安全模型基于零信任原则：默认不信任任何流量，所有通信需要经过身份验证和授权。核心能力包括：mTLS（双向 TLS 加密）、身份认证（PeerAuthentication/RequestAuthentication）、访问控制（AuthorizationPolicy）。",
+            "mTLS（双向 TLS）是网格安全的基石。Istio 为每个工作负载签发 X.509 证书（基于 ServiceAccount），Sidecar 自动进行 TLS 握手和证书轮换。服务间通信加密且双向认证，防止窃听和中间人攻击。",
+            "PeerAuthentication 控制服务接收流量的 mTLS 要求：PERMISSIVE（允许 mTLS 和明文）、STRICT（仅允许 mTLS）、DISABLE（禁用 mTLS）。迁移期通常先用 PERMISSIVE，稳定后切换到 STRICT。",
+            "AuthorizationPolicy 实现细粒度访问控制，支持 ALLOW、DENY、CUSTOM 三种动作。策略基于来源（from，如 ServiceAccount、命名空间）、操作（to，如 HTTP 方法、路径）和条件（when，如请求属性）进行匹配。"
+        ],
+        keyDifficulties: [
+            "mTLS 模式的选择和迁移：新集群建议直接 STRICT；已有集群从 PERMISSIVE 开始，用 Kiali 观察哪些服务还有明文流量，逐步切换到 STRICT。端口级别配置允许特殊端口例外（如健康检查）。",
+            "证书管理和 SPIFFE：Istio 使用 SPIFFE（Secure Production Identity Framework For Everyone）标准的身份格式：spiffe://cluster.local/ns/<namespace>/sa/<serviceaccount>。证书默认 24 小时轮换，可配置。外部 CA 集成需要额外配置。",
+            "AuthorizationPolicy 的评估顺序：DENY 优先于 ALLOW。多个策略叠加时：先评估 CUSTOM，再 DENY，最后 ALLOW。没有匹配的 ALLOW 策略时，请求被拒绝（默认拒绝）。需要仔细设计策略避免意外阻断。",
+            "JWT 认证（RequestAuthentication）：验证 JWT token 的签名和声明，但不强制携带 token。需要配合 AuthorizationPolicy 要求 requestPrincipals 存在来强制认证。支持多个 JWT 发行者配置。"
+        ],
+        handsOnPath: [
+            "启用全局 mTLS：创建命名空间级别的 PeerAuthentication（mode: STRICT）。使用 Kiali 观察流量是否全部加密（锁图标）。尝试从非网格客户端访问，验证被拒绝。",
+            "配置 AuthorizationPolicy 白名单：创建策略只允许 frontend 命名空间访问 backend 服务。从 frontend Pod 访问成功，从其他命名空间访问被拒绝（403）。",
+            "配置 HTTP 方法和路径限制：创建策略只允许 GET /api/public/*，禁止 POST /api/admin/*。测试不同请求组合，验证策略生效。",
+            "集成 JWT 认证：配置 RequestAuthentication 指定 JWT issuer 和 jwksUri。创建 AuthorizationPolicy 要求 requestPrincipals 存在。测试带 token 和不带 token 的请求。",
+            "调试安全策略：使用 istioctl analyze 检查策略配置。使用 kubectl logs -n istio-system istiod 查看控制面日志。使用 istioctl proxy-config log <pod> --level debug 开启代理调试日志。"
+        ],
+        selfCheck: [
+            "Istio 的零信任安全模型包含哪些核心能力？它们如何协同工作？",
+            "mTLS 的三种模式（PERMISSIVE/STRICT/DISABLE）分别是什么含义？如何规划从 PERMISSIVE 迁移到 STRICT？",
+            "AuthorizationPolicy 的评估顺序是什么？如何设计策略避免意外阻断合法请求？",
+            "RequestAuthentication 和 AuthorizationPolicy 如何配合实现 JWT 认证强制？为什么只有 RequestAuthentication 不够？",
+            "如何调试 Istio 安全策略导致的访问拒绝问题？有哪些常用的排查工具和方法？"
+        ],
+        extensions: [
+            "研究 Istio 的外部授权（CUSTOM action），了解如何集成外部授权服务（如 OPA、Authzed）实现更复杂的访问控制逻辑。",
+            "探索 Istio 的审计日志功能，了解如何记录所有访问控制决策用于合规审计。",
+            "学习 Istio 与 SPIRE 的集成，了解如何使用外部 SPIFFE 身份提供者替代 Istio 内置 CA。",
+            "研究 Istio 的 Egress 安全控制，了解如何控制网格内服务对外部服务的访问，防止数据泄露。"
+        ],
+        sourceUrls: [
+            "https://istio.io/latest/docs/concepts/security/",
+            "https://istio.io/latest/docs/tasks/security/authentication/mtls-migration/",
+            "https://istio.io/latest/docs/tasks/security/authorization/"
+        ]
+    }
+}
+
+export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "w13-1": [
         {
             id: "w13-1-q1",
@@ -729,4 +893,4 @@ export const week13: Record<string, QuizQuestion[]> = {
             rationale: "端口级别配置允许为特定端口设置不同的 mTLS 模式。例如健康检查端口可以设置为 DISABLE，而其他端口保持 STRICT。"
         }
     ]
-};
+}
