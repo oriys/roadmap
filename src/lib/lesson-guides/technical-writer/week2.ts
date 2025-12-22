@@ -86,35 +86,37 @@ export const week2Guides: Record<string, LessonGuide> = {
     "tw-w2-3": {
         lessonId: "tw-w2-3",
         background: [
-            "静态站点生成器（SSG）将 Markdown 文件转换为可部署的 HTML 网站，是 Docs-as-Code 的核心工具。",
-            "Docusaurus 是 Meta 开源的文档站点生成器，基于 React，支持版本管理、国际化、全站搜索，适合大型文档项目。",
-            "MkDocs 是 Python 生态的文档生成器，以'fast, simple and downright gorgeous'著称，配置简单（单个 YAML 文件），适合快速上手。",
-            "VitePress 是 Vue 生态的文档生成器，基于 Vite 构建，启动速度极快，支持在 Markdown 中使用 Vue 组件，适合 Vue 技术栈团队。"
+            "【SSG 核心价值】静态站点生成器（SSG）将 Markdown 文件转换为可部署的静态 HTML 网站——构建时生成所有页面，部署后无需服务器端处理，加载速度快且易于托管（GitHub Pages、Netlify、Vercel）。",
+            "【Docusaurus 定位】Meta 开源的文档优先（documentation-first）静态站点生成器，核心理念：'ship a beautiful documentation site in no time'、'focus on your content and just write Markdown files'。基于 React，支持 MDX 嵌入交互式组件。",
+            "【MkDocs 特点】Python 生态的文档生成器，以'fast, simple and downright gorgeous'著称。单一 YAML 配置文件（mkdocs.yml），内置开发服务器提供实时预览，文件变更时自动刷新浏览器。",
+            "【VitePress 优势】Vue 生态的文档生成器，由 Vite 驱动——'Instant server start, lightning fast hot updates'。支持在 Markdown 中直接使用 Vue 语法和组件，适合需要深度定制的 Vue 技术栈团队。",
+            "【PRPL 模式】Docusaurus 遵循的性能优化策略：Push（推送关键资源）、Render（渲染初始路由）、Pre-cache（预缓存剩余路由）、Lazy-load（懒加载按需路由）——确保首屏加载和后续导航都快速。"
         ],
         keyDifficulties: [
-            "工具选型：Docusaurus（React 生态，功能丰富）、MkDocs（Python 生态，简单快速）、VitePress（Vue 生态，性能优先）——根据团队技术栈和需求选择。",
-            "配置复杂度：SSG 工具功能丰富意味着配置项多。建议从最小配置开始，按需添加功能（导航、搜索、版本管理）。",
-            "部署和 CI/CD：需要配置自动构建和部署流程（GitHub Pages、Netlify、Vercel）。关键是理解构建产物（dist/build 目录）和部署目标。",
-            "自定义主题：默认主题通常够用，但深度定制需要了解底层框架（React/Vue）。评估定制需求再决定投入。"
+            "【工具选型决策树】Docusaurus（React 生态，功能丰富，适合需要版本管理和 i18n 的大型项目）、MkDocs（Python 生态，配置简单，适合快速上手）、VitePress（Vue 生态，Vite 驱动，适合需要 Vue 组件深度定制的项目）。根据团队技术栈和需求选择。",
+            "【配置复杂度管理】SSG 工具功能丰富意味着配置项多。建议：从最小配置开始（最小可用 → 可运行 → 可导航），按需添加功能（搜索 → 版本管理 → i18n），避免一开始就追求完美配置。",
+            "【部署与 CI/CD】需要理解：构建产物（dist/build 目录）、部署目标（GitHub Pages、Netlify、Vercel）、CI/CD 触发（on push to main → build → deploy）。关键是配置好 GitHub Actions workflow。",
+            "【自定义主题边界】默认主题通常够用，深度定制需要了解底层框架（React/Vue）。评估定制需求再决定投入——过早定制是常见的时间陷阱。"
         ],
         handsOnPath: [
-            "选择一个 SSG 工具（推荐先试 VitePress 或 MkDocs），用官方脚手架创建一个文档项目，在本地运行并预览。",
-            "将你之前写的 Markdown 文档迁移到 SSG 项目中，配置导航栏和侧边栏，组织文档结构。",
-            "部署到 GitHub Pages：配置 GitHub Actions，实现 push 到 main 分支后自动构建和部署。",
-            "尝试一个高级功能：添加搜索（Algolia DocSearch 或内置搜索）、多版本文档、或国际化支持。"
+            "选择一个 SSG 工具（推荐先试 VitePress 或 MkDocs），用官方脚手架创建项目：npx create-docusaurus / npm create vitepress / pip install mkdocs && mkdocs new。在本地运行并预览。",
+            "将你之前写的 Markdown 文档迁移到 SSG 项目中，配置导航栏（nav）和侧边栏（sidebar），组织文档结构。理解配置文件如何控制导航。",
+            "部署到 GitHub Pages：创建 .github/workflows/deploy.yml，配置 GitHub Actions 实现 push 到 main 分支后自动构建和部署。验证部署成功。",
+            "尝试一个高级功能：添加搜索（Algolia DocSearch 或内置搜索）、多版本文档（docs-versioning）、或国际化支持（i18n）。选择一个与项目需求匹配的功能深入实践。",
+            "比较三个工具：分别用 Docusaurus、MkDocs、VitePress 创建最小项目，对比开发体验（启动速度、配置复杂度、预览效果）。形成自己的工具偏好。"
         ],
         selfCheck: [
-            "你能否在 10 分钟内用 SSG 工具创建一个可运行的文档站点？",
-            "你的文档站点是否有清晰的导航结构？用户能否快速找到所需内容？",
-            "你是否配置了自动部署？push 代码后文档是否自动更新？",
-            "你的文档站点是否有搜索功能？用户能否通过关键词快速定位？",
-            "你是否了解如何自定义主题或添加插件？"
+            "【快速启动能力】你能否在 10 分钟内用 SSG 工具创建一个可运行的文档站点？知道用什么命令初始化和启动开发服务器？",
+            "【导航结构理解】你的文档站点是否有清晰的导航结构（nav + sidebar）？用户能否快速找到所需内容？配置文件中如何定义导航？",
+            "【自动部署配置】你是否配置了自动部署？push 代码后文档是否自动更新？GitHub Actions workflow 文件在哪里？",
+            "【搜索功能集成】你的文档站点是否有搜索功能？用户能否通过关键词快速定位内容？使用的是内置搜索还是 Algolia？",
+            "【定制能力边界】你是否了解如何自定义主题或添加插件？知道什么时候该定制、什么时候该使用默认配置？"
         ],
         extensions: [
-            "深入学习 Docusaurus：https://docusaurus.io/docs —— 适合需要版本管理和国际化的大型项目。",
-            "了解 MkDocs Material 主题：https://squidfunk.github.io/mkdocs-material/ —— MkDocs 最流行的主题。",
-            "学习 VitePress 自定义主题：https://vitepress.dev/guide/custom-theme —— 使用 Vue 组件扩展功能。",
-            "配置 Algolia DocSearch：免费为开源项目提供强大的文档搜索功能。"
+            "【Docusaurus 深入】完整阅读 Docusaurus 官方文档：https://docusaurus.io/docs —— 特别是 Versioning、i18n、Search 章节，适合需要这些功能的大型项目。",
+            "【MkDocs Material】了解 MkDocs 最流行的主题 Material：https://squidfunk.github.io/mkdocs-material/ —— 提供丰富的功能扩展和美观的默认样式。",
+            "【VitePress 定制】学习 VitePress 自定义主题：https://vitepress.dev/guide/custom-theme —— 使用 Vue 组件扩展功能，适合 Vue 技术栈团队。",
+            "【Algolia DocSearch】配置 Algolia DocSearch：免费为开源项目提供强大的文档搜索功能，需要申请并配置 API Key。"
         ],
         sourceUrls: [
             "https://docusaurus.io/docs",

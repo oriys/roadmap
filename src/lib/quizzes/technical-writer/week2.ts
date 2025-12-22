@@ -319,98 +319,163 @@ export const week2: Record<string, QuizQuestion[]> = {
         "Write the Docs 指出 Docs as Code 的三大优势：(1) 写作者与开发团队更好融合，(2) 开发者常贡献初稿，(3) 功能合并可要求文档就绪。",
     },
   ],
-  // Lesson 3: 静态站点与发布（SSG）(7题)
+  // Lesson 3: 静态站点与发布（SSG）(12题，答案随机分布)
   "tw-w2-3": [
     {
       id: "tw-w2-3-q1",
-      question: "Docusaurus 作为静态站点生成器的核心优势是什么？",
+      question: "静态站点生成器（SSG）与传统动态网站的核心区别是什么？",
       options: [
-        "让开发者用 Markdown 专注于内容创作，自动生成具有快速导航的单页应用",
-        "提供所见即所得的可视化编辑器",
-        "自动将文档翻译成 50 种语言",
-        "内置数据库管理功能",
-      ],
-      answer: 0,
-      rationale:
-        "Docusaurus: 它构建具有快速客户端导航的单页应用程序，让开发者专注于用 Markdown 编写内容。",
-    },
-    {
-      id: "tw-w2-3-q2",
-      question: "静态站点生成器（SSG）与传统动态网站的主要区别是什么？",
-      options: [
-        "SSG 在构建时生成静态 HTML 文件，无需服务器端运行时处理",
         "SSG 必须使用数据库",
+        "SSG 在构建时生成静态 HTML 文件，部署后无需服务器端运行时处理",
         "SSG 不支持 JavaScript",
         "SSG 只能用于博客",
       ],
+      answer: 1,
+      rationale:
+        "SSG 在构建时生成所有 HTML 页面，部署后无需服务器端处理，加载速度快且易于托管（GitHub Pages、Netlify、Vercel）。",
+    },
+    {
+      id: "tw-w2-3-q2",
+      question: "Docusaurus 官方对自己的定位是什么？",
+      options: [
+        "'documentation-first static site generator'——文档优先的静态站点生成器",
+        "通用的 Web 应用框架",
+        "数据库管理工具",
+        "代码编辑器插件",
+      ],
       answer: 0,
       rationale:
-        "SSG 在构建时生成所有 HTML 页面，部署后无需服务器端处理，加载速度快且易于托管。",
+        "Docusaurus 强调自己是'opinionated toward the documentation use-case'，相比 Next.js 或 Gatsby 等通用框架，更专注于文档场景。",
     },
     {
       id: "tw-w2-3-q3",
-      question: "Docusaurus 支持的文档特性包括哪些？",
+      question: "MkDocs 的配置方式有什么特点？",
       options: [
-        "文档版本管理、多语言国际化、全站搜索、MDX 支持",
-        "实时协作编辑、语音输入、AI 写作辅助",
-        "自动代码生成、数据库集成、用户认证",
-        "视频托管、直播功能、在线会议",
+        "需要多个 JSON 配置文件",
+        "单一 YAML 配置文件（mkdocs.yml），内置开发服务器提供实时预览",
+        "必须通过 GUI 界面配置",
+        "不支持任何配置定制",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Docusaurus: 提供文档版本管理、多语言国际化支持（i18n）、全站搜索功能、MDX 驱动的交互式内容。",
+        "MkDocs 以简洁著称——单一 YAML 配置文件，内置开发服务器，文件变更时自动刷新浏览器。",
     },
     {
       id: "tw-w2-3-q4",
-      question: "MDX 相对于纯 Markdown 的主要优势是什么？",
+      question: "VitePress 相比其他 SSG 工具的独特优势是什么？",
       options: [
-        "支持在 Markdown 中嵌入 React 组件，创建交互式内容",
-        "文件体积更小",
-        "兼容更多的编辑器",
-        "自动生成目录",
+        "只支持英文文档",
+        "必须使用 React",
+        "由 Vite 驱动，实现'Instant server start, lightning fast hot updates'",
+        "不支持 Markdown",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Docusaurus: MDX 驱动，支持嵌入 React 组件的交互式内容，超越了纯 Markdown 的静态限制。",
+        "VitePress 由 Vite 驱动，提供即时服务器启动和闪电般的热更新体验，并支持在 Markdown 中使用 Vue 组件。",
     },
     {
       id: "tw-w2-3-q5",
-      question: "选择 Docusaurus 而非 MkDocs 的主要考虑因素是什么？",
+      question: "Docusaurus 遵循的 PRPL 性能优化模式中，四个字母分别代表什么？",
       options: [
-        "需要单页应用（SPA）体验和 React 生态系统支持",
-        "需要 Python 环境",
-        "只想要最简单的静态页面",
-        "需要使用 reStructuredText 格式",
+        "Push、Render、Pre-cache、Lazy-load",
+        "Parse、Run、Process、Load",
+        "Prepare、Read、Print、Link",
+        "Package、Release、Publish、Launch",
       ],
       answer: 0,
       rationale:
-        "Docusaurus: MkDocs 适合无需 SPA 的项目，而 Docusaurus 基于 React 提供更丰富的交互体验。",
+        "PRPL 是 Google 提出的性能模式：Push（推送关键资源）、Render（渲染初始路由）、Pre-cache（预缓存剩余路由）、Lazy-load（懒加载按需路由）。",
     },
     {
       id: "tw-w2-3-q6",
-      question: "静态站点生成器的 SEO 优势是什么？",
+      question: "选择 SSG 工具时，应该根据什么因素决定？",
       options: [
-        "生成静态 HTML 文件便于搜索引擎爬取和索引",
-        "自动购买搜索广告",
-        "隐藏内容不被搜索引擎发现",
-        "强制用户必须登录才能访问",
+        "只看工具的 GitHub star 数",
+        "团队技术栈（React/Vue/Python）和项目需求（版本管理、i18n、搜索等）",
+        "选择最新发布的工具",
+        "选择配置最复杂的工具",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Docusaurus: SEO 友好的静态 HTML 生成，搜索引擎可以直接爬取预渲染的内容。",
+        "Docusaurus 适合 React 生态和需要版本管理的大型项目，MkDocs 适合 Python 生态和快速上手，VitePress 适合 Vue 生态和深度定制。",
     },
     {
       id: "tw-w2-3-q7",
-      question: "PRPL 模式在文档站点中的作用是什么？",
+      question: "MDX 相对于纯 Markdown 的主要优势是什么？",
       options: [
-        "确保内容加载速度快：预加载、渲染、预缓存、懒加载",
-        "用于代码压缩和混淆",
-        "管理用户权限和角色",
-        "处理多语言翻译",
+        "文件体积更小",
+        "支持在 Markdown 中嵌入 React 组件，创建交互式内容",
+        "加载速度更快",
+        "不需要任何构建步骤",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Docusaurus: 遵循 PRPL 模式（Push, Render, Pre-cache, Lazy-load）确保内容加载速度快。",
+        "Docusaurus 支持 MDX，允许在 Markdown 中嵌入 React 组件，实现交互式文档内容，超越纯 Markdown 的静态限制。",
+    },
+    {
+      id: "tw-w2-3-q8",
+      question: "关于 SSG 工具的配置复杂度管理，最佳实践是什么？",
+      options: [
+        "一开始就配置所有可能需要的功能",
+        "从最小配置开始，按需添加功能（搜索 → 版本管理 → i18n）",
+        "直接复制其他项目的完整配置",
+        "不做任何配置，只使用默认设置",
+      ],
+      answer: 1,
+      rationale:
+        "SSG 工具功能丰富意味着配置项多。建议从最小可用配置开始，按需逐步添加功能，避免一开始就追求完美配置。",
+    },
+    {
+      id: "tw-w2-3-q9",
+      question: "部署 SSG 站点到 GitHub Pages 需要理解的关键概念是什么？",
+      options: [
+        "只需要上传源码即可",
+        "构建产物（dist/build 目录）、部署目标、CI/CD 触发（on push → build → deploy）",
+        "GitHub Pages 会自动从源码构建",
+        "不需要任何 CI/CD 配置",
+      ],
+      answer: 1,
+      rationale:
+        "需要配置 GitHub Actions workflow：push 到 main 分支触发构建，将构建产物（dist/build）部署到 GitHub Pages。",
+    },
+    {
+      id: "tw-w2-3-q10",
+      question: "Docusaurus 提供的文档特有功能包括哪些？",
+      options: [
+        "只有基础的 Markdown 渲染",
+        "文档版本管理、国际化（i18n）、全站搜索、SEO 优化",
+        "实时协作编辑",
+        "自动代码生成",
+      ],
+      answer: 1,
+      rationale:
+        "Docusaurus 提供文档版本管理（同步项目版本）、多语言国际化、全站搜索、SEO 友好的静态 HTML 生成。",
+    },
+    {
+      id: "tw-w2-3-q11",
+      question: "MkDocs 的官方宣传语是什么？",
+      options: [
+        "'The React Framework'",
+        "'fast, simple and downright gorgeous'",
+        "'Build anything with Vue'",
+        "'Ship better products faster'",
+      ],
+      answer: 1,
+      rationale:
+        "MkDocs 以'快速、简洁且精美'（fast, simple and downright gorgeous）著称，强调其易用性和美观性。",
+    },
+    {
+      id: "tw-w2-3-q12",
+      question: "关于 SSG 工具的自定义主题，正确的态度是什么？",
+      options: [
+        "必须第一天就完全自定义主题",
+        "永远不应该自定义主题",
+        "默认主题通常够用，评估定制需求再决定投入——过早定制是常见的时间陷阱",
+        "自定义主题不需要了解底层框架",
+      ],
+      answer: 2,
+      rationale:
+        "深度定制需要了解底层框架（React/Vue），应该评估真实需求再决定投入。默认主题对大多数项目已经足够。",
     },
   ],
   // Lesson 4: 贡献指南与写作规范 (7题)
