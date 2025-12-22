@@ -44,35 +44,38 @@ export const week4Guides: Record<string, LessonGuide> = {
     "tw-w4-2": {
         lessonId: "tw-w4-2",
         background: [
-            "OpenAPI Specification（原 Swagger Specification）是描述 REST API 的标准格式，用 YAML 或 JSON 编写，易于人类和机器理解。",
-            "OpenAPI 可以描述：端点和操作（GET /users、POST /users）、操作参数、输入输出格式、认证方法、联系信息和许可证。",
-            "Swagger 工具集：Swagger Editor（浏览器编辑器）、Swagger UI（生成交互式文档）、Swagger Codegen（生成服务器/客户端代码）。",
-            "OpenAPI 的核心价值：单一真相来源（Single Source of Truth）——从同一份定义生成文档、客户端库、测试用例、Mock 服务器。"
+            "【OpenAPI 定义】OAS 官方定义：'The OpenAPI Specification defines a standard, programming language-agnostic interface description for HTTP APIs'——让人类和机器都能理解 API 能力，无需访问源码。",
+            "【Swagger 定位】Swagger 是'a set of open-source tools built around the OpenAPI Specification'——包括 Editor（浏览器编写）、UI（交互式文档）、Codegen（40+ 语言代码生成）、Parser（解析库）。",
+            "【OpenAPI 描述内容】可描述：端点（/users）及其操作、每个操作的参数和输入输出、安全与认证方式、API 元数据（联系人、许可证、服务条款）。",
+            "【核心结构组件】Root Object 包含：openapi（版本号，必需）、info（API 元数据，必需）、paths（端点定义）、components（可复用 schema）、servers（服务器连接）、security（认证机制）、webhooks（回调端点）。",
+            "【设计优先工作流】Design-First：先写 OpenAPI 定义，自动生成服务器骨架和客户端库——API 定义成为'单一真相来源'（Single Source of Truth）。"
         ],
         keyDifficulties: [
-            "OpenAPI 结构理解：info（元信息）、servers（服务器地址）、paths（端点定义）、components（可复用组件）、security（安全定义）。",
-            "Schema 定义：如何用 JSON Schema 描述请求/响应的数据结构，包括类型、必需字段、枚举、嵌套对象。",
-            "从现有 API 生成 OpenAPI：手动编写 vs 从代码注解生成 vs 从流量捕获推断——各有优劣。",
-            "OpenAPI 版本差异：2.0（Swagger）vs 3.0 vs 3.1——新版本支持更多功能但工具兼容性需考虑。"
+            "【必需字段理解】规范要求 components、paths 或 webhooks 至少存在一个；info 对象必须包含 title 和 version 字符串。",
+            "【服务器变量替换】servers 对象支持模板化 URL，使用花括号语法进行变量替换（如 {environment}.api.example.com）。",
+            "【多文档引用】3.2.0 版本强调通过 URI 引用支持多文档，$self 字段可显式指定基础 URI 用于跨分布式描述的正确引用解析。",
+            "【版本兼容性】OpenAPI 2.0（原 Swagger）vs 3.0 vs 3.1 vs 3.2——新版本功能更强但需考虑工具链兼容性。",
+            "【描述格式】description 字段支持 CommonMark markdown 格式——可在 API 描述中使用丰富的文档格式。"
         ],
         handsOnPath: [
-            "用 Swagger Editor 创建一个简单 API 的 OpenAPI 定义：至少包含一个 GET 和一个 POST 端点。",
-            "用 Swagger UI 预览你的 API 文档，尝试发送测试请求。",
-            "定义 components/schemas：创建可复用的数据模型（如 User、Error），在多个端点中引用。",
-            "为 API 添加安全定义：API Key 或 OAuth2，说明如何认证。"
+            "用 Swagger Editor（https://editor.swagger.io/）创建 OpenAPI 定义：包含一个 GET 和一个 POST 端点，体验实时验证和预览。",
+            "定义 info 对象：填写 title、version、description、contact、license，理解元数据的作用。",
+            "创建 components/schemas：定义可复用的数据模型（如 User、Error），用 $ref 在多个端点中引用，避免重复。",
+            "添加 security 定义：配置 API Key 或 OAuth2 认证，在 securitySchemes 中定义，在操作或全局级别应用。",
+            "用 Swagger UI 预览文档并测试 API：体验交互式文档，直接在浏览器中发送请求并查看响应。"
         ],
         selfCheck: [
-            "你能否读懂一份 OpenAPI 定义文件？知道每个字段的作用？",
-            "你的 OpenAPI 定义是否完整描述了所有端点、参数、响应？",
-            "你是否使用了 components 来避免重复定义？",
-            "你的 OpenAPI 定义是否可以用 Swagger UI 正确渲染？",
-            "你是否为 API 定义了安全方案？"
+            "【结构理解】你能否识别 OpenAPI 文件的各个部分：openapi、info、servers、paths、components、security？",
+            "【必需字段】你的定义是否包含所有必需字段：openapi 版本、info.title、info.version？",
+            "【复用实践】你是否使用 components/schemas 定义可复用模型？是否用 $ref 引用而非复制粘贴？",
+            "【安全定义】你是否在 securitySchemes 中定义认证方式？是否在需要认证的操作中应用？",
+            "【工具验证】你的 OpenAPI 定义是否能在 Swagger Editor 中通过验证？能否用 Swagger UI 正确渲染？"
         ],
         extensions: [
-            "深入学习 OpenAPI 3.1 规范：https://spec.openapis.org/oas/latest.html",
-            "了解 Redocly：https://redocly.com/ —— 更美观的 API 文档生成工具。",
-            "学习 API-first 开发流程：先写 OpenAPI 定义，再实现代码。",
-            "配置 CI 自动验证 OpenAPI 定义的有效性。"
+            "【OpenAPI 3.2 完整规范】深入学习最新版本：https://spec.openapis.org/oas/latest.html —— 理解多文档支持和 URI 引用。",
+            "【Redocly 美化文档】更精美的 API 文档生成：https://redocly.com/ —— 提供更好的阅读体验和自定义主题。",
+            "【代码生成实践】用 Swagger Codegen 生成客户端 SDK：支持 40+ 种语言，体验从定义到代码的自动化。",
+            "【CI 集成验证】在 CI/CD 中自动验证 OpenAPI 定义的有效性：使用 spectral 或 redocly lint 工具。"
         ],
         sourceUrls: [
             "https://spec.openapis.org/oas/latest.html",
