@@ -129,40 +129,48 @@ export const week8Guides: Record<string, LessonGuide> = {
     "tw-w8-4": {
         lessonId: "tw-w8-4",
         background: [
-            "技术写作的职业路径可以向深度或广度发展：深度方向包括领域专家（API 文档、安全文档）、信息架构师、内容策略师；广度方向包括产品经理、开发者关系、技术培训。",
-            "核心技能的发展：产品理解（知道用户要什么）、技术能力（能读懂代码、使用工具）、信息架构（组织复杂信息）、团队影响力（推动文档文化）。",
-            "Write the Docs 社区是技术写作者的重要资源：Slack 社区、本地 Meetup、年度大会、播客、招聘信息。加入社区获取行业动态和同行支持。",
-            "持续学习是必须的：技术不断变化，新的框架、工具、最佳实践不断涌现。保持学习习惯，关注行业趋势。"
+            "【Write the Docs 社区定位】全球文档工作者社区，成员包括程序员、技术写作者、开发者关系、客户支持等——'considers anyone who cares about communication, documentation, and their users to be a member of our community'。",
+            "【职业发展双路径】深度方向：领域专家（API 文档、安全文档）、信息架构师、内容策略师；广度方向：产品经理、开发者关系（DevRel）、技术培训、用户体验写作。",
+            "【核心软技能】Write the Docs：'Be bold. Own what you do'——主动展示技术写作工作的价值，积极提问不畏惧看似'愚蠢'的问题，持续学习新技术提升市场竞争力。",
+            "【技术技能基础】必备技能包括：Git 版本控制、命令行操作、Markdown/DITA 标记语言、HTML/CSS 基础、专业工具（MadCap Flare、Adobe Tech Comms Suite）。",
+            "【薪资透明倡议】Write the Docs 自 2019 年启动年度薪资调查，'help community members better understand what an appropriate salary is and provide a basis for future negotiations'。"
         ],
         keyDifficulties: [
-            "技术深度 vs 广度的选择：是成为特定领域（如云计算、区块链）的专家，还是成为通用型的技术写作者？取决于个人兴趣和市场需求。",
-            "量化贡献的挑战：文档的价值难以直接量化。需要学习如何用数据（支持工单减少、用户满意度提升）证明文档的价值。",
-            "职业发展路径的不确定性：技术写作可能没有明确的晋升阶梯。需要主动定义自己的成长方向，与管理者沟通期望。",
-            "远程工作的协作挑战：技术写作越来越多是远程工作。需要在异步环境中有效沟通、建立信任、推动项目。"
+            "【深度 vs 广度抉择】是成为特定领域（云计算、区块链、API）的专家，还是通用型技术写作者？取决于个人兴趣、市场需求和职业目标。",
+            "【价值量化挑战】文档价值难以直接量化。需学习用数据证明贡献：支持工单减少率、用户满意度提升、首次解决率改善、文档使用指标。",
+            "【晋升路径模糊】技术写作可能没有明确的晋升阶梯。需主动定义成长方向，与管理者沟通期望，建立个人品牌和影响力。",
+            "【远程协作障碍】技术写作日益远程化。需掌握异步沟通技巧、跨时区协作工具、主动建立信任关系、推动虚拟环境中的项目进展。",
+            "【持续学习压力】技术不断演进，新框架、新工具、新最佳实践持续涌现。Write the Docs：文档指南是'living, breathing guide'，需保持学习习惯。"
         ],
         handsOnPath: [
-            "评估你的技能差距：对照 Google/Microsoft 的技术写作者技能模型，识别你的强项和需要发展的领域。",
-            "建立学习计划：选择 1-2 个你想发展的技能（如 API 文档、视频教程、信息架构），制定学习资源和实践计划。",
-            "加入 Write the Docs 社区：加入 Slack、参加本地 Meetup 或线上活动，与同行交流、获取反馈。",
-            "开始记录你的贡献：建立一个'成就日志'，记录你完成的项目、获得的反馈、可量化的成果，为绩效评估和面试准备材料。"
+            "技能评估：对照 Write the Docs 技能清单（soft skills + technical skills），识别强项和发展领域，建立个人技能矩阵。",
+            "学习计划：选择 1-2 个目标技能（API 文档、视频教程、信息架构），制定学习资源清单和实践项目。",
+            "社区参与：加入 Write the Docs Slack（数千名成员）、参加本地 Meetup 或虚拟活动，建立专业网络。",
+            "贡献记录：建立'成就日志'——完成的项目、获得的反馈、可量化的成果、解决的问题，为绩效评估和面试准备素材。",
+            "面试准备：按 Write the Docs 面试指南准备——用具体项目回答而非抽象描述，准备向面试官提问的问题清单。",
+            "薪资研究：查阅 Write the Docs 年度薪资调查数据（2019-2024），了解行业薪资水平，为谈判做准备。"
         ],
         selfCheck: [
-            "你是否清楚自己的职业发展方向？是向深度还是广度发展？",
-            "你是否识别了需要发展的技能？是否有学习计划？",
-            "你是否加入了技术写作社区？是否与同行保持交流？",
-            "你是否记录了自己的贡献和成就？能否在面试中用具体例子证明你的价值？",
-            "你是否关注行业趋势？是否持续学习新工具和最佳实践？"
+            "【方向清晰度】你是否清楚职业发展方向？是向深度（领域专家）还是广度（跨领域角色）发展？",
+            "【技能差距】你是否识别了需要发展的技能？是否有具体的学习计划和时间表？",
+            "【社区连接】你是否加入了技术写作社区？是否与同行保持交流、获取反馈？",
+            "【成就记录】你是否记录了贡献和成就？能否在面试中用 STAR 方法讲述具体例子？",
+            "【行业关注】你是否关注行业趋势？是否持续学习新工具和最佳实践？",
+            "【薪资认知】你是否了解行业薪资水平？是否有数据支持薪资谈判？"
         ],
         extensions: [
-            "研究 Write the Docs 的招聘指南：https://www.writethedocs.org/hiring-guide/",
-            "关注技术写作播客：Write the Docs Podcast、The Content Strategy Podcast。",
-            "阅读行业博客：I'd Rather Be Writing、Every Page is Page One。",
-            "考虑认证：如 Society for Technical Communication (STC) 认证，展示专业承诺。"
+            "【Write the Docs 招聘指南】完整资源：https://www.writethedocs.org/hiring-guide/ —— 社区访谈、面试问题、技能清单、自由职业指南。",
+            "【全球 Meetup 网络】北美 13 个、欧洲 6 个、亚洲 2 个、大洋洲和非洲各有活跃社区，支持线上和线下参与。",
+            "【薪资调查数据】2019-2024 年度调查结果，涵盖薪资基准、福利、远程工作模式、工作满意度。",
+            "【软件文档指南】Write the Docs 社区维护的'living guide'，涵盖 Docs-as-Code、风格指南、可访问性、工具选择等主题。",
+            "【行业播客和博客】Write the Docs Podcast、I'd Rather Be Writing、Every Page is Page One——持续学习的优质来源。"
         ],
         sourceUrls: [
             "https://www.writethedocs.org/hiring-guide/",
-            "https://roadmap.sh/",
-            "https://www.writethedocs.org/"
+            "https://www.writethedocs.org/",
+            "https://www.writethedocs.org/meetups/",
+            "https://www.writethedocs.org/surveys/",
+            "https://www.writethedocs.org/guide/"
         ]
     }
 }
