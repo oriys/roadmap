@@ -319,75 +319,140 @@ export const week3: Record<string, QuizQuestion[]> = {
         "curl -s（静默模式）隐藏进度信息，让输出只包含响应体，便于通过管道传给 jq 等工具处理。",
     },
   ],
-  // Lesson 3: 排错文档（Troubleshooting）写法 (7题)
+  // Lesson 3: 排错文档（Troubleshooting）写法 (12题，答案随机分布)
   "tw-w3-3": [
     {
       id: "tw-w3-3-q1",
       question: "排错文档的理想结构是什么？",
       options: [
-        "症状描述 → 可能原因 → 诊断步骤 → 解决方案",
         "解决方案 → 原因 → 症状",
+        "症状描述 → 可能原因 → 诊断步骤 → 解决方案",
         "只列出解决方案即可",
         "按字母顺序排列所有错误",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
         "排错文档应从用户观察到的症状开始，然后解释原因，提供诊断步骤，最后给出解决方案。",
     },
     {
       id: "tw-w3-3-q2",
-      question: "在排错文档中，错误信息应该如何呈现？",
+      question: "Google 风格指南定义的四种通知类型是什么？",
       options: [
-        "完整引用原始错误信息，使用代码块格式，便于用户搜索匹配",
-        "用自己的话概括错误",
-        "只写错误代码，省略详细信息",
-        "翻译成用户的母语",
+        "Info、Alert、Error、Success",
+        "Note、Caution、Warning、Success",
+        "Tip、Important、Critical、Fatal",
+        "Hint、Attention、Danger、Done",
+      ],
+      answer: 1,
+      rationale:
+        "Google 风格指南定义四种通知：Note（相关但非关键）、Caution（建议谨慎）、Warning（不可逆风险）、Success（仅用于交互式内容）。",
+    },
+    {
+      id: "tw-w3-3-q3",
+      question: "Google 风格指南对过度使用 notices 的警告是什么？",
+      options: [
+        "'Readers skip elements on the page, including notices, that are outside their focus of interest'——过度使用会降低有效性",
+        "notices 不会影响阅读体验",
+        "应该尽可能多地使用 notices",
+        "notices 只影响打印版本",
       ],
       answer: 0,
+      rationale:
+        "Google 明确警告：读者会跳过不相关的元素，包括 notices。过度使用会降低视觉区分度和有效性。",
+    },
+    {
+      id: "tw-w3-3-q4",
+      question: "Warning 类型的通知应该在什么情况下使用？",
+      options: [
+        "任何重要的信息都应使用 Warning",
+        "所有步骤都应有 Warning 提醒",
+        "仅用于'irreversible actions or significant risks—potential data loss, security breaches, or financial harm'",
+        "只在文档开头使用一次",
+      ],
+      answer: 2,
+      rationale:
+        "Google：Warning 仅用于不可逆操作或重大风险——潜在的数据丢失、安全漏洞或财务损失。过多使用会让用户麻木。",
+    },
+    {
+      id: "tw-w3-3-q5",
+      question: "排错文档中的错误信息应该如何呈现？",
+      options: [
+        "用自己的话概括错误",
+        "只写错误代码，省略详细信息",
+        "完整引用原始错误信息，使用代码块格式，便于用户搜索匹配",
+        "翻译成用户的母语",
+      ],
+      answer: 2,
       rationale:
         "完整引用原始错误信息让用户能通过搜索找到文档，也便于确认是否遇到相同问题。",
     },
     {
-      id: "tw-w3-3-q3",
-      question: "排错文档中的'快速绕过'（Workaround）应该如何处理？",
+      id: "tw-w3-3-q6",
+      question: "'快速绕过'（Workaround）在排错文档中的定位是什么？",
       options: [
-        "提供快速绕过方案，但同时说明根因和完整修复方法",
+        "优先提供快速绕过方案让用户先解除阻塞，再提供根因分析",
         "只提供绕过方案，不需要解释原因",
         "不应该提供绕过方案，只给根本解决方案",
         "绕过方案应该放在文档最后",
       ],
       answer: 0,
       rationale:
-        "快速绕过帮助用户先解除阻塞，但也应说明根因和完整修复方法，让用户理解问题本质。",
+        "好的排错文档优先给出 Workaround，让时间紧迫的用户先解除阻塞，再提供根因分析和完整修复。",
     },
     {
-      id: "tw-w3-3-q4",
-      question: "描述复现步骤时，最重要的原则是什么？",
+      id: "tw-w3-3-q7",
+      question: "Write the Docs 如何描述文档模板的价值？",
       options: [
-        "步骤具体、完整，包含版本信息和环境配置",
-        "尽量简短，只写关键步骤",
-        "使用技术术语让步骤更专业",
-        "只描述成功路径",
+        "模板限制了作者的创造力",
+        "模板只适合新手使用",
+        "模板是'established patterns for common documentation types'，帮助作者避免空白页焦虑",
+        "模板会导致所有文档看起来一样",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "复现步骤必须足够详细和完整，包括版本、环境等信息，让其他人能够准确重现问题。",
+        "Write the Docs 指出模板是建立好的模式，包括 quickstarts、how-to、troubleshooting 等类型，帮助作者避免空白页焦虑。",
     },
     {
-      id: "tw-w3-3-q5",
-      question: "排错文档中的日志示例应该如何处理？",
+      id: "tw-w3-3-q8",
+      question: "当同一症状可能由多个原因导致时，应该如何组织？",
       options: [
-        "展示相关的日志片段，高亮关键信息，解释日志含义",
-        "展示完整的日志文件",
-        "只提供日志文件的路径",
-        "不应该在文档中包含日志",
+        "按字母顺序列出所有原因",
+        "随机排列原因",
+        "只列出最复杂的原因",
+        "按'最常见 → 最罕见'顺序列出，让用户快速排除",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "展示相关日志片段并解释含义，帮助用户理解如何从日志中诊断问题，而非展示冗长的完整日志。",
+        "多因一果场景下，应按概率从高到低排序，让用户能快速排除不相关的原因，找到真正的问题所在。",
     },
     {
-      id: "tw-w3-3-q6",
+      id: "tw-w3-3-q9",
+      question: "复现步骤必须包含哪些信息？",
+      options: [
+        "只需要操作步骤即可",
+        "环境信息（OS、版本）、操作序列、预期结果、实际结果",
+        "只需要错误消息",
+        "只需要解决方案",
+      ],
+      answer: 1,
+      rationale:
+        "完整的复现步骤必须包含：环境信息、操作序列、预期结果、实际结果。缺少任何一项都会影响问题定位。",
+    },
+    {
+      id: "tw-w3-3-q10",
+      question: "Note 类型的通知适合在什么情况下使用？",
+      options: [
+        "所有重要信息都应使用 Note",
+        "Note 和 Warning 可以互换使用",
+        "相关但非关键的信息，interruption 不会阻断读者的阅读路径",
+        "只在步骤之间使用",
+      ],
+      answer: 2,
+      rationale:
+        "Google：Note 用于相关但非关键的信息，前提是这个 interruption 不会阻断读者完成当前任务。",
+    },
+    {
+      id: "tw-w3-3-q11",
       question: "排错文档的标题应该如何命名？",
       options: [
         "使用用户可能搜索的症状或错误信息作为标题",
@@ -397,20 +462,20 @@ export const week3: Record<string, QuizQuestion[]> = {
       ],
       answer: 0,
       rationale:
-        "使用用户可能搜索的症状或错误信息作为标题，提高文档的可发现性。",
+        "使用用户可能搜索的症状或错误信息作为标题，提高文档的可发现性——用户的语言而非技术术语。",
     },
     {
-      id: "tw-w3-3-q7",
-      question: "在排错文档中，'预期结果'与'实际结果'的对比有什么作用？",
+      id: "tw-w3-3-q12",
+      question: "Google 风格指南建议 Note 不适合用于什么内容？",
       options: [
-        "帮助用户确认是否遇到相同问题，也帮助支持人员快速理解问题",
-        "增加文档的长度显得更专业",
-        "只是格式规范的要求",
-        "用于统计错误发生率",
+        "cross-references、prerequisites、完整的步骤、必要的信息",
+        "补充说明和背景信息",
+        "相关但非关键的提示",
+        "可选的扩展内容",
       ],
       answer: 0,
       rationale:
-        "对比预期和实际结果让用户确认问题，也让支持人员快速理解用户的期望与现实的差距。",
+        "Google 明确：Note 不适合用于 cross-references、prerequisites、完整的步骤、必要的信息——这些应该在正文中呈现。",
     },
   ],
   // Lesson 4: 图表与示意图（可维护）(7题)
