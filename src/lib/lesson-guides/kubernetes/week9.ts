@@ -48,37 +48,37 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-2": {
         lessonId: "w9-2",
         background: [
-            "【来源: GitHub Actions 文档】GitHub Actions 发布 Docker 镜像的完整流程包括四个关键步骤：1) 使用 docker/login-action 登录 Registry（Docker Hub 使用用户名/密码，ghcr.io 使用 GITHUB_TOKEN）；2) 使用 docker/metadata-action 自动生成标签和标签；3) 使用 docker/build-push-action 构建并推送镜像；4) 可选地使用 artifact attestation 增强供应链安全。",
-            "【来源: Jenkins Pipeline 文档】Jenkins 中使用 Docker 的主要方法包括：docker.build() 构建自定义镜像、docker.image().inside 在容器中执行步骤、customImage.push() 推送镜像到 Registry。支持声明式语法 agent { docker { image 'node:alpine' } } 指定执行环境，以及 withRegistry() 连接自定义仓库。",
-            "【来源: Docker 多阶段构建文档】多阶段构建使用多个 FROM 语句，允许在单个 Dockerfile 中定义多个构建阶段。核心语法：FROM golang:1.24 AS build 命名阶段，COPY --from=build 从其他阶段复制制品。优势是只将必要的产物复制到最终镜像，Go 示例中编译后的二进制文件可以放入 scratch 镜像，完全消除 SDK 依赖。",
-            "【来源: Docker 最佳实践文档】镜像优化的关键策略：选择最小基础镜像（Alpine 小于 6MB）、使用 .dockerignore 排除无关文件、将 apt-get update 和 apt-get install 放在同一 RUN 语句避免缓存问题、使用版本摘要（digest）固定基础镜像版本、定期重建镜像更新依赖。",
-            "【来源: GitHub Actions 工作流模板】标准 Docker 发布工作流配置：触发条件包括定时构建（cron）、push 到主分支、语义化版本标签（v*.*.*）和 PR；环境变量设置 REGISTRY: ghcr.io 和 IMAGE_NAME；权限声明 packages: write 和 id-token: write；使用 cosign 对非 PR 构建的镜像进行数字签名。"
+            "在 CI/CD 流水线中构建和推送 Docker 镜像是容器化应用交付的核心环节。GitHub Actions 提供了完整的工具链：docker/login-action 处理认证，docker/metadata-action 自动生成标签，docker/build-push-action 执行构建和推送。整个流程可以在几行 YAML 配置中完成。",
+            "镜像仓库认证方式因平台而异：Docker Hub 需要用户名和访问令牌（PAT），建议存储为仓库 Secrets；GitHub Container Registry（ghcr.io）可直接使用工作流中的 GITHUB_TOKEN，无需额外配置。推送到多个仓库时需要分别认证。",
+            "多阶段构建（Multi-stage Build）是优化镜像体积的关键技术。通过多个 FROM 语句定义不同阶段，使用 COPY --from=<stage> 从前一阶段复制构建产物。例如在第一阶段编译 Go 应用，在第二阶段只将二进制文件复制到 Alpine 或 scratch 基础镜像，最终镜像可以从几百 MB 缩减到几十 MB 甚至更小。",
+            "镜像标签策略直接影响版本追溯能力。docker/metadata-action 可根据 Git 事件自动生成标签：分支推送生成分支名标签，Git tag 推送生成语义化版本标签（v1.2.3 → 1.2.3, 1.2, 1）。始终使用 Git commit SHA 作为唯一标签确保精确追溯，避免 latest 等可变标签在生产环境使用。",
+            "Docker 构建缓存可显著提升构建速度，但需要正确理解其工作机制。每条指令的缓存基于指令内容和上下文文件的 hash。将变化频繁的指令（如 COPY . .）放在 Dockerfile 末尾可最大化缓存利用。注意 apt-get update 和 apt-get install 必须在同一 RUN 语句中，否则会导致缓存失效或安装旧版本包。"
         ],
         keyDifficulties: [
-            "【Registry 认证差异】Docker Hub 需要用户名和访问令牌存储为 Secrets；GitHub Container Registry (ghcr.io) 可直接使用工作流中的 GITHUB_TOKEN，无需额外配置。推送到多个 Registry 时需分别认证，且镜像摘要（digest）可能不同。",
-            "【多阶段构建理解】每个 FROM 指令开启新的构建阶段，后续阶段可通过 COPY --from=stagename 引用之前阶段的产物。BuildKit 会智能优化，只构建目标阶段所依赖的阶段；传统构建器会处理所有前置阶段。使用 --target 参数可以停止在特定阶段。",
-            "【缓存策略设计】Docker 会为每条指令检查缓存。apt-get update 单独作为 RUN 语句会导致缓存问题。指令顺序影响缓存效率：变化频繁的指令（如 COPY . .）应放在后面。使用 --pull 获取最新基础镜像，--no-cache 强制完全重建。",
-            "【标签策略规划】docker/metadata-action 可根据 Git 事件自动生成标签：push 到分支生成分支名标签，push 标签生成版本标签（如 v1.2.3 → 1.2.3, 1.2, 1, latest）。使用 Git commit SHA 作为唯一标签确保可追溯性，避免 latest 的可变性问题。"
+            "多阶段构建的理解：每个 FROM 指令开启一个新的构建阶段，可用 AS 命名。后续阶段可通过 COPY --from=stagename 引用前一阶段的文件。BuildKit 会智能分析依赖关系，只构建目标阶段所需的前置阶段。使用 --target 参数可以停止在特定阶段，常用于分离开发和生产镜像。",
+            "缓存优化策略：Docker 按指令顺序检查缓存，一旦某条指令缓存失效，后续所有指令都会重新执行。优化建议：先复制 package.json/go.mod 等依赖文件并安装依赖，再复制源代码。这样源代码变化时只需重新编译，无需重新下载依赖。",
+            "Registry 认证与安全：不同 Registry 的认证机制不同。Docker Hub 使用用户名+访问令牌；ghcr.io 使用 GITHUB_TOKEN；私有 Registry 可能需要 docker login 或配置 ~/.docker/config.json。敏感凭证必须通过 Secrets 传递，绝不能硬编码在工作流文件中。",
+            "镜像签名与供应链安全：使用 cosign 可以对镜像进行数字签名，结合 Sigstore 的 Keyless 签名能力，无需管理长期密钥。签名信息存储在镜像 manifest 中，部署时可通过准入控制器验证签名，确保只有经过验证的镜像才能运行。"
         ],
         handsOnPath: [
-            "创建包含 Go 或 Node.js 应用的 GitHub 仓库，编写多阶段 Dockerfile：第一阶段编译应用，第二阶段使用 alpine 或 distroless 作为运行时镜像，只复制编译产物。",
-            "配置 .github/workflows/docker-publish.yml：使用 docker/login-action 登录 ghcr.io，docker/metadata-action 生成标签，docker/build-push-action 构建推送。设置只在 main 分支 push 时才推送镜像。",
-            "测试标签生成策略：创建 v1.0.0 格式的 Git 标签，观察 metadata-action 生成的标签列表。修改配置使用自定义标签规则，如添加 sha-${{ github.sha }} 格式。",
-            "优化构建缓存：配置 cache-from 和 cache-to 使用 GitHub Actions 缓存。对比有无缓存时的构建时间差异，理解缓存模式（inline/registry/gha）的区别。",
-            "（可选）在 Jenkins 中创建 Pipeline 项目：使用 docker.build() 构建镜像，docker.withRegistry() 登录私有仓库，customImage.push() 推送带版本标签的镜像。"
+            "编写多阶段 Dockerfile：创建一个简单的 Go 或 Node.js 应用，编写多阶段 Dockerfile。第一阶段使用完整 SDK 镜像编译，第二阶段使用 Alpine 或 distroless 作为运行时。对比单阶段和多阶段构建的镜像体积差异。",
+            "配置 GitHub Actions 构建推送工作流：创建 .github/workflows/docker.yml，使用 docker/login-action 登录 ghcr.io，docker/metadata-action 生成标签，docker/build-push-action 构建推送。设置只在 main 分支和 tag 推送时才推送镜像。",
+            "测试标签生成策略：推送代码到 main 分支，观察生成的标签（main, sha-xxx）。创建 v1.0.0 格式的 Git tag 并推送，观察生成的版本标签（1.0.0, 1.0, 1, latest）。理解不同事件如何映射到镜像标签。",
+            "优化构建缓存：配置 cache-from 和 cache-to 参数使用 GitHub Actions 缓存或 Registry 缓存。修改源代码后重新构建，观察缓存命中情况和构建时间变化。理解 inline、registry、gha 三种缓存模式的区别。",
+            "体验 Jenkins Docker Pipeline（可选）：在 Jenkins 中使用 docker.build() 构建镜像，docker.withRegistry() 配置认证，customImage.push() 推送到私有仓库。对比与 GitHub Actions 的语法差异。"
         ],
         selfCheck: [
-            "GitHub Actions 中登录 Docker Hub 和 ghcr.io 分别需要什么凭证？如何安全存储这些凭证？",
-            "docker/metadata-action 如何根据不同 Git 事件（push/tag/PR）自动生成镜像标签？",
-            "什么是多阶段构建？它如何帮助减小最终镜像体积？COPY --from 的作用是什么？",
-            "Docker 构建缓存如何工作？为什么要将 apt-get update 和 apt-get install 放在同一 RUN 语句？",
-            "为什么推荐使用 Git commit SHA 而不是 latest 作为镜像标签？镜像摘要（digest）的作用是什么？"
+            "多阶段构建的原理是什么？COPY --from 指令的作用是什么？如何只构建到特定阶段？",
+            "Docker 构建缓存的工作机制是什么？为什么要将 apt-get update 和 apt-get install 放在同一 RUN 语句中？",
+            "GitHub Actions 中如何认证 Docker Hub 和 ghcr.io？两者有什么区别？",
+            "docker/metadata-action 如何根据 Git 事件自动生成镜像标签？常见的标签策略有哪些？",
+            "为什么推荐使用 Git commit SHA 作为镜像标签？latest 标签有什么问题？"
         ],
         extensions: [
-            "研究 cosign 镜像签名：了解如何使用 Sigstore 为镜像生成来源证明（provenance），增强供应链安全。",
-            "探索 Kaniko、Buildah 等无 Docker daemon 的构建工具，了解它们在 Kubernetes 环境中构建镜像的优势。",
-            "学习 BuildKit 的高级特性：并行构建、远程缓存、多平台镜像（linux/amd64, linux/arm64）构建。",
-            "研究 Harbor、AWS ECR、Google GCR 等企业级 Registry 的特性：镜像扫描、复制策略、访问控制。"
+            "研究 cosign 镜像签名：了解如何使用 Sigstore 的 Keyless 签名为镜像生成来源证明（provenance），在 Kubernetes 中配置签名验证策略。",
+            "探索 BuildKit 高级特性：并行构建多个阶段、远程缓存后端、构建多平台镜像（linux/amd64, linux/arm64）。",
+            "学习 Kaniko 和 Buildah：这些工具可以在没有 Docker daemon 的环境（如 Kubernetes Pod）中构建镜像，适合更安全的构建场景。",
+            "研究企业级 Registry：Harbor、AWS ECR、Google GCR 等提供镜像扫描、复制策略、RBAC 等企业功能。"
         ],
         sourceUrls: [
             "https://docs.github.com/en/actions/publishing-packages/publishing-docker-images",
@@ -358,79 +358,79 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-2": [
         {
             id: "w9-2-q1",
-            question: "根据 GitHub Actions 文档，发布 Docker 镜像到 ghcr.io 时应使用什么凭证？",
+            question: "发布 Docker 镜像到 ghcr.io 时应使用什么凭证？",
             options: [
-                "使用工作流中的 GITHUB_TOKEN，无需额外配置 Secrets",
+                "工作流中的 GITHUB_TOKEN，无需额外配置",
                 "必须创建 Docker Hub 账号",
                 "需要 AWS IAM 密钥",
                 "必须使用 SSH 密钥"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档指出，登录 GitHub Packages (ghcr.io) 可直接使用 GITHUB_TOKEN，而 Docker Hub 需要用户名和密码。"
+            rationale: "GitHub Container Registry (ghcr.io) 可以直接使用工作流自带的 GITHUB_TOKEN 进行认证，无需手动配置 Secrets。"
         },
         {
             id: "w9-2-q2",
-            question: "根据 Docker 多阶段构建文档，COPY --from=build 的作用是什么？",
+            question: "多阶段构建中 COPY --from=build 的作用是什么？",
             options: [
                 "从名为 build 的构建阶段复制文件到当前阶段",
-                "从 Docker Hub 下载镜像",
-                "复制当前目录的所有文件",
-                "创建新的构建阶段"
+                "从 Docker Hub 下载名为 build 的镜像",
+                "复制当前目录下 build 文件夹的内容",
+                "创建一个名为 build 的新阶段"
             ],
             answer: 0,
-            rationale: "Docker 文档说明 COPY --from=build 用于「从其他阶段复制制品」，实现多阶段构建的核心功能。"
+            rationale: "COPY --from=<stage> 用于从指定的构建阶段复制文件，是多阶段构建的核心机制，可以只复制需要的产物到最终镜像。"
         },
         {
             id: "w9-2-q3",
-            question: "根据 Docker 最佳实践文档，为什么要将 apt-get update 和 apt-get install 放在同一 RUN 语句？",
+            question: "为什么要将 apt-get update 和 apt-get install 放在同一 RUN 语句？",
             options: [
-                "避免缓存问题，单独的 apt-get update 会导致后续 install 失败",
+                "避免缓存问题，确保安装最新版本的包",
                 "减少 Dockerfile 行数",
                 "提高构建速度",
-                "只是代码风格要求"
+                "这只是代码风格要求"
             ],
             answer: 0,
-            rationale: "Docker 文档明确指出：「使用 apt-get update 单独作为 RUN 语句会导致缓存问题和后续 apt-get install 指令失败」。"
+            rationale: "如果 apt-get update 单独作为一条 RUN，其缓存可能被复用，导致 apt-get install 安装的是旧版本包列表中的包。"
         },
         {
             id: "w9-2-q4",
-            question: "根据 Docker 多阶段构建文档，BuildKit 相比传统构建器的优势是什么？",
+            question: "BuildKit 相比传统 Docker 构建器有什么优势？",
             options: [
-                "只构建目标阶段所依赖的阶段，而传统构建器会处理所有前置阶段",
+                "智能分析依赖，只构建目标阶段所需的前置阶段",
                 "BuildKit 不需要 Dockerfile",
-                "传统构建器更快",
+                "传统构建器速度更快",
                 "两者完全相同"
             ],
             answer: 0,
-            rationale: "Docker 文档说明 BuildKit 会智能优化，「只构建目标阶段所依赖的阶段」，传统构建器则「处理所有前置阶段」。"
+            rationale: "BuildKit 会分析阶段依赖关系，只执行必要的构建阶段，支持并行构建和更高效的缓存机制。"
         },
         {
             id: "w9-2-q5",
-            question: "根据 Jenkins Pipeline 文档，docker.build() 方法的作用是什么？",
+            question: "Jenkins Pipeline 中 docker.build() 方法的作用是什么？",
             options: [
-                "从 Dockerfile 构建自定义镜像",
+                "根据 Dockerfile 构建自定义镜像",
                 "下载现有镜像",
                 "删除本地镜像",
                 "登录到 Registry"
             ],
             answer: 0,
-            rationale: "Jenkins 文档说明 docker.build() 用于「创建自定义镜像」，如 docker.build('my-image:${env.BUILD_ID}')。"
+            rationale: "docker.build() 用于在 Jenkins Pipeline 中执行 docker build 命令，可以指定镜像名称和构建参数。"
         },
         {
             id: "w9-2-q6",
-            question: "根据 GitHub Actions 工作流模板，标准 Docker 发布工作流需要声明哪些权限？",
+            question: "GitHub Actions Docker 发布工作流需要声明哪些权限？",
             options: [
-                "packages: write 和 id-token: write（用于推送镜像和签名）",
+                "packages: write 用于推送镜像",
                 "只需要 contents: read",
                 "不需要声明任何权限",
                 "需要 admin 权限"
             ],
             answer: 0,
-            rationale: "GitHub Actions 工作流模板显示需要声明 packages: write 用于推送镜像，id-token: write 用于 cosign 签名。"
+            rationale: "推送镜像到 ghcr.io 需要 packages: write 权限，如果使用 cosign 签名还需要 id-token: write 权限。"
         },
         {
             id: "w9-2-q7",
-            question: "根据 Docker 最佳实践文档，Alpine 基础镜像的大小约为多少？",
+            question: "Alpine 基础镜像的体积大约是多少？",
             options: [
                 "小于 6 MB",
                 "约 100 MB",
@@ -438,47 +438,47 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
                 "约 1 GB"
             ],
             answer: 0,
-            rationale: "Docker 最佳实践文档指出 Alpine 镜像「小于 6 MB」，是最小化基础镜像的推荐选择。"
+            rationale: "Alpine Linux 是极简的 Linux 发行版，压缩后的镜像大小小于 6MB，是构建轻量级容器的理想基础镜像。"
         },
         {
             id: "w9-2-q8",
-            question: "根据 Docker 多阶段构建文档，FROM golang:1.24 AS build 语法的作用是什么？",
+            question: "FROM golang:1.22 AS build 语法中 AS build 的作用是什么？",
             options: [
-                "开启一个新的构建阶段并命名为 build，使其可被后续阶段引用",
-                "下载 Go 1.24 版本",
-                "设置环境变量",
-                "定义最终输出镜像名称"
+                "为构建阶段命名，使后续阶段可以通过名称引用",
+                "下载 Go 1.22 版本",
+                "设置环境变量 build",
+                "定义最终镜像的名称"
             ],
             answer: 0,
-            rationale: "Docker 文档说明 AS 子句用于「命名阶段」，使其「可被引用」，提高可维护性。"
+            rationale: "AS 子句为构建阶段指定一个名称，后续阶段可以通过 COPY --from=build 引用该阶段的文件。"
         },
         {
             id: "w9-2-q9",
-            question: "根据 GitHub Actions 文档，docker/metadata-action 的主要作用是什么？",
+            question: "docker/metadata-action 的主要功能是什么？",
             options: [
-                "根据 Git 事件自动生成镜像标签和标签",
+                "根据 Git 事件自动生成镜像标签",
                 "扫描镜像漏洞",
-                "登录到 Registry",
+                "登录镜像仓库",
                 "构建多架构镜像"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档说明 docker/metadata-action 用于「自动生成标签和标签」。"
+            rationale: "metadata-action 根据 Git 事件（分支、标签、PR）自动生成符合规范的镜像标签，简化版本管理。"
         },
         {
             id: "w9-2-q10",
-            question: "根据 Jenkins Pipeline 文档，如何在 Pipeline 中使用 Docker 容器作为执行环境？",
+            question: "如何在 Jenkins Pipeline 中使用 Docker 容器作为执行环境？",
             options: [
                 "使用 agent { docker { image 'node:alpine' } } 或 docker.image().inside",
-                "只能在物理机上运行",
-                "必须手动启动容器",
-                "使用 agent { kubernetes }"
+                "只能在物理机上运行 Pipeline",
+                "必须手动启动 Docker 容器",
+                "Jenkins 不支持 Docker"
             ],
             answer: 0,
-            rationale: "Jenkins 文档说明可使用声明式语法 agent { docker { image } } 或脚本式 docker.image().inside 在容器中执行步骤。"
+            rationale: "Jenkins 支持声明式语法 agent { docker } 和脚本式 docker.image().inside {} 两种方式在容器中执行 Pipeline 步骤。"
         },
         {
             id: "w9-2-q11",
-            question: "根据 Docker 最佳实践文档，如何强制重建所有层而不使用缓存？",
+            question: "如何强制 Docker 重新构建所有层而不使用缓存？",
             options: [
                 "使用 docker build --no-cache 参数",
                 "删除 Dockerfile",
@@ -486,55 +486,55 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
                 "清空所有本地镜像"
             ],
             answer: 0,
-            rationale: "Docker 文档说明使用「--no-cache 从头重建所有层」，可组合 --pull 获取最新基础镜像。"
+            rationale: "--no-cache 参数会忽略所有缓存层，强制重新执行 Dockerfile 中的每条指令。"
         },
         {
             id: "w9-2-q12",
-            question: "根据 GitHub Actions 文档，推送镜像到多个 Registry 时需要注意什么？",
+            question: "推送镜像到多个 Registry 时需要注意什么？",
             options: [
-                "需要分别认证每个 Registry，且镜像摘要（digest）可能不同",
+                "需要分别认证每个 Registry",
                 "只需要认证一次",
-                "摘要总是相同的",
+                "镜像摘要在所有 Registry 都相同",
                 "不支持推送到多个 Registry"
             ],
             answer: 0,
-            rationale: "GitHub Actions 文档指出推送到多个 Registry 时需分别认证，「镜像摘要可能不同」，建议先推送一处再用工具复制。"
+            rationale: "每个 Registry 需要单独的认证配置，且由于存储方式不同，同一镜像在不同 Registry 的摘要（digest）可能不同。"
         },
         {
             id: "w9-2-q13",
-            question: "根据 Docker 最佳实践文档，如何固定基础镜像版本以保证一致性构建？",
+            question: "如何固定基础镜像版本以保证构建一致性？",
             options: [
-                "使用版本摘要（digest），如 image@sha256:...",
+                "使用镜像摘要（digest），如 image@sha256:...",
                 "只使用 latest 标签",
                 "不指定任何标签",
                 "使用日期作为标签"
             ],
             answer: 0,
-            rationale: "Docker 文档推荐「使用摘要固定基础镜像版本」以保证一致的构建结果。"
+            rationale: "使用完整的镜像摘要可以精确锁定基础镜像版本，避免因基础镜像更新导致的构建不一致问题。"
         },
         {
             id: "w9-2-q14",
-            question: "根据 Docker 多阶段构建文档，如何在构建时只构建到特定阶段？",
+            question: "如何只构建多阶段 Dockerfile 中的特定阶段？",
             options: [
-                "使用 docker build --target <stage-name> 参数",
-                "删除后续阶段的 FROM 语句",
+                "使用 docker build --target <stage-name>",
+                "删除其他阶段的 FROM 语句",
                 "使用环境变量控制",
-                "不支持此功能"
+                "多阶段构建不支持此功能"
             ],
             answer: 0,
-            rationale: "Docker 文档说明「--target 选择停止在特定阶段」，可用于只构建开发或测试镜像。"
+            rationale: "--target 参数可以指定构建到哪个阶段停止，常用于构建开发镜像或运行特定阶段的测试。"
         },
         {
             id: "w9-2-q15",
-            question: "根据 GitHub Actions 工作流模板，cosign 工具在工作流中的作用是什么？",
+            question: "cosign 工具在 CI/CD 中的作用是什么？",
             options: [
-                "对发布的镜像进行数字签名，通过 Sigstore 增强供应链安全",
+                "对容器镜像进行数字签名，增强供应链安全",
                 "扫描镜像漏洞",
                 "压缩镜像体积",
                 "加速镜像推送"
             ],
             answer: 0,
-            rationale: "GitHub Actions 工作流模板显示 cosign 用于「对发布的镜像进行数字签名」，使用 Sigstore 的临时证书。"
+            rationale: "cosign 用于对容器镜像进行签名和验证，配合 Sigstore 可实现无密钥签名，是软件供应链安全的重要工具。"
         }
     ],
     "w9-3": [
