@@ -1,111 +1,163 @@
 import type { QuizQuestion } from "../types";
 
 export const week3: Record<string, QuizQuestion[]> = {
-  // Lesson 1: HTTP/JSON 基础（面向文档）(8题)
+  // Lesson 1: HTTP/JSON 基础（面向文档）(12题，答案随机分布)
   "tw-w3-1": [
     {
       id: "tw-w3-1-q1",
-      question: "HTTP 状态码 200 表示什么含义？",
+      question: "MDN 对 HTTP 的核心定义是什么？",
       options: [
-        "请求成功，服务器正常返回了请求的资源",
-        "资源已创建",
-        "请求被重定向到其他位置",
-        "客户端请求格式错误",
+        "一种数据库查询语言",
+        "应用层协议，采用客户端-服务器模型，客户端发起请求，服务器返回响应",
+        "一种文件压缩格式",
+        "一种编程语言",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "HTTP 状态码 200 OK 表示请求成功，是最常见的成功响应状态码。",
+        "HTTP 是应用层协议，采用客户端-服务器模型。它是无状态协议，可通过 Cookie/Session 添加状态。",
     },
     {
       id: "tw-w3-1-q2",
-      question: "HTTP 状态码 404 和 500 的区别是什么？",
-      options: [
-        "404 是客户端错误（资源不存在），500 是服务器内部错误",
-        "404 表示请求超时，500 表示权限不足",
-        "404 是临时错误，500 是永久错误",
-        "两者含义相同，只是编号不同",
-      ],
-      answer: 0,
-      rationale:
-        "4xx 系列是客户端错误（如 404 Not Found），5xx 系列是服务器错误（如 500 Internal Server Error）。",
-    },
-    {
-      id: "tw-w3-1-q3",
-      question: "HTTP GET 和 POST 方法的主要区别是什么？",
-      options: [
-        "GET 用于获取资源且是幂等的，POST 用于提交数据且非幂等",
-        "GET 用于删除资源，POST 用于更新资源",
-        "GET 必须带请求体，POST 不需要",
-        "GET 只能用于 HTML，POST 只能用于 JSON",
-      ],
-      answer: 0,
-      rationale:
-        "GET 是安全且幂等的读取操作，POST 用于创建资源或提交数据，可能改变服务器状态。",
-    },
-    {
-      id: "tw-w3-1-q4",
-      question: "JSON 支持哪些基本数据类型？",
-      options: [
-        "字符串、数字、布尔值、null、对象、数组",
-        "只支持字符串和数字",
-        "字符串、整数、浮点数、日期、二进制",
-        "任何 JavaScript 支持的类型",
-      ],
-      answer: 0,
-      rationale:
-        "JSON 支持五种基本值类型：字符串、数字、布尔值、null，以及嵌套的对象和数组。",
-    },
-    {
-      id: "tw-w3-1-q5",
-      question: "在 HTTP 响应中，Content-Type 头的作用是什么？",
-      options: [
-        "告知客户端响应体的媒体类型（如 application/json）",
-        "指定请求的认证方式",
-        "控制响应的缓存策略",
-        "设置跨域访问权限",
-      ],
-      answer: 0,
-      rationale:
-        "Content-Type 头告知客户端响应体的 MIME 类型，如 application/json、text/html 等。",
-    },
-    {
-      id: "tw-w3-1-q6",
       question: "HTTP 状态码 401 和 403 的区别是什么？",
       options: [
-        "401 表示未认证（需要登录），403 表示已认证但无权限",
+        "401 Unauthorized 表示未认证（需要登录），403 Forbidden 表示已认证但无权限",
         "401 表示服务器错误，403 表示客户端错误",
         "401 是临时性的，403 是永久性的",
         "两者含义完全相同",
       ],
       answer: 0,
       rationale:
-        "401 Unauthorized 表示需要认证，403 Forbidden 表示已认证但没有访问权限。",
+        "这是最容易混淆的状态码组：401 需要认证（如登录），403 表示认证成功但没有访问该资源的权限。",
+    },
+    {
+      id: "tw-w3-1-q3",
+      question: "HTTP 方法中，哪些是幂等的（多次执行结果相同）？",
+      options: [
+        "只有 GET 是幂等的",
+        "所有方法都是幂等的",
+        "GET、PUT、DELETE 是幂等的，POST 不是幂等的",
+        "没有方法是幂等的",
+      ],
+      answer: 2,
+      rationale:
+        "GET、PUT、DELETE 是幂等操作，多次执行产生相同结果；POST 不是幂等的，每次执行可能创建新资源。",
+    },
+    {
+      id: "tw-w3-1-q4",
+      question: "JSON 规范（ECMA-404）对字符串的要求是什么？",
+      options: [
+        "必须使用双引号包围，不能使用单引号",
+        "可以使用单引号或双引号",
+        "可以使用反引号",
+        "不需要任何引号",
+      ],
+      answer: 0,
+      rationale:
+        "JSON 规范严格要求：字符串必须使用双引号包围，单引号不是有效的 JSON 语法。",
+    },
+    {
+      id: "tw-w3-1-q5",
+      question: "HTTP 状态码的五大分类是什么？",
+      options: [
+        "1xx 信息性、2xx 成功、3xx 重定向、4xx 客户端错误、5xx 服务器错误",
+        "1xx 错误、2xx 成功、3xx 警告、4xx 信息、5xx 重定向",
+        "按字母顺序 A-E 分类",
+        "只有 200 和 500 两种分类",
+      ],
+      answer: 0,
+      rationale:
+        "HTTP 状态码按首位数字分类：1xx 信息性、2xx 成功、3xx 重定向、4xx 客户端错误、5xx 服务器错误。",
+    },
+    {
+      id: "tw-w3-1-q6",
+      question: "JSON 支持哪些基本数据类型？",
+      options: [
+        "只支持字符串和数字",
+        "字符串、整数、浮点数、日期、二进制",
+        "字符串、数字、布尔值、null、对象、数组",
+        "任何 JavaScript 支持的类型",
+      ],
+      answer: 2,
+      rationale:
+        "JSON 支持六种值类型：字符串、数字、布尔值（true/false）、null、对象（嵌套）、数组（嵌套）。",
     },
     {
       id: "tw-w3-1-q7",
-      question: "JSON 字符串必须使用什么符号包围？",
+      question: "HTTP 状态码 200、201、204 的区别是什么？",
       options: [
-        "双引号（\"）",
-        "单引号（'）",
-        "反引号（`）",
-        "双引号或单引号均可",
+        "都表示完全相同的成功状态",
+        "200 表示错误，201 表示成功，204 表示警告",
+        "200 OK（成功返回数据）、201 Created（资源已创建）、204 No Content（成功但无响应体）",
+        "200 用于 GET，201 用于 POST，204 用于 DELETE",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "JSON 规范要求字符串必须使用双引号包围，单引号不是有效的 JSON 语法。",
+        "200 表示请求成功并返回数据，201 表示成功创建了新资源，204 表示成功但响应体为空（常用于 DELETE）。",
     },
     {
       id: "tw-w3-1-q8",
-      question: "HTTP 方法中，哪些是幂等的（多次执行结果相同）？",
+      question: "Content-Type 头的作用是什么？",
       options: [
-        "GET、PUT、DELETE 是幂等的，POST 不是幂等的",
-        "只有 GET 是幂等的",
-        "所有方法都是幂等的",
-        "没有方法是幂等的",
+        "控制响应的缓存策略",
+        "设置跨域访问权限",
+        "告知客户端响应体的媒体类型（如 application/json）",
+        "指定请求的认证方式",
+      ],
+      answer: 2,
+      rationale:
+        "Content-Type 头告知客户端响应体的 MIME 类型，如 application/json、text/html、image/png 等。",
+    },
+    {
+      id: "tw-w3-1-q9",
+      question: "JSON 格式有什么严格限制？",
+      options: [
+        "支持注释、尾随逗号、单引号",
+        "键名必须用双引号、不支持注释、尾随逗号非法",
+        "可以使用任意格式",
+        "只有数组支持嵌套",
+      ],
+      answer: 1,
+      rationale:
+        "JSON 格式非常严格：键名必须双引号、不支持注释、尾随逗号非法、不支持 undefined。",
+    },
+    {
+      id: "tw-w3-1-q10",
+      question: "HTTP 九种标准请求方法中，OPTIONS 的作用是什么？",
+      options: [
+        "删除指定资源",
+        "创建新资源",
+        "查询资源支持的方法（常用于 CORS 预检请求）",
+        "建立 WebSocket 连接",
+      ],
+      answer: 2,
+      rationale:
+        "OPTIONS 方法用于查询目标资源支持的通信选项，常用于 CORS 预检请求检查服务器是否允许跨域访问。",
+    },
+    {
+      id: "tw-w3-1-q11",
+      question: "404 和 410 状态码的区别是什么？",
+      options: [
+        "404 Not Found 表示资源不存在，410 Gone 表示资源曾存在但已永久删除",
+        "两者含义完全相同",
+        "404 是服务器错误，410 是客户端错误",
+        "404 是临时的，410 是临时的",
       ],
       answer: 0,
       rationale:
-        "GET、PUT、DELETE 是幂等操作，多次执行产生相同结果；POST 不是幂等的，每次执行可能创建新资源。",
+        "404 表示资源当前不存在（可能是路径错误），410 表示资源曾经存在但已被永久删除，不会再恢复。",
+    },
+    {
+      id: "tw-w3-1-q12",
+      question: "在 API 文档中，Header 应该如何描述？",
+      options: [
+        "只列出 Header 名称即可",
+        "不需要描述 Headers",
+        "说明哪些是必需的、哪些是可选的、默认值是什么、Accept 头如何影响响应格式",
+        "只描述 Authorization 头",
+      ],
+      answer: 2,
+      rationale:
+        "完整的 API 文档应清晰说明每个 Header：是否必需、是否可选、默认值、Accept 头如何影响响应格式等。",
     },
   ],
   // Lesson 2: 命令行与可复现示例 (8题)

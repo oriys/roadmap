@@ -4,35 +4,36 @@ export const week3Guides: Record<string, LessonGuide> = {
     "tw-w3-1": {
         lessonId: "tw-w3-1",
         background: [
-            "HTTP（超文本传输协议）是 Web 的基础——客户端发起请求，服务器返回响应。理解 HTTP 是写 API 文档的前提。",
-            "HTTP 是无状态协议（Stateless），服务器不在两个请求之间保留会话数据。通过 Cookies/Session 可以添加状态功能。",
-            "JSON（JavaScript Object Notation）是'a lightweight data-interchange format'，易于人类阅读和编写，是 API 数据交换的事实标准。",
-            "HTTP 消息头（Headers）用于发送元数据——描述内容类型、编码、缓存策略、身份验证等信息。"
+            "【HTTP 本质】MDN 定义：HTTP 是应用层协议，采用客户端-服务器模型——客户端发起请求，服务器返回响应。它是无状态协议（Stateless），服务器不在请求间保留会话数据，可通过 Cookie/Session 添加状态。",
+            "【请求方法语义】九种标准方法：GET（读取，幂等）、POST（创建/提交）、PUT（完全替换，幂等）、PATCH（部分更新）、DELETE（删除，幂等）、HEAD（只获取元数据）、OPTIONS（查询支持的方法）、CONNECT（建立隧道）、TRACE（诊断追踪）。",
+            "【状态码五分类】1xx（信息性）、2xx（成功：200 OK、201 Created、204 No Content）、3xx（重定向：301 永久、302 临时、304 未修改）、4xx（客户端错误：400 Bad Request、401 未认证、403 无权限、404 不存在）、5xx（服务器错误：500 内部错误、502 网关错误、503 服务不可用）。",
+            "【JSON 规范定义】ECMA-404 标准：'JSON is a lightweight data-interchange format'——轻量级数据交换格式。基于两个结构：对象（{} 名值对无序集合）和数组（[] 有序值集合）。",
+            "【JSON 数据类型】六种值类型：字符串（必须双引号）、数字（不支持八进制/十六进制）、布尔值（true/false）、null、对象（嵌套）、数组（嵌套）。独立于编程语言，采用 C 语言族约定。"
         ],
         keyDifficulties: [
-            "状态码的正确使用：2xx 成功、3xx 重定向、4xx 客户端错误、5xx 服务器错误。常见混淆：401（未认证）vs 403（无权限）、404（不存在）vs 410（已删除）。",
-            "请求方法的语义：GET（读取，幂等）、POST（创建）、PUT（全量更新，幂等）、PATCH（部分更新）、DELETE（删除，幂等）。文档要准确描述每个端点使用的方法。",
-            "JSON 格式的严格性：键名必须用双引号，不支持注释，尾随逗号非法。文档中的 JSON 示例必须是有效的 JSON。",
-            "Header 的描述：哪些 Header 是必需的（如 Authorization）？哪些是可选的？默认值是什么？文档要清晰说明。"
+            "【状态码易混淆组】401 Unauthorized（未认证，需要登录）vs 403 Forbidden（已认证但无权限）；404 Not Found（资源不存在）vs 410 Gone（资源曾存在但已永久删除）；200 OK vs 201 Created vs 204 No Content。",
+            "【幂等性理解】GET、PUT、DELETE 是幂等的（多次执行结果相同），POST 不是幂等的（每次可能创建新资源）。PATCH 的幂等性取决于具体实现。文档要准确描述每个端点的行为。",
+            "【JSON 格式严格性】键名必须用双引号（不能单引号）、不支持注释、尾随逗号非法、不支持 undefined。文档中的 JSON 示例必须是有效 JSON——可用 jsonlint 验证。",
+            "【Headers 文档化】哪些 Header 是必需的（如 Authorization、Content-Type）？哪些是可选的？默认值是什么？Accept 头如何影响响应格式？文档要清晰说明。"
         ],
         handsOnPath: [
-            "用 curl 发送一个 GET 请求到公开 API（如 https://api.github.com），观察响应头和响应体，记录状态码、Content-Type 等。",
-            "用 curl 发送一个 POST 请求，带上 JSON body 和 Content-Type: application/json 头。观察请求和响应的完整信息。",
-            "为一个 API 端点写一份请求/响应文档：包含 URL、方法、请求头、请求体示例、响应状态码、响应体示例。",
-            "故意构造一个错误请求（如缺少必需参数），记录错误响应，为错误场景补充文档。"
+            "用 curl -v 发送 GET 请求到 https://api.github.com，观察完整的请求头和响应头。记录状态码、Content-Type、Cache-Control 等关键头。理解 HTTP 交互的完整结构。",
+            "用 curl -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' 发送 POST 请求。观察请求体如何发送，响应如何返回。对比 GET 和 POST 的差异。",
+            "为一个 API 端点写完整文档：URL、方法、请求头表格、请求体 JSON Schema、响应状态码表格（200/400/401/404/500）、响应体示例。确保 JSON 示例可复制粘贴使用。",
+            "故意构造错误请求（缺少必需参数、无效 JSON、错误认证），记录错误响应的状态码和响应体。为每种错误场景补充文档说明。"
         ],
         selfCheck: [
-            "你能否解释 GET、POST、PUT、PATCH、DELETE 的语义差异？",
-            "你能否区分 200、201、204 的使用场景？",
-            "你文档中的 JSON 示例是否都是有效的 JSON？是否可以直接复制使用？",
-            "你是否清晰描述了每个 API 需要的 Headers？哪些是必需的？",
-            "你是否记录了常见的错误响应和对应的状态码？"
+            "【方法语义】你能否解释 GET、POST、PUT、PATCH、DELETE 的语义差异？知道哪些是幂等的？",
+            "【状态码区分】你能否区分 200/201/204、401/403、404/410 的使用场景？",
+            "【JSON 有效性】你文档中的 JSON 示例是否都是有效 JSON？是否用工具验证过？",
+            "【Headers 完整性】你是否清晰描述了每个 API 需要的 Headers？哪些必需、哪些可选？",
+            "【错误文档化】你是否记录了常见的错误响应？状态码、错误消息、解决建议是否齐全？"
         ],
         extensions: [
-            "深入学习 HTTP/2 和 HTTP/3 的改进：多路复用、头部压缩、基于 QUIC 的传输。",
-            "了解 RESTful API 设计最佳实践：资源命名、版本控制、分页、过滤。",
-            "学习 OpenAPI (Swagger) 规范，用结构化方式描述 API。",
-            "使用 Postman 或 Insomnia 测试 API，生成可分享的请求集合。"
+            "【HTTP 演进】了解 HTTP/1.1 → HTTP/2（多路复用、头部压缩、二进制帧）→ HTTP/3（基于 QUIC，更低延迟）的演进，理解为什么需要新版本。",
+            "【RESTful 设计】学习 RESTful API 设计最佳实践：资源命名（复数名词）、版本控制（/v1/）、分页（offset/limit 或 cursor）、过滤与排序。",
+            "【OpenAPI 规范】使用 OpenAPI/Swagger 结构化描述 API：paths、schemas、securityDefinitions。可自动生成文档和客户端 SDK。",
+            "【工具链】Postman/Insomnia 测试 API 并生成可分享的请求集合；httpie 作为 curl 的现代替代。"
         ],
         sourceUrls: [
             "https://developer.mozilla.org/en-US/docs/Web/HTTP",
