@@ -127,35 +127,37 @@ export const week2Guides: Record<string, LessonGuide> = {
     "tw-w2-4": {
         lessonId: "tw-w2-4",
         background: [
-            "CONTRIBUTING.md 是开源项目的核心文档之一——'help collaborators make meaningful, useful contributions to a project'（帮助协作者做出有意义的贡献）。",
-            "Changelog 是'a curated, chronologically ordered list of notable changes for each version'——按时间顺序记录每个版本重要变化的精选文档。",
-            "Write the Docs 社区强调建立'文档文化'：从工程团队开始推动文档意识，定期举行会议，收集多方意见，降低参与门槛。",
-            "健康的开源项目需要一套完整的社区文档：README、CONTRIBUTING、CODE_OF_CONDUCT、LICENSE、CHANGELOG、Issue/PR 模板。"
+            "【CONTRIBUTING.md 核心价值】GitHub 官方定义：'Repository maintainers can set contributing guidelines to help collaborators make meaningful, useful contributions to a project'——帮助协作者做出有意义的贡献，降低参与门槛。",
+            "【Changelog 精确定义】Keep a Changelog：'A changelog is a file which contains a curated, chronologically ordered list of notable changes for each version'——为人类（非机器）编写的精选变更记录，不是 Git commit log 的导出。",
+            "【变更类型六分类】Keep a Changelog 标准分类：Added（新功能）、Changed（修改）、Deprecated（弃用预告）、Removed（已移除）、Fixed（修复）、Security（安全补丁）——覆盖软件演进的所有变更类型。",
+            "【GitHub 社区健康九要素】Code of Conduct（行为准则）、Contributing Guidelines（贡献指南）、License（许可证）、Issue Templates（Issue 模板）、PR Templates（PR 模板）、Support Resources（支持渠道）、Community Profile（社区档案）、Health Files（健康文件）、Contribution Labels（贡献标签）。",
+            "【文档文化建设】Write the Docs 强调：'Quality software documentation requires intentional processes, community collaboration'——文档需要刻意的流程设计和社区协作，不是副产品。"
         ],
         keyDifficulties: [
-            "CONTRIBUTING 的粒度：太简单没有指导作用，太复杂吓跑贡献者。关键是覆盖'如何开始'、'代码/文档规范'、'提交流程'三个核心问题。",
-            "Changelog 的维护成本：手动维护容易遗漏或过时。建议维护一个'Unreleased'部分追踪待发布变更，发布时再移至新版本。",
-            "规范的执行：有规范但没人遵守等于没有。需要通过 CI 检查（linter、模板）和 PR 审查强制执行。",
-            "平衡灵活性与一致性：规范太死板会限制创造力，太灵活又导致混乱。核心规则强制执行，细节留有余地。"
+            "【CONTRIBUTING 粒度把控】太简单没有指导作用，太复杂吓跑贡献者。关键覆盖三个核心问题：如何开始（环境设置）、代码/文档规范（风格指南）、提交流程（PR 流程）。保持简洁但完整。",
+            "【Changelog 维护成本】手动维护容易遗漏或过时。最佳实践：维护'Unreleased'部分追踪待发布变更，发布时再移至新版本号下。避免直接使用 Git log（太吵杂，面向机器而非人类）。",
+            "【规范的执行保障】有规范但没人遵守等于没有。需要通过 CI 检查（linter、模板校验）和 PR 审查强制执行。规范必须可自动化验证。",
+            "【日期格式统一】Keep a Changelog 推荐 ISO 8601 格式（YYYY-MM-DD），避免 MM/DD/YYYY 或 DD/MM/YYYY 的地区歧义。"
         ],
         handsOnPath: [
-            "为你的项目创建 CONTRIBUTING.md：包含开发环境设置、代码规范、提交信息格式、PR 流程、沟通渠道。",
-            "创建 CHANGELOG.md：按 Keep a Changelog 格式，用 Added/Changed/Deprecated/Removed/Fixed/Security 分类记录变更。",
-            "配置 Issue 和 PR 模板（.github/ISSUE_TEMPLATE/、.github/PULL_REQUEST_TEMPLATE.md），引导贡献者提供必要信息。",
-            "用 commitlint 或类似工具强制提交信息格式（如 Conventional Commits：feat:/fix:/docs:）。"
+            "为你的项目创建 CONTRIBUTING.md：包含开发环境设置（依赖、工具、版本）、代码规范（风格指南链接）、提交信息格式（Conventional Commits）、PR 流程（分支命名、审查要求）、沟通渠道（Issue、Discussion、Slack）。",
+            "创建 CHANGELOG.md：按 Keep a Changelog 格式，顶部维护 [Unreleased] 部分，用 Added/Changed/Deprecated/Removed/Fixed/Security 分类记录变更。为历史版本补充至少 3 个版本的记录。",
+            "配置 Issue 和 PR 模板：创建 .github/ISSUE_TEMPLATE/bug_report.md 和 feature_request.md，创建 .github/PULL_REQUEST_TEMPLATE.md。包含必要的信息字段和检查清单。",
+            "设置 commitlint 强制提交格式：安装 @commitlint/cli 和 @commitlint/config-conventional，配置 husky 在 commit-msg 钩子中运行检查。确保所有提交遵循 Conventional Commits（feat:/fix:/docs:）。",
+            "添加 CODE_OF_CONDUCT.md：使用 Contributor Covenant（https://www.contributor-covenant.org/）模板，明确行为准则和违规处理流程。"
         ],
         selfCheck: [
-            "新贡献者能否通过 CONTRIBUTING.md 独立完成第一次贡献？",
-            "你的 Changelog 是否清晰记录了每个版本的重要变化？用户能否快速了解版本差异？",
-            "你的 Issue/PR 模板是否引导贡献者提供足够的信息？",
-            "你的提交信息是否有统一的格式？能否从提交历史快速了解变更类型？",
-            "规范是否通过 CI 检查自动执行？"
+            "【贡献者自助能力】新贡献者能否通过 CONTRIBUTING.md 独立完成第一次贡献？是否需要额外询问才能开始？",
+            "【Changelog 可读性】你的 Changelog 是否清晰记录了每个版本的重要变化？用户能否快速了解版本差异和升级影响？",
+            "【模板引导效果】你的 Issue/PR 模板是否引导贡献者提供足够的信息？是否减少了'信息不足'的来回沟通？",
+            "【提交信息一致性】你的提交信息是否有统一的格式？能否从提交历史快速了解变更类型（feat/fix/docs）？",
+            "【规范自动化验证】规范是否通过 CI 检查自动执行？违反规范的提交是否会被阻止？"
         ],
         extensions: [
-            "学习 Conventional Commits 规范：https://www.conventionalcommits.org/ —— 结构化的提交信息格式。",
-            "了解 Semantic Versioning：https://semver.org/ —— 版本号的语义化规则。",
-            "研究优秀开源项目的 CONTRIBUTING（如 React、Vue、Kubernetes），学习它们的组织方式。",
-            "配置自动生成 Changelog 的工具（如 standard-version、semantic-release）。"
+            "【Conventional Commits】学习标准化提交格式：https://www.conventionalcommits.org/ —— feat:、fix:、docs:、chore:、refactor: 等前缀让提交历史结构化，支持自动生成 Changelog。",
+            "【Semantic Versioning】了解语义化版本规则：https://semver.org/ —— MAJOR.MINOR.PATCH 的含义，何时需要升级主版本号（Breaking Changes）。",
+            "【优秀案例研究】研究 React、Vue、Kubernetes 的 CONTRIBUTING 文件——它们如何组织内容、如何平衡详尽与简洁、如何分层提供信息。",
+            "【自动化 Changelog】配置 standard-version 或 semantic-release 自动生成 Changelog：基于 Conventional Commits 提取变更，自动创建版本号和 Git Tag。"
         ],
         sourceUrls: [
             "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions",
