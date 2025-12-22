@@ -4,35 +4,37 @@ export const week2Guides: Record<string, LessonGuide> = {
     "tw-w2-1": {
         lessonId: "tw-w2-1",
         background: [
-            "Markdown 是一种轻量级标记语言，设计目标是'易读易写'——源文件本身就是可读的纯文本，同时能转换为结构化的 HTML。",
-            "CommonMark 是 Markdown 的标准化规范，解决了不同 Markdown 解析器之间的不一致问题。从 2014 年至今持续迭代，确保实现的一致性。",
-            "GitHub Flavored Markdown（GFM）在 CommonMark 基础上扩展了表格、任务列表、代码高亮、自动链接等功能，是技术文档的事实标准。",
-            "Docs-as-Code 的核心理念：用纯文本格式（如 Markdown）编写文档，用 Git 管理版本，用 CI/CD 自动发布——让文档享受与代码相同的工程实践。"
+            "【设计哲学】Markdown 由 John Gruber 于 2004 年创建，核心设计目标是'易读易写'——源文件本身就是可读的纯文本，同时能转换为结构化的 HTML。这种'纯文本即文档'的理念是 Docs-as-Code 的基石。",
+            "【CommonMark 统一标准】原始 Markdown 规范存在大量歧义，导致不同解析器行为不一致。CommonMark（2014 年启动）提供了严格的规范和测试套件，解决了'同一文档不同平台渲染不同'的问题。从 2014 至 2024 持续迭代，是 Markdown 的事实标准。",
+            "【GitHub Flavored Markdown】GFM 在 CommonMark 基础上扩展：表格（`| col1 | col2 |`）、任务列表（`- [ ]`）、删除线（`~~text~~`）、代码高亮（```language）、自动链接（URL 自动转为可点击链接）。这些扩展已成为技术文档的标配。",
+            "【Docs-as-Code 范式】用 Git 管理文档版本，用 PR 进行评审，用 CI/CD 自动发布——让文档享受与代码相同的工程实践：可追溯、可回滚、可协作、可自动化。Markdown 是这个范式的基础格式。",
+            "【模板化思维】模板不是限制创造力，而是沉淀最佳实践。Quickstart、How-to、API Reference 各有固定结构，模板确保一致性，降低认知负荷，让作者聚焦内容而非格式。"
         ],
         keyDifficulties: [
-            "Markdown 方言差异：不同平台（GitHub、GitLab、Notion）对 Markdown 的扩展不同，需要了解目标平台支持的语法子集。",
-            "格式一致性：团队成员使用不同的编辑器和习惯，容易导致格式混乱。需要约定：标题层级、列表符号、代码块语言标注等。",
-            "模板复用 vs 僵化：模板能提高一致性，但过于死板会限制表达。关键是识别'必须统一'的结构和'可以灵活'的内容。",
-            "图片和链接管理：外部链接可能失效，图片路径在不同环境下可能失效。需要建立资源管理策略（相对路径 vs CDN）。"
+            "【Markdown 方言兼容性】GitHub、GitLab、Notion、Obsidian 对 Markdown 的扩展不同。解决方案：(1) 坚持 CommonMark 核心语法确保可移植性，(2) 明确目标平台，(3) 用 linter 检测不兼容语法。",
+            "【空行和空格的陷阱】Markdown 对空行和行尾空格敏感：段落需要空行分隔，列表嵌套需要正确缩进，行尾两空格才是换行。这些'隐形'规则是初学者常见的困惑点。",
+            "【资源管理策略】图片和链接管理：(1) 相对路径适合 Git 管理但构建后可能失效，(2) CDN 链接稳定但外部依赖，(3) 外部链接会腐烂（link rot）。建议：内部资源用相对路径 + 构建时检查，外部链接定期验证。",
+            "【模板的灵活边界】模板必须区分'必须统一'（标题层级、元数据）和'可以灵活'（正文内容、示例选择）。过度模板化会让文档变成填空题，失去针对性。"
         ],
         handsOnPath: [
-            "用 Markdown 写一份完整的 README：包含项目描述、安装步骤（代码块）、使用示例（代码块）、贡献指南（链接）和许可证。",
-            "创建三个可复用模板：Quickstart（3-5 步跑通）、How-to Guide（解决具体问题）、API Reference（参数表格）。保存为团队共享的模板文件。",
-            "在 GitHub 上创建一个文档仓库，尝试 GFM 扩展功能：任务列表、表格、折叠部分（<details>）、Mermaid 图表。",
-            "用 markdownlint 检查你的 Markdown 文件，修复所有警告，建立团队的 .markdownlint.json 配置。"
+            "创建一份完整的 README.md：项目描述（一句话价值主张）→ 快速开始（3-5 步）→ 功能特性（列表）→ 安装说明（代码块）→ 使用示例（代码块 + 输出）→ 贡献指南（链接）→ 许可证。",
+            "创建三个可复用模板并保存为团队资源：(1) Quickstart 模板（前置条件 → 安装 → 最小示例 → 预期输出 → 下一步），(2) How-to 模板（目标 → 前置条件 → 步骤 → 验证 → 常见问题），(3) API Reference 模板（端点 → 参数表格 → 请求示例 → 响应示例 → 错误码）。",
+            "在 GitHub 仓库中实践 GFM 扩展：创建一个 README 包含任务列表、表格、代码高亮（至少 2 种语言）、折叠部分（<details>）、Mermaid 图表（流程图或时序图）。",
+            "配置 markdownlint：安装 VS Code 插件或命令行工具，创建 .markdownlint.json 配置文件，运行检查并修复所有警告。将配置提交到仓库作为团队规范。",
+            "执行'渲染一致性测试'：将同一份 Markdown 文件在 GitHub、VS Code 预览、目标 SSG 工具中渲染，对比差异，修复不一致的地方。"
         ],
         selfCheck: [
-            "你的 Markdown 文件在 GitHub、VS Code、其他平台上渲染结果是否一致？",
-            "你是否有一套可复用的文档模板？新文档是否基于模板创建？",
-            "你的图片和链接是否使用相对路径？外部链接是否定期检查可用性？",
-            "你的团队是否有 Markdown 格式约定？是否用 linter 自动检查？",
-            "你能否在 5 分钟内用模板创建一份新的 How-to 文档？"
+            "【核心语法掌握】你能否不查文档写出：标题（6 级）、有序/无序列表、链接、图片、代码块（行内/块级）、表格、引用？",
+            "【平台兼容性】你的 Markdown 在 GitHub、VS Code、目标 SSG 的渲染结果是否一致？是否有平台特定语法？",
+            "【模板可用性】你是否有一套可复用的模板？新文档是否能在 5 分钟内用模板创建骨架？",
+            "【资源管理】你的图片和链接是否使用相对路径？是否有机制检测失效链接？",
+            "【自动化检查】你是否配置了 markdownlint？团队是否遵循相同的 Markdown 规范？"
         ],
         extensions: [
-            "深入学习 Markdown 扩展语法：https://www.markdownguide.org/extended-syntax/ —— 表格、脚注、定义列表等。",
-            "了解 CommonMark 规范细节：https://spec.commonmark.org/ —— 理解 Markdown 的'边缘情况'处理。",
-            "学习 Mermaid 图表语法，用 Markdown 画流程图、时序图：https://mermaid.js.org/",
-            "配置 VS Code 的 Markdown 插件：预览、linting、自动格式化。"
+            "【扩展语法】Markdown 扩展语法指南（https://www.markdownguide.org/extended-syntax/）——脚注、定义列表、任务列表等高级功能。",
+            "【规范细节】CommonMark 规范（https://spec.commonmark.org/）——理解边缘情况的处理，如嵌套列表、链接解析优先级。",
+            "【图表能力】Mermaid 图表语法（https://mermaid.js.org/）——用 Markdown 画流程图、时序图、甘特图、ER 图。",
+            "【工具链】VS Code Markdown 插件推荐：Markdown All in One（快捷键）、markdownlint（检查）、Markdown Preview Enhanced（增强预览）。"
         ],
         sourceUrls: [
             "https://www.markdownguide.org/basic-syntax/",

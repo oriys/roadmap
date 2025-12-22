@@ -1,111 +1,163 @@
 import type { QuizQuestion } from "../types";
 
 export const week2: Record<string, QuizQuestion[]> = {
-  // Lesson 1: Markdown 与可复用模板 (8题)
+  // Lesson 1: Markdown 与可复用模板 (12题，答案随机分布)
   "tw-w2-1": [
     {
       id: "tw-w2-1-q1",
-      question: "在 Markdown 中创建一级标题的正确语法是什么？",
+      question: "Markdown 由 John Gruber 于 2004 年创建时的核心设计目标是什么？",
       options: [
-        "在文本前添加一个井号和空格，如 '# 标题'",
-        "在文本前后各添加一个井号，如 '#标题#'",
-        "使用 HTML 标签 <h1>标题</h1>",
-        "在文本下方添加等号，如 '标题\\n==='",
+        "支持复杂的排版和样式控制",
+        "'易读易写'——源文件本身就是可读的纯文本，同时能转换为结构化的 HTML",
+        "替代 HTML 成为网页的唯一标记语言",
+        "提供所见即所得的编辑体验",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Markdown Guide: 使用井号创建标题，井号数量对应标题级别。最佳实践是在井号与文本间保留空格。",
+        "Markdown 的核心理念是'纯文本即文档'——源文件无需渲染就能阅读，这种设计哲学是 Docs-as-Code 的基石。",
     },
     {
       id: "tw-w2-1-q2",
-      question: "在 Markdown 中创建换行的最佳实践是什么？",
+      question: "CommonMark 规范（2014 年启动）解决了 Markdown 的什么根本问题？",
       options: [
-        "在行末添加两个或更多空格后按回车键",
-        "连续按两次回车键",
-        "使用反斜杠 \\\\ 表示换行",
-        "使用 \\n 转义字符",
+        "原始 Markdown 规范存在大量歧义，导致不同解析器行为不一致",
+        "Markdown 语法太复杂，需要简化",
+        "Markdown 无法支持表格和代码高亮",
+        "Markdown 文件无法被搜索引擎索引",
       ],
       answer: 0,
       rationale:
-        "Markdown Guide: 创建换行需在行末添加两个或更多空格后按回车键，或使用 <br> 标签。",
+        "CommonMark 提供了严格的规范和测试套件，解决了'同一文档不同平台渲染不同'的问题，是 Markdown 的事实标准。",
     },
     {
       id: "tw-w2-1-q3",
-      question: "为什么 Markdown 在技术文档中广泛使用？",
+      question: "GitHub Flavored Markdown (GFM) 在 CommonMark 基础上扩展了哪些特性？",
       options: [
-        "纯文本格式易于版本控制，语法简单且专注于内容结构",
-        "因为它支持复杂的排版效果",
-        "因为它是唯一能在 GitHub 上显示的格式",
-        "因为它可以直接编译成可执行程序",
+        "只增加了代码高亮功能",
+        "增加了实时协作编辑功能",
+        "表格、任务列表、删除线、代码高亮、自动链接",
+        "增加了 PDF 导出功能",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Markdown 是纯文本格式，易于 Git 版本控制，语法简单直观，让作者专注于内容而非排版。",
+        "GFM 扩展包括：表格（| col1 | col2 |）、任务列表（- [ ]）、删除线（~~text~~）、代码高亮（```language）、URL 自动转为可点击链接。",
     },
     {
       id: "tw-w2-1-q4",
-      question: "在 Markdown 中如何正确创建超链接？",
+      question: "Docs-as-Code 范式的核心价值是什么？",
       options: [
-        "[链接文本](URL \"可选标题\")",
-        "<a href=\"URL\">链接文本</a>",
-        "[[链接文本|URL]]",
-        "{链接文本}(URL)",
+        "减少文档数量以降低维护成本",
+        "用 AI 自动生成所有文档",
+        "只使用 Word 格式编写文档",
+        "用 Git 管理文档版本，用 PR 评审，用 CI/CD 自动发布——让文档享受与代码相同的工程实践",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "Markdown 链接语法：[文本](URL \"可选标题\")。方括号包含显示文本，圆括号包含 URL。",
+        "Docs-as-Code 让文档可追溯、可回滚、可协作、可自动化，Markdown 是这个范式的基础格式。",
     },
     {
       id: "tw-w2-1-q5",
-      question: "Markdown 代码块的正确创建方式是什么？",
+      question: "Markdown 中创建换行的'隐形规则'是什么？",
       options: [
-        "使用三个反引号包围代码，可在开头反引号后指定语言",
-        "使用三个单引号包围代码",
-        "在每行代码前添加制表符",
-        "使用 <code> 标签",
+        "只需按一次回车即可换行",
+        "使用 \\n 转义字符",
+        "行尾需要两个空格才会产生换行，否则会被合并为同一段落",
+        "使用 HTML 的 <br> 标签是唯一方式",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "围栏式代码块使用三个反引号，可在开头指定语言以启用语法高亮，如 ```python。",
+        "Markdown 对空行和行尾空格敏感：行尾两空格才是换行，这是初学者常见的困惑点之一。",
     },
     {
       id: "tw-w2-1-q6",
-      question: "CommonMark 规范的主要目标是什么？",
+      question: "关于 Markdown 中的图片和链接管理，以下哪种策略最合理？",
       options: [
-        "为 Markdown 提供统一的、无歧义的语法标准",
-        "创建一种全新的标记语言替代 Markdown",
-        "让 Markdown 支持更多高级功能",
-        "统一所有文档格式为单一标准",
+        "始终使用绝对 URL 指向外部 CDN",
+        "将所有图片嵌入为 Base64 编码",
+        "内部资源用相对路径 + 构建时检查，外部链接定期验证",
+        "只使用文字描述，避免使用任何图片",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "CommonMark 致力于为 Markdown 创建明确的规范，解决不同实现之间的歧义和不一致问题。",
+        "资源管理策略：相对路径适合 Git 管理但需构建检查，CDN 稳定但有外部依赖，外部链接会腐烂（link rot）需定期验证。",
     },
     {
       id: "tw-w2-1-q7",
-      question: "在 Markdown 中使用星号 (*) 和下划线 (_) 进行强调时，最佳实践是什么？",
+      question: "为什么模板化写作对技术文档团队很重要？",
       options: [
-        "在单词中间强调时使用星号而非下划线，以确保兼容性",
-        "始终使用下划线因为更明显",
-        "两种符号可以随意混用",
-        "强调时应避免使用任何符号，改用 HTML 标签",
+        "模板限制创造力，不推荐使用",
+        "模板沉淀最佳实践，确保一致性，降低认知负荷，让作者聚焦内容而非格式",
+        "模板只适用于法律文档",
+        "模板会增加文档维护成本",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "Markdown Guide: 为确保兼容性，在单词中间进行强调时推荐使用星号（*）而非下划线（_）。",
+        "模板不是限制创造力，而是沉淀最佳实践。Quickstart、How-to、API Reference 各有固定结构，模板确保团队产出一致。",
     },
     {
       id: "tw-w2-1-q8",
-      question: "Markdown 列表嵌套的正确方式是什么？",
+      question: "Markdown 方言兼容性问题的最佳解决方案是什么？",
       options: [
-        "通过缩进（四个空格或一个制表符）创建嵌套列表",
-        "使用不同的符号（如 - 和 *）区分层级",
-        "在列表项后添加冒号表示嵌套",
-        "Markdown 不支持嵌套列表",
+        "只使用一个特定平台，禁止跨平台使用",
+        "坚持 CommonMark 核心语法确保可移植性，明确目标平台，用 linter 检测不兼容语法",
+        "完全放弃 Markdown，改用 HTML",
+        "为每个平台维护不同版本的文档",
+      ],
+      answer: 1,
+      rationale:
+        "GitHub、GitLab、Notion、Obsidian 对 Markdown 的扩展不同。解决方案是坚持核心语法 + 明确目标平台 + 自动化检测。",
+    },
+    {
+      id: "tw-w2-1-q9",
+      question: "在 GitHub 上使用 Markdown 时，<details> 标签的作用是什么？",
+      options: [
+        "创建可折叠/展开的内容区域",
+        "添加脚注引用",
+        "创建表格的详细描述",
+        "插入视频内容",
       ],
       answer: 0,
       rationale:
-        "Markdown Guide: 可通过缩进（四个空格或一个制表符）创建嵌套列表。",
+        "GitHub 支持 HTML 的 <details> 标签创建折叠部分，适合隐藏可选信息或长代码块。",
+    },
+    {
+      id: "tw-w2-1-q10",
+      question: "模板的'灵活边界'原则是什么意思？",
+      options: [
+        "模板的每个字段都可以任意填写",
+        "模板只是参考，完全可以忽略",
+        "必须区分'必须统一'（标题层级、元数据）和'可以灵活'（正文内容、示例选择）",
+        "模板应该每周更新一次",
+      ],
+      answer: 2,
+      rationale:
+        "过度模板化会让文档变成填空题，失去针对性。核心结构强制统一，具体内容保留灵活性。",
+    },
+    {
+      id: "tw-w2-1-q11",
+      question: "执行'渲染一致性测试'时应该做什么？",
+      options: [
+        "只在一个编辑器中预览即可",
+        "使用自动化工具检查拼写错误",
+        "将同一份 Markdown 在 GitHub、VS Code 预览、目标 SSG 工具中渲染，对比差异并修复不一致",
+        "确保所有图片都能正常显示",
+      ],
+      answer: 2,
+      rationale:
+        "不同平台对 Markdown 的渲染可能存在差异，需要在目标平台上验证实际效果，确保一致性。",
+    },
+    {
+      id: "tw-w2-1-q12",
+      question: "Mermaid 图表在 Markdown 文档中的价值是什么？",
+      options: [
+        "替代所有文字描述",
+        "只能画简单的流程图",
+        "用纯文本语法画流程图、时序图、甘特图、ER 图，实现'图表即代码'的版本控制",
+        "需要安装专门的绘图软件",
+      ],
+      answer: 2,
+      rationale:
+        "Mermaid 让图表与文档一起版本控制，无需外部工具即可维护。GitHub 原生支持 Mermaid 代码块渲染。",
     },
   ],
   // Lesson 2: Git 基础与协作评审 (8题)
