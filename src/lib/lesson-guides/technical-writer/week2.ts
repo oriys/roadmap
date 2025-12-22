@@ -45,35 +45,37 @@ export const week2Guides: Record<string, LessonGuide> = {
     "tw-w2-2": {
         lessonId: "tw-w2-2",
         background: [
-            "Git 是分布式版本控制系统，核心特性：Fast（快速）、Everything is local（本地化）、Local branching on the cheap（廉价分支）。",
-            "Pull Request（PR）是 GitHub 的核心协作功能——'proposals to merge code changes into a project'。它让团队在合并前讨论和审查变更，帮助捕获问题并维护质量。",
-            "Docs as Code 哲学：用与代码相同的工具写文档——问题追踪、版本控制（Git）、纯文本标记语言、代码审查、自动化测试。",
-            "PR 的四个核心标签页：Conversation（讨论）、Commits（提交历史）、Checks（自动化检查）、Files changed（差异对比）。"
+            "【Git 分布式本质】Git 是分布式版本控制系统，三大核心特性：Fast（快速）、Everything is local（本地化）、Local branching on the cheap（廉价分支）。每个开发者拥有完整的代码库副本，支持离线工作。",
+            "【Pull Request 协作模型】GitHub 官方定义：'Pull requests are proposals to merge code changes into a project'。它是 GitHub 的'foundational collaboration feature'，让团队在合并前讨论和审查变更。",
+            "【PR 四标签页架构】Conversation（讨论中心，追踪反馈进度）、Commits（按时间顺序显示提交历史）、Checks（自动化测试和 CI/CD 状态）、Files changed（差异对比，显示具体修改内容）。",
+            "【Docs as Code 哲学】Write the Docs 定义：'Documentation as Code refers to a philosophy that you should be writing documentation with the same tools as code'——版本控制（Git）、纯文本标记语言、代码审查、自动化测试。",
+            "【行业验证】Google、Microsoft、Rackspace、AWS、UK Government Digital Service 等组织已成功实施 Docs as Code，证明其广泛的行业认可度和有效性。"
         ],
         keyDifficulties: [
-            "分支策略选择：main-only、GitFlow、GitHub Flow 各有适用场景。文档项目通常用简单的 main + feature branch 模式即可。",
-            "冲突解决：多人同时编辑同一文件会产生冲突。文档冲突通常是结构性的（如两人都加了新章节），需要人工判断合并顺序。",
-            "PR 粒度把控：PR 太大难以审查，太小又增加管理成本。文档 PR 建议按'一个主题一个 PR'组织。",
-            "审查反馈的处理：收到修改建议后，是直接修改还是讨论？关键是区分'必须改'（错误）和'可以商量'（风格偏好）。"
+            "【分支策略选择】main-only（极简）、GitFlow（复杂产品）、GitHub Flow（持续部署）各有适用场景。文档项目通常用简单的 main + feature branch 模式——一个功能一个分支，PR 合并后删除。",
+            "【合并冲突解决】多人同时编辑同一文件会产生冲突。文档冲突通常是结构性的（如两人都加了新章节），需要人工判断合并顺序。关键命令：git merge、git rebase、手动编辑冲突标记。",
+            "【PR 粒度把控】PR 太大难以审查（reviewer fatigue），太小增加管理成本。文档 PR 建议按'一个主题一个 PR'组织，保持 Files changed 在可审查范围内。",
+            "【Draft PR 的正确使用】GitHub Draft PR 阻止合并且不自动通知代码所有者——适合分享进行中的工作（WIP）以获取早期反馈，而非正式请求审查。转为 ready-for-review 才触发通知。"
         ],
         handsOnPath: [
-            "在 GitHub 上 fork 一个开源文档项目，创建分支修复一个 typo 或补充一段说明，提交你的第一个文档 PR。",
-            "练习完整的 PR 流程：创建分支 → 提交变更 → 推送 → 创建 PR → 请求审查 → 根据反馈修改 → 合并。",
-            "故意制造一个冲突并解决它：两个分支修改同一文件的同一行，然后合并并手动解决冲突。",
-            "为你的文档仓库配置 PR 模板（.github/PULL_REQUEST_TEMPLATE.md），包含：变更类型、变更描述、检查清单。"
+            "在 GitHub 上 fork 一个开源文档项目（如 kubernetes/website 或 facebook/docusaurus），创建分支修复一个 typo 或补充一段说明，提交你的第一个文档 PR。体验完整流程。",
+            "练习完整的 PR 流程：git checkout -b feature/xxx → 修改文件 → git add → git commit -m '描述' → git push -u origin feature/xxx → GitHub 创建 PR → 请求审查 → 根据反馈修改 → Squash and merge。",
+            "故意制造一个冲突并解决它：两个分支修改同一文件的同一行，尝试合并时会出现冲突标记（<<<<<<<、=======、>>>>>>>），手动编辑选择保留内容，然后 git add + git commit 完成合并。",
+            "为你的文档仓库配置 PR 模板（.github/PULL_REQUEST_TEMPLATE.md），包含：变更类型（docs/fix/feat）、变更描述、关联 Issue、检查清单（□ 本地构建通过、□ 链接有效、□ 拼写检查）。",
+            "体验 Draft PR：创建一个 Draft PR 分享早期想法，收集反馈后再标记为 Ready for review。观察通知行为的差异。"
         ],
         selfCheck: [
-            "你是否能熟练使用 git branch、git checkout、git merge、git pull、git push？",
-            "你的 PR 描述是否清晰说明了'改了什么'和'为什么改'？",
-            "你是否在合并前确保所有自动检查（Checks）都通过？",
-            "你是否知道如何解决合并冲突？",
-            "你的团队是否有 PR 审查的流程和标准？"
+            "【Git 基础命令】你是否能熟练使用 git branch、git checkout（或 git switch）、git merge、git pull、git push、git log、git diff？",
+            "【PR 描述质量】你的 PR 描述是否清晰说明了'改了什么'（What）和'为什么改'（Why）？审查者能否仅凭描述理解变更意图？",
+            "【CI 状态意识】你是否在合并前确保所有自动检查（Checks）都通过？你是否理解每个检查项的含义？",
+            "【冲突解决能力】你是否知道如何解决合并冲突？是否理解冲突标记的含义？是否尝试过 rebase 而非 merge？",
+            "【团队流程规范】你的团队是否有 PR 审查的流程和标准？是否有 CODEOWNERS 文件自动分配审查者？"
         ],
         extensions: [
-            "阅读 Pro Git 书籍（免费）：https://git-scm.com/book/en/v2 —— 深入理解 Git 内部机制。",
-            "学习 GitHub Flow 工作流：https://docs.github.com/en/get-started/quickstart/github-flow",
-            "配置 Git Hooks（pre-commit）自动运行检查：拼写、链接、格式。",
-            "学习使用 GitHub Actions 自动化文档构建和部署。"
+            "【深度学习】阅读 Pro Git 书籍（免费）：https://git-scm.com/book/en/v2 —— 理解 Git 内部机制（对象模型、引用、packfiles）。",
+            "【工作流对比】学习 GitHub Flow：https://docs.github.com/en/get-started/quickstart/github-flow —— 对比 GitFlow 和 Trunk-based Development 的适用场景。",
+            "【自动化钩子】配置 Git Hooks（pre-commit）自动运行检查：拼写（cspell）、链接（lychee）、格式（prettier）。推荐使用 husky + lint-staged。",
+            "【持续部署】学习使用 GitHub Actions 自动化文档构建和部署：on push to main → build → deploy to GitHub Pages/Netlify/Vercel。"
         ],
         sourceUrls: [
             "https://git-scm.com/book/en/v2",
