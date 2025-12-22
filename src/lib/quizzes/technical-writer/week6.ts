@@ -1,62 +1,114 @@
 import type { QuizQuestion } from "../types";
 
 export const week6: Record<string, QuizQuestion[]> = {
-  // Lesson 1: 风格指南与术语表 (8题)
+  // Lesson 1: 风格指南与术语表 (12题，答案随机分布)
   "tw-w6-1": [
     {
       id: "tw-w6-1-q1",
-      question: "风格指南（Style Guide）在文档团队中的主要作用是什么？",
+      question: "Google Style Guide 对规则灵活性的核心观点是什么？",
       options: [
-        "统一术语、语气和格式，确保多人协作时文档的一致性",
-        "限制作者的创意表达",
-        "减少文档数量",
-        "替代文档评审",
+        "规则必须严格遵循，不允许例外",
+        "规则只是建议，可以随意忽略",
+        "'Break any of these rules sooner than say anything outright barbarous'——清晰性优先于规则",
+        "规则应该每年重新制定",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "风格指南是团队协作的基石，确保不同作者产出的文档在术语、语气和格式上保持一致。",
+        "Google：'Break any of these rules sooner than say anything outright barbarous'——清晰性和一致性优先于严格遵循规则。",
     },
     {
       id: "tw-w6-1-q2",
-      question: "术语表（Glossary）的核心价值是什么？",
+      question: "Google 建议的风格参考优先级是什么？",
       options: [
-        "作为术语的'单一事实来源'，确保团队和用户对词汇理解一致",
-        "展示作者的词汇量",
-        "增加文档页数",
-        "用于 SEO 优化",
+        "Google Style Guide → 项目指南 → 第三方来源",
+        "项目特定指南 → Google Style Guide → 第三方来源（Merriam-Webster、Chicago、Microsoft）",
+        "第三方来源 → 项目指南 → Google Style Guide",
+        "只需要参考 Google Style Guide",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "术语表确保整个文档体系中相同概念使用相同术语，避免歧义和混淆。",
+        "Google 建议的优先级：1) 项目特定指南 → 2) Google Style Guide → 3) 第三方来源（Merriam-Webster 拼写、Chicago Manual 通用写作）。",
     },
     {
       id: "tw-w6-1-q3",
-      question: "风格指南中的'语气'（Tone）规定通常涉及什么？",
+      question: "Microsoft Style Guide 的核心哲学是什么？",
       options: [
-        "文档的正式程度、对用户的称呼方式、表达的友好程度",
-        "使用的字体大小",
-        "文档的颜色方案",
-        "代码的缩进风格",
+        "'Make every word matter'——每个词都应该有意义",
+        "'Write as much as possible'——尽可能多写",
+        "'Technical accuracy above all'——技术准确性高于一切",
+        "'Follow the template'——严格遵循模板",
       ],
       answer: 0,
       rationale:
-        "语气规定帮助建立品牌一致性，如是否使用'您'还是'你'，是正式还是轻松友好。",
+        "Microsoft：'Make every word matter'——每个词都应该有意义。风格应该温暖放松、简洁清晰、乐于助人。",
     },
     {
       id: "tw-w6-1-q4",
-      question: "当风格指南与项目特定需求冲突时，应该如何处理？",
+      question: "术语表（Glossary）在风格指南中的核心价值是什么？",
       options: [
-        "项目特定指南优先，但应记录偏离原因并保持内部一致",
-        "始终遵循公司风格指南",
-        "忽略所有指南",
-        "每次随机选择",
+        "增加文档页数",
+        "展示作者的词汇量",
+        "作为术语的'单一事实来源'，确保团队和用户对词汇理解一致",
+        "用于 SEO 优化",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Google Style Guide: 项目特定指南优先，但偏离应有记录，确保项目内部一致性。",
+        "术语表确保整个文档体系中相同概念使用相同术语，是统一命名、大小写规则、缩写定义的核心组件。",
     },
     {
       id: "tw-w6-1-q5",
+      question: "风格指南应该覆盖哪些内容？",
+      options: [
+        "只需要覆盖语法规则",
+        "只需要覆盖代码格式",
+        "语言语法、标点、格式、代码接口、可访问性、全球化等方面",
+        "只需要覆盖术语表",
+      ],
+      answer: 2,
+      rationale:
+        "风格指南应覆盖：语言与语法、标点规范、格式（标题、列表、表格）、代码接口、可访问性与包容性语言、全球化考量。",
+    },
+    {
+      id: "tw-w6-1-q6",
+      question: "当风格规则与清晰表达冲突时，应该如何处理？",
+      options: [
+        "始终遵循风格规则",
+        "选择清晰表达，但要记录例外情况和原因",
+        "放弃这段内容",
+        "请求上级决定",
+      ],
+      answer: 1,
+      rationale:
+        "风格指南是指导而非法律。当规则与清晰表达冲突时，应选择清晰——但要记录例外情况和原因。",
+    },
+    {
+      id: "tw-w6-1-q7",
+      question: "术语一致性执行的主要挑战是什么？",
+      options: [
+        "术语表太难建立",
+        "术语表太大无法使用",
+        "建立术语表容易，执行难——需要 PR 审查和自动化检查（如 Vale）",
+        "术语不需要一致",
+      ],
+      answer: 2,
+      rationale:
+        "建立术语表容易，执行难。需要在 PR 审查中检查术语使用，并用 linter（如 Vale）自动检查。",
+    },
+    {
+      id: "tw-w6-1-q8",
+      question: "Microsoft Style Guide 描述的理想语气特征不包括以下哪项？",
+      options: [
+        "温暖放松（warm and relaxed）",
+        "简洁清晰（crisp and clear）",
+        "严肃正式（serious and formal）",
+        "乐于助人（ready to lend a hand）",
+      ],
+      answer: 2,
+      rationale:
+        "Microsoft 的风格特征：温暖放松、简洁清晰、乐于助人。不包括'严肃正式'。",
+    },
+    {
+      id: "tw-w6-1-q9",
       question: "如何处理有多个常见叫法的技术概念？",
       options: [
         "在术语表中选定一个首选术语，首次使用时可注明其他叫法",
@@ -69,43 +121,43 @@ export const week6: Record<string, QuizQuestion[]> = {
         "选定首选术语并在术语表中记录，首次使用时可说明'也称为...'，之后统一使用首选术语。",
     },
     {
-      id: "tw-w6-1-q6",
-      question: "Microsoft 风格指南的核心哲学是什么？",
+      id: "tw-w6-1-q10",
+      question: "新术语处理流程需要解决什么问题？",
       options: [
-        "'Make every word matter'，追求温暖、清晰、乐于助人的语气",
-        "使用尽可能专业的术语",
-        "文档越长越好",
-        "避免使用任何技术术语",
+        "谁有权添加新术语、如何通知团队、如何更新翻译",
+        "如何删除旧术语",
+        "如何缩短术语长度",
+        "如何避免使用术语",
       ],
       answer: 0,
       rationale:
-        "Microsoft Style Guide: 核心是'Make every word matter'，强调温暖放松、简洁清晰、乐于助人。",
+        "技术领域不断出现新术语。需要建立流程明确：谁有权添加？如何通知团队？如何更新翻译？",
     },
     {
-      id: "tw-w6-1-q7",
-      question: "风格指南应该如何演进和更新？",
+      id: "tw-w6-1-q11",
+      question: "风格指南在多人协作中需要满足什么平衡？",
       options: [
-        "随着产品和团队发展定期审查和更新，记录变更历史",
+        "足够复杂以展示专业性",
+        "足够具体以消除歧义，但不能过于死板限制表达",
+        "越简单越好",
+        "只有高级作者才能使用",
+      ],
+      answer: 1,
+      rationale:
+        "不同作者有不同习惯。风格指南需要足够具体以消除歧义，但不能过于死板限制表达。",
+    },
+    {
+      id: "tw-w6-1-q12",
+      question: "风格指南应该如何演进？",
+      options: [
         "一旦确定永不更改",
         "每天都更新",
         "只有出现错误时才更新",
+        "随着产品和团队发展定期审查和更新，记录变更历史",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
         "风格指南是活的文档，应随产品演进、用户反馈和最佳实践更新而持续改进。",
-    },
-    {
-      id: "tw-w6-1-q8",
-      question: "创建风格指南时，应该参考哪些现有资源？",
-      options: [
-        "行业标准指南（如 Google、Microsoft），结合公司和产品特点定制",
-        "只使用公司内部已有的规范",
-        "完全从零开始创建",
-        "只参考竞争对手的文档",
-      ],
-      answer: 0,
-      rationale:
-        "Google Style Guide 建议参考层级：项目指南 > Google 指南 > 第三方来源（如 Merriam-Webster、Chicago）。",
     },
   ],
   // Lesson 2: 可访问性与包容性写作 (8题)

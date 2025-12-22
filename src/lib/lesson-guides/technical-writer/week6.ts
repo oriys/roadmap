@@ -4,35 +4,37 @@ export const week6Guides: Record<string, LessonGuide> = {
     "tw-w6-1": {
         lessonId: "tw-w6-1",
         background: [
-            "风格指南的核心原则：'清晰性和一致性优先于严格遵循规则'——如果规则阻碍了清晰表达，应该优先选择清晰。",
-            "风格指南的参考等级：1) 项目特定术语 → 2) 行业风格指南（Google/Microsoft）→ 3) 通用风格手册（Chicago）→ 4) 词典（Merriam-Webster）。",
-            "术语表（Glossary）是风格指南的核心组件：统一命名、大小写规则、缩写定义。同一个概念必须在整个文档中使用相同的术语。",
-            "风格指南应覆盖：代码格式（API 注释、命令行语法）、组织结构（标题、列表、表格）、语法（主动语态、现在时、第二人称）、标点规范。"
+            "【风格指南核心原则】Google：'Break any of these rules sooner than say anything outright barbarous'——清晰性和一致性优先于严格遵循规则。如果规则阻碍了清晰表达，应该选择清晰。",
+            "【参考等级】Google 建议的优先级：1) 项目特定指南 → 2) Google Style Guide → 3) 第三方来源（Merriam-Webster 拼写、Chicago Manual 通用写作、Microsoft Style Guide 技术内容）。",
+            "【Microsoft 核心哲学】'Make every word matter'——每个词都应该有意义。风格应该是：温暖放松（warm and relaxed）、简洁清晰（crisp and clear）、乐于助人（ready to lend a hand）。",
+            "【术语表价值】术语表（Glossary）是风格指南的核心组件：统一命名、大小写规则、缩写定义。同一个概念必须在整个文档中使用相同的术语。",
+            "【覆盖范围】风格指南应覆盖：语言与语法、标点规范、格式（标题、列表、表格）、代码接口（API 注释、命令行语法）、可访问性与包容性语言、全球化考量。"
         ],
         keyDifficulties: [
-            "规则与灵活性的平衡：风格指南是指导而非法律。当规则与清晰表达冲突时，应选择清晰——但要记录例外情况和原因。",
-            "术语一致性的执行：建立术语表容易，执行难。需要在 PR 审查中检查术语使用，并用 linter（如 Vale）自动检查。",
-            "新术语的处理：技术领域不断出现新术语。需要建立添加新术语的流程——谁有权添加？如何通知团队？",
-            "多人协作的挑战：不同作者有不同习惯。风格指南需要足够具体以消除歧义，但不能过于死板。"
+            "【规则与灵活性平衡】风格指南是指导而非法律。当规则与清晰表达冲突时，应选择清晰——但要记录例外情况和原因。",
+            "【术语一致性执行】建立术语表容易，执行难。需要在 PR 审查中检查术语使用，并用 linter（如 Vale）自动检查。",
+            "【新术语处理流程】技术领域不断出现新术语。需要建立添加新术语的流程——谁有权添加？如何通知团队？如何更新翻译？",
+            "【多人协作挑战】不同作者有不同习惯。风格指南需要足够具体以消除歧义，但不能过于死板限制表达。"
         ],
         handsOnPath: [
             "为你的项目创建最小风格指南：列出 10-15 个最常用术语的统一写法、大小写规则、缩写定义。",
             "建立术语表格式：术语、定义、首次出现时是否需要解释、相关术语、禁用的同义词。",
             "审查现有文档的术语一致性：搜索同一概念的不同表述（如 user/customer/client），统一使用。",
-            "配置 Vale 使用你的术语表：创建自定义规则检查术语使用，集成到 CI 自动检查。"
+            "配置 Vale 使用你的术语表：创建自定义规则检查术语使用，集成到 CI 自动检查。",
+            "参考 Google 和 Microsoft 风格指南，补充你项目特有的规则。"
         ],
         selfCheck: [
-            "你是否有一份项目级风格指南？团队成员是否知道并遵循它？",
-            "你的术语表是否完整？是否覆盖了所有常用术语？",
-            "同一个概念在所有文档中是否使用相同的术语？",
-            "新术语如何添加到术语表？是否有明确的流程？",
-            "风格规则是否在 PR 审查中检查？是否有自动化检查？"
+            "【指南存在性】你是否有一份项目级风格指南？团队成员是否知道并遵循它？",
+            "【术语完整性】你的术语表是否完整？是否覆盖了所有常用术语？",
+            "【一致性检查】同一个概念在所有文档中是否使用相同的术语？",
+            "【流程建立】新术语如何添加到术语表？是否有明确的流程？",
+            "【自动化检查】风格规则是否在 PR 审查中检查？是否有自动化检查工具？"
         ],
         extensions: [
-            "深入学习 Google Developer Documentation Style Guide：https://developers.google.com/style",
-            "研究 Microsoft Writing Style Guide：https://learn.microsoft.com/en-us/style-guide/welcome/",
-            "学习使用 Vale 创建自定义风格规则：https://vale.sh/docs/",
-            "研究大型开源项目的风格指南（如 Kubernetes、React）是如何组织的。"
+            "【Google Style Guide】完整参考：https://developers.google.com/style —— 开发者文档的事实标准。",
+            "【Microsoft Style Guide】完整参考：https://learn.microsoft.com/en-us/style-guide/welcome/ —— 技术内容的权威指南。",
+            "【Vale 风格检查】学习创建自定义规则：https://vale.sh/docs/ —— 将风格指南转化为可执行检查。",
+            "【开源项目参考】研究 Kubernetes、React、Django 等大型开源项目的风格指南是如何组织的。"
         ],
         sourceUrls: [
             "https://developers.google.com/style",
