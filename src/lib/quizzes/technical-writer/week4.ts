@@ -319,10 +319,23 @@ export const week4: Record<string, QuizQuestion[]> = {
         "OpenAPI 描述：端点及操作、参数和输入输出、安全与认证、API 元数据。数据库表结构不在 OpenAPI 描述范围内。",
     },
   ],
-  // Lesson 3: 示例、SDK 与代码样例写法 (7题)
+  // Lesson 3: 示例、SDK 与代码样例写法 (12题，答案随机分布)
   "tw-w4-3": [
     {
       id: "tw-w4-3-q1",
+      question: "根据 Microsoft 风格指南，代码示例的核心目的是什么？",
+      options: [
+        "展示语言的所有高级特性",
+        "address real problems developers are trying to solve——解决开发者实际问题",
+        "演示显而易见的功能用法",
+        "展示尽可能多的代码量",
+      ],
+      answer: 1,
+      rationale:
+        "Microsoft：代码示例应'address real problems developers are trying to solve'——解决开发者实际问题，而非仅仅演示功能。",
+    },
+    {
+      id: "tw-w4-3-q2",
       question: "根据 Google 代码示例规范，代码块的最大行宽应该是多少？",
       options: [
         "80 个字符，以确保在各种环境下的可读性",
@@ -332,72 +345,59 @@ export const week4: Record<string, QuizQuestion[]> = {
       ],
       answer: 0,
       rationale:
-        "Google Code Samples Style: 代码行应在 80 个字符处换行，确保在不同屏幕和打印时的可读性。",
-    },
-    {
-      id: "tw-w4-3-q2",
-      question: "在代码示例中表示省略代码时，应该如何处理？",
-      options: [
-        "使用该语言的注释语法（如 // ... 或 # ...），不使用省略号字符",
-        "使用省略号字符 '…'",
-        "使用三个点 '...'",
-        "直接留空",
-      ],
-      answer: 0,
-      rationale:
-        "Google Code Samples Style: 用语言的注释语法表示省略，不使用省略号字符，保持代码语法正确。",
+        "Google：行宽不超过 80 字符以确保可读性，尤其在窄窗口或打印文档中。",
     },
     {
       id: "tw-w4-3-q3",
-      question: "包含省略代码的代码块应该如何处理复制功能？",
+      question: "Google 规范中，如何在代码示例中表示省略的代码？",
       options: [
-        "不应该格式化为可点击复制，因为复制不完整的代码可能导致错误",
-        "始终提供复制功能",
-        "只复制非省略部分",
-        "复制时自动填充省略内容",
+        "使用三个点 '...'",
+        "使用省略号字符 '…'",
+        "使用该语言的注释语法（如 // ...），不使用省略号字符",
+        "直接留空",
       ],
-      answer: 0,
+      answer: 2,
       rationale:
-        "Google Code Samples Style: 包含省略的代码块不应提供一键复制，避免用户复制不完整代码。",
+        "Google：用语言特定的注释表示省略（如 // ...），'Don't use three dots or the ellipsis character'。",
     },
     {
       id: "tw-w4-3-q4",
-      question: "代码示例的引导文本应该以什么标点结尾？",
+      question: "包含省略代码的代码块应该如何处理复制功能？",
       options: [
-        "如果直接接代码块用冒号，如果中间有其他内容用句号",
-        "始终用句号",
-        "始终用冒号",
-        "不需要标点",
+        "始终提供复制功能方便用户",
+        "只复制非省略部分",
+        "复制时自动填充省略内容",
+        "不应格式化为可点击复制，防止用户复制不完整代码",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "Google Code Samples Style: 直接引入代码用冒号结尾，如果有注释等中间内容则用句号。",
+        "Google：'If a code block contains an omission, don't format the block as click-to-copy'——防止用户复制不完整代码。",
     },
     {
       id: "tw-w4-3-q5",
-      question: "好的代码示例应该具备什么特点？",
+      question: "代码示例的引导文本应该以什么标点结尾？",
       options: [
-        "可复制粘贴、可运行、有清晰的注释说明关键步骤",
-        "越短越好，省略所有注释",
-        "展示尽可能多的高级特性",
-        "使用最新的语法特性",
+        "始终用句号",
+        "始终用冒号",
+        "不需要标点",
+        "直接接代码块用冒号，如有中间内容则用句号",
       ],
-      answer: 0,
+      answer: 3,
       rationale:
-        "代码示例应该可以直接运行，注释解释关键逻辑，帮助用户理解并在自己的代码中应用。",
+        "Google：直接引入代码用冒号结尾，如有中间内容（如链接说明）则用句号。",
     },
     {
       id: "tw-w4-3-q6",
-      question: "SDK 文档中的快速入门示例应该展示什么？",
+      question: "Microsoft 对代码示例的规划建议是什么？",
       options: [
-        "最小可用的端到端流程：安装、配置、第一个 API 调用",
-        "所有可用的 API 方法",
-        "高级配置选项",
-        "性能优化技巧",
+        "从复杂开始展示完整功能",
+        "Start simple——从简单开始，逐步增加复杂性",
+        "演示所有可能的用法",
+        "只写最高级的用法",
       ],
-      answer: 0,
+      answer: 1,
       rationale:
-        "快速入门应该让用户最快速地跑通第一个成功案例，建立信心后再深入学习更多功能。",
+        "Microsoft：'Start simple'——从简单开始，优先处理常用且难理解的功能，避免演示显而易见的场景。",
     },
     {
       id: "tw-w4-3-q7",
@@ -410,7 +410,72 @@ export const week4: Record<string, QuizQuestion[]> = {
       ],
       answer: 0,
       rationale:
-        "Google Code Samples Style: 使用空格而非制表符进行缩进，通常每级 2 个空格，确保跨环境一致性。",
+        "Google：使用空格而非制表符缩进（通常每级 2 个空格，某些场景用 4 个），确保跨环境一致性。",
+    },
+    {
+      id: "tw-w4-3-q8",
+      question: "Microsoft 对代码示例中错误处理的建议是什么？",
+      options: [
+        "每个示例都必须包含完整的错误处理",
+        "完全忽略错误处理",
+        "只在错误处理是示例固有部分（intrinsic to the example）时才展示",
+        "只在文档末尾统一说明错误处理",
+      ],
+      answer: 2,
+      rationale:
+        "Microsoft：'Handle exceptions appropriately: Only show exception handling when intrinsic to the example'——仅在必要时展示。",
+    },
+    {
+      id: "tw-w4-3-q9",
+      question: "Microsoft 对代码示例发布前的要求是什么？",
+      options: [
+        "只需检查语法正确性",
+        "只需让同事审查",
+        "发布后再测试修复问题",
+        "Always compile and test code before publishing——必须编译和测试",
+      ],
+      answer: 3,
+      rationale:
+        "Microsoft：'Always compile and test code before publishing'——发布前必须编译和测试，确保示例实际可运行。",
+    },
+    {
+      id: "tw-w4-3-q10",
+      question: "Microsoft 对代码示例安全性的建议包括什么？",
+      options: [
+        "安全性不是代码示例需要考虑的",
+        "验证用户输入、永不硬编码密码、使用代码分析工具",
+        "只需添加安全声明即可",
+        "安全问题留给用户自己处理",
+      ],
+      answer: 1,
+      rationale:
+        "Microsoft：'Write secure code'——验证用户输入、永不硬编码密码、使用代码分析工具。示例代码也应遵循安全最佳实践。",
+    },
+    {
+      id: "tw-w4-3-q11",
+      question: "Microsoft 建议如何展示代码示例的预期输出？",
+      options: [
+        "不需要展示输出",
+        "在代码后或代码注释中显示运行结果",
+        "只口头描述输出",
+        "让用户自己运行查看",
+      ],
+      answer: 1,
+      rationale:
+        "Microsoft：'Show expected output: Display results either after the example or within code comments'——让用户知道成功时应看到什么。",
+    },
+    {
+      id: "tw-w4-3-q12",
+      question: "关于多语言代码示例的维护，以下哪项是主要挑战？",
+      options: [
+        "不同语言的语法差异",
+        "代码高亮支持问题",
+        "多语言示例需要同步更新，容易出现不一致",
+        "用户只使用一种语言",
+      ],
+      answer: 2,
+      rationale:
+        "API 文档通常需要多语言示例（curl、Python、JavaScript、Go 等），需同步更新，容易出现不一致。考虑自动生成工具减少维护成本。",
     },
   ],
   // Lesson 4: CLI 文档与命令参考 (7题)
