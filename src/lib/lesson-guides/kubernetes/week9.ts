@@ -131,40 +131,42 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-4": {
         lessonId: "w9-4",
         background: [
-            "GitOps 是一种以 Git 为唯一真相源（Single Source of Truth）的运维模式。所有配置（Kubernetes 清单、Helm Chart、Kustomize）都存储在 Git 仓库中，集群状态通过自动化工具与 Git 中的声明保持同步。",
-            "GitOps 的核心原则包括：声明式配置（所有配置以声明式方式定义）、版本控制（所有变更通过 Git 提交，有完整的审计追踪）、自动同步（控制器持续对比期望状态和实际状态，自动调和差异）、安全性（操作人员不直接访问集群，而是通过 Git 进行变更）。",
-            "Push 模式 vs Pull 模式：传统 CI/CD 采用 Push 模式，由流水线直接向集群推送变更；GitOps 采用 Pull 模式，由集群内的控制器（ArgoCD/Flux）主动从 Git 拉取配置并应用。Pull 模式不需要暴露集群 API，安全性更高。",
-            "ArgoCD 和 Flux 是两个主流的 GitOps 工具。ArgoCD 提供丰富的 Web UI 和可视化能力；Flux 采用模块化设计，更加轻量灵活。两者都支持多集群、多租户、渐进式交付等企业级功能。"
+            "【来源: OpenGitOps】GitOps 由四个核心原则定义：1) 声明式 - 系统必须以声明式形式表达期望状态；2) 版本化和不可变 - 期望状态存储必须具有版本控制和完整历史记录；3) 自动拉取 - 软件代理自动从源获取期望状态声明；4) 持续调和 - 代理持续监控实际状态并努力实现期望状态。",
+            "【来源: ArgoCD Application 规范】Application CRD 的核心字段包括：source（配置来源，支持 Git/Helm/Kustomize/Jsonnet/Directory）、destination（目标集群和命名空间）、syncPolicy（同步策略）。syncPolicy 支持 automated（自动同步）、prune（清理多余资源）、selfHeal（自愈漂移）等选项。",
+            "【来源: Flux 文档】Flux 是「保持 Kubernetes 集群与配置源（如 Git 仓库）同步，并在有新代码部署时自动更新配置」的工具。核心组件包括：Source Controller（管理 Git/Helm/OCI 源）、Kustomize Controller、Helm Controller、Notification Controller 和 Image Automation Controllers。",
+            "【来源: ArgoCD Webhook 文档】ArgoCD 支持 Webhook 通知以消除默认的 3 分钟轮询延迟。配置后 Git push 会立即触发应用同步。支持 GitHub、GitLab、BitBucket、Azure DevOps 等多种 Git 提供商。推荐配置 webhook secret 以防止 DDoS 攻击。",
+            "【来源: Flux 文档】Flux 采用 Pull 模式而非 Push 模式，遵循最小权限原则，与 Kubernetes 安全策略无缝集成。它基于 Kubernetes API 扩展（Custom Resources）构建，与 RBAC、准入控制器和现有生态系统工具兼容。"
         ],
         keyDifficulties: [
-            "Git 仓库结构设计：应用配置（App Repo）与基础设施配置（Infra Repo）是否分离？多环境（dev/staging/prod）如何组织？Kustomize overlays 和 Helm values 各有什么适用场景？这些设计决策影响团队协作和变更管理。",
-            "漂移检测与自愈：GitOps 控制器会检测集群状态与 Git 定义的差异（漂移），可以配置自动修复（Self-Heal）或仅告警。理解什么情况下应该自动修复，什么情况下需要人工介入，是运维的关键。",
-            "Secret 管理挑战：敏感信息不应明文存储在 Git 中。常见方案包括：Sealed Secrets（加密后存储在 Git）、External Secrets Operator（从 Vault/AWS Secrets Manager 同步）、SOPS（加密文件）。每种方案有不同的复杂度和安全权衡。",
-            "CI 与 CD 的边界：CI 负责构建和测试，产出镜像；CD 负责部署。在 GitOps 模式下，CI 完成后应该更新 Git 仓库中的镜像标签，由 GitOps 工具完成部署。避免 CI 直接 kubectl apply 破坏 GitOps 模式。"
+            "【Push vs Pull 模式】传统 CI/CD 采用 Push 模式，由流水线直接向集群推送变更，需要暴露集群 API；GitOps 采用 Pull 模式，由集群内控制器主动从 Git 拉取配置并应用，安全性更高，不需要给 CI 系统集群访问权限。",
+            "【ArgoCD 同步策略配置】syncPolicy.automated 启用自动同步；prune: true 删除 Git 中已移除的资源；selfHeal: true 自动修复集群中手动修改导致的漂移。理解何时启用 selfHeal（防止误操作）和何时禁用（允许临时调试修改）。",
+            "【ArgoCD vs Flux 选型】ArgoCD 提供丰富的 Web UI 和可视化能力，适合需要直观操作的团队；Flux 采用模块化设计，更轻量灵活，适合高度自动化的场景。两者都支持多集群、多租户。",
+            "【Secret 管理挑战】敏感信息不应明文存储在 Git 中。常见方案：Sealed Secrets（加密后存储在 Git）、External Secrets Operator（从 Vault/云厂商 Secrets Manager 同步）、SOPS（加密文件）。每种方案有不同的复杂度和安全权衡。"
         ],
         handsOnPath: [
-            "在本地 Kubernetes 集群（minikube/kind）中安装 ArgoCD。访问 Web UI，熟悉界面布局，了解 Application、Project、Repository 等核心概念。",
-            "创建第一个 ArgoCD Application，指向一个包含 Kubernetes 清单的 Git 仓库。观察 ArgoCD 如何同步配置到集群，理解 Sync Status 和 Health Status 的含义。",
+            "在本地 Kubernetes 集群（minikube/kind）中安装 ArgoCD。使用 kubectl port-forward 访问 Web UI，使用 admin 用户登录，熟悉界面布局。",
+            "创建第一个 ArgoCD Application：指向一个包含 Kubernetes 清单的 Git 仓库（如 ArgoCD 官方示例仓库），配置 destination 为本地集群。观察 ArgoCD 如何同步配置，理解 Sync Status 和 Health Status 的含义。",
             "模拟漂移场景：使用 kubectl 直接修改集群中的资源（如 Deployment 的副本数）。观察 ArgoCD 如何检测到 OutOfSync 状态，手动触发 Sync 恢复期望状态。",
-            "配置自动同步（Auto-Sync）和自愈（Self-Heal）：在 Application 中启用 automated.prune 和 automated.selfHeal，观察 ArgoCD 如何自动处理漂移和删除多余资源。",
-            "设置 Webhook：配置 Git 仓库的 Webhook 指向 ArgoCD，实现 push 后立即触发同步，减少轮询延迟。"
+            "配置自动同步和自愈：在 Application 中启用 syncPolicy.automated.prune 和 syncPolicy.automated.selfHeal，观察 ArgoCD 如何自动处理漂移和删除多余资源。",
+            "配置 Webhook（可选）：在 Git 仓库中设置 Webhook 指向 ArgoCD 的 /api/webhook 端点，配置 argocd-secret 中的 webhook secret。测试 push 后立即触发同步。"
         ],
         selfCheck: [
-            "GitOps 的核心原则是什么？为什么说 Git 是唯一真相源？",
+            "OpenGitOps 定义的四个 GitOps 核心原则是什么？为什么强调「持续调和」？",
+            "ArgoCD Application CRD 的 source、destination、syncPolicy 字段分别配置什么？",
             "Push 模式和 Pull 模式有什么区别？为什么 GitOps 推荐 Pull 模式？",
-            "ArgoCD 和 Flux 各有什么特点？它们分别适用于什么场景？",
-            "如何在 GitOps 模式下管理 Secret？Sealed Secrets 和 External Secrets Operator 有什么区别？",
-            "CI 完成后应该如何触发 GitOps 部署？为什么不应该在 CI 中直接 kubectl apply？"
+            "ArgoCD 和 Flux 各有什么特点？如何选择适合团队的工具？",
+            "如何在 GitOps 模式下安全地管理 Secret？有哪些常见方案？"
         ],
         extensions: [
-            "研究 ArgoCD 的 App of Apps 模式，了解如何用一个 Application 管理多个 Application，实现集群引导和多应用编排。",
-            "探索 Flux 的 Image Automation 功能，了解如何自动检测新镜像并更新 Git 仓库中的镜像标签。",
-            "学习渐进式交付（Progressive Delivery）工具如 Argo Rollouts 和 Flagger，了解如何实现金丝雀发布和蓝绿部署。",
-            "研究 GitOps 在多集群场景下的应用，了解 ArgoCD ApplicationSet 和 Flux 的多集群管理能力。"
+            "研究 ArgoCD 的 App of Apps 模式：了解如何用一个 Application 管理多个 Application，实现集群引导和多应用编排。",
+            "探索 Flux 的 Image Automation 功能：了解如何自动检测新镜像并更新 Git 仓库中的镜像标签。",
+            "学习 Sealed Secrets 或 External Secrets Operator：实现 GitOps 中的安全 Secret 管理。",
+            "研究 ArgoCD ApplicationSet：了解如何用模板化方式批量生成多个 Application，适用于多集群和多环境场景。"
         ],
         sourceUrls: [
-            "https://argo-cd.readthedocs.io/en/stable/",
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/",
             "https://fluxcd.io/flux/",
+            "https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/",
             "https://opengitops.dev/"
         ]
     }
@@ -720,183 +722,183 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-4": [
         {
             id: "w9-4-q1",
-            question: "GitOps 的核心思想是什么？",
+            question: "根据 OpenGitOps 定义，GitOps 的第一个核心原则是什么？",
             options: [
-                "以 Git 作为唯一真相源，集群状态通过控制器与 Git 中的声明保持同步",
-                "使用 Git 存储代码",
-                "用 Git 替代 Kubernetes",
-                "只在 Git 中存储密码"
+                "声明式 - 系统必须以声明式形式表达期望状态",
+                "使用命令式脚本部署",
+                "手动修改集群配置",
+                "只支持 YAML 格式"
             ],
             answer: 0,
-            rationale: "GitOps 强调声明式配置存储在 Git 中，控制器持续调和集群状态与 Git 定义一致。"
+            rationale: "OpenGitOps 明确定义第一个原则是「Declarative」：A system managed by GitOps must have its desired state expressed declaratively."
         },
         {
             id: "w9-4-q2",
-            question: "Push 模式与 Pull 模式的主要区别是什么？",
+            question: "根据 OpenGitOps 定义，GitOps 的四个核心原则是什么？",
             options: [
-                "Push 模式由 CI 直接部署到集群，Pull 模式由集群内控制器从 Git 拉取配置",
-                "Push 更安全",
-                "Pull 需要人工确认每次部署",
-                "两者完全相同"
+                "声明式、版本化和不可变、自动拉取、持续调和",
+                "构建、测试、部署、监控",
+                "开发、预发布、生产、灾备",
+                "设计、编码、测试、发布"
             ],
             answer: 0,
-            rationale: "GitOps 采用 Pull 模式，由 ArgoCD/Flux 等控制器主动从 Git 拉取并应用配置。"
+            rationale: "OpenGitOps 定义了四个原则：Declarative、Versioned and Immutable、Pulled Automatically、Continuously Reconciled."
         },
         {
             id: "w9-4-q3",
-            question: "GitOps 带来的主要好处包括？",
+            question: "根据 ArgoCD Application 规范，source 字段支持哪些配置来源？",
             options: [
-                "审计可追溯、易于回滚、减少手工操作导致的漂移",
-                "部署速度必然变慢",
-                "不需要任何权限控制",
-                "消除测试需求"
+                "Git、Helm、Kustomize、Jsonnet、Directory",
+                "只支持 Git",
+                "只支持 Helm",
+                "只支持 YAML 文件"
             ],
             answer: 0,
-            rationale: "Git 提供完整的变更历史和审计追踪，自动同步减少人为错误。"
+            rationale: "ArgoCD 文档说明 source 字段支持多种配置来源：Git/Helm/Kustomize/Jsonnet/Directory."
         },
         {
             id: "w9-4-q4",
-            question: "为什么不建议在 GitOps 模式下直接用 kubectl 修改集群资源？",
+            question: "根据 ArgoCD Application 规范，syncPolicy 支持哪些自动化选项？",
             options: [
-                "会导致漂移，GitOps 控制器会检测到差异并可能回滚，且变更无法审计",
-                "kubectl 不能修改资源",
-                "会导致集群崩溃",
-                "没有任何问题"
+                "automated（自动同步）、prune（清理多余资源）、selfHeal（自愈漂移）",
+                "只支持手动同步",
+                "只支持自动同步",
+                "不支持配置同步策略"
             ],
             answer: 0,
-            rationale: "手动修改与 Git 源脱节，破坏 GitOps 的一致性保证，影响审计和回滚能力。"
+            rationale: "ArgoCD 文档说明 syncPolicy 支持 automated、prune、selfHeal 等选项."
         },
         {
             id: "w9-4-q5",
-            question: "ArgoCD 和 Flux 的主要区别是什么？",
+            question: "根据 Flux 文档，Flux 的核心组件包括哪些？",
             options: [
-                "ArgoCD 提供丰富的 Web UI，Flux 采用模块化设计更轻量",
-                "ArgoCD 不支持 Kubernetes",
-                "Flux 只能用于单个集群",
-                "两者功能完全相同"
+                "Source Controller、Kustomize Controller、Helm Controller、Notification Controller、Image Automation Controllers",
+                "只有一个控制器",
+                "只有 Source Controller",
+                "只有 Helm Controller"
             ],
             answer: 0,
-            rationale: "ArgoCD 有完善的可视化界面，Flux 更加模块化和轻量，各有适用场景。"
+            rationale: "Flux 文档列出其核心组件包括：Source Controller、Kustomize Controller、Helm Controller、Notification Controller 和 Image Automation Controllers."
         },
         {
             id: "w9-4-q6",
-            question: "如何在 GitOps 模式下触发部署？",
+            question: "根据 Flux 文档，Flux 采用什么部署模式？",
             options: [
-                "通过 Git 仓库的 Webhook 或控制器的轮询机制",
-                "只能手动 SSH 到集群",
-                "必须重启控制器",
-                "通过 kubelet"
+                "Pull 模式，遵循最小权限原则，与 Kubernetes 安全策略无缝集成",
+                "Push 模式，由 CI 直接部署",
+                "混合模式，同时支持 Push 和 Pull",
+                "手动模式，需要人工触发"
             ],
             answer: 0,
-            rationale: "GitOps 控制器支持定期轮询 Git 仓库，也可以配置 Webhook 实现推送后立即同步。"
+            rationale: "Flux 文档强调采用 Pull 模式，遵循最小权限原则，基于 Kubernetes API 扩展构建."
         },
         {
             id: "w9-4-q7",
-            question: "ArgoCD Application CRD 的主要字段包括？",
+            question: "根据 ArgoCD Webhook 文档，配置 Webhook 的主要目的是什么？",
             options: [
-                "source（配置来源）、destination（目标集群/命名空间）、syncPolicy（同步策略）",
-                "只有 name 字段",
-                "只有 image 字段",
-                "只有 replicas 字段"
+                "消除默认的 3 分钟轮询延迟，Git push 后立即触发应用同步",
+                "增加安全性",
+                "减少 Git 仓库负载",
+                "自动创建 Application"
             ],
             answer: 0,
-            rationale: "Application 定义了从哪里获取配置（source）、部署到哪里（destination）以及如何同步（syncPolicy）。"
+            rationale: "ArgoCD Webhook 文档说明配置 Webhook 可以「消除默认的 3 分钟轮询延迟」，实现推送后立即同步."
         },
         {
             id: "w9-4-q8",
-            question: "GitOps 如何实现回滚？",
+            question: "根据 ArgoCD Webhook 文档，支持哪些 Git 提供商？",
             options: [
-                "回退 Git 提交或切换到旧版本的 Tag，控制器自动同步到对应状态",
-                "必须手动删除所有资源",
-                "需要重新部署集群",
-                "无法回滚"
+                "GitHub、GitLab、BitBucket、Azure DevOps 等",
+                "只支持 GitHub",
+                "只支持 GitLab",
+                "不支持任何 Git 提供商"
             ],
             answer: 0,
-            rationale: "Git 历史就是版本控制，通过 revert 或切换分支/标签，控制器会调和到对应状态。"
+            rationale: "ArgoCD Webhook 文档列出支持多种 Git 提供商：GitHub、GitLab、BitBucket、Azure DevOps 等."
         },
         {
             id: "w9-4-q9",
-            question: "如何在 GitOps 模式下管理 Secret？",
+            question: "根据 ArgoCD Webhook 文档，为什么推荐配置 webhook secret？",
             options: [
-                "使用 Sealed Secrets、External Secrets Operator 或 SOPS 等方案，避免明文存储",
-                "直接将密码提交到 Git",
-                "不需要管理 Secret",
-                "使用环境变量硬编码"
+                "防止 DDoS 攻击",
+                "加速同步速度",
+                "减少网络流量",
+                "自动生成配置"
             ],
             answer: 0,
-            rationale: "敏感信息不应明文存储在 Git 中，需要使用加密或外部 Secret 管理方案。"
+            rationale: "ArgoCD Webhook 文档推荐配置 webhook secret「以防止 DDoS 攻击」."
         },
         {
             id: "w9-4-q10",
-            question: "什么是漂移（Drift）检测？",
+            question: "根据 OpenGitOps 定义，「持续调和」原则的含义是什么？",
             options: [
-                "检测集群实际状态与 Git 中定义的期望状态之间的差异",
-                "检测网络延迟",
-                "检测 CPU 使用率",
-                "检测磁盘空间"
+                "软件代理持续监控实际状态并努力实现期望状态",
+                "每天执行一次同步",
+                "只在代码提交时同步",
+                "手动触发同步"
             ],
             answer: 0,
-            rationale: "GitOps 控制器持续对比期望状态和实际状态，发现差异即为漂移。"
+            rationale: "OpenGitOps 第四原则「Continuously Reconciled」定义为：Software agents continuously observe actual system state and attempt to apply the desired state."
         },
         {
             id: "w9-4-q11",
-            question: "ArgoCD 的 Self-Heal 功能是什么？",
+            question: "根据 ArgoCD Application 规范，destination 字段配置什么？",
             options: [
-                "自动修复集群状态与 Git 定义的差异，恢复到期望状态",
-                "自动修复代码 bug",
-                "自动升级 Kubernetes 版本",
-                "自动扩容节点"
+                "目标集群和命名空间",
+                "源代码仓库",
+                "镜像标签",
+                "构建参数"
             ],
             answer: 0,
-            rationale: "启用 Self-Heal 后，当检测到漂移时 ArgoCD 会自动触发同步恢复期望状态。"
+            rationale: "ArgoCD 文档说明 destination 字段定义目标集群（server/name）和命名空间（namespace）."
         },
         {
             id: "w9-4-q12",
-            question: "CI 完成后如何正确触发 GitOps 部署？",
+            question: "根据 Flux 文档，Flux 基于什么构建？",
             options: [
-                "CI 更新 Git 仓库中的镜像标签，GitOps 工具检测到变更后自动部署",
-                "CI 直接运行 kubectl apply",
-                "手动修改集群配置",
-                "重启所有 Pod"
+                "Kubernetes API 扩展（Custom Resources），与 RBAC、准入控制器兼容",
+                "独立的数据库",
+                "Docker 容器",
+                "虚拟机"
             ],
             answer: 0,
-            rationale: "在 GitOps 模式下，CI 应该修改 Git 仓库（如更新 values.yaml 中的镜像标签），部署由 GitOps 工具负责。"
+            rationale: "Flux 文档说明它「基于 Kubernetes API 扩展（Custom Resources）构建」，与 RBAC、准入控制器和现有生态系统工具兼容."
         },
         {
             id: "w9-4-q13",
-            question: "多环境（dev/staging/prod）在 GitOps 中通常如何管理？",
+            question: "根据 OpenGitOps 定义，「版本化和不可变」原则要求什么？",
             options: [
-                "使用 Kustomize overlays 或 Helm values 文件区分不同环境的配置",
-                "每个环境使用完全不同的代码仓库",
-                "所有环境使用完全相同的配置",
-                "不支持多环境"
+                "期望状态存储必须具有版本控制和完整历史记录",
+                "每次部署创建新分支",
+                "禁止修改任何配置",
+                "只使用标签不使用分支"
             ],
             answer: 0,
-            rationale: "Kustomize 通过 overlays 覆盖基础配置，Helm 通过不同的 values 文件实现环境差异化。"
+            rationale: "OpenGitOps 第二原则「Versioned and Immutable」要求：Desired state is stored in a way that enforces immutability, versioning and retains a complete version history."
         },
         {
             id: "w9-4-q14",
-            question: "为什么 Pull 模式比 Push 模式更安全？",
+            question: "Push 模式和 Pull 模式的安全性差异是什么？",
             options: [
-                "不需要暴露集群 API 给外部 CI 系统，控制器在集群内运行",
-                "Pull 模式不需要认证",
-                "Push 模式无法部署应用",
-                "两者安全性相同"
+                "Push 模式需要暴露集群 API 给外部 CI 系统，Pull 模式由集群内控制器主动拉取，安全性更高",
+                "两者安全性相同",
+                "Push 模式更安全",
+                "Pull 模式需要更多权限"
             ],
             answer: 0,
-            rationale: "Pull 模式中 CI 不需要集群访问权限，只需要 Git 写权限，减少了攻击面。"
+            rationale: "GitOps Pull 模式中控制器在集群内运行，不需要给 CI 系统集群访问权限，减少了攻击面."
         },
         {
             id: "w9-4-q15",
-            question: "什么是 App of Apps 模式？",
+            question: "根据 OpenGitOps 定义，「自动拉取」原则的含义是什么？",
             options: [
-                "用一个 ArgoCD Application 管理多个 Application，实现集群引导和批量管理",
-                "一个应用运行多个容器",
-                "多个应用共享一个 Pod",
-                "应用之间的网络通信"
+                "软件代理自动从源获取期望状态声明",
+                "手动触发拉取操作",
+                "定时批量拉取",
+                "只在工作时间拉取"
             ],
             answer: 0,
-            rationale: "App of Apps 是 ArgoCD 的高级模式，通过一个父 Application 定义和管理多个子 Application。"
+            rationale: "OpenGitOps 第三原则「Pulled Automatically」定义为：Software agents automatically pull the desired state declarations from the source."
         }
     ]
 }
