@@ -1,6 +1,170 @@
-import type { QuizQuestion } from "../types";
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
-export const week10: Record<string, QuizQuestion[]> = {
+export const week10Guides: Record<string, LessonGuide> = {
+    "w10-1": {
+        lessonId: "w10-1",
+        background: [
+            "ArgoCD 是 Kubernetes 原生的持续交付工具，实现 GitOps 模式。它将 Git 仓库作为应用期望状态的唯一真相源，持续监控并自动同步集群状态与 Git 定义保持一致。",
+            "ArgoCD 由三个核心组件构成：API Server（提供 gRPC/REST 接口，处理 Web UI、CLI 和 CI/CD 系统的请求）、Repository Server（维护 Git 仓库缓存并生成 Kubernetes 清单）、Application Controller（持续监控应用状态并执行同步操作）。",
+            "Application CRD 是 ArgoCD 的核心资源，定义了应用的来源（source：Git 仓库 URL、分支/标签、路径）、目标（destination：集群 API、命名空间）和同步策略（syncPolicy）。每个 Application 代表一个需要部署的应用。",
+            "ArgoCD 采用声明式方式管理应用。与传统 CI/CD 的 Push 模式不同，ArgoCD 采用 Pull 模式：控制器主动从 Git 拉取配置并调和到集群，CI 流水线只需提交到 Git，无需直接访问集群 API。"
+        ],
+        keyDifficulties: [
+            "理解三组件的职责分工：API Server 负责认证授权和外部接口；Repository Server 负责克隆仓库、缓存和模板渲染（Helm/Kustomize）；Application Controller 是核心调和循环，检测 OutOfSync 并执行同步。三者通过 gRPC 通信。",
+            "Application CRD 关键字段：source.repoURL（仓库地址）、source.targetRevision（分支/标签/commit）、source.path（应用路径）、destination.server（集群 API）、destination.namespace（目标命名空间）、project（项目权限边界）。",
+            "同步状态与健康状态的区别：Sync Status 表示集群状态与 Git 的一致性（Synced/OutOfSync）；Health Status 表示应用资源的运行状态（Healthy/Progressing/Degraded/Suspended）。两者独立判断。",
+            "ArgoCD 的认证方式：Web UI/CLI 使用 SSO 或本地账户认证；集群访问使用 ServiceAccount；Git 仓库访问使用 SSH 密钥或 HTTPS Token。不同认证用于不同场景。"
+        ],
+        handsOnPath: [
+            "在本地 Kubernetes 集群（kind/minikube）安装 ArgoCD：kubectl create namespace argocd && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml。等待所有 Pod Running。",
+            "获取初始管理员密码：argocd admin initial-password -n argocd。通过端口转发访问 UI：kubectl port-forward svc/argocd-server -n argocd 8080:443。登录 https://localhost:8080。",
+            "使用 CLI 创建第一个应用：argocd app create guestbook --repo https://github.com/argoproj/argocd-example-apps.git --path guestbook --dest-server https://kubernetes.default.svc --dest-namespace default。在 UI 中观察应用状态。",
+            "手动触发同步：argocd app sync guestbook。观察同步过程和资源创建。使用 argocd app get guestbook 查看详细状态，理解 Sync Status 和 Health Status 的含义。",
+            "尝试修改 Git 仓库中的 Deployment 副本数（fork 后修改），观察 ArgoCD 检测到 OutOfSync，手动同步后副本数更新。体验 GitOps 工作流。"
+        ],
+        selfCheck: [
+            "ArgoCD 的三个核心组件（API Server、Repository Server、Application Controller）各自的职责是什么？它们如何协同工作？",
+            "Application CRD 的 source、destination、project 字段分别定义什么？如何理解 targetRevision 可以是分支、标签或 commit SHA？",
+            "Sync Status 和 Health Status 有什么区别？一个应用可能处于什么状态组合（如 Synced+Degraded、OutOfSync+Healthy）？",
+            "为什么说 ArgoCD 是 Pull 模式？与 Jenkins 等 Push 模式的 CD 工具相比，安全性上有什么优势？",
+            "argocd app sync 和 argocd app refresh 命令有什么区别？什么时候使用哪个？"
+        ],
+        extensions: [
+            "研究 ArgoCD 的 SSO 集成（Dex/OIDC），了解如何与企业身份提供商（Okta、Azure AD、GitHub）集成实现统一认证。",
+            "探索 ArgoCD Notifications，了解如何配置 Slack、Email、Webhook 等通知渠道，在同步失败或应用状态变化时发送告警。",
+            "学习 ArgoCD 的 RBAC 模型，了解如何通过 Project 和 AppProject CRD 实现多租户隔离和细粒度权限控制。",
+            "研究 ArgoCD Image Updater，了解如何自动检测 Registry 中的新镜像并更新 Git 仓库中的镜像标签，实现端到端自动化。"
+        ],
+        sourceUrls: [
+            "https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/",
+            "https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/",
+            "https://argo-cd.readthedocs.io/en/stable/getting_started/"
+        ]
+    },
+    "w10-2": {
+        lessonId: "w10-2",
+        background: [
+            "ArgoCD 的同步策略（Sync Policy）控制应用如何从 Git 同步到集群。核心选项包括自动同步（auto-sync）、自动清理（prune）和自愈（self-heal），它们组合使用可以实现完全自动化的 GitOps 流程。",
+            "自动同步（Auto-Sync）让 ArgoCD 在检测到 Git 变更时自动触发同步，无需人工干预。启用后，CI 只需提交到 Git，ArgoCD 会自动将变更应用到集群。默认调和间隔为 3 分钟（可配置）。",
+            "自动清理（Prune）控制是否删除 Git 中已移除的资源。默认情况下，即使 Git 中删除了某个资源的定义，ArgoCD 也不会删除集群中对应的资源。启用 Prune 后，Git 中移除的资源会在同步时被删除。",
+            "Sync Waves 和 Hooks 是 ArgoCD 的高级编排功能。Sync Waves 通过注解定义资源的部署顺序（数字越小越先部署）；Hooks（PreSync/Sync/PostSync/SyncFail）可以在同步的不同阶段执行特定任务。"
+        ],
+        keyDifficulties: [
+            "Auto-Sync 的触发条件：只有 OutOfSync 状态的应用才会触发自动同步；同一个 commit SHA + 参数组合只会同步一次；如果上次同步失败，不会自动重试（需要新的 commit 或手动触发）。理解这些语义对排错很重要。",
+            "Prune 的风险控制：启用 Prune 后要特别小心，误删 Git 中的文件会导致集群资源被删除。可以使用 Prune=false 注解保护特定资源，或使用 PruneLast 让删除操作在最后执行。",
+            "Self-Heal 与 Prune 的区别：Self-Heal 修复的是集群状态的「漂移」（如有人 kubectl edit 修改了资源），将其恢复到 Git 定义；Prune 删除的是 Git 中已移除的资源。两者解决不同的问题。",
+            "Sync Waves 的执行顺序：按 wave 数字从小到大执行，每个 wave 内的资源需要全部 Healthy 后才进入下一个 wave。结合 Hooks 可以实现复杂的部署编排，如先执行数据库迁移再部署应用。"
+        ],
+        handsOnPath: [
+            "启用自动同步：argocd app set guestbook --sync-policy automated。修改 Git 仓库中的 Deployment 副本数，观察 ArgoCD 自动检测并同步变更（最多等待 3 分钟）。",
+            "启用自动清理：argocd app set guestbook --auto-prune。在 Git 中删除一个 Service 定义，观察 ArgoCD 在同步时自动删除集群中的 Service。讨论生产环境是否应该启用 Prune。",
+            "启用自愈：argocd app set guestbook --self-heal。使用 kubectl scale deployment guestbook-ui --replicas=5 手动修改副本数，观察 ArgoCD 检测到漂移并自动恢复到 Git 定义的值。",
+            "创建 Sync Wave 示例：为资源添加 argocd.argoproj.io/sync-wave: '1' 注解，观察部署顺序。创建 PreSync Hook（如 Job）执行数据库迁移，体验编排能力。",
+            "配置 Sync Options：尝试 Replace=true（替换而非 apply）、CreateNamespace=true（自动创建命名空间）、ApplyOutOfSyncOnly=true（只同步变更的资源）等选项，理解不同场景的用途。"
+        ],
+        selfCheck: [
+            "Auto-Sync 启用后，为什么同一个 commit 只会同步一次？如果同步失败了怎么办？",
+            "Prune 和 Self-Heal 分别解决什么问题？它们的触发条件是什么？",
+            "生产环境是否应该启用 Auto-Sync 和 Prune？有什么风险和最佳实践？",
+            "Sync Waves 的执行顺序是怎样的？如何利用 Hooks 实现「先迁移数据库，再部署应用」的流程？",
+            "Replace 和 Apply 同步策略有什么区别？什么情况下需要使用 Replace？"
+        ],
+        extensions: [
+            "研究 ArgoCD 的 Sync Windows，了解如何限制同步只在特定时间窗口内执行，实现变更冻结和维护窗口。",
+            "探索 Sync Retry 配置，了解如何在同步失败时自动重试，以及重试策略（间隔、最大次数）的设置。",
+            "学习 Resource Hooks 的 DeletePolicy，了解如何控制 Hook 资源（如 Job）的清理策略（HookSucceeded/BeforeHookCreation）。",
+            "研究 ArgoCD 的 Diff 自定义，了解如何通过 ignoreDifferences 配置忽略特定字段的差异（如自动注入的 annotation）。"
+        ],
+        sourceUrls: [
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/",
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/"
+        ]
+    },
+    "w10-3": {
+        lessonId: "w10-3",
+        background: [
+            "多环境管理是 GitOps 落地的核心挑战。开发、测试、预发布、生产等环境需要部署相同的应用，但配置（副本数、资源限制、环境变量）不同。Kustomize 和 Helm 是 ArgoCD 支持的两种主流配置管理工具。",
+            "Kustomize 采用 Base + Overlay 模式：Base 定义通用配置，Overlay 针对不同环境进行差异化配置。目录结构通常为 base/（基础配置）、overlays/dev/、overlays/staging/、overlays/prod/。ArgoCD 直接指向 overlay 目录即可。",
+            "Helm 通过 Values 文件实现多环境配置。ArgoCD 支持指定多个 values 文件（如 values.yaml、values-prod.yaml），后面的文件覆盖前面的值。也可以在 Application 中直接设置 parameters 覆盖特定值。",
+            "ArgoCD 的 values 优先级从低到高：Helm 仓库默认 values.yaml → valueFiles 列表（后面覆盖前面）→ values（内联字符串）→ valuesObject（内联对象）→ parameters（最高优先级）。"
+        ],
+        keyDifficulties: [
+            "Kustomize vs Helm 的选择：Kustomize 是声明式补丁，适合 YAML 微调；Helm 是模板引擎，适合复杂逻辑和条件渲染。简单应用推荐 Kustomize，复杂应用或需要社区 Chart 时使用 Helm。",
+            "Git 仓库结构设计：单仓库（Mono-repo，所有环境在一个仓库）vs 多仓库（应用配置与环境配置分离）。单仓库简单但权限难控制；多仓库权限清晰但管理复杂。需要根据团队情况选择。",
+            "环境晋级（Promotion）策略：开发完成后如何从 dev 晋级到 staging 再到 prod？可以通过 Git 分支/标签策略实现，或使用 ArgoCD ApplicationSet 的渐进式交付功能。自动化程度取决于风险承受能力。",
+            "配置漂移检测：ArgoCD 会检测 Git 与集群的差异，但不同环境可能有不同的「允许漂移」（如 HPA 自动调整的副本数）。使用 ignoreDifferences 配置忽略这些预期的差异。"
+        ],
+        handsOnPath: [
+            "创建 Kustomize 多环境结构：base/ 包含 Deployment 和 Service；overlays/dev/ 使用 2 副本和 100m CPU；overlays/prod/ 使用 5 副本和 500m CPU。在 ArgoCD 中创建两个 Application 分别指向不同 overlay。",
+            "使用 Helm 多环境配置：创建 values.yaml（默认）和 values-prod.yaml（生产覆盖）。在 ArgoCD Application 中配置 valueFiles: [values.yaml, values-prod.yaml]，验证生产配置正确覆盖默认值。",
+            "在 Application 中使用 parameters 覆盖：argocd app set myapp --parameter image.tag=v2.0.0。观察 parameters 如何覆盖 values 文件中的值。讨论何时使用 parameters vs valueFiles。",
+            "配置 ignoreDifferences：为 Deployment 添加 ignoreDifferences 忽略 spec.replicas 字段（让 HPA 管理），验证 ArgoCD 不再报告该字段的 OutOfSync。",
+            "设计环境晋级流程：dev 分支合并到 main 触发 staging 部署；创建 Tag 触发 prod 部署。使用 ArgoCD 的 targetRevision 配置不同环境跟踪不同分支/标签。"
+        ],
+        selfCheck: [
+            "Kustomize 的 Base/Overlay 模式如何工作？与 Helm 的 Values 覆盖相比，各有什么优缺点？",
+            "ArgoCD 中 values 的优先级顺序是什么？parameters 为什么具有最高优先级？",
+            "如何设计 Git 仓库结构支持多环境部署？单仓库和多仓库方案各有什么取舍？",
+            "什么是配置漂移？为什么需要 ignoreDifferences？常见需要忽略的字段有哪些？",
+            "环境晋级（如从 staging 到 prod）有哪些策略？如何平衡自动化和风险控制？"
+        ],
+        extensions: [
+            "研究 ArgoCD ApplicationSet，了解如何使用 Generator（List/Cluster/Git）自动为多环境、多集群生成 Application。",
+            "探索 Kustomize 的高级功能：Strategic Merge Patch、JSON Patch、Component，了解复杂场景的配置管理。",
+            "学习 Helm 的 post-renderer，了解如何在 Helm 渲染后使用 Kustomize 进行二次处理，结合两者优势。",
+            "研究 GitOps 的 Secret 管理方案：Sealed Secrets、External Secrets Operator、SOPS，了解如何安全地管理多环境敏感配置。"
+        ],
+        sourceUrls: [
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/kustomize/",
+            "https://argo-cd.readthedocs.io/en/stable/user-guide/helm/",
+            "https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/"
+        ]
+    },
+    "w10-4": {
+        lessonId: "w10-4",
+        background: [
+            "App of Apps 是 ArgoCD 推荐的集群引导模式。通过创建一个「父 Application」来管理多个「子 Application」，实现一键部署整个集群的应用栈。父 Application 的 Git 仓库包含所有子 Application 的 YAML 定义。",
+            "ApplicationSet 是 ArgoCD 的另一个强大功能，使用 Generator（List、Cluster、Git、Matrix 等）自动生成多个 Application。适合多集群部署、多租户场景，比手写多个 Application YAML 更高效。",
+            "多集群管理是 ArgoCD 的核心能力。通过 argocd cluster add 命令将远程集群添加到 ArgoCD，然后在 Application 的 destination 中指定目标集群。ArgoCD 可以从单一控制平面管理数十上百个集群。",
+            "渐进式交付（Progressive Delivery）通过 Argo Rollouts 实现。它提供金丝雀发布（Canary）和蓝绿部署（Blue-Green）策略，可以与 ArgoCD 配合使用，在 GitOps 模式下实现安全的渐进式发布。"
+        ],
+        keyDifficulties: [
+            "App of Apps 的目录结构设计：父 Application 指向一个包含多个 Application YAML 的目录。可以使用 Helm 或 Kustomize 模板化子 Application，实现参数化配置。注意 finalizer 配置确保级联删除。",
+            "ApplicationSet Generator 的选择：List Generator 适合固定列表；Cluster Generator 自动匹配注册的集群；Git Generator 从 Git 目录/文件生成；Matrix Generator 组合多个 Generator。不同场景选择不同 Generator。",
+            "多集群的安全考量：添加远程集群需要在目标集群创建 ServiceAccount 和 RBAC。ArgoCD 存储集群凭证在 Secret 中，需要保护好这些凭证。考虑使用 OIDC 集成而非静态凭证。",
+            "Argo Rollouts 与 ArgoCD 的协作：Rollouts 替换 Deployment 使用 Rollout CRD，ArgoCD 照常管理 Rollout 资源。流量切分需要配合 Ingress Controller 或 Service Mesh。分析指标驱动自动晋级/回滚。"
+        ],
+        handsOnPath: [
+            "创建 App of Apps 结构：创建 apps/ 目录包含多个 Application YAML（如 nginx-app.yaml、redis-app.yaml）。创建父 Application 指向 apps/ 目录，同步后观察子 Application 自动创建。",
+            "使用 ApplicationSet 替代手写：创建 ApplicationSet 使用 List Generator 定义多个环境（dev/staging/prod），观察自动生成的 Application。修改 Generator 参数，验证 Application 自动更新。",
+            "添加远程集群：使用 argocd cluster add 添加另一个 Kubernetes 集群。创建 Application 的 destination.server 指向远程集群，验证跨集群部署能力。",
+            "部署 Argo Rollouts：在集群中安装 Argo Rollouts Controller。创建一个 Rollout 资源（替代 Deployment），配置 Canary 策略（20%→40%→100%）。通过 ArgoCD 管理 Rollout，观察渐进式发布过程。",
+            "配置基于指标的自动晋级：为 Rollout 配置 Analysis（如成功率 > 99%），使用 Prometheus 作为指标源。触发更新，观察 Rollouts 自动分析指标并决定晋级或回滚。"
+        ],
+        selfCheck: [
+            "App of Apps 模式解决什么问题？与直接创建多个独立 Application 相比有什么优势？",
+            "ApplicationSet 的 Generator 有哪些类型？分别适用于什么场景？",
+            "如何向 ArgoCD 添加远程集群？需要什么权限和凭证？",
+            "Argo Rollouts 的 Canary 和 Blue-Green 策略有什么区别？如何选择？",
+            "如何实现基于指标的自动晋级/回滚？需要配置哪些组件？"
+        ],
+        extensions: [
+            "研究 ApplicationSet 的 Progressive Sync 功能，了解如何控制多个 Application 的滚动更新顺序和并发度。",
+            "探索 Argo Rollouts 的 Experiment 功能，了解如何同时运行多个版本进行 A/B 测试。",
+            "学习 ArgoCD 的 Resource Tracking 方法（annotation vs label），了解不同追踪方式的取舍。",
+            "研究 GitOps 的多集群架构模式：Hub-Spoke（中心管理多个边缘集群）vs Standalone（每个集群独立 ArgoCD），了解企业级部署选型。"
+        ],
+        sourceUrls: [
+            "https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/",
+            "https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-management/",
+            "https://argo-rollouts.readthedocs.io/en/stable/"
+        ]
+    }
+}
+
+export const week10Quizzes: Record<string, QuizQuestion[]> = {
     "w10-1": [
         {
             id: "w10-1-q1",
@@ -729,4 +893,4 @@ export const week10: Record<string, QuizQuestion[]> = {
             rationale: "in-cluster 是特殊集群，不能通过 argocd cluster rm 删除。需要在 argocd-cm ConfigMap 中设置配置项禁用。"
         }
     ]
-};
+}
