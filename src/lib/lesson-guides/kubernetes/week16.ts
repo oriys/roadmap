@@ -1,6 +1,174 @@
-import type { QuizQuestion } from "../types";
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
-export const week16: Record<string, QuizQuestion[]> = {
+export const week16Guides: Record<string, LessonGuide> = {
+    "w16-1": {
+        lessonId: "w16-1",
+        background: [
+            "etcd 是 Kubernetes 的核心数据存储，保存了集群的所有状态信息（Pods、Services、Secrets、ConfigMaps 等）。etcd 的数据丢失意味着整个集群的配置丢失，因此灾备是生产环境的必备能力。",
+            "etcd 备份有两种方式：快照备份（snapshot）和数据目录备份。快照备份使用 etcdctl snapshot save 命令，生成压缩的快照文件；数据目录备份直接复制 member/snap/db 文件，但需要 etcd 停止运行。",
+            "恢复流程需要谨慎操作：停止 kube-apiserver → 停止 etcd → 使用 etcdutl 恢复快照 → 启动 etcd → 启动 kube-apiserver。恢复会创建新的集群 ID，旧的成员信息会被覆盖。",
+            "生产环境 etcd 最佳实践：使用奇数个成员（3 或 5 个）形成集群；运行在专用机器或隔离环境防止资源争抢；定期备份（如每小时）并加密存储；使用 3.4.22+ 或 3.5.6+ 版本。",
+            "除了 etcd 备份，完整的集群灾备还包括：证书备份（CA、API Server 证书）、配置备份（kubeadm-config、静态 Pod 清单）、PersistentVolume 数据备份。Velero 是常用的完整集群备份工具。"
+        ],
+        keyDifficulties: [
+            "理解 etcd 快照的一致性：快照是某个时间点的一致性视图，但恢复后 Kubernetes 对象可能与实际运行状态不一致（如 Pod 已不存在但 etcd 中还有记录）。控制器会逐步调和。",
+            "etcdctl vs etcdutl：etcdctl 用于日常操作（get/put/snapshot save），需要连接运行中的 etcd。etcdutl 用于离线操作（snapshot restore/defrag），直接操作数据文件。恢复使用 etcdutl。",
+            "多成员集群恢复：每个成员需要用相同的快照恢复，但使用不同的 --name 和 --initial-cluster 参数。恢复后形成新集群，需要更新其他组件的 etcd 连接配置。",
+            "备份策略设计：考虑 RPO（可容忍的数据丢失量）和 RTO（恢复时间目标）。高频备份减少 RPO 但增加存储成本；自动化备份和测试减少 RTO。备份要定期验证可恢复性。"
+        ],
+        handsOnPath: [
+            "执行 etcd 快照备份：使用 etcdctl snapshot save backup.db --endpoints --cacert --cert --key。验证快照：etcdctl snapshot status backup.db。理解各参数的含义。",
+            "模拟灾难恢复：在测试集群中创建一些资源（Deployment、ConfigMap）。执行快照备份。删除这些资源。使用 etcdutl snapshot restore 恢复。验证资源恢复。",
+            "配置自动备份：编写 CronJob 定期执行 etcd 备份。将备份存储到外部存储（S3、GCS）。配置备份保留策略（如保留 7 天）。监控备份任务状态。",
+            "使用 Velero 备份集群：安装 Velero 并配置存储后端。创建 Backup 资源备份整个集群或特定命名空间。模拟灾难后用 Restore 恢复。对比 etcd 快照和 Velero 的差异。",
+            "建立灾备演练流程：文档化备份和恢复步骤。定期（如每季度）执行恢复演练。测量实际 RTO。记录演练问题并改进流程。"
+        ],
+        selfCheck: [
+            "etcd 在 Kubernetes 中存储什么数据？为什么 etcd 备份对灾备至关重要？",
+            "etcdctl snapshot save 和 etcdutl snapshot restore 的区别是什么？各自适用于什么场景？",
+            "恢复 etcd 快照后，为什么 Kubernetes 对象可能与实际状态不一致？控制器如何处理？",
+            "设计一个 etcd 备份策略需要考虑哪些因素？如何平衡 RPO/RTO 与成本？",
+            "除了 etcd 数据，完整的集群灾备还需要备份什么？Velero 与 etcd 快照的差异是什么？"
+        ],
+        extensions: [
+            "研究 etcd 的 Raft 共识算法，了解多成员集群如何保证数据一致性，以及成员故障时的行为。",
+            "探索 etcd 的性能调优，包括磁盘 IOPS 要求、网络延迟影响、压缩和碎片整理。",
+            "学习 Velero 的高级功能，包括增量备份、跨集群迁移、Hooks 和资源过滤。",
+            "研究多集群联邦场景下的灾备策略，了解如何实现跨区域的高可用。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/",
+            "https://etcd.io/docs/v3.5/op-guide/recovery/",
+            "https://velero.io/docs/"
+        ]
+    },
+    "w16-2": {
+        lessonId: "w16-2",
+        background: [
+            "Kubernetes 故障排查需要系统性思维：从表象定位根因。常见问题分层：应用层（Pod 不启动、CrashLoopBackOff）、服务层（Service 不通、Ingress 配置错误）、节点层（节点 NotReady、资源不足）、网络层（Pod 间不通、DNS 解析失败）。",
+            "Pod 故障排查是最常见场景。关键命令：kubectl describe pod（查看事件和状态）、kubectl logs（查看容器日志）、kubectl exec（进入容器调试）。常见问题：镜像拉取失败、资源不足、健康检查失败、配置错误。",
+            "Service 和网络故障排查：验证 Service selector 与 Pod label 匹配；检查 Endpoints 是否有后端 Pod；测试 Pod 内部 DNS 解析（nslookup service-name）；使用 kubectl port-forward 绑定调试。",
+            "节点故障排查：kubectl describe node 查看 Conditions 和 Events；检查 kubelet 日志（journalctl -u kubelet）；验证容器运行时状态（crictl）；检查系统资源（CPU、内存、磁盘、inode）。",
+            "高效排查需要可观测性基础设施：集中日志（Loki/ELK）快速搜索；指标监控（Prometheus）发现异常；分布式追踪（Jaeger）定位链路问题。没有可观测性基础设施，排查效率会大大降低。"
+        ],
+        keyDifficulties: [
+            "理解 Pod 生命周期和状态：Pending（调度中）、ContainerCreating（拉取镜像/挂载卷）、Running（运行中）、CrashLoopBackOff（反复崩溃）。不同状态指向不同问题域。",
+            "区分应用问题和平台问题：应用 bug 导致的崩溃 vs 资源限制导致的 OOMKilled vs 配置错误导致的启动失败。需要结合日志和 describe 信息判断。",
+            "网络故障的分层排查：先验证 Pod IP 可达性（ping）→ 再验证端口连通性（nc/telnet）→ 再验证 DNS 解析 → 最后验证应用协议。逐层缩小问题范围。",
+            "使用 ephemeral container 调试：kubectl debug 可以向运行中的 Pod 注入临时调试容器（带有调试工具），而不需要修改原始 Pod 配置。特别适合 distroless 镜像调试。"
+        ],
+        handsOnPath: [
+            "Pod 故障排查实战：创建一个故意配置错误的 Pod（错误镜像名、资源请求过大、错误的健康检查）。使用 describe/logs 定位问题。修复后验证。",
+            "Service 连通性调试：创建 Deployment 和 Service。故意制造 selector 不匹配或端口配置错误。使用 kubectl get endpoints、kubectl exec curl 调试。修复后验证。",
+            "DNS 问题排查：部署一个应用依赖 DNS 解析其他服务。在 Pod 内执行 nslookup/dig 测试。检查 CoreDNS 状态和配置。模拟 CoreDNS 故障和恢复。",
+            "节点问题排查：模拟节点资源不足（磁盘满、内存压力）。观察节点 Condition 变化和 Pod 驱逐。使用 kubectl describe node 和 journalctl 分析。恢复后验证。",
+            "建立排查手册：整理团队常见故障的排查步骤和解决方案。创建故障排查 Runbook。定期更新和培训团队成员。"
+        ],
+        selfCheck: [
+            "Pod 处于 Pending 状态通常是什么原因？如何排查？",
+            "如何区分容器 OOMKilled 和应用自身崩溃？各自的排查方向是什么？",
+            "Service 的 Endpoints 为空可能是什么原因？如何排查和修复？",
+            "节点 NotReady 的常见原因有哪些？如何逐步排查？",
+            "kubectl debug 命令的用途是什么？什么场景下特别有用？"
+        ],
+        extensions: [
+            "研究 Kubernetes Events 的保留和聚合机制，了解如何长期存储事件用于问题回溯。",
+            "探索 kubectl-debug 和其他调试增强工具，了解社区提供的调试能力扩展。",
+            "学习 Chaos Engineering（混沌工程），了解如何主动注入故障来验证系统韧性和排查能力。",
+            "研究 AIOps 在 Kubernetes 故障排查中的应用，了解如何利用 AI 辅助异常检测和根因分析。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/tasks/debug/debug-application/",
+            "https://kubernetes.io/docs/tasks/debug/debug-cluster/",
+            "https://kubernetes.io/docs/reference/kubectl/cheatsheet/"
+        ]
+    },
+    "w16-3": {
+        lessonId: "w16-3",
+        background: [
+            "CKA（Certified Kubernetes Administrator）是 CNCF 官方认证，证明持有者具备 Kubernetes 集群管理能力。考试形式为在线实操，2 小时内在真实集群中完成任务。费用 445 美元，包含一次免费重考。",
+            "CKA 考试覆盖五大领域：集群架构与安装配置（25%）、工作负载与调度（15%）、服务与网络（20%）、存储（10%）、故障排查（30%）。故障排查权重最高，需要重点准备。",
+            "CKAD（Certified Kubernetes Application Developer）侧重应用开发者视角，包括 Pod 设计、配置管理、可观测性等。CKA 侧重管理员视角，包括集群安装、升级、备份恢复等。根据角色选择合适认证。",
+            "考试环境提供 kubectl、官方文档访问（kubernetes.io/docs）和 kubectl 别名（k）。熟练使用 kubectl 和快速查阅文档是关键技能。不允许访问其他网站或使用 AI 工具。",
+            "考试每季度更新以匹配最新 Kubernetes 版本。建议考试前使用与考试版本一致的集群练习。Linux Foundation 提供官方培训课程和模拟考试。"
+        ],
+        keyDifficulties: [
+            "时间管理：2 小时完成约 15-20 道题，平均每题 6-8 分钟。遇到难题先跳过，保证简单题不丢分。使用考试环境的标记功能标记待回顾的题目。",
+            "kubectl 熟练度：必须熟练使用 kubectl create/run/expose 快速创建资源。善用 --dry-run=client -o yaml 生成模板后编辑。熟记常用资源的简写（po/svc/deploy/ns）。",
+            "文档检索效率：考试允许使用 kubernetes.io/docs，但时间有限。提前熟悉文档结构，知道常用配置（如 PV/PVC、NetworkPolicy、RBAC）在哪个页面。使用浏览器搜索功能。",
+            "YAML 编辑效率：考试环境使用 vim/nano。熟练使用 vim 的复制粘贴、查找替换功能。避免 YAML 缩进错误（使用 :set paste）。kubectl explain 可以查看字段说明。"
+        ],
+        handsOnPath: [
+            "建立练习环境：使用 kind/minikube/kubeadm 创建集群。确保版本与考试版本一致。配置 kubectl 别名和补全。练习在命令行完成所有操作。",
+            "按考纲练习：针对五大领域逐一练习。集群安装（kubeadm init/join）、RBAC 配置、NetworkPolicy、PV/PVC、故障排查。使用 Killer.sh 或 KodeKloud 模拟题。",
+            "限时模拟考试：设置 2 小时计时器完成模拟题。记录每道题耗时。分析时间分配，识别薄弱环节。重复练习直到能稳定完成。",
+            "总结速查清单：整理常用 kubectl 命令速查表。记录常见操作的 YAML 模板。整理官方文档常用页面书签。考前复习这些材料。",
+            "考试当天准备：提前测试网络和设备。确保摄像头和麦克风正常。准备身份证件。保持桌面整洁（考官会检查）。提前 15 分钟进入考试系统。"
+        ],
+        selfCheck: [
+            "CKA 考试的五大领域和权重分别是什么？哪个领域权重最高？",
+            "考试中如何快速创建 Kubernetes 资源？--dry-run=client -o yaml 有什么用？",
+            "考试允许访问哪些资源？如何高效使用官方文档？",
+            "你的 kubectl 命令熟练度如何？能否在 1 分钟内创建一个 Deployment 并暴露为 Service？",
+            "如何管理考试时间？遇到难题应该如何处理？"
+        ],
+        extensions: [
+            "了解 CKS（Certified Kubernetes Security Specialist）认证，这是 CKA 的进阶认证，专注安全领域。",
+            "探索其他云原生认证：KCNA（入门级）、Prometheus Certified Associate、Istio Certified Expert 等。",
+            "研究企业招聘对认证的要求，了解认证在职业发展中的价值。",
+            "加入认证学习社区，与其他考生交流备考经验和考试技巧。"
+        ],
+        sourceUrls: [
+            "https://www.cncf.io/training/certification/cka/",
+            "https://www.cncf.io/training/certification/ckad/",
+            "https://killer.sh/"
+        ]
+    },
+    "w16-4": {
+        lessonId: "w16-4",
+        background: [
+            "16 周的 Kubernetes 学习路线涵盖了从基础到进阶的核心知识：容器基础 → 核心资源 → 网络存储 → 部署策略 → GitOps → 可观测性 → 服务网格 → 安全 → Serverless → 故障排查。这是成为 Kubernetes 专家的系统路径。",
+            "技能树可分为三个层次：基础能力（kubectl 操作、YAML 编写、核心资源理解）、进阶能力（网络深入、存储方案、安全加固）、专家能力（架构设计、性能调优、多集群管理）。持续学习是云原生领域的常态。",
+            "Kubernetes 生态持续演进：Gateway API 替代 Ingress、Sidecar-less 服务网格、eBPF 网络、Wasm 扩展等新技术不断涌现。保持对新技术的关注和学习是长期发展的关键。",
+            "职业路线多样：DevOps 工程师（CI/CD、自动化）、SRE（可靠性、可观测性）、平台工程师（内部开发平台）、云原生架构师（技术选型、架构设计）。根据兴趣和优势选择发展方向。",
+            "社区参与是成长加速器：贡献开源项目（Kubernetes、CNCF 项目）、参加 KubeCon 等技术会议、撰写技术博客、在本地 Meetup 分享。社区活动既能学习也能建立人脉。"
+        ],
+        keyDifficulties: [
+            "从「会用」到「精通」的鸿沟：能部署应用只是起点，理解底层原理（如调度算法、网络实现、存储驱动）才能处理复杂问题。需要持续深入学习和实践。",
+            "技术债务与新技术的平衡：生产环境需要稳定，不能盲目追新。评估新技术时考虑：成熟度、社区活跃度、迁移成本、团队学习曲线。渐进式采用是常见策略。",
+            "软技能的重要性：技术能力之外，沟通协作、项目管理、成本意识也是高级工程师的必备能力。能够向非技术人员解释技术决策的价值。",
+            "持续学习的方法论：订阅技术博客/Newsletter、关注 CNCF 项目动态、定期参加技术会议、在工作中实践新知识。建立自己的知识管理系统。"
+        ],
+        handsOnPath: [
+            "复习核心知识：回顾 16 周的学习内容，整理笔记和速查清单。识别掌握不够扎实的领域，针对性补强。",
+            "构建个人项目：设计并实现一个完整的云原生项目（如微服务应用、平台工具）。应用学到的知识，在实践中发现不足。将项目开源展示能力。",
+            "制定学习计划：根据职业目标制定 3-6 个月学习计划。选择 1-2 个深入方向（如安全、可观测性）。设定可衡量的目标（如获得认证、完成项目）。",
+            "建立技术影响力：开始撰写技术博客记录学习和实践。在公司内部分享知识。参与开源社区讨论或贡献代码。",
+            "规划职业发展：了解目标职位的能力要求。寻找 mentor 获取职业建议。持续提升技术和软技能。"
+        ],
+        selfCheck: [
+            "回顾 16 周学习，你掌握最好和需要加强的领域分别是什么？",
+            "你的职业目标是什么？需要什么技能来达成这个目标？",
+            "你计划如何持续学习和跟进云原生技术的发展？",
+            "你有参与开源社区或技术分享的计划吗？",
+            "你的下一步行动是什么？（如考取认证、深入某领域、构建项目）"
+        ],
+        extensions: [
+            "研究平台工程（Platform Engineering）的理念和实践，了解如何构建内部开发者平台。",
+            "探索 Kubernetes 的边缘计算应用（KubeEdge、K3s），了解边缘场景的特殊需求。",
+            "学习 FinOps 和云成本优化，了解如何在 Kubernetes 环境中管理和优化成本。",
+            "关注 CNCF Landscape，了解云原生生态的全貌和技术选型思路。"
+        ],
+        sourceUrls: [
+            "https://www.cncf.io/",
+            "https://landscape.cncf.io/",
+            "https://kubernetes.io/docs/home/"
+        ]
+    }
+}
+
+export const week16Quizzes: Record<string, QuizQuestion[]> = {
     "w16-1": [
         {
             id: "w16-1-q1",
@@ -729,4 +897,4 @@ export const week16: Record<string, QuizQuestion[]> = {
             rationale: "下一步行动：复习核心知识巩固基础、构建个人项目实践、考取 CKA/CKAD 认证验证能力、持续学习跟进新技术、建立技术影响力。"
         }
     ]
-};
+}
