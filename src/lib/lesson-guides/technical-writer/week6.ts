@@ -135,35 +135,40 @@ export const week6Guides: Record<string, LessonGuide> = {
     "tw-w6-4": {
         lessonId: "tw-w6-4",
         background: [
-            "Vale 是开源的命令行风格检查工具——'Your style, our editor'。它完全离线运行，确保内容不发送到远程服务器，支持自定义风格规则。",
-            "markdownlint 是 Markdown 静态分析工具，使用 micromark 解析器，遵循 CommonMark 规范和 GFM 扩展，包含 60 条规则检查风格违规和结构问题。",
-            "文档 QA 自动化的价值：把主观标准变成可执行规则，减少人工重复劳动，确保一致性——每次 PR 都自动检查，而非依赖人工审查。",
-            "常见检查项：拼写错误、链接有效性、术语一致性、Markdown 格式、标题结构、图片 alt 文本、代码示例可运行性。"
+            "【Vale 核心定位】开源命令行工具，将编辑风格指南付诸实践——'Your style, our editor'。完全离线运行，确保内容永不发送到远程服务器。",
+            "【Vale 技术能力】理解标记语言和代码，内置流行风格指南（Google、Microsoft、write-good）的实现方案，支持用户创建和分享自定义规则。",
+            "【markdownlint 定义】Node.js 风格检查器和 Markdown/CommonMark 文件的 lint 工具——静态分析工具，确保 Markdown 文档的标准和一致性。",
+            "【markdownlint 规则覆盖】实现 60+ 条内置规则（MD001-MD060），覆盖标题结构、间距、代码块、链接、表格等格式问题。",
+            "【GitHub Actions 核心】'Automate, customize, and execute your software development workflows right in your repository'——在仓库中自动化、定制和执行软件开发工作流。"
         ],
         keyDifficulties: [
-            "规则配置的平衡：规则太严格会产生大量误报，太宽松则失去意义。需要根据团队情况逐步调整，从核心规则开始。",
-            "自定义规则的创建：Vale 允许创建自定义规则检查术语使用。需要学习 YAML 规则语法和正则表达式。",
-            "CI 集成的配置：GitHub Actions、GitLab CI 等如何配置文档检查？如何让检查结果显示在 PR 中？",
-            "链接检查的挑战：外部链接可能因网络问题误报，内部链接需要考虑构建后的路径。需要配置重试和白名单。"
+            "【规则配置平衡】规则太严格产生大量误报，太宽松则失去意义。需要根据团队情况逐步调整，从核心规则开始。",
+            "【markdownlint 配置】三种主要配置方式：行内注释（HTML comments）、配置对象（options.config）、样式文件（JSON with extends）。",
+            "【CommonMark 兼容】markdownlint 遵循 CommonMark 规范，支持 GitHub Flavored Markdown (GFM) 语法——自动链接、表格、脚注、数学公式。",
+            "【CI 集成配置】GitHub Actions 工作流使用 YAML 文件定义，可触发于 push、pull_request 等事件，支持条件执行和并发控制。",
+            "【自定义规则创建】Vale 允许用 YAML 语法创建自定义规则检查术语使用，需要学习规则语法和正则表达式。"
         ],
         handsOnPath: [
-            "在项目中配置 markdownlint：创建 .markdownlint.json，启用核心规则，运行检查并修复问题。",
-            "配置 Vale 使用官方风格包（如 Google、Microsoft）：创建 .vale.ini，安装风格包，运行检查。",
-            "为你的术语表创建 Vale 自定义规则：检查术语拼写、禁用的同义词、大小写一致性。",
-            "配置 GitHub Actions 自动检查：每个 PR 运行 markdownlint 和 Vale，失败时阻止合并。"
+            "安装 Vale 并运行首次检查：`vale --init` 创建 .vale.ini，安装官方风格包（如 Google、Microsoft）。",
+            "配置 markdownlint：创建 .markdownlint.json 或 .markdownlint.yaml，启用核心规则，运行检查并修复问题。",
+            "为术语表创建 Vale 自定义规则：检查术语拼写、禁用的同义词、大小写一致性。",
+            "配置 GitHub Actions 工作流：创建 .github/workflows/docs.yml，在每个 PR 运行 markdownlint 和 Vale。",
+            "添加链接检查：集成 lychee 或 linkcheck 等工具，发现死链接和失效引用。",
+            "设置检查失败阻止合并：配置 branch protection rules，要求 CI 检查通过才能合并。"
         ],
         selfCheck: [
-            "你的项目是否配置了 markdownlint？是否在 CI 中自动运行？",
-            "你是否使用 Vale 或类似工具检查风格和术语？",
-            "自定义规则是否覆盖了项目特定的术语和风格要求？",
-            "CI 检查失败是否会阻止 PR 合并？",
-            "链接检查是否配置？是否定期运行以发现失效链接？"
+            "【Vale 配置】项目是否有 .vale.ini 配置文件？是否安装了风格包？",
+            "【markdownlint 配置】项目是否有 markdownlint 配置？是否在 CI 中运行？",
+            "【自定义规则】是否为项目特定术语创建了 Vale 自定义规则？",
+            "【CI 集成】文档检查是否集成到 GitHub Actions？每个 PR 是否自动检查？",
+            "【链接检查】是否配置了链接有效性检查？是否定期运行发现死链？",
+            "【合并保护】CI 检查失败是否会阻止 PR 合并？"
         ],
         extensions: [
-            "深入学习 Vale 规则语法：https://vale.sh/docs/topics/styles/",
-            "了解 markdownlint 的所有规则：https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md",
-            "探索其他文档检查工具：textlint、write-good、alex（检查不包容语言）。",
-            "学习使用 GitHub Actions 构建完整的文档 CI/CD 流水线。"
+            "【Vale 规则语法】深入学习：https://vale.sh/docs/topics/styles/ —— 创建自定义规则的完整文档。",
+            "【markdownlint 规则】完整规则列表：https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md",
+            "【其他检查工具】探索 textlint、write-good、alex（检查不包容语言）、proselint 等工具。",
+            "【GitHub Actions 文档 CI/CD】学习构建完整的文档发布流水线——检查、构建、部署一体化。"
         ],
         sourceUrls: [
             "https://vale.sh/",
