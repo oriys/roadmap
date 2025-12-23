@@ -5,11 +5,11 @@ export const week10Guides: Record<string, LessonGuide> = {
     "w10-1": {
         lessonId: "w10-1",
         background: [
-            "【来源: ArgoCD 架构文档】ArgoCD 由三个核心组件构成：API Server 作为 gRPC/REST 端点，处理「应用管理和状态报告」以及「调用应用操作（如 sync、rollback、用户定义的操作）」；Repository Server 是内部服务，「维护包含应用清单的 Git 仓库的本地缓存」；Application Controller 作为 Kubernetes 控制器，「持续监控运行中的应用并比较当前实际状态与期望目标状态」。",
-            "【来源: ArgoCD 架构文档】API Server 管理凭证、执行 RBAC 策略、处理 Git webhook 事件。Repository Server 根据仓库 URL、版本、应用路径和模板配置（如 Helm values）生成 Kubernetes 清单。Application Controller 识别同步差异并执行纠正操作，包括 PreSync、Sync 和 PostSync 的生命周期钩子。",
-            "【来源: ArgoCD 声明式配置文档】Application CRD 需要两个关键部分：source（Git 仓库详情：URL、revision、path）和 destination（目标集群和命名空间）。对于 Helm，使用 chart 属性替代 path。destination 使用 server 或 name（不能同时使用）以及 namespace。",
-            "【来源: ArgoCD 声明式配置文档】AppProject 通过 sourceRepos（允许的 Git 仓库）、destinations（允许的部署目标）、roles（访问控制定义）组织应用。部署到 ArgoCD 命名空间的项目授予管理员级别访问权限，需要谨慎的 RBAC 限制。",
-            "【来源: ArgoCD 声明式配置文档】关于 finalizer 的重要说明：「没有 resources-finalizer.argocd.argoproj.io finalizer，删除 Application 不会删除它管理的资源」。"
+            "【三大组件架构】官方架构文档：ArgoCD 由三个核心组件构成——API Server 是'gRPC/REST server exposing APIs for external systems'负责应用管理和状态报告；Repository Server 是内部服务'maintaining local cache of Git repositories'；Application Controller 是'Kubernetes controller continuously monitoring running applications and comparing current live state against desired target state'。",
+            "【API Server 职责】官方文档：API Server 负责'application management and status reporting'、'invoking of application operations (sync, rollback, user-defined actions)'、凭证管理、外部身份提供商认证、RBAC 策略执行、Git webhook 事件处理。是 ArgoCD 的外部接口。",
+            "【Repository Server 职责】官方文档：Repository Server 负责'generating and returning Kubernetes manifests when provided: repository URL, revision (commit, tag, branch), application path, template specific settings'——根据输入参数渲染生成清单文件，支持 Helm values 和模板参数。",
+            "【Application Controller 职责】官方文档：Application Controller 是核心调和循环，职责包括'detects OutOfSync application conditions'、'takes corrective actions when configured'、'invokes lifecycle hooks (PreSync, Sync, PostSync)'——检测差异、执行同步、触发钩子。",
+            "【Application CRD 核心字段】官方声明式配置文档：source 指定配置来源（repoURL、targetRevision、path/chart）；destination 指定部署目标（'accepts either server or name, but not both'）；project 关联权限边界；syncPolicy 控制同步策略。Finalizer 'resources-finalizer.argocd.argoproj.io' 启用级联删除。"
         ],
         keyDifficulties: [
             "【三组件职责分工】API Server 负责认证授权、外部接口和 webhook 处理；Repository Server 负责克隆仓库、缓存和模板渲染（Helm/Kustomize）生成清单；Application Controller 是核心调和循环，持续比较实际状态与期望状态，检测 OutOfSync 并执行同步。",
@@ -169,126 +169,90 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
     "w10-1": [
         {
             id: "w10-1-q1",
-            question: "ArgoCD 的 Application Controller 的主要职责是什么？",
+            question: "官方架构文档对 ArgoCD API Server 的定义是什么？",
             options: [
-                "提供 Web UI 和 REST API",
-                "持续监控应用状态，检测 OutOfSync 并执行同步",
-                "克隆 Git 仓库并生成 Kubernetes 清单",
-                "管理用户认证和授权"
+                "'gRPC/REST server exposing APIs for external systems'——对外暴露 API 的服务端",
+                "内部缓存服务",
+                "Kubernetes 控制器",
+                "Git 仓库代理"
             ],
-            answer: 1,
-            rationale: "Application Controller 是核心调和循环，持续对比期望状态与实际状态，检测差异并执行同步操作。"
+            answer: 0,
+            rationale: "官方架构文档定义 API Server 为'gRPC/REST server exposing APIs for external systems'，负责应用管理和状态报告。"
         },
         {
             id: "w10-1-q2",
-            question: "ArgoCD 的 Repository Server 的作用是什么？",
+            question: "官方文档对 Repository Server 职责的描述是什么？",
             options: [
-                "存储应用部署历史",
-                "维护 Git 仓库缓存并生成 Kubernetes 清单",
-                "提供 CLI 命令行接口",
-                "管理集群凭证"
+                "执行 RBAC 策略",
+                "持续监控应用状态",
+                "'generating and returning Kubernetes manifests when provided: repository URL, revision, application path, template settings'",
+                "处理 Git webhook 事件"
             ],
-            answer: 1,
-            rationale: "Repository Server 负责克隆 Git 仓库、缓存内容，并使用 Helm/Kustomize 等工具渲染生成 Kubernetes 清单。"
+            answer: 2,
+            rationale: "官方文档：Repository Server 负责'generating and returning Kubernetes manifests when provided: repository URL, revision (commit, tag, branch), application path, template specific settings'。"
         },
         {
             id: "w10-1-q3",
-            question: "Application CRD 中的 source 字段定义什么？",
+            question: "官方文档对 Application Controller 的定义是什么？",
             options: [
-                "目标集群的 API 地址",
-                "应用的 Git 仓库 URL、分支/标签和路径",
-                "同步策略和自动化选项",
-                "项目权限和 RBAC 配置"
+                "gRPC/REST 服务端",
+                "Git 仓库缓存服务",
+                "凭证管理服务",
+                "'Kubernetes controller continuously monitoring running applications and comparing current live state against desired target state'"
             ],
-            answer: 1,
-            rationale: "source 定义应用配置的来源，包括 repoURL（仓库地址）、targetRevision（分支/标签/commit）和 path（应用路径）。"
+            answer: 3,
+            rationale: "官方架构文档定义 Application Controller 为'Kubernetes controller continuously monitoring running applications and comparing current live state against desired target state'。"
         },
         {
             id: "w10-1-q4",
-            question: "Application 的 destination 字段需要指定哪些信息？",
+            question: "官方文档列出的 Application Controller 职责包括什么？",
             options: [
-                "Git 仓库 URL 和分支",
-                "目标集群 API 地址和命名空间",
-                "Helm Chart 名称和版本",
-                "同步策略和 Hook 配置"
+                "'detects OutOfSync application conditions'、'takes corrective actions'、'invokes lifecycle hooks (PreSync, Sync, PostSync)'",
+                "管理用户认证和授权",
+                "克隆 Git 仓库并缓存",
+                "处理外部 API 请求"
             ],
-            answer: 1,
-            rationale: "destination 定义部署目标，包括 server（集群 API 地址）或 name（集群名称）以及 namespace（目标命名空间）。"
+            answer: 0,
+            rationale: "官方文档：Application Controller 职责包括'detects OutOfSync application conditions'、'takes corrective actions when configured'、'invokes lifecycle hooks (PreSync, Sync, PostSync)'。"
         },
         {
             id: "w10-1-q5",
-            question: "Sync Status 为 OutOfSync 表示什么？",
+            question: "官方声明式配置文档对 destination 字段 server 和 name 的说明是什么？",
             options: [
-                "应用资源运行不健康",
-                "集群状态与 Git 定义不一致",
-                "ArgoCD 无法连接到集群",
-                "Git 仓库访问失败"
+                "两者必须同时指定",
+                "'accepts either server or name, but not both'——只能二选一",
+                "name 优先级高于 server",
+                "两者可选，都不指定则使用默认集群"
             ],
             answer: 1,
-            rationale: "OutOfSync 表示集群中的实际状态与 Git 仓库中定义的期望状态存在差异，需要同步。"
+            rationale: "官方声明式配置文档明确：destination'accepts either server or name, but not both (which will result in an error)'。"
         },
         {
             id: "w10-1-q6",
-            question: "Health Status 为 Degraded 通常表示什么？",
+            question: "官方文档对 finalizer 'resources-finalizer.argocd.argoproj.io' 的说明是什么？",
             options: [
-                "应用配置与 Git 不一致",
-                "部分资源运行异常，如 Pod CrashLoopBackOff",
-                "同步操作正在进行中",
-                "应用已被手动暂停"
+                "自动创建命名空间",
+                "启用自动同步",
+                "'Without this finalizer, deleting an Application will not delete the resources it manages'——启用级联删除",
+                "配置 RBAC 权限"
             ],
-            answer: 1,
-            rationale: "Degraded 表示应用资源处于异常状态，如 Deployment 的 Pod 崩溃或未达到期望副本数。"
+            answer: 2,
+            rationale: "官方文档：'Without the resources-finalizer.argocd.argoproj.io finalizer, deleting an Application will not delete the resources it manages'。"
         },
         {
             id: "w10-1-q7",
-            question: "为什么说 ArgoCD 采用 Pull 模式？",
+            question: "官方文档对 AppProject 部署到 ArgoCD 命名空间的警告是什么？",
             options: [
-                "CI 直接调用 ArgoCD API 推送配置",
-                "ArgoCD 主动从 Git 拉取配置并同步到集群",
-                "用户手动触发每次同步",
-                "Kubernetes 从 ArgoCD 拉取配置"
+                "不允许部署到该命名空间",
+                "需要特殊的 annotation",
+                "只能部署系统应用",
+                "'grant admin-level access'——授予管理员级别访问权限，需要谨慎"
             ],
-            answer: 1,
-            rationale: "Pull 模式指 ArgoCD 控制器主动从 Git 仓库拉取配置，而非外部系统推送。CI 只需提交到 Git，无需访问集群。"
+            answer: 3,
+            rationale: "官方文档警告：Projects allowing deployment to ArgoCD namespace'grant admin-level access'，需要严格的 RBAC 限制。"
         },
         {
             id: "w10-1-q8",
-            question: "Application 必须部署在哪个命名空间？",
-            options: [
-                "default 命名空间",
-                "与 ArgoCD 相同的命名空间（通常是 argocd）",
-                "任意命名空间",
-                "kube-system 命名空间"
-            ],
-            answer: 1,
-            rationale: "Application CRD 必须创建在 ArgoCD 所在的命名空间（通常是 argocd），这是 ArgoCD 的设计要求。"
-        },
-        {
-            id: "w10-1-q9",
-            question: "获取 ArgoCD 初始管理员密码的命令是什么？",
-            options: [
-                "kubectl get secret argocd-initial-admin-secret",
-                "argocd admin initial-password -n argocd",
-                "argocd login --password",
-                "kubectl describe cm argocd-cm"
-            ],
-            answer: 1,
-            rationale: "argocd admin initial-password -n argocd 命令从 Kubernetes Secret 中读取并解码初始管理员密码。"
-        },
-        {
-            id: "w10-1-q10",
-            question: "argocd app refresh 和 argocd app sync 的区别是什么？",
-            options: [
-                "refresh 同步资源，sync 刷新状态",
-                "refresh 重新读取 Git 并对比状态，sync 实际应用变更到集群",
-                "两者功能相同",
-                "refresh 用于 Helm，sync 用于 Kustomize"
-            ],
-            answer: 1,
-            rationale: "refresh 从 Git 重新获取配置并更新状态（检测是否 OutOfSync），sync 实际将变更应用到集群。"
-        },
-        {
-            id: "w10-1-q11",
             question: "ArgoCD 默认的调和（reconciliation）间隔是多少？",
             options: [
                 "30 秒",
@@ -300,52 +264,52 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
             rationale: "ArgoCD 默认每 3 分钟检查一次 Git 仓库变化，可以通过配置或 Webhook 减少延迟。"
         },
         {
-            id: "w10-1-q12",
-            question: "Application 的 project 字段的作用是什么？",
+            id: "w10-1-q9",
+            question: "Sync Status 为 OutOfSync 表示什么？",
             options: [
-                "定义 Git 仓库路径",
-                "定义权限边界和访问控制",
-                "定义目标命名空间",
-                "定义同步策略"
+                "集群状态与 Git 定义不一致",
+                "应用资源运行不健康",
+                "ArgoCD 无法连接到集群",
+                "Git 仓库访问失败"
             ],
-            answer: 1,
-            rationale: "Project（AppProject）定义应用的权限边界，包括允许的源仓库、目标集群、资源类型等，实现多租户隔离。"
+            answer: 0,
+            rationale: "OutOfSync 表示集群中的实际状态与 Git 仓库中定义的期望状态存在差异，需要同步。"
         },
         {
-            id: "w10-1-q13",
+            id: "w10-1-q10",
+            question: "Health Status 为 Degraded 通常表示什么？",
+            options: [
+                "应用配置与 Git 不一致",
+                "部分资源运行异常，如 Pod CrashLoopBackOff",
+                "同步操作正在进行中",
+                "应用已被手动暂停"
+            ],
+            answer: 1,
+            rationale: "Degraded 表示应用资源处于异常状态，如 Deployment 的 Pod 崩溃或未达到期望副本数。"
+        },
+        {
+            id: "w10-1-q11",
             question: "targetRevision 可以是以下哪些值？",
             options: [
                 "只能是分支名",
                 "只能是 Tag",
-                "分支名、Tag 或 commit SHA",
-                "只能是 commit SHA"
+                "只能是 commit SHA",
+                "分支名、Tag 或 commit SHA"
             ],
-            answer: 2,
+            answer: 3,
             rationale: "targetRevision 支持分支名（如 main）、Tag（如 v1.0.0）或完整的 commit SHA，提供灵活的版本控制。"
         },
         {
-            id: "w10-1-q14",
-            question: "ArgoCD 支持哪些方式访问 Git 仓库？",
+            id: "w10-1-q12",
+            question: "为什么说 ArgoCD 采用 Pull 模式而非 Push 模式？",
             options: [
-                "只支持 HTTPS",
-                "只支持 SSH",
-                "HTTPS（用户名/Token）和 SSH（密钥）",
-                "只支持 Git 协议"
-            ],
-            answer: 2,
-            rationale: "ArgoCD 支持 HTTPS（使用用户名/密码或 Token）和 SSH（使用密钥对）两种方式访问 Git 仓库。"
-        },
-        {
-            id: "w10-1-q15",
-            question: "如何让 ArgoCD 在删除 Application 时也删除其管理的资源？",
-            options: [
-                "手动删除所有资源",
-                "添加 resources-finalizer.argocd.argoproj.io finalizer",
-                "设置 cascade=true 参数",
-                "使用 kubectl delete 而非 argocd app delete"
+                "CI 直接调用 ArgoCD API 推送配置",
+                "ArgoCD 控制器主动从 Git 拉取配置并同步到集群，无需暴露集群 API",
+                "用户必须手动触发每次同步",
+                "Kubernetes 从 ArgoCD 拉取配置"
             ],
             answer: 1,
-            rationale: "添加 resources-finalizer.argocd.argoproj.io finalizer 后，删除 Application 会级联删除其管理的所有 Kubernetes 资源。"
+            rationale: "Pull 模式指 ArgoCD 控制器主动从 Git 仓库拉取配置，而非外部系统推送。CI 只需提交到 Git，无需访问集群，安全性更高。"
         }
     ],
     "w10-2": [
