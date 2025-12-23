@@ -89,17 +89,18 @@ export const week16Guides: Record<string, LessonGuide> = {
     "w16-3": {
         lessonId: "w16-3",
         background: [
-            "CKA（Certified Kubernetes Administrator）是 CNCF 官方认证，证明持有者具备 Kubernetes 集群管理能力。考试形式为在线实操，2 小时内在真实集群中完成任务。费用 445 美元，包含一次免费重考。",
-            "CKA 考试覆盖五大领域：集群架构与安装配置（25%）、工作负载与调度（15%）、服务与网络（20%）、存储（10%）、故障排查（30%）。故障排查权重最高，需要重点准备。",
-            "CKAD（Certified Kubernetes Application Developer）侧重应用开发者视角，包括 Pod 设计、配置管理、可观测性等。CKA 侧重管理员视角，包括集群安装、升级、备份恢复等。根据角色选择合适认证。",
-            "考试环境提供 kubectl、官方文档访问（kubernetes.io/docs）和 kubectl 别名（k）。熟练使用 kubectl 和快速查阅文档是关键技能。不允许访问其他网站或使用 AI 工具。",
-            "考试每季度更新以匹配最新 Kubernetes 版本。建议考试前使用与考试版本一致的集群练习。Linux Foundation 提供官方培训课程和模拟考试。"
+            "【CKA 认证定义】CNCF 官方：CKA（Certified Kubernetes Administrator）是'performance-based exam that tests your ability to deploy, manage, and troubleshoot Kubernetes clusters'——基于实操的考试，测试部署、管理和排错能力。费用 $445 USD，包含一次免费重考机会。",
+            "【CKA 考试领域权重】官方课程大纲：五大领域——Cluster Architecture, Installation & Configuration（25%）、Workloads & Scheduling（15%）、Services & Networking（20%）、Storage（10%）、Troubleshooting（30%）。故障排查权重最高。",
+            "【CKAD 认证定义】CNCF 官方：CKAD（Certified Kubernetes Application Developer）面向'application developers who want to demonstrate their ability to design, build, and deploy cloud-native applications for Kubernetes'——证明设计、构建和部署云原生应用的能力。",
+            "【CKAD 考试领域权重】官方课程大纲：五大领域——Application Design and Build（20%）、Application Deployment（20%）、Application Observability and Maintenance（15%）、Application Environment, Configuration and Security（25%）、Services and Networking（20%）。",
+            "【考试环境与规则】官方说明：考试采用'online proctored, performance-based test'——在线监考的实操测试。时间 2 小时，在真实 Kubernetes 集群中完成任务。允许访问 kubernetes.io/docs 官方文档，禁止访问其他网站。"
         ],
         keyDifficulties: [
-            "时间管理：2 小时完成约 15-20 道题，平均每题 6-8 分钟。遇到难题先跳过，保证简单题不丢分。使用考试环境的标记功能标记待回顾的题目。",
-            "kubectl 熟练度：必须熟练使用 kubectl create/run/expose 快速创建资源。善用 --dry-run=client -o yaml 生成模板后编辑。熟记常用资源的简写（po/svc/deploy/ns）。",
-            "文档检索效率：考试允许使用 kubernetes.io/docs，但时间有限。提前熟悉文档结构，知道常用配置（如 PV/PVC、NetworkPolicy、RBAC）在哪个页面。使用浏览器搜索功能。",
-            "YAML 编辑效率：考试环境使用 vim/nano。熟练使用 vim 的复制粘贴、查找替换功能。避免 YAML 缩进错误（使用 :set paste）。kubectl explain 可以查看字段说明。"
+            "【时间管理策略】考试技巧：2 小时完成约 15-20 道题，平均每题 6-8 分钟。遇到难题先跳过标记（flag for review），保证简单题不丢分。先完成高分值题目，最后回顾标记的题目。",
+            "【kubectl 命令效率】官方文档：善用'kubectl create'和'kubectl run'快速创建资源。关键技巧：'--dry-run=client -o yaml'生成模板后编辑。熟记资源简写：po(pods)、svc(services)、deploy(deployments)、cm(configmaps)、ns(namespaces)。",
+            "【文档检索技巧】考试规则：允许访问 kubernetes.io/docs 和相关子域名。提前熟悉文档结构，知道 PV/PVC、NetworkPolicy、RBAC 等常用配置的页面位置。使用浏览器 Ctrl+F 快速搜索关键词。",
+            "【YAML 编辑效率】考试环境：使用 vim 或 nano 编辑器。关键 vim 技巧：':set paste'避免粘贴时缩进错乱、':set number'显示行号。使用'kubectl explain <resource>.<field>'查询字段格式。",
+            "【CKA vs CKAD 选择】官方定位：CKA 侧重'Kubernetes administrator'——集群安装、升级、备份恢复、故障排查；CKAD 侧重'application developer'——Pod 设计、配置管理、部署策略。根据职业方向选择，可同时持有两个认证。"
         ],
         handsOnPath: [
             "建立练习环境：使用 kind/minikube/kubeadm 创建集群。确保版本与考试版本一致。配置 kubectl 别名和补全。练习在命令行完成所有操作。",
@@ -124,7 +125,7 @@ export const week16Guides: Record<string, LessonGuide> = {
         sourceUrls: [
             "https://www.cncf.io/training/certification/cka/",
             "https://www.cncf.io/training/certification/ckad/",
-            "https://killer.sh/"
+            "https://github.com/cncf/curriculum"
         ]
     },
     "w16-4": {
@@ -466,183 +467,147 @@ export const week16Quizzes: Record<string, QuizQuestion[]> = {
     "w16-3": [
         {
             id: "w16-3-q1",
-            question: "CKA 考试的时长是多少？",
+            question: "CNCF 官方对 CKA 考试的定义是什么？",
             options: [
-                "1 小时",
-                "2 小时",
-                "3 小时",
-                "4 小时"
+                "理论知识测试",
+                "'performance-based exam that tests your ability to deploy, manage, and troubleshoot Kubernetes clusters'",
+                "多选题考试",
+                "口头问答考试"
             ],
             answer: 1,
-            rationale: "CKA 考试时长为 2 小时，需要在真实集群环境中完成约 15-20 道实操题目。时间管理是关键技能。"
+            rationale: "CNCF 官方定义 CKA 为'performance-based exam that tests your ability to deploy, manage, and troubleshoot Kubernetes clusters'——基于实操的考试。"
         },
         {
             id: "w16-3-q2",
             question: "CKA 考试中权重最高的领域是什么？",
             options: [
-                "集群架构（25%）",
-                "工作负载（15%）",
-                "故障排查（30%）",
-                "存储（10%）"
+                "Troubleshooting（30%）——故障排查",
+                "Cluster Architecture（25%）",
+                "Services & Networking（20%）",
+                "Storage（10%）"
             ],
-            answer: 2,
-            rationale: "故障排查占 30% 权重最高，其次是集群架构（25%）和服务网络（20%）。备考时应重点关注故障排查。"
+            answer: 0,
+            rationale: "官方课程大纲：Troubleshooting 占 30% 权重最高，其次是 Cluster Architecture（25%）和 Services & Networking（20%）。"
         },
         {
             id: "w16-3-q3",
-            question: "CKA 考试中可以使用什么资源？",
+            question: "CKA 考试费用和重考政策是什么？",
             options: [
-                "任何网站",
-                "只有 kubernetes.io/docs 官方文档",
-                "ChatGPT",
-                "Google 搜索"
+                "$395 USD，无重考机会",
+                "$495 USD，两次重考",
+                "$445 USD，包含一次免费重考",
+                "$545 USD，无限重考"
             ],
-            answer: 1,
-            rationale: "考试只允许访问 kubernetes.io/docs 和相关子域名。不能使用 AI 工具、搜索引擎或其他网站。需要熟悉官方文档结构。"
+            answer: 2,
+            rationale: "CNCF 官方：CKA 考试费用 $445 USD，包含一次免费重考机会（one free retake）。"
         },
         {
             id: "w16-3-q4",
-            question: "--dry-run=client -o yaml 参数的用途是什么？",
+            question: "CKAD 考试面向什么人群？",
             options: [
-                "直接创建资源",
-                "生成资源 YAML 模板而不实际创建",
-                "删除资源",
-                "更新资源"
+                "系统管理员",
+                "网络工程师",
+                "数据库管理员",
+                "'application developers who want to demonstrate their ability to design, build, and deploy cloud-native applications'"
             ],
-            answer: 1,
-            rationale: "--dry-run=client 不实际创建资源，-o yaml 输出 YAML 格式。组合使用可以快速生成模板后编辑，是考试中的常用技巧。"
+            answer: 3,
+            rationale: "CNCF 官方：CKAD 面向'application developers who want to demonstrate their ability to design, build, and deploy cloud-native applications for Kubernetes'。"
         },
         {
             id: "w16-3-q5",
-            question: "CKA 和 CKAD 的主要区别是什么？",
+            question: "CKA 考试中可以访问什么资源？",
             options: [
-                "没有区别",
-                "CKA 侧重集群管理，CKAD 侧重应用开发",
-                "CKAD 更难",
-                "CKA 只考理论"
+                "任何搜索引擎",
+                "kubernetes.io/docs 官方文档",
+                "Stack Overflow",
+                "AI 工具"
             ],
             answer: 1,
-            rationale: "CKA 侧重管理员视角（集群安装、升级、备份）；CKAD 侧重开发者视角（Pod 设计、配置、可观测性）。根据角色选择。"
+            rationale: "考试规则：允许访问 kubernetes.io/docs 和相关子域名，禁止使用搜索引擎、AI 工具或其他网站。"
         },
         {
             id: "w16-3-q6",
-            question: "考试中遇到难题应该怎么处理？",
+            question: "CKAD 考试中权重最高的领域是什么？",
             options: [
-                "必须完成每道题",
-                "先跳过标记，保证简单题不丢分",
-                "放弃整个考试",
-                "花更多时间在难题上"
+                "Application Design and Build（20%）",
+                "Application Deployment（20%）",
+                "Application Environment, Configuration and Security（25%）",
+                "Services and Networking（20%）"
             ],
-            answer: 1,
-            rationale: "时间有限，遇到难题先跳过并标记，优先完成有把握的题目。最后回头处理难题，避免在一道题上花费过多时间。"
+            answer: 2,
+            rationale: "官方课程大纲：Application Environment, Configuration and Security 占 25% 权重最高。"
         },
         {
             id: "w16-3-q7",
-            question: "CKA 考试费用是多少？包含什么？",
+            question: "--dry-run=client -o yaml 参数组合的用途是什么？",
             options: [
-                "100 美元",
-                "445 美元，包含一次免费重考",
-                "1000 美元",
-                "免费"
+                "删除资源并输出日志",
+                "更新现有资源",
+                "直接创建资源到集群",
+                "生成资源 YAML 模板而不实际创建"
             ],
-            answer: 1,
-            rationale: "CKA 考试费用 445 美元，包含一次免费重考机会。可以关注 Linux Foundation 的促销活动获取折扣。"
+            answer: 3,
+            rationale: "kubectl 技巧：--dry-run=client 不实际创建资源，-o yaml 输出 YAML 格式。组合使用可快速生成模板后编辑。"
         },
         {
             id: "w16-3-q8",
-            question: "kubectl 常用资源简写 po、svc、deploy 分别代表什么？",
+            question: "kubectl 资源简写 po、svc、deploy、cm 分别代表什么？",
             options: [
-                "pods、services、deployments",
-                "podTemplate、serviceAccount、deployment",
-                "policy、secret、daemonset",
-                "pod、service、daemon"
+                "pods、services、deployments、configmaps",
+                "policy、secret、daemon、cluster",
+                "port、service、deployment、command",
+                "podTemplate、serviceAccount、daemonset、certificate"
             ],
             answer: 0,
-            rationale: "熟记常用简写节省时间：po=pods, svc=services, deploy=deployments, ns=namespaces, cm=configmaps, pv=persistentvolumes 等。"
+            rationale: "常用简写：po=pods, svc=services, deploy=deployments, cm=configmaps, ns=namespaces, pv=persistentvolumes。"
         },
         {
             id: "w16-3-q9",
-            question: "如何快速查看 YAML 字段说明？",
+            question: "如何使用 kubectl 查看 YAML 字段说明？",
             options: [
-                "只能查文档",
-                "kubectl explain 资源.字段",
-                "kubectl describe",
-                "kubectl get -o yaml"
+                "kubectl get -o wide",
+                "kubectl describe --explain",
+                "kubectl explain <resource>.<field>",
+                "kubectl help yaml"
             ],
-            answer: 1,
-            rationale: "kubectl explain pod.spec.containers 可以查看字段说明和类型，支持递归（--recursive）。考试中可以快速确认字段格式。"
+            answer: 2,
+            rationale: "kubectl explain pod.spec.containers 可查看字段说明和类型，支持 --recursive 递归显示所有子字段。"
         },
         {
             id: "w16-3-q10",
-            question: "考试前应该如何准备环境？",
+            question: "在 vim 中避免 YAML 粘贴缩进问题的命令是什么？",
             options: [
-                "不需要准备",
-                "测试网络、摄像头、身份证件，保持桌面整洁",
-                "只需要检查网络",
-                "只需要准备笔记"
-            ],
-            answer: 1,
-            rationale: "考前准备：测试网络稳定性、摄像头和麦克风正常、准备有效身份证件、保持桌面整洁（考官会检查环境）、提前 15 分钟进入。"
-        },
-        {
-            id: "w16-3-q11",
-            question: "如何在 vim 中避免 YAML 缩进问题？",
-            options: [
-                "不使用 vim",
-                "使用 :set paste 进入粘贴模式",
-                "使用 Tab 键",
-                "不需要任何设置"
+                ":set autoindent",
+                ":set paste",
+                ":set tabstop=2",
+                ":set expandtab"
             ],
             answer: 1,
             rationale: ":set paste 禁用自动缩进，避免粘贴 YAML 时格式错乱。粘贴完成后 :set nopaste 恢复正常模式。"
         },
         {
+            id: "w16-3-q11",
+            question: "CKA 和 CKAD 的主要区别是什么？",
+            options: [
+                "CKAD 考试时间更长",
+                "CKA 只考理论不考实操",
+                "两者完全相同",
+                "CKA 侧重集群管理（administrator），CKAD 侧重应用开发（developer）"
+            ],
+            answer: 3,
+            rationale: "官方定位：CKA 侧重'Kubernetes administrator'——集群安装、升级、备份恢复；CKAD 侧重'application developer'——Pod 设计、配置管理。"
+        },
+        {
             id: "w16-3-q12",
-            question: "CKA 考试多久更新一次以匹配 Kubernetes 版本？",
+            question: "考试中遇到难题的最佳策略是什么？",
             options: [
-                "每月",
-                "每季度",
-                "每年",
-                "从不更新"
+                "花更多时间直到解决",
+                "先跳过并标记（flag for review），保证简单题不丢分",
+                "立即放弃该题",
+                "重启考试系统"
             ],
             answer: 1,
-            rationale: "CKA 考试每季度更新以匹配最新 Kubernetes 版本。备考时确保使用与考试版本一致的集群练习。"
-        },
-        {
-            id: "w16-3-q13",
-            question: "Killer.sh 是什么？",
-            options: [
-                "考试管理系统",
-                "CKA/CKAD 模拟考试平台",
-                "Kubernetes 安装工具",
-                "监控系统"
-            ],
-            answer: 1,
-            rationale: "Killer.sh 是官方合作的模拟考试平台，提供与真实考试相似的环境和题目。购买考试后会获得模拟考试访问权限。"
-        },
-        {
-            id: "w16-3-q14",
-            question: "考试中快速创建 Deployment 的命令是什么？",
-            options: [
-                "kubectl apply -f deployment.yaml",
-                "kubectl create deployment <name> --image=<image>",
-                "kubectl run deployment",
-                "kubectl generate deployment"
-            ],
-            answer: 1,
-            rationale: "kubectl create deployment nginx --image=nginx 快速创建 Deployment。添加 --replicas 设置副本数，结合 --dry-run=client -o yaml 生成模板。"
-        },
-        {
-            id: "w16-3-q15",
-            question: "获得 CKA 认证后有效期是多久？",
-            options: [
-                "永久有效",
-                "2 年",
-                "3 年",
-                "1 年"
-            ],
-            answer: 2,
-            rationale: "CKA 认证有效期为 3 年。到期后需要重新考试以保持认证有效。建议在有效期内关注技术发展和实践。"
+            rationale: "时间管理技巧：2 小时完成约 15-20 道题，遇到难题先跳过标记，优先完成有把握的题目，最后回顾标记的题目。"
         }
     ],
     "w16-4": [
