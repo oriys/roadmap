@@ -120,40 +120,46 @@ export const week6Guides: Record<string, LessonGuide> = {
     "w6-1": {
         lessonId: "w6-1",
         background: [
-            "Kubernetes 提供多种机制控制 Pod 调度到特定节点：nodeSelector（简单标签匹配）、nodeAffinity（表达式丰富的节点亲和）、Pod Affinity/Anti-Affinity（Pod 间亲和/反亲和）。",
-            "nodeSelector 是最简单的节点选择方式，要求节点标签完全匹配。nodeAffinity 更强大，支持逻辑运算符（In、NotIn、Exists、DoesNotExist、Gt、Lt）和软/硬约束。",
-            "亲和性规则分为两类：requiredDuringSchedulingIgnoredDuringExecution（硬约束，必须满足）和 preferredDuringSchedulingIgnoredDuringExecution（软约束，尽量满足）。后缀 IgnoredDuringExecution 表示运行中的 Pod 不会因规则变化被驱逐。",
-            "Pod Affinity 将 Pod 调度到同一拓扑域（如同一节点、同一可用区），Pod Anti-Affinity 将 Pod 分散到不同拓扑域。topologyKey 定义拓扑域的粒度。"
+            "【nodeSelector 定义】官方文档：'nodeSelector is the simplest recommended form of node selection constraint'——最简单的节点选择方式，Pod spec 中指定标签，Kubernetes 仅在具有所有指定标签的节点上调度。",
+            "【亲和性优势】官方文档列出三点：'更强的表达能力（supports more complex selection logic）'、'软约束支持（prefer rules that are not hard requirements）'、'Pod 间约束（constrain a Pod using labels on other Pods）'。",
+            "【两种亲和性类型】官方定义：requiredDuringSchedulingIgnoredDuringExecution 是硬约束（'rules must be met for a pod to be scheduled'）；preferredDuringSchedulingIgnoredDuringExecution 是软约束（'scheduler will try to enforce but will not guarantee'）。",
+            "【拓扑分布约束目的】官方文档：'control how Pods are distributed across your cluster among failure-domains such as regions, zones, nodes'——防止单点故障、优化延迟、减少跨区流量成本。",
+            "【PriorityClass 机制】官方文档：'PriorityClass is a non-namespaced object that maps a priority class name to an integer value'——值范围 -2147483648 到 1000000000，数值越大优先级越高。",
+            "【调度框架架构】官方文档：Scheduling Framework 是'pluggable architecture for the Kubernetes scheduler'，包含 13 个扩展点，分为调度周期（选择节点）和绑定周期（应用决策）两个阶段。"
         ],
         keyDifficulties: [
-            "topologyKey 的理解：它指定节点标签键来划分拓扑域。常用值：kubernetes.io/hostname（节点级别）、topology.kubernetes.io/zone（可用区级别）、topology.kubernetes.io/region（区域级别）。",
-            "required vs preferred 的选择：required 是硬约束，不满足则 Pod 无法调度，可能导致 Pending；preferred 是软约束，有权重评分机制（1-100），尽量满足但不阻止调度。",
-            "Pod Anti-Affinity 的性能影响：需要检查集群中所有 Pod 的标签，在大规模集群中可能影响调度性能。建议限制 namespace 范围（namespaceSelector）或使用较小的 topologyKey 范围。",
-            "matchExpressions 的逻辑：同一 matchExpressions 数组内的条件是 AND 关系；nodeSelectorTerms 数组内的多个 term 是 OR 关系。理解这个逻辑对构建复杂规则很重要。"
+            "【IgnoredDuringExecution 含义】官方文档：'if the node labels change after Kubernetes schedules the Pod, the Pod continues to run'——调度后节点标签变化不会驱逐 Pod。未来可能支持 RequiredDuringExecution 实现运行时驱逐。",
+            "【逻辑关系规则】官方文档明确：'nodeSelectorTerms: [term1, term2] → term1 OR term2'；'matchExpressions: [expr1, expr2] → expr1 AND expr2'——多个 term 是 OR 关系，同一 term 内的表达式是 AND 关系。",
+            "【maxSkew 参数】官方文档：'degree to which Pods may be unevenly distributed'——定义 Pod 分布的最大不均匀度。配合 whenUnsatisfiable（DoNotSchedule 或 ScheduleAnyway）控制违反约束时的行为。",
+            "【抢占机制】官方文档：'scheduler can preempt (evict) lower-priority Pods to make room for the pending Pod'——当高优先级 Pod 无法调度时，调度器驱逐低优先级 Pod 腾出资源。nominatedNodeName 记录被提名的节点。",
+            "【非抢占优先级】官方文档 v1.24+：'preemptionPolicy: Never'——Pod 在调度队列中优先但不会抢占其他 Pod，适用于'should be prioritized but shouldn't discard existing work'的场景。"
         ],
         handsOnPath: [
-            "给节点添加自定义标签（kubectl label node <name> disktype=ssd），然后创建使用 nodeSelector 的 Pod，验证 Pod 只调度到有该标签的节点。",
-            "创建使用 nodeAffinity 的 Pod，配置 required 约束必须运行在 Linux 节点，preferred 约束优先选择带有 gpu=true 标签的节点，观察调度结果。",
-            "部署一个 3 副本的 Deployment，配置 podAntiAffinity 使用 kubernetes.io/hostname 作为 topologyKey，验证每个 Pod 运行在不同节点上。",
-            "使用 Pod Affinity 将缓存服务与 Web 服务调度到同一可用区，使用 topology.kubernetes.io/zone 作为 topologyKey，验证跨可用区的 Pod 分布。"
+            "给节点添加自定义标签（kubectl label node <name> disktype=ssd），创建使用 nodeSelector: {disktype: ssd} 的 Pod，验证 Pod 只调度到有该标签的节点。",
+            "创建使用 nodeAffinity 的 Pod：required 约束 kubernetes.io/os In [linux]，preferred 约束（weight: 50）优先选择带 gpu=true 标签的节点，观察调度结果。",
+            "部署 Deployment 配置 podAntiAffinity：topologyKey: kubernetes.io/hostname + labelSelector 匹配自身标签，验证每个副本运行在不同节点。",
+            "创建 topologySpreadConstraints：maxSkew: 1 + topologyKey: topology.kubernetes.io/zone + whenUnsatisfiable: DoNotSchedule，验证 Pod 跨可用区均匀分布。",
+            "创建 PriorityClass（value: 1000000）并在 Pod 中引用 priorityClassName，验证高优先级 Pod 优先调度；创建 preemptionPolicy: Never 的 PriorityClass 测试非抢占行为。"
         ],
         selfCheck: [
-            "nodeSelector 和 nodeAffinity 的区别是什么？什么情况下应该使用 nodeAffinity？",
-            "requiredDuringSchedulingIgnoredDuringExecution 和 preferredDuringSchedulingIgnoredDuringExecution 的区别是什么？",
-            "topologyKey 的作用是什么？常用的 topologyKey 值有哪些？",
-            "如何使用 Pod Anti-Affinity 确保 Deployment 的副本分散在不同节点？",
-            "preferred 亲和性的 weight 参数如何影响调度决策？"
+            "nodeSelector 和 nodeAffinity 的区别是什么？nodeAffinity 支持哪六种操作符？",
+            "requiredDuringSchedulingIgnoredDuringExecution 中 Ignored 是什么意思？如果节点标签变化会发生什么？",
+            "nodeSelectorTerms 数组内多个 term 是什么逻辑关系？matchExpressions 内多个条件呢？",
+            "topologySpreadConstraints 的 maxSkew 和 whenUnsatisfiable 各有什么作用？",
+            "PriorityClass 的 preemptionPolicy: Never 与默认的抢占行为有什么区别？适用于什么场景？",
+            "Kubernetes 内置的两个系统级 PriorityClass 是什么？它们用于什么场景？"
         ],
         extensions: [
-            "研究 Pod Topology Spread Constraints，了解如何更精细地控制 Pod 在拓扑域间的分布均匀度。",
-            "探索 nodeAffinity 的 requiredDuringSchedulingRequiredDuringExecution（计划中的特性），了解未来可能支持的运行时驱逐功能。",
-            "学习使用 node-restriction.kubernetes.io/ 前缀的标签限制 kubelet 可设置的标签，防止节点伪造身份。",
-            "研究调度器扩展点和调度插件，了解如何自定义调度逻辑实现更复杂的亲和性规则。"
+            "研究 matchLabelKeys（v1.27 beta）在 topologySpreadConstraints 中的应用，了解如何使用 pod-template-hash 区分 Deployment 版本。",
+            "探索 node-restriction.kubernetes.io/ 前缀标签，了解如何防止被破坏的节点绕过调度限制。",
+            "学习调度框架的 13 个扩展点（PreFilter、Filter、Score、Reserve、Permit 等），了解如何开发自定义调度插件。",
+            "研究 ResourceQuota 与 PriorityClass 的配合使用，了解如何在多租户环境中限制优先级类的使用配额。"
         ],
         sourceUrls: [
             "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
-            "https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/",
-            "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"
+            "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+            "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+            "https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/"
         ]
     }
 }
@@ -708,183 +714,147 @@ export const week6Quizzes: Record<string, QuizQuestion[]> = {
     "w6-1": [
         {
             id: "w6-1-q1",
-            question: "nodeSelector 和 nodeAffinity 的主要区别是什么？",
+            question: "官方文档对 nodeSelector 的描述是什么？",
             options: [
-                "nodeSelector 性能更好",
-                "nodeAffinity 支持逻辑运算符和软约束，nodeSelector 只支持精确匹配",
-                "nodeSelector 可以跨命名空间使用",
-                "nodeAffinity 只支持硬约束"
+                "'the simplest recommended form of node selection constraint'——最简单的推荐节点选择方式",
+                "最强大的节点选择方式",
+                "已废弃的节点选择方式",
+                "仅用于测试环境的功能"
             ],
-            answer: 1,
-            rationale: "nodeAffinity 比 nodeSelector 更强大，支持 In、NotIn、Exists 等运算符，以及 preferred 软约束；nodeSelector 只支持精确的标签匹配。"
+            answer: 0,
+            rationale: "官方文档明确指出 nodeSelector 是'the simplest recommended form of node selection constraint'——最简单的推荐节点选择约束方式。"
         },
         {
             id: "w6-1-q2",
-            question: "requiredDuringSchedulingIgnoredDuringExecution 的含义是什么？",
+            question: "nodeAffinity 相比 nodeSelector 的优势不包括以下哪项？",
             options: [
-                "软约束，尽量满足",
-                "硬约束，调度时必须满足，运行时规则变化不会驱逐 Pod",
-                "只在调度时检查，运行时强制执行",
-                "可以忽略的约束"
+                "更强的表达能力",
+                "软约束支持",
+                "Pod 间约束",
+                "自动创建节点标签"
             ],
-            answer: 1,
-            rationale: "required 表示硬约束，调度时必须满足；IgnoredDuringExecution 表示 Pod 运行后如果节点标签变化不满足规则，不会驱逐 Pod。"
+            answer: 3,
+            rationale: "官方文档列出三点优势：更强的表达能力、软约束支持、Pod 间约束。nodeAffinity 不会自动创建节点标签。"
         },
         {
             id: "w6-1-q3",
-            question: "topologyKey 在 Pod Affinity 中的作用是什么？",
+            question: "IgnoredDuringExecution 在亲和性规则名称中的含义是什么？",
             options: [
-                "指定 Pod 的名称前缀",
-                "定义拓扑域的粒度（如节点、可用区、区域）",
-                "设置 Pod 的优先级",
-                "配置网络拓扑"
+                "调度时忽略该规则",
+                "运行时强制执行该规则",
+                "'if the node labels change after scheduling, the Pod continues to run'——调度后标签变化不驱逐 Pod",
+                "Pod 启动后忽略所有约束"
             ],
-            answer: 1,
-            rationale: "topologyKey 指定一个节点标签键来划分拓扑域。相同标签值的节点属于同一拓扑域，Pod Affinity 在这个范围内生效。"
+            answer: 2,
+            rationale: "官方文档：'if the node labels change after Kubernetes schedules the Pod, the Pod continues to run'——调度后节点标签变化不会导致 Pod 被驱逐。"
         },
         {
             id: "w6-1-q4",
-            question: "kubernetes.io/hostname 作为 topologyKey 表示什么？",
+            question: "官方文档描述的 nodeSelectorTerms 与 matchExpressions 的逻辑关系是什么？",
             options: [
-                "可用区级别的拓扑域",
-                "单个节点作为一个拓扑域",
-                "整个集群作为一个拓扑域",
-                "按操作系统划分的拓扑域"
+                "nodeSelectorTerms 是 AND，matchExpressions 是 OR",
+                "两者都是 AND 关系",
+                "两者都是 OR 关系",
+                "nodeSelectorTerms 是 OR，matchExpressions 是 AND"
             ],
-            answer: 1,
-            rationale: "kubernetes.io/hostname 以单个节点为拓扑域。使用这个 topologyKey 的 Pod Anti-Affinity 会确保 Pod 分散到不同节点。"
+            answer: 3,
+            rationale: "官方文档明确：'nodeSelectorTerms: [term1, term2] → term1 OR term2'；'matchExpressions: [expr1, expr2] → expr1 AND expr2'。"
         },
         {
             id: "w6-1-q5",
-            question: "preferred 亲和性的 weight 参数（1-100）有什么作用？",
+            question: "nodeAffinity 支持的六种操作符是什么？",
             options: [
-                "定义约束的执行顺序",
-                "影响调度评分，权重高的偏好对调度决策影响更大",
-                "限制 Pod 的数量",
-                "设置超时时间"
+                "Equal, NotEqual, Match, NotMatch, Has, HasNot",
+                "In, NotIn, Exists, DoesNotExist, Gt, Lt",
+                "Contains, StartsWith, EndsWith, Regex, Equals, NotEquals",
+                "=, !=, >, <, >=, <="
             ],
             answer: 1,
-            rationale: "weight 参数（1-100）用于多个 preferred 规则时计算综合评分。权重越高，对节点评分的影响越大，调度器更倾向选择高分节点。"
+            rationale: "官方文档列出六种操作符：In（值在列表中）、NotIn、Exists（键存在）、DoesNotExist、Gt（大于）、Lt（小于）。"
         },
         {
             id: "w6-1-q6",
-            question: "如何使用 Pod Anti-Affinity 确保 Deployment 副本分散在不同节点？",
+            question: "topologySpreadConstraints 的 maxSkew 参数的官方定义是什么？",
             options: [
-                "使用 nodeSelector 指定不同节点",
-                "配置 podAntiAffinity 使用 kubernetes.io/hostname 作为 topologyKey",
-                "设置 replicas 为 1",
-                "使用 nodeName 直接指定"
+                "最大 Pod 数量",
+                "最大节点数量",
+                "'degree to which Pods may be unevenly distributed'——Pod 分布的最大不均匀度",
+                "最大重试次数"
             ],
-            answer: 1,
-            rationale: "配置 podAntiAffinity，使用 kubernetes.io/hostname 作为 topologyKey，并匹配自身的标签，可以确保每个副本运行在不同节点。"
+            answer: 2,
+            rationale: "官方文档定义 maxSkew 为'degree to which Pods may be unevenly distributed'——定义 Pod 分布允许的最大不均匀度。"
         },
         {
             id: "w6-1-q7",
-            question: "matchExpressions 数组内多个条件的逻辑关系是什么？",
+            question: "whenUnsatisfiable 的两个有效值是什么？",
             options: [
-                "OR 关系",
-                "AND 关系",
-                "XOR 关系",
-                "NOT 关系"
+                "Allow 和 Deny",
+                "DoNotSchedule 和 ScheduleAnyway",
+                "Required 和 Preferred",
+                "Hard 和 Soft"
             ],
             answer: 1,
-            rationale: "同一个 matchExpressions 数组内的多个条件是 AND 关系，必须全部满足。nodeSelectorTerms 数组内的多个 term 是 OR 关系。"
+            rationale: "官方文档：whenUnsatisfiable 可设为 DoNotSchedule（默认，不调度 Pod）或 ScheduleAnyway（仍调度但最小化偏差）。"
         },
         {
             id: "w6-1-q8",
-            question: "nodeAffinity 支持哪些运算符？",
+            question: "官方文档对 PriorityClass 的定义是什么？",
             options: [
-                "只支持 Equals",
-                "In、NotIn、Exists、DoesNotExist、Gt、Lt",
-                "只支持 In 和 NotIn",
-                "=、!=、>、<"
+                "一种命名空间级别的资源配额",
+                "'a non-namespaced object that maps a priority class name to an integer value'",
+                "Pod 的标签选择器",
+                "节点的污点配置"
             ],
             answer: 1,
-            rationale: "nodeAffinity 支持 In（值在列表中）、NotIn、Exists（键存在）、DoesNotExist、Gt（大于）、Lt（小于）等运算符。"
+            rationale: "官方文档：'PriorityClass is a non-namespaced object that maps a priority class name to an integer value'——非命名空间对象，映射优先级名称到整数值。"
         },
         {
             id: "w6-1-q9",
-            question: "Pod Affinity 的主要用途是什么？",
+            question: "抢占（Preemption）机制的官方描述是什么？",
             options: [
-                "将 Pod 分散到不同节点",
-                "将相关的 Pod 调度到同一拓扑域以减少网络延迟",
-                "限制 Pod 的资源使用",
-                "配置 Pod 的网络策略"
+                "自动扩展集群节点",
+                "自动重启失败的 Pod",
+                "'scheduler can preempt (evict) lower-priority Pods to make room for the pending Pod'",
+                "自动删除长时间运行的 Pod"
             ],
-            answer: 1,
-            rationale: "Pod Affinity 用于将相关的 Pod 调度到同一拓扑域（如同一节点或同一可用区），常用于减少通信密集型服务之间的网络延迟。"
+            answer: 2,
+            rationale: "官方文档：'scheduler can preempt (evict) lower-priority Pods to make room for the pending Pod'——驱逐低优先级 Pod 为高优先级 Pod 腾出资源。"
         },
         {
             id: "w6-1-q10",
-            question: "Pod Anti-Affinity 在大规模集群中可能有什么问题？",
+            question: "preemptionPolicy: Never 的作用是什么？",
             options: [
-                "不支持大规模集群",
-                "需要检查所有 Pod 的标签，可能影响调度性能",
-                "会导致 Pod 被驱逐",
-                "不支持软约束"
+                "Pod 完全不参与调度",
+                "Pod 在队列中优先但不会抢占其他 Pod",
+                "Pod 可以被任何其他 Pod 抢占",
+                "Pod 立即被调度，跳过队列"
             ],
             answer: 1,
-            rationale: "Pod Anti-Affinity 需要在调度时检查集群中所有匹配的 Pod，在大规模集群中可能影响性能。建议使用 namespaceSelector 限制范围。"
+            rationale: "官方文档 v1.24+：preemptionPolicy: Never 的 Pod 在调度队列中优先但'cannot preempt other Pods'——不会驱逐其他 Pod。"
         },
         {
             id: "w6-1-q11",
-            question: "topology.kubernetes.io/zone 作为 topologyKey 适用于什么场景？",
+            question: "Kubernetes 内置的两个系统级 PriorityClass 是什么？",
             options: [
-                "将 Pod 限制在单个节点",
-                "将 Pod 分布在不同的可用区以提高可用性",
-                "将所有 Pod 调度到同一台物理机",
-                "根据操作系统类型调度"
+                "high-priority 和 low-priority",
+                "critical 和 non-critical",
+                "system-cluster-critical 和 system-node-critical",
+                "guaranteed 和 burstable"
             ],
-            answer: 1,
-            rationale: "topology.kubernetes.io/zone 以可用区为拓扑域单位。使用它可以实现跨可用区的 Pod 分布，提高应用的可用性和容灾能力。"
+            answer: 2,
+            rationale: "官方文档：Kubernetes 提供两个内置 PriorityClass——system-cluster-critical 和 system-node-critical，用于关键系统组件。"
         },
         {
             id: "w6-1-q12",
-            question: "如果 required nodeAffinity 无法满足会发生什么？",
+            question: "官方文档对 Scheduling Framework 的描述是什么？",
             options: [
-                "Pod 自动调度到任意节点",
-                "Pod 保持 Pending 状态，无法调度",
-                "Pod 被标记为 Failed",
-                "调度器自动创建满足条件的节点"
+                "一个独立的调度器替代品",
+                "仅用于测试的调度模拟器",
+                "'pluggable architecture for the Kubernetes scheduler'——可插拔的调度器架构",
+                "用于监控调度性能的工具"
             ],
-            answer: 1,
-            rationale: "required 是硬约束，如果没有节点满足条件，Pod 将保持 Pending 状态，直到有满足条件的节点可用或约束被修改。"
-        },
-        {
-            id: "w6-1-q13",
-            question: "namespaceSelector 在 Pod Affinity 中的作用是什么？",
-            options: [
-                "选择 Pod 运行的命名空间",
-                "限制在哪些命名空间中搜索匹配的 Pod",
-                "配置命名空间的资源配额",
-                "设置命名空间的网络策略"
-            ],
-            answer: 1,
-            rationale: "namespaceSelector 限制 Pod Affinity/Anti-Affinity 在哪些命名空间中搜索匹配的 Pod，可以减少搜索范围，提高调度性能。"
-        },
-        {
-            id: "w6-1-q14",
-            question: "nodeSelectorTerms 数组中多个 term 的逻辑关系是什么？",
-            options: [
-                "AND 关系",
-                "OR 关系",
-                "NOT 关系",
-                "XOR 关系"
-            ],
-            answer: 1,
-            rationale: "nodeSelectorTerms 数组中的多个 term 是 OR 关系，满足任意一个 term 即可。而每个 term 内的 matchExpressions 是 AND 关系。"
-        },
-        {
-            id: "w6-1-q15",
-            question: "Exists 运算符在 nodeAffinity 中的含义是什么？",
-            options: [
-                "标签的值必须存在于指定列表中",
-                "只要节点有这个标签键就匹配，不关心值",
-                "标签必须不存在",
-                "标签值必须大于指定值"
-            ],
-            answer: 1,
-            rationale: "Exists 运算符只检查标签键是否存在，不关心值是什么。相对地，DoesNotExist 检查标签键不存在。"
+            answer: 2,
+            rationale: "官方文档：Scheduling Framework 是'pluggable architecture for the Kubernetes scheduler'，包含 13 个扩展点，允许通过插件自定义调度逻辑。"
         }
     ]
 }
