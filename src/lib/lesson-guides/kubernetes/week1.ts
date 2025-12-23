@@ -122,35 +122,39 @@ export const week1Guides: Record<string, LessonGuide> = {
     "w1-1": {
         lessonId: "w1-1",
         background: [
-            "Linux Namespace 是内核提供的资源隔离抽象层，使 namespace 内的进程看起来拥有独立的全局资源实例——这正是容器技术的核心基石。",
-            "Linux 共有 8 种 Namespace 类型：Cgroup（cgroup 根目录）、IPC（System V IPC 与 POSIX 消息队列）、Network（网络设备与协议栈）、Mount（挂载点）、PID（进程 ID）、Time（启动与单调时钟）、User（用户与组 ID）、UTS（主机名与 NIS 域名）。",
-            "容器运行时（如 Docker、containerd）通过 clone()、unshare()、setns() 三个系统调用操作 namespace：clone() 在创建进程时指定隔离标志，unshare() 将当前进程移入新 namespace，setns() 加入已存在的 namespace。",
-            "理解 namespace 是理解 K8s Pod 安全边界的基础——hostPID、hostNetwork、hostIPC 配置本质上就是选择性突破这些隔离边界。"
+            "【隔离本质】Linux Namespace 是内核级资源隔离抽象层，使 namespace 内的进程看起来拥有独立的全局资源实例。namespaces(7) 明确指出这是'wrapping a global system resource in an abstraction'——容器技术的核心基石。",
+            "【八种类型】Linux 共有 8 种 Namespace：Cgroup (CLONE_NEWCGROUP)、IPC (CLONE_NEWIPC)、Network (CLONE_NEWNET)、Mount (CLONE_NEWNS)、PID (CLONE_NEWPID)、Time (CLONE_NEWTIME)、User (CLONE_NEWUSER)、UTS (CLONE_NEWUTS)。Time namespace 是最新添加的（Linux 5.6）。",
+            "【三大系统调用】clone(2) 创建新进程时指定隔离标志；unshare(2) 将当前进程移入新 namespace；setns(2) 通过 /proc/[pid]/ns/* 文件描述符加入已存在的 namespace。这三个 API 构成 namespace 操作的完整接口。",
+            "【权限模型】namespaces(7) 指出：'Creation of new namespaces using clone(2) and unshare(2) in most cases requires CAP_SYS_ADMIN'，唯独 User Namespace 自 Linux 3.8 起可由非特权用户创建——rootless container 的技术基础。",
+            "【K8s 安全边界】hostPID、hostNetwork、hostIPC 配置本质上就是选择性突破 namespace 隔离边界。理解 namespace 是理解 Pod 安全模型的前提。"
         ],
         keyDifficulties: [
-            "区分 8 种 namespace 的隔离范围：PID namespace 让容器内进程从 PID 1 开始计数，但宿主机可通过 /proc 看到真实 PID；Network namespace 隔离网络栈但共享内核网络参数（如 sysctl）。",
-            "权限模型差异：大多数 namespace 创建需要 CAP_SYS_ADMIN 权限，唯独 User Namespace 自 Linux 3.8 起可由非特权用户创建——这是 rootless container 的技术基础，但也带来复杂的 UID/GID 映射问题。",
-            "生命周期管理：namespace 在进程退出后不会立即销毁，只要存在文件描述符引用（/proc/[pid]/ns/*）、bind mount 或子层级依赖，namespace 就会持续存在——pause 容器正是利用这一特性为 Pod 保持 namespace。",
-            "继承与共享：子进程默认继承父进程的 namespace，除非显式使用 CLONE_NEW* 标志；同一 Pod 内的容器通过 setns() 共享网络和 IPC namespace。"
+            "【隔离范围差异】PID namespace 让容器内进程从 PID 1 开始，但宿主机通过 /proc 可见真实 PID；Network namespace 隔离网络栈但某些 sysctl 参数是全局共享的。每种 namespace 的隔离边界需要精确理解。",
+            "【pid vs pid_for_children】namespaces(7) 区分 /proc/[pid]/ns/pid（进程当前所属，生命周期内不变）与 pid_for_children（影响子进程的 namespace，可被 unshare/setns 改变）。这是理解 namespace 继承的关键。",
+            "【生命周期 Pin 机制】namespace 在所有成员进程退出后不会立即销毁——只要存在 fd 引用、bind mount 或层级依赖就会持续存在。pause 容器正是利用此特性为 Pod 保持 namespace。",
+            "【per-user limits】Linux 4.9+ 的 /proc/sys/user/max_*_namespaces 限制每个用户可创建的 namespace 数量，对所有用户（包括 UID 0）生效，且会计入祖先 user namespace 防止逃逸。"
         ],
         handsOnPath: [
-            "使用 ls -la /proc/self/ns/ 或 lsns 查看当前进程所属的所有 namespace，观察每个 namespace 的 inode 编号作为唯一标识符。",
-            "运行 docker run --rm -it alpine sh，在容器内执行 ps aux 和 hostname，对比宿主机输出，体会 PID namespace 和 UTS namespace 的隔离效果。",
-            "使用 unshare -p -f --mount-proc /bin/bash 创建新 PID namespace，验证新 namespace 中 PID 从 1 开始，并理解 --mount-proc 的必要性。",
-            "实验 docker run --pid=host 和 docker run --net=host，观察取消隔离后容器能看到的资源范围变化，思考安全边界被突破的影响。"
+            "执行 ls -la /proc/self/ns/ 或 lsns 查看当前进程所属 namespace，观察 inode 编号作为唯一标识符（如 net:[4026531969]）。",
+            "运行 docker run --rm -it alpine sh，容器内执行 ps aux 和 hostname，对比宿主机输出，体会 PID/UTS namespace 隔离效果。",
+            "使用 unshare -Ur 创建新 user namespace 并映射为内部 root（-r），验证 id 命令输出变化，理解 UID 映射机制。",
+            "使用 unshare -p -f --mount-proc /bin/bash 创建新 PID namespace，验证 PID 从 1 开始，理解 --mount-proc 重新挂载 /proc 的必要性。",
+            "实验 docker run --pid=host 和 docker run --net=host，观察取消隔离后容器可见资源范围变化，评估安全影响。",
+            "查看 /proc/sys/user/max_user_namespaces 等限制文件，尝试创建超过限制数量的 namespace 观察 ENOSPC 错误。"
         ],
         selfCheck: [
-            "你能说出 Linux 8 种 namespace 各自隔离的资源类型以及对应的 CLONE_NEW* 标志吗？",
-            "当 K8s Pod 配置 hostNetwork: true 时，Pod 内进程与宿主机共享什么？有哪些安全风险？",
-            "为什么说 User Namespace 是 rootless container 的基础？它如何将容器内 UID 0 映射到宿主机非特权用户？",
-            "解释 pause 容器的作用：为什么它需要持续运行？如果 pause 容器被杀死会发生什么？",
-            "clone()、unshare()、setns() 三个系统调用在容器生命周期中分别扮演什么角色？"
+            "你能说出 Linux 8 种 namespace 各自隔离的资源类型及对应的 CLONE_NEW* 标志吗？哪种 namespace 最新添加？",
+            "创建新 namespace 需要什么权限？哪种 namespace 是例外？这对 rootless container 有什么意义？",
+            "解释 /proc/[pid]/ns/pid 与 /proc/[pid]/ns/pid_for_children 的区别，后者何时可能返回空链接？",
+            "namespace 在进程退出后如何被'pin'住不销毁？列举至少三种 pin 机制。",
+            "K8s Pod 配置 hostNetwork: true 时，Pod 内进程与宿主机共享什么？存在哪些安全风险？",
+            "pause 容器在 K8s Pod 中扮演什么角色？如果被杀死会发生什么？"
         ],
         extensions: [
-            "深入阅读 man namespaces(7)，了解每种 namespace 的详细行为和边界条件，特别关注 User Namespace 的能力降级机制。",
-            "研究 rootless Podman 的实现原理，了解如何在完全无特权的情况下运行容器。",
-            "探索 K8s Pod Security Standards（PSS），理解 Baseline 和 Restricted 策略如何限制 hostPID、hostIPC、hostNetwork 的使用。",
-            "阅读 runc 或 containerd 源码中 namespace 创建流程，理解容器运行时如何调用 Linux namespace API。"
+            "【深入 man 页】阅读 namespaces(7) 完整文档，特别关注 Namespace lifetime 部分的所有 pin 因素和 /proc/sys/user 限制机制。",
+            "【rootless 实践】研究 rootless Podman 的实现原理，了解 User Namespace 如何在完全无特权的情况下运行容器。",
+            "【PSS 策略】探索 K8s Pod Security Standards，理解 Baseline 和 Restricted 策略如何限制 hostPID/hostIPC/hostNetwork。",
+            "【源码追踪】阅读 runc 或 containerd 中 namespace 创建流程，理解容器运行时如何调用 clone/unshare/setns。"
         ],
         sourceUrls: [
             "https://man7.org/linux/man-pages/man7/namespaces.7.html",
@@ -710,183 +714,147 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
     "w1-1": [
         {
             id: "w1-1-q1",
-            question: "Linux Namespace 的核心作用是什么？",
+            question: "namespaces(7) 对 Linux Namespace 核心作用的描述是什么？",
             options: [
-                "限制进程使用的 CPU 和内存资源",
-                "将全局系统资源包装成隔离的抽象层，使进程看起来拥有独立的资源实例",
-                "加密容器之间的网络通信",
-                "管理容器镜像的存储层"
+                "将全局系统资源包装成隔离的抽象层（wrapping a global system resource in an abstraction）",
+                "限制进程使用的 CPU 和内存资源上限",
+                "加密容器之间的网络通信数据",
+                "管理容器镜像的分层存储结构"
             ],
-            answer: 1,
-            rationale: "Namespace 的核心是资源视图隔离，让 namespace 内的进程认为自己拥有独立的系统资源。资源用量限制是 Cgroups 的功能，两者配合构成容器隔离基础。"
+            answer: 0,
+            rationale: "namespaces(7) 明确指出 namespace 的作用是'wrapping a global system resource in an abstraction'，使 namespace 内进程看起来拥有独立的资源实例。资源用量限制是 Cgroups 的职责。"
         },
         {
             id: "w1-1-q2",
-            question: "Linux 共有多少种 Namespace 类型？",
+            question: "Linux 8 种 Namespace 中，哪一种是最新添加的（Linux 5.6）？",
             options: [
-                "5 种",
-                "6 种",
-                "7 种",
-                "8 种"
+                "User Namespace",
+                "Cgroup Namespace",
+                "Time Namespace",
+                "PID Namespace"
             ],
-            answer: 3,
-            rationale: "Linux 有 8 种 Namespace：Cgroup、IPC、Network、Mount、PID、Time、User、UTS。Time namespace 是较新添加的（Linux 5.6）。"
+            answer: 2,
+            rationale: "Time Namespace (CLONE_NEWTIME) 是 Linux 5.6 引入的最新 namespace 类型，用于隔离 CLOCK_BOOTTIME 和 CLOCK_MONOTONIC 时钟。"
         },
         {
             id: "w1-1-q3",
-            question: "以下哪个 Namespace 负责隔离主机名和 NIS 域名？",
+            question: "关于创建新 namespace 的权限要求，namespaces(7) 的描述是？",
             options: [
-                "PID Namespace",
-                "User Namespace",
-                "UTS Namespace",
-                "IPC Namespace"
+                "所有 namespace 类型都必须 root 权限才能创建",
+                "只有 Network namespace 需要 CAP_NET_ADMIN",
+                "大多数需要 CAP_SYS_ADMIN，但 User namespace 自 Linux 3.8 起可由非特权用户创建",
+                "创建 User namespace 需要 CAP_SYS_ADMIN，其它都不需要"
             ],
             answer: 2,
-            rationale: "UTS（Unix Time-Sharing System）Namespace 隔离主机名和 NIS 域名，对应 CLONE_NEWUTS 标志，使容器可以拥有独立的 hostname。"
+            rationale: "namespaces(7) 指出：'Creation of new namespaces using clone(2) and unshare(2) in most cases requires CAP_SYS_ADMIN'，User namespace 是唯一例外——这是 rootless container 的技术基础。"
         },
         {
             id: "w1-1-q4",
-            question: "哪个系统调用用于将当前进程移入新创建的 namespace？",
+            question: "/proc/[pid]/ns/pid 与 /proc/[pid]/ns/pid_for_children 的区别是什么？",
             options: [
-                "clone()",
-                "unshare()",
-                "setns()",
-                "fork()"
+                "两者完全等价，只是名字不同",
+                "pid 指向当前进程所属 PID namespace（生命周期内不变）；pid_for_children 影响子进程的 namespace，可被 unshare/setns 改变",
+                "pid_for_children 记录父进程 PID 值，pid 记录子进程 PID",
+                "pid 可通过 setns 改变，pid_for_children 永远不变"
             ],
             answer: 1,
-            rationale: "unshare(2) 将调用进程从当前 namespace 移入新创建的 namespace。clone() 在创建新进程时指定 namespace，setns() 加入已存在的 namespace。"
+            rationale: "namespaces(7) 明确区分：pid 指向进程当前所属的 PID namespace（不可变）；pid_for_children 可被 unshare/setns 修改，影响后续创建的子进程。"
         },
         {
             id: "w1-1-q5",
-            question: "哪个 Namespace 可以在不需要特权的情况下创建？",
+            question: "当 namespace 内已没有成员进程时，哪种方式可以'pin'住它使其继续存在？",
             options: [
-                "PID Namespace",
-                "Network Namespace",
-                "User Namespace",
-                "Mount Namespace"
+                "发送 SIGSTOP 给 init 进程",
+                "把 /proc 重新挂载为只读",
+                "保持 /proc/[pid]/ns/* 的打开 fd 或对其做 bind mount",
+                "删除 /proc/[pid]/ns/* 以阻止回收"
             ],
             answer: 2,
-            rationale: "自 Linux 3.8 起，User Namespace 是唯一不需要 CAP_SYS_ADMIN 权限就能创建的 namespace，这是 rootless container 技术的基础。"
+            rationale: "namespaces(7) 的 Namespace lifetime 部分说明：打开 fd 或 bind mount /proc/[pid]/ns/* 会保持对应 namespace 的引用从而不被回收。"
         },
         {
             id: "w1-1-q6",
-            question: "当 K8s Pod 配置 hostNetwork: true 时，会发生什么？",
+            question: "Linux 4.9+ 的 /proc/sys/user/max_*_namespaces 限制对哪些用户生效？",
             options: [
-                "Pod 使用独立的网络栈，与宿主机完全隔离",
-                "Pod 直接使用宿主机的 Network Namespace，可看到宿主机网络接口和端口",
-                "Pod 的网络流量被加密传输",
-                "Pod 无法访问集群内其他 Pod"
+                "仅对非 root 用户生效",
+                "仅对容器内用户生效",
+                "对所有用户生效，包括 UID 0",
+                "仅对 systemd 管理的进程生效"
             ],
-            answer: 1,
-            rationale: "hostNetwork: true 使 Pod 跳过 Network Namespace 隔离，直接使用宿主机网络栈。这意味着 Pod 可以看到宿主机的所有网络接口，并直接绑定宿主机端口。"
+            answer: 2,
+            rationale: "namespaces(7) 明确指出：'These limits apply to all users, including UID 0'。这些限制是 per-user 的，且会计入祖先 user namespace 防止逃逸。"
         },
         {
             id: "w1-1-q7",
-            question: "进程的 namespace 信息存储在文件系统的哪个位置？",
+            question: "setns(2) 系统调用的作用是什么？",
             options: [
-                "/etc/namespaces/",
-                "/proc/[pid]/ns/",
-                "/sys/fs/ns/",
-                "/var/run/ns/"
+                "创建新进程并指定隔离标志",
+                "将当前进程移入新创建的 namespace",
+                "通过指向 /proc/[pid]/ns/* 的文件描述符加入已存在的 namespace",
+                "销毁指定的 namespace"
             ],
-            answer: 1,
-            rationale: "/proc/[pid]/ns/ 目录包含该进程所属各 namespace 的符号链接，可通过 setns() 使用这些文件描述符加入对应 namespace。"
+            answer: 2,
+            rationale: "namespaces(7) 描述 setns(2) 用于加入已存在的 namespace，目标通过 /proc/pid/ns 下的 fd 指定。clone() 创建新进程，unshare() 移入新 namespace。"
         },
         {
             id: "w1-1-q8",
-            question: "以下哪种情况下 Namespace 会被销毁？",
+            question: "当达到 /proc/sys/user/max_*_namespaces 上限时，clone(2)/unshare(2) 会返回什么错误？",
             options: [
-                "namespace 内所有进程退出后立即销毁",
-                "namespace 创建 24 小时后自动销毁",
-                "只有当 namespace 内无进程且无文件描述符引用、无 bind mount、无子层级时才销毁",
-                "需要管理员手动执行命令销毁"
+                "EACCES",
+                "EINVAL",
+                "ENOSPC",
+                "EEXIST"
             ],
             answer: 2,
-            rationale: "Namespace 使用引用计数管理生命周期。即使所有进程退出，只要存在文件描述符引用、bind mount 或子 namespace 依赖，namespace 就会持续存在。"
+            rationale: "namespaces(7) 指出：遇到这些限制时 clone(2) 与 unshare(2) 会以 ENOSPC 失败。"
         },
         {
             id: "w1-1-q9",
-            question: "docker exec 进入容器后能看到容器内进程（而非宿主机进程）的原因是？",
+            question: "pause 容器在 Kubernetes Pod 中的核心作用是什么？",
             options: [
-                "docker exec 创建了全新的 PID namespace",
-                "docker exec 使用 setns() 将新进程加入容器的 PID namespace",
-                "Docker 修改了 /proc 文件系统的内容",
-                "容器内进程的 PID 与宿主机相同"
+                "负责处理 Pod 的所有网络流量和负载均衡",
+                "收集 Pod 内所有容器的监控指标和日志",
+                "管理 Pod 内容器的资源配额分配",
+                "持有 Pod 的 Network/IPC namespace，确保业务容器重启时 namespace 不被销毁"
             ],
-            answer: 1,
-            rationale: "docker exec 通过 setns() 系统调用将新 shell 进程加入目标容器的各个 namespace（包括 PID、Network、Mount 等），因此在容器视角中看到的是容器内的进程树。"
+            answer: 3,
+            rationale: "pause 容器作为 Pod 中第一个启动的容器，创建并持有 Network 和 IPC namespace。其他容器通过 setns() 加入这些 namespace，利用 namespace 的 pin 机制确保隔离边界稳定。"
         },
         {
             id: "w1-1-q10",
-            question: "pause 容器在 Kubernetes Pod 中的核心作用是？",
+            question: "K8s Pod 配置 hostNetwork: true 时，Pod 内进程与宿主机共享什么？",
             options: [
-                "负责处理 Pod 的所有网络流量和负载均衡",
-                "持有 Pod 的 Network/IPC namespace，确保其他容器重启时 namespace 不被销毁",
-                "收集 Pod 内所有容器的监控指标和日志",
-                "管理 Pod 内容器的资源配额分配"
+                "共享宿主机的 PID namespace，可看到宿主机所有进程",
+                "共享宿主机的 Mount namespace，可看到宿主机所有文件",
+                "共享宿主机的 Network namespace，可看到宿主机网络接口和端口",
+                "共享宿主机的 User namespace，以 root 身份运行"
             ],
-            answer: 1,
-            rationale: "pause 容器是 Pod 中第一个启动的容器，它创建并持有 Network 和 IPC namespace。其他容器通过 setns() 共享这些 namespace，即使业务容器重启，namespace 也不会消失。"
+            answer: 2,
+            rationale: "hostNetwork: true 使 Pod 跳过 Network Namespace 隔离，直接使用宿主机网络栈。Pod 可看到宿主机所有网络接口并绑定宿主机端口，存在端口冲突和安全风险。"
         },
         {
             id: "w1-1-q11",
-            question: "Network Namespace 隔离了以下哪些资源？",
+            question: "执行 unshare -Ur 的效果是什么？",
             options: [
-                "仅隔离 IP 地址和路由表",
-                "隔离网络设备、协议栈、端口等，但共享内核网络参数",
-                "完全隔离所有网络相关的内核参数",
-                "仅隔离端口号，共享 IP 地址"
+                "创建新的 user namespace（-U）并把调用者映射为新 userns 内的 root（-r）",
+                "创建新的 UTS namespace 并修改 hostname",
+                "加入一个已存在的 user namespace",
+                "创建新的 PID namespace 并让当前进程 PID 变为 1"
             ],
-            answer: 1,
-            rationale: "Network Namespace（CLONE_NEWNET）隔离网络设备、IP 地址、路由表、端口号、协议栈等，但某些 sysctl 参数是 per-namespace 的，某些是全局共享的。"
+            answer: 0,
+            rationale: "unshare(1) 的 -U 创建 user namespace，-r 将调用者映射为新 userns 内的 root（UID 0）。这展示了 User Namespace 允许非特权用户创建的特性。"
         },
         {
             id: "w1-1-q12",
-            question: "使用 unshare -p -f --mount-proc /bin/bash 创建新 PID namespace 时，--mount-proc 的作用是？",
+            question: "使用 unshare -p -f --mount-proc /bin/bash 时，--mount-proc 的必要性在于？",
             options: [
-                "挂载额外的存储卷",
-                "重新挂载 /proc 使其反映新 PID namespace 的进程视图",
+                "加密 /proc 中的敏感信息",
                 "限制进程可访问的 /proc 条目",
-                "加密 /proc 中的敏感信息"
+                "挂载额外的存储卷用于容器数据",
+                "重新挂载 /proc 使其反映新 PID namespace 的进程视图"
             ],
-            answer: 1,
-            rationale: "新 PID namespace 中的进程如果仍使用旧的 /proc 挂载点，会看到宿主机的进程信息。--mount-proc 重新挂载 /proc，使其反映新 namespace 中 PID 从 1 开始的进程树。"
-        },
-        {
-            id: "w1-1-q13",
-            question: "关于子进程的 namespace 继承，以下说法正确的是？",
-            options: [
-                "子进程总是创建新的 namespace",
-                "子进程默认继承父进程的 namespace，除非使用 CLONE_NEW* 标志",
-                "子进程必须显式指定要加入的 namespace",
-                "子进程只继承 PID namespace，其他 namespace 需单独指定"
-            ],
-            answer: 1,
-            rationale: "fork()/clone() 创建的子进程默认继承父进程所有 namespace。只有在 clone() 时显式指定 CLONE_NEW* 标志，或调用 unshare()，才会创建新的 namespace。"
-        },
-        {
-            id: "w1-1-q14",
-            question: "Cgroup Namespace 隔离的资源是？",
-            options: [
-                "CPU 和内存使用量限制",
-                "cgroup 文件系统的根目录视图",
-                "进程的 cgroup 控制器配置",
-                "cgroup 的优先级权重"
-            ],
-            answer: 1,
-            rationale: "Cgroup Namespace（CLONE_NEWCGROUP）隔离的是 cgroup 层级视图的根目录。进程在新 Cgroup Namespace 中看到的 /sys/fs/cgroup 以自己所在 cgroup 为根，而非宿主机的完整树。"
-        },
-        {
-            id: "w1-1-q15",
-            question: "IPC Namespace 隔离的资源包括？",
-            options: [
-                "网络套接字和端口",
-                "System V IPC 对象（信号量、消息队列、共享内存）和 POSIX 消息队列",
-                "文件锁和管道",
-                "进程信号和信号处理器"
-            ],
-            answer: 1,
-            rationale: "IPC Namespace（CLONE_NEWIPC）隔离 System V IPC 标识符（信号量、消息队列、共享内存段）和 POSIX 消息队列，确保不同 namespace 的进程无法访问彼此的 IPC 资源。"
+            answer: 3,
+            rationale: "新 PID namespace 中的进程如果使用旧的 /proc 挂载点，会看到宿主机的进程信息。--mount-proc 重新挂载 /proc，使其正确反映新 namespace 中 PID 从 1 开始的进程树。"
         }
     ]
 }
