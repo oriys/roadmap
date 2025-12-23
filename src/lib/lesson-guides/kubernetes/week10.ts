@@ -46,10 +46,11 @@ export const week10Guides: Record<string, LessonGuide> = {
     "w10-2": {
         lessonId: "w10-2",
         background: [
-            "ArgoCD 的同步策略（Sync Policy）控制应用如何从 Git 同步到集群。核心选项包括自动同步（auto-sync）、自动清理（prune）和自愈（self-heal），它们组合使用可以实现完全自动化的 GitOps 流程。",
-            "自动同步（Auto-Sync）让 ArgoCD 在检测到 Git 变更时自动触发同步，无需人工干预。启用后，CI 只需提交到 Git，ArgoCD 会自动将变更应用到集群。默认调和间隔为 3 分钟（可配置）。",
-            "自动清理（Prune）控制是否删除 Git 中已移除的资源。默认情况下，即使 Git 中删除了某个资源的定义，ArgoCD 也不会删除集群中对应的资源。启用 Prune 后，Git 中移除的资源会在同步时被删除。",
-            "Sync Waves 和 Hooks 是 ArgoCD 的高级编排功能。Sync Waves 通过注解定义资源的部署顺序（数字越小越先部署）；Hooks（PreSync/Sync/PostSync/SyncFail）可以在同步的不同阶段执行特定任务。"
+            "【Auto-Sync 定义】官方文档：ArgoCD 可以'automatically sync an application when it detects differences between the desired manifests in Git and the live state in the cluster'——自动检测差异并同步，消除 CI/CD 流水线直接访问集群的需求。",
+            "【Auto-Sync 触发条件】官方文档关键语义：'Automated sync will only be attempted if application is OutOfSync'——仅 OutOfSync 状态触发；'Automated sync will only be attempted once per unique combination of commit SHA and app parameters'——相同组合只尝试一次。",
+            "【Self-Heal 机制】官方文档：启用 Self-Heal 后，'Argo CD will sync when the live cluster's state deviates from Git'——检测到集群状态漂移时自动修复，默认检查间隔 5 秒。与 Auto-Sync 配合使用可实现完全自动化。",
+            "【Prune 与 Sync Options】官方文档：'Prune=true' 自动删除 Git 中不再定义的资源；'PruneLast=true' 让删除操作在部署成功后执行；'ApplyOutOfSyncOnly=true' 只同步有差异的资源；'ServerSideApply=true' 使用 Kubernetes 服务端 apply。",
+            "【Sync Hooks 定义】官方文档定义五种钩子：PreSync'executes prior to application of manifests'；Sync'executes at the same time as application of manifests'；PostSync'executes after successful application and all resources in Healthy state'；SyncFail'executes when sync operation fails'；Skip'skip application of the manifest'。"
         ],
         keyDifficulties: [
             "Auto-Sync 的触发条件：只有 OutOfSync 状态的应用才会触发自动同步；同一个 commit SHA + 参数组合只会同步一次；如果上次同步失败，不会自动重试（需要新的 commit 或手动触发）。理解这些语义对排错很重要。",
@@ -315,183 +316,147 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
     "w10-2": [
         {
             id: "w10-2-q1",
-            question: "启用 Auto-Sync 后，ArgoCD 什么时候会自动同步？",
+            question: "官方文档对 Auto-Sync 触发条件的描述是什么？",
             options: [
-                "任何时候检测到差异",
-                "只有 OutOfSync 状态的应用才会自动同步",
-                "只在工作时间自动同步",
-                "只在手动触发后自动同步"
+                "'Automated sync will only be attempted if application is OutOfSync'——仅 OutOfSync 状态触发",
+                "任何时候检测到差异都会触发",
+                "每隔固定时间间隔触发",
+                "只在手动确认后触发"
             ],
-            answer: 1,
-            rationale: "Auto-Sync 只对 OutOfSync 状态的应用触发自动同步，且同一 commit + 参数组合只会同步一次。"
+            answer: 0,
+            rationale: "官方文档明确：'Automated sync will only be attempted if application is OutOfSync'——只有 OutOfSync 状态的应用才会触发自动同步。"
         },
         {
             id: "w10-2-q2",
-            question: "Auto-Prune 功能的作用是什么？",
+            question: "官方文档对同一 commit 同步尝试次数的说明是什么？",
             options: [
-                "自动修复集群状态漂移",
-                "删除 Git 中已移除的资源",
-                "清理旧版本的 ReplicaSet",
-                "删除失败的同步记录"
+                "失败后会自动重试三次",
+                "每次调和周期都会重试",
+                "'Automated sync will only be attempted once per unique combination of commit SHA and app parameters'",
+                "可以通过配置设置重试次数"
             ],
-            answer: 1,
-            rationale: "Auto-Prune 启用后，当资源定义从 Git 中移除时，ArgoCD 会在同步时删除集群中对应的资源。"
+            answer: 2,
+            rationale: "官方文档：'Automated sync will only be attempted once per unique combination of commit SHA and app parameters'——相同组合只尝试一次。"
         },
         {
             id: "w10-2-q3",
-            question: "Self-Heal 功能解决什么问题？",
+            question: "官方文档对 Self-Heal 机制的描述是什么？",
             options: [
                 "修复 Git 仓库中的配置错误",
-                "修复集群状态的漂移（如 kubectl 手动修改）",
+                "'Argo CD will sync when the live cluster's state deviates from Git'——集群状态漂移时自动修复",
                 "修复 ArgoCD 组件故障",
                 "修复网络连接问题"
             ],
             answer: 1,
-            rationale: "Self-Heal 自动修复集群状态的漂移，当有人直接修改集群资源时，ArgoCD 会将其恢复到 Git 定义的状态。"
+            rationale: "官方文档：启用 Self-Heal 后，'Argo CD will sync when the live cluster's state deviates from Git'——检测到集群状态漂移时自动修复。"
         },
         {
             id: "w10-2-q4",
-            question: "Sync Wave 的执行顺序是怎样的？",
+            question: "官方文档定义的五种 Sync Hook 类型是什么？",
             options: [
-                "随机执行",
-                "按 wave 数字从大到小执行",
-                "按 wave 数字从小到大执行",
-                "按资源名称字母顺序执行"
+                "Start、Running、Success、Fail、End",
+                "Init、Pre、Main、Post、Cleanup",
+                "Begin、Process、Complete、Error、Finalize",
+                "PreSync、Sync、PostSync、SyncFail、Skip"
             ],
-            answer: 2,
-            rationale: "Sync Wave 按数字从小到大执行，每个 wave 内的资源需要全部 Healthy 后才进入下一个 wave。"
+            answer: 3,
+            rationale: "官方文档定义五种钩子：PreSync、Sync、PostSync、SyncFail、Skip，分别在同步生命周期的不同阶段执行。"
         },
         {
             id: "w10-2-q5",
-            question: "PreSync Hook 的用途是什么？",
+            question: "官方文档对 PreSync Hook 执行时机的描述是什么？",
             options: [
-                "在同步后执行清理",
-                "在应用清单之前执行（如数据库迁移）",
+                "'executes prior to application of manifests'——在应用清单之前执行",
+                "在同步完成后执行",
                 "在同步失败时执行",
-                "在应用删除时执行"
+                "与主清单同时执行"
             ],
-            answer: 1,
-            rationale: "PreSync Hook 在应用主要清单之前执行，常用于数据库迁移、备份等前置操作，失败会阻止整个同步。"
+            answer: 0,
+            rationale: "官方文档：PreSync 'executes prior to application of manifests'——在应用主要清单之前执行，常用于数据库迁移。"
         },
         {
             id: "w10-2-q6",
-            question: "如果上次自动同步失败，Auto-Sync 会如何处理？",
+            question: "官方文档对 PostSync Hook 执行条件的描述是什么？",
             options: [
-                "立即重试",
-                "等待下一次调和周期重试",
-                "不会自动重试，需要新的 commit 或手动触发",
-                "发送告警后自动重试"
+                "在任何同步操作后执行",
+                "只要同步完成就执行",
+                "'executes after successful application and all resources in Healthy state'",
+                "在同步失败后执行清理"
             ],
             answer: 2,
-            rationale: "同一 commit + 参数组合只会尝试同步一次，失败后不会自动重试，需要新的 commit 或手动触发。"
+            rationale: "官方文档：PostSync 'executes after successful application and all resources in Healthy state'——同步成功且资源健康后才执行。"
         },
         {
             id: "w10-2-q7",
-            question: "Replace 同步策略与默认的 Apply 有什么区别？",
+            question: "Sync Wave 的执行顺序是怎样的？",
             options: [
-                "Replace 更快",
-                "Replace 使用 kubectl replace 替换整个资源，而非 apply 合并",
-                "Replace 不会删除资源",
-                "Replace 只用于 ConfigMap"
+                "随机执行，无固定顺序",
+                "按资源名称字母顺序执行",
+                "按 wave 数字从大到小执行",
+                "按 wave 数字从小到大执行，每个 wave 内资源需全部 Healthy 后进入下一个"
             ],
-            answer: 1,
-            rationale: "Replace 使用 kubectl replace/create 完全替换资源，适用于资源 annotation 超过大小限制等场景。"
+            answer: 3,
+            rationale: "Sync Wave 按数字从小到大执行，每个 wave 内的资源需要全部达到 Healthy 状态后才进入下一个 wave。"
         },
         {
             id: "w10-2-q8",
-            question: "PruneLast 选项的作用是什么？",
+            question: "Prune 和 Self-Heal 分别解决什么问题？",
             options: [
-                "最后才删除旧版本",
-                "在所有资源 Healthy 后再执行删除操作",
-                "只删除最后一个资源",
-                "禁用自动删除"
+                "Prune 删除 Git 中已移除的资源；Self-Heal 修复集群状态漂移（如手动修改）",
+                "两者功能完全相同",
+                "Prune 修复漂移；Self-Heal 删除资源",
+                "两者都用于清理旧版本"
             ],
-            answer: 1,
-            rationale: "PruneLast 让删除操作作为最后一个 wave 执行，确保新资源健康后再删除旧资源，减少服务中断。"
+            answer: 0,
+            rationale: "Prune 删除 Git 中已移除的资源（同步时）；Self-Heal 修复集群状态的漂移（如 kubectl edit 修改）。两者解决不同问题。"
         },
         {
             id: "w10-2-q9",
-            question: "如何保护特定资源不被 Prune 删除？",
+            question: "如何保护特定资源不被 Auto-Prune 删除？",
             options: [
-                "设置 Prune=false 注解",
                 "将资源移到其他命名空间",
-                "禁用整个应用的 Auto-Prune",
-                "使用 Secret 类型"
+                "禁用整个应用的 Auto-Sync",
+                "为资源添加 argocd.argoproj.io/sync-options: Prune=false 注解",
+                "使用 Secret 类型资源"
             ],
-            answer: 0,
-            rationale: "为资源添加 argocd.argoproj.io/sync-options: Prune=false 注解可以保护该资源不被自动删除。"
+            answer: 2,
+            rationale: "为资源添加 argocd.argoproj.io/sync-options: Prune=false 注解可以保护该特定资源不被自动删除。"
         },
         {
             id: "w10-2-q10",
-            question: "PostSync Hook 在什么时候执行？",
+            question: "PruneLast 选项的作用是什么？",
             options: [
-                "同步开始前",
-                "同步失败后",
-                "同步成功且资源 Healthy 后",
-                "应用删除后"
+                "让删除操作在所有资源 Healthy 后再执行，作为最后一个 wave",
+                "只删除最后创建的资源",
+                "禁用所有自动删除功能",
+                "删除上一次同步的资源"
             ],
-            answer: 2,
-            rationale: "PostSync Hook 在同步成功且所有资源达到 Healthy 状态后执行，常用于验证测试或通知。"
+            answer: 0,
+            rationale: "PruneLast 让删除操作作为最后一个 wave 执行，确保新资源健康后再删除旧资源，减少服务中断风险。"
         },
         {
             id: "w10-2-q11",
-            question: "CreateNamespace=true 选项的作用是什么？",
+            question: "启用 Auto-Sync 后，手动 Rollback 功能会怎样？",
             options: [
-                "在 Git 中自动创建 namespace 定义",
-                "如果目标命名空间不存在则自动创建",
-                "将应用部署到新创建的命名空间",
-                "创建 ArgoCD 专用命名空间"
+                "正常工作，与 Auto-Sync 互不影响",
+                "需要管理员权限才能执行",
+                "只能回滚一个版本",
+                "手动 Rollback 会被 Auto-Sync 覆盖，要回滚需修改 Git 仓库"
             ],
-            answer: 1,
-            rationale: "CreateNamespace=true 允许 ArgoCD 在同步时自动创建目标命名空间（如果不存在），无需手动预先创建。"
+            answer: 3,
+            rationale: "启用 Auto-Sync 后，手动 Rollback 会被自动同步回 Git 最新状态。要实现回滚需要修改 Git 仓库（如 revert commit）。"
         },
         {
             id: "w10-2-q12",
-            question: "ApplyOutOfSyncOnly 选项的优势是什么？",
+            question: "ApplyOutOfSyncOnly 选项的主要优势是什么？",
             options: [
-                "只同步新增的资源",
-                "只同步有变更的资源，提高大型应用的同步性能",
-                "只在工作时间同步",
+                "只同步新增的资源，忽略修改",
+                "只同步有变更的资源，减少 API 调用，提高大型应用同步性能",
+                "只在非工作时间同步",
                 "只同步 Deployment 类型资源"
             ],
             answer: 1,
-            rationale: "ApplyOutOfSyncOnly 只对检测到差异的资源执行 apply，减少不必要的 API 调用，适合大型应用。"
-        },
-        {
-            id: "w10-2-q13",
-            question: "SyncFail Hook 在什么时候执行？",
-            options: [
-                "同步成功后",
-                "同步失败时",
-                "同步开始前",
-                "应用删除时"
-            ],
-            answer: 1,
-            rationale: "SyncFail Hook 在同步操作失败时执行，可用于清理部分创建的资源或发送失败通知。"
-        },
-        {
-            id: "w10-2-q14",
-            question: "ServerSideApply 选项的主要优势是什么？",
-            options: [
-                "更快的同步速度",
-                "避免 kubectl apply 的 annotation 大小限制",
-                "支持更多资源类型",
-                "自动合并冲突"
-            ],
-            answer: 1,
-            rationale: "ServerSideApply 使用 Kubernetes 服务端 apply，避免了客户端 apply 的 last-applied-configuration annotation 大小限制。"
-        },
-        {
-            id: "w10-2-q15",
-            question: "启用 Auto-Sync 后，Rollback 功能会怎样？",
-            options: [
-                "正常工作",
-                "被禁用，因为 ArgoCD 会自动同步回 Git 最新状态",
-                "需要手动确认",
-                "只能回滚一个版本"
-            ],
-            answer: 1,
-            rationale: "启用 Auto-Sync 后，手动 Rollback 会被 Auto-Sync 覆盖。要回滚需要修改 Git 仓库（如 revert commit）。"
+            rationale: "ApplyOutOfSyncOnly 只对检测到差异的资源执行 apply，减少不必要的 API 调用，适合管理大量资源的应用。"
         }
     ],
     "w10-3": [
