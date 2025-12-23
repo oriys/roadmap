@@ -44,16 +44,16 @@ export const week5Guides: Record<string, LessonGuide> = {
     "w5-3": {
         lessonId: "w5-3",
         background: [
-            "StorageClass 是 Kubernetes 中描述存储'类别'的资源，允许管理员定义不同的存储配置（如性能级别、备份策略）。它是实现动态存储供给的核心组件。",
-            "CSI（Container Storage Interface）是容器存储的行业标准接口，定义了容器编排系统与存储系统之间的通信规范。Kubernetes 正在将所有 in-tree 存储插件迁移到 CSI 驱动。",
-            "StorageClass 通过 provisioner 字段指定使用哪个存储驱动（如 ebs.csi.aws.com、disk.csi.azure.com）。不同的 provisioner 支持不同的 parameters 配置项。",
-            "volumeBindingMode 控制 PVC 绑定时机：Immediate（立即绑定）和 WaitForFirstConsumer（延迟到 Pod 调度时绑定，支持拓扑感知）。后者对多可用区集群尤为重要。"
+            "【StorageClass 定义】官方文档：'A StorageClass provides a way for administrators to describe the classes of storage they offer'——StorageClass 描述存储类别，不同类别对应不同的服务质量、备份策略或管理员定义的任意策略。",
+            "【CSI 标准接口】官方定义：'The Container Storage Interface (CSI) defines a standard interface to expose storage systems to containers'——CSI 是容器存储的标准化接口，用于替代 in-tree 存储驱动。",
+            "【动态供给价值】官方文档：'Without dynamic provisioning, cluster administrators have to manually make calls to their cloud or storage provider to create new storage volumes'——动态供给消除了管理员预创建存储的需要。",
+            "【核心字段说明】StorageClass 包含：provisioner（决定使用哪个卷插件供给 PV）、parameters（供应商特定参数）、reclaimPolicy（Delete 或 Retain）、volumeBindingMode（Immediate 或 WaitForFirstConsumer）。"
         ],
         keyDifficulties: [
-            "默认 StorageClass 配置：通过 annotation storageclass.kubernetes.io/is-default-class: \"true\" 设置。集群应只有一个默认 StorageClass，否则 PVC 可能绑定到意外的存储。不指定 storageClassName 的 PVC 会使用默认类。",
-            "WaitForFirstConsumer 的作用：延迟 PV 创建直到 Pod 调度，确保 PV 在正确的可用区/节点创建。避免 Pod 因存储位置错误而无法调度。与 allowedTopologies 配合实现拓扑约束。",
-            "in-tree 插件迁移：Kubernetes 正在废弃 in-tree 存储插件（如 awsElasticBlockStore、azureDisk），迁移到 CSI 驱动。迁移通过 CSIMigration feature gate 自动完成，对用户透明。",
-            "allowVolumeExpansion 配置：设为 true 允许用户通过编辑 PVC 的 spec.resources.requests.storage 来扩容。不是所有存储后端都支持，且通常不支持缩容。某些后端需要 Pod 重启才能生效。"
+            "【默认 StorageClass 机制】官方文档：通过 annotation 'storageclass.kubernetes.io/is-default-class: true' 设置默认类。当 PVC 未指定 storageClassName 时，DefaultStorageClass admission controller 自动添加默认类。建议集群只有一个默认 StorageClass。",
+            "【WaitForFirstConsumer 优势】官方文档：'Delays binding and provisioning until a Pod using the PVC is created'——延迟绑定直到 Pod 创建，尊重调度约束（资源需求、节点选择器、亲和性、污点容忍）。注意：不要与 nodeName 一起使用，应使用 nodeSelector。",
+            "【in-tree 到 CSI 迁移】官方文档：'In Kubernetes 1.35, all operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver'——类似地 azureDisk → disk.csi.azure.com，cinder → cinder.csi.openstack.org，迁移对用户透明。",
+            "【卷扩展限制】官方文档：'Volume expansion can only grow volumes, not shrink them'——设置 allowVolumeExpansion: true 允许扩容，但不支持缩容。支持的类型包括 CSI volumes、Azure File、FlexVolume、Portworx、RBD。"
         ],
         handsOnPath: [
             "查看集群中的 StorageClass：kubectl get storageclass，找到默认 StorageClass（标记为 default），使用 kubectl describe storageclass 查看配置详情。",
@@ -349,183 +349,147 @@ export const week5Quizzes: Record<string, QuizQuestion[]> = {
     "w5-3": [
         {
             id: "w5-3-q1",
-            question: "StorageClass 的主要作用是什么？",
+            question: "官方文档对 StorageClass 的定义是什么？",
             options: [
-                "直接存储应用数据",
-                "描述存储类别，定义动态供给的配置和参数",
-                "替代 PV 和 PVC",
-                "限制存储的访问权限"
+                "'A StorageClass provides a way for administrators to describe the classes of storage they offer'——描述存储类别",
+                "用于直接存储应用数据的对象",
+                "替代 PV 和 PVC 的新 API",
+                "限制存储访问权限的策略"
             ],
-            answer: 1,
-            rationale: "StorageClass 定义存储的'类别'，包括使用哪个 provisioner、什么参数、什么回收策略等，是动态供给的核心配置。"
+            answer: 0,
+            rationale: "官方文档明确定义：'A StorageClass provides a way for administrators to describe the classes of storage they offer'，不同类别对应不同的服务质量和策略。"
         },
         {
             id: "w5-3-q2",
-            question: "StorageClass 的 provisioner 字段用于什么？",
+            question: "官方对 CSI 的定义是什么？",
             options: [
-                "指定 PVC 的名称",
-                "指定使用哪个存储驱动来创建 PV",
-                "设置存储容量上限",
-                "配置访问模式"
+                "Kubernetes 内置的存储驱动程序",
+                "一种特定的存储后端实现",
+                "'The Container Storage Interface (CSI) defines a standard interface to expose storage systems to containers'",
+                "容器安全接口的缩写"
             ],
-            answer: 1,
-            rationale: "provisioner 指定使用哪个存储驱动（如 ebs.csi.aws.com、kubernetes.io/gce-pd）来处理该 StorageClass 的动态供给请求。"
+            answer: 2,
+            rationale: "官方定义 CSI 为'The Container Storage Interface (CSI) defines a standard interface to expose storage systems to containers'——标准化的存储接口。"
         },
         {
             id: "w5-3-q3",
-            question: "volumeBindingMode: WaitForFirstConsumer 的作用是什么？",
+            question: "StorageClass 的 provisioner 字段的作用是什么？",
             options: [
-                "立即创建 PV",
-                "延迟 PV 创建和绑定，直到使用该 PVC 的 Pod 被调度",
-                "等待管理员手动批准",
-                "等待存储后端就绪"
+                "设置存储容量上限",
+                "determines what volume plugin is used for provisioning PersistentVolumes——决定使用哪个卷插件",
+                "配置访问模式",
+                "指定 PVC 的名称"
             ],
             answer: 1,
-            rationale: "WaitForFirstConsumer 延迟 PV 创建直到 Pod 调度，确保 PV 在正确的拓扑位置（可用区/节点）创建，避免调度失败。"
+            rationale: "官方文档：provisioner'determines what volume plugin is used for provisioning PersistentVolumes'——决定使用哪个卷插件供给 PV。"
         },
         {
             id: "w5-3-q4",
             question: "如何设置默认 StorageClass？",
             options: [
                 "将 StorageClass 命名为 default",
-                "添加 annotation storageclass.kubernetes.io/is-default-class: \"true\"",
                 "在 kube-controller-manager 中配置",
-                "使用 kubectl set-default storageclass"
+                "使用 kubectl set-default storageclass 命令",
+                "添加 annotation 'storageclass.kubernetes.io/is-default-class: true'"
             ],
-            answer: 1,
-            rationale: "通过 metadata.annotations 添加 storageclass.kubernetes.io/is-default-class: \"true\" 将 StorageClass 设为默认。"
+            answer: 3,
+            rationale: "官方文档：通过 metadata.annotations 添加'storageclass.kubernetes.io/is-default-class: true'将 StorageClass 设为默认。"
         },
         {
             id: "w5-3-q5",
-            question: "什么是 CSI（Container Storage Interface）？",
+            question: "volumeBindingMode: WaitForFirstConsumer 的行为是什么？",
             options: [
-                "Kubernetes 内置的存储驱动",
-                "容器存储的行业标准接口，定义编排系统与存储系统的通信规范",
-                "一种特定的存储后端",
-                "容器安全接口"
+                "'Delays binding and provisioning until a Pod using the PVC is created'——延迟绑定直到 Pod 创建",
+                "立即创建 PV 并绑定",
+                "等待管理员手动批准",
+                "等待存储后端就绪"
             ],
-            answer: 1,
-            rationale: "CSI 是一套标准化的接口规范，使存储供应商可以编写一次驱动即可在所有容器编排系统中使用。"
+            answer: 0,
+            rationale: "官方文档：WaitForFirstConsumer'Delays binding and provisioning until a Pod using the PVC is created'，尊重 Pod 调度约束。"
         },
         {
             id: "w5-3-q6",
-            question: "为什么 Kubernetes 要从 in-tree 存储插件迁移到 CSI？",
+            question: "官方文档关于 WaitForFirstConsumer 与 nodeName 的建议是什么？",
             options: [
-                "CSI 性能更好",
-                "减少 Kubernetes 核心代码的维护负担，让存储供应商独立开发和发布驱动",
-                "CSI 更安全",
-                "in-tree 插件不支持持久存储"
+                "必须配合 nodeName 使用才有效",
+                "两者可以随意搭配使用",
+                "Don't use nodeName with WaitForFirstConsumer，应使用 nodeSelector",
+                "nodeName 会覆盖 WaitForFirstConsumer 的行为"
             ],
-            answer: 1,
-            rationale: "CSI 允许存储供应商独立于 Kubernetes 发布周期开发和更新驱动，减少了核心代码的复杂度和维护负担。"
+            answer: 2,
+            rationale: "官方文档明确警告：'Don't use nodeName with WaitForFirstConsumer. Use node selector instead'——应使用 nodeSelector。"
         },
         {
             id: "w5-3-q7",
-            question: "allowVolumeExpansion: true 的作用是什么？",
+            question: "Kubernetes 1.35 中 in-tree awsElasticBlockStore 的状态是什么？",
             options: [
-                "允许自动缩容",
-                "允许用户通过编辑 PVC 扩展存储容量",
-                "允许 PV 跨节点迁移",
-                "允许多个 PVC 共享同一个 PV"
+                "仍然是默认推荐方式",
+                "'all operations are redirected to the ebs.csi.aws.com CSI driver'——所有操作重定向到 CSI 驱动",
+                "已完全移除，无法使用",
+                "只支持只读操作"
             ],
             answer: 1,
-            rationale: "allowVolumeExpansion: true 允许用户编辑 PVC 的 spec.resources.requests.storage 来扩容，前提是存储后端支持在线扩容。"
+            rationale: "官方文档：'In Kubernetes 1.35, all operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver'。"
         },
         {
             id: "w5-3-q8",
-            question: "不指定 storageClassName 的 PVC 会怎样？",
+            question: "StorageClass 的 reclaimPolicy 可以设置为哪些值？",
             options: [
-                "PVC 创建失败",
-                "使用默认 StorageClass（如果存在）",
-                "不创建 PV，直接绑定到空存储",
-                "使用最新创建的 StorageClass"
+                "Create 和 Destroy",
+                "Keep 和 Remove",
+                "Delete 和 Retain",
+                "Persist 和 Ephemeral"
             ],
-            answer: 1,
-            rationale: "不指定 storageClassName 的 PVC 会使用集群的默认 StorageClass。如果没有默认类，行为取决于集群配置。"
+            answer: 2,
+            rationale: "官方文档：reclaimPolicy'Determines what happens to the PV when the PVC is deleted (Delete or Retain)'——只有 Delete 和 Retain 两个选项。"
         },
         {
             id: "w5-3-q9",
-            question: "StorageClass 的 reclaimPolicy 可以设置为哪些值？",
+            question: "官方文档对 allowVolumeExpansion 的说明是什么？",
             options: [
-                "Retain 和 Delete",
-                "Create 和 Destroy",
-                "Keep 和 Remove",
-                "Persist 和 Ephemeral"
+                "'Volume expansion can only grow volumes, not shrink them'——只能扩容不能缩容",
+                "支持扩容和缩容操作",
+                "扩容后必须重启 Pod",
+                "只有特定存储类型支持缩容"
             ],
             answer: 0,
-            rationale: "StorageClass 支持 Retain（保留 PV 和数据）和 Delete（删除 PV 和底层存储）两种回收策略，默认是 Delete。"
+            rationale: "官方文档明确：'Volume expansion can only grow volumes, not shrink them'——卷扩展只能增长卷，不能收缩。"
         },
         {
             id: "w5-3-q10",
-            question: "以下哪个是 AWS EBS 的 CSI 驱动名称？",
+            question: "动态供给相比手动创建 PV 的优势是什么？",
             options: [
-                "aws-ebs-csi",
-                "ebs.csi.aws.com",
-                "kubernetes.io/aws-ebs",
-                "csi.aws.ebs"
+                "提供更好的数据加密",
+                "支持更多存储后端",
+                "'eliminates the need for cluster administrators to pre-provision storage'——消除预创建存储的需要",
+                "自动备份数据"
             ],
-            answer: 1,
-            rationale: "AWS EBS CSI 驱动的 provisioner 名称是 ebs.csi.aws.com，这是 CSI 驱动的标准命名格式。"
+            answer: 2,
+            rationale: "官方文档：动态供给'eliminates the need for cluster administrators to pre-provision storage'——管理员无需手动预创建存储卷。"
         },
         {
             id: "w5-3-q11",
-            question: "StorageClass 的 parameters 字段用于什么？",
+            question: "不指定 storageClassName 的 PVC 会怎样？",
             options: [
-                "设置 PVC 的名称",
-                "传递给 provisioner 的存储配置参数（如磁盘类型、IOPS）",
-                "配置 Pod 的环境变量",
-                "设置网络参数"
+                "PVC 创建失败",
+                "使用最新创建的 StorageClass",
+                "DefaultStorageClass admission controller 自动添加默认类",
+                "不创建 PV，直接绑定到空存储"
             ],
-            answer: 1,
-            rationale: "parameters 是传递给 provisioner 的键值对，用于配置存储后端的特定选项，如磁盘类型、加密、IOPS 等。"
+            answer: 2,
+            rationale: "官方文档：当存在默认 StorageClass 时，'the DefaultStorageClass admission controller automatically adds the storageClassName field pointing to the default storage class'。"
         },
         {
             id: "w5-3-q12",
-            question: "allowedTopologies 字段的作用是什么？",
+            question: "StorageClass 的 parameters 字段有什么限制？",
             options: [
-                "限制哪些用户可以使用该 StorageClass",
-                "限制 PV 可以创建在哪些拓扑区域（如可用区）",
-                "限制 StorageClass 的总容量",
-                "限制挂载点的数量"
-            ],
-            answer: 1,
-            rationale: "allowedTopologies 限制动态供给的 PV 只能在指定的拓扑区域创建，常用于控制存储的地理位置。"
-        },
-        {
-            id: "w5-3-q13",
-            question: "如果集群有多个 StorageClass 都标记为默认，会发生什么？",
-            options: [
-                "集群启动失败",
-                "使用字母顺序排第一的",
-                "PVC 创建会报错，或使用最近创建的默认类",
-                "随机选择一个"
+                "只能有 10 个参数",
+                "总大小不能超过 1 MiB",
+                "最多 512 个参数，总大小不能超过 256 KiB",
+                "没有任何限制"
             ],
             answer: 2,
-            rationale: "多个默认 StorageClass 会导致不确定行为。某些版本使用最近创建的，建议始终只保留一个默认 StorageClass。"
-        },
-        {
-            id: "w5-3-q14",
-            question: "mountOptions 字段的作用是什么？",
-            options: [
-                "指定挂载点路径",
-                "为动态创建的 PV 指定挂载选项（如 discard、noatime）",
-                "限制挂载次数",
-                "设置挂载超时时间"
-            ],
-            answer: 1,
-            rationale: "mountOptions 指定挂载到 Pod 时的选项，如 discard（启用 TRIM）、noatime、sync 等。无效选项会导致挂载失败。"
-        },
-        {
-            id: "w5-3-q15",
-            question: "CSIMigration feature gate 的作用是什么？",
-            options: [
-                "禁用 CSI 驱动",
-                "自动将 in-tree 存储插件的请求重定向到对应的 CSI 驱动",
-                "迁移 PV 数据",
-                "升级 CSI 驱动版本"
-            ],
-            answer: 1,
-            rationale: "CSIMigration 自动将使用 in-tree 插件（如 kubernetes.io/aws-ebs）的请求重定向到对应的 CSI 驱动，实现透明迁移。"
+            rationale: "官方文档：'Maximum 512 parameters per StorageClass'，'Total parameter object size cannot exceed 256 KiB'——有参数数量和大小限制。"
         }
     ],
     "w5-2": [
