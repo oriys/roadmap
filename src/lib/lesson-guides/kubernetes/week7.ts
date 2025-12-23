@@ -5,16 +5,18 @@ export const week7Guides: Record<string, LessonGuide> = {
     "w7-3": {
         lessonId: "w7-3",
         background: [
-            "Helm 是 Kubernetes 的包管理器，类似于 Linux 的 apt/yum 或 macOS 的 Homebrew。它简化了 Kubernetes 应用的打包、分发、安装和升级流程。",
-            "Helm 有三个核心概念：Chart（包含应用所有 K8s 资源定义的包）、Repository（存储和分享 Chart 的仓库）、Release（Chart 在集群中运行的实例）。同一个 Chart 可以安装多次，每次生成一个独立的 Release。",
-            "Chart 是一个目录结构，核心文件包括：Chart.yaml（元数据）、values.yaml（默认配置）、templates/（模板文件）。Helm 使用 Go template 语法渲染模板，生成最终的 Kubernetes 清单。",
-            "Helm v3 是当前主流版本，相比 v2 移除了服务端组件 Tiller，直接使用 kubeconfig 认证，安全性和简洁性大幅提升。Release 信息存储在 Secret 或 ConfigMap 中。"
+            "【Helm 定位】官方文档：Helm 是 Kubernetes 的包管理器，'The package manager for Kubernetes'——类似 Linux 的 apt/yum 或 macOS 的 Homebrew，简化应用的打包、分发、安装和升级流程。",
+            "【Chart 定义】官方文档：'A Helm package. It contains all of the resource definitions necessary to run an application'——Chart 是包含应用所有 K8s 资源定义的完整部署包。",
+            "【Repository 定义】官方文档：'The place where charts can be collected and shared'——仓库是 Chart 的集中存储和分发平台，允许用户发现和共享 Kubernetes 应用配置。",
+            "【Release 定义】官方文档：'An instance of a chart running in a Kubernetes cluster'——Release 是 Chart 在集群中的部署实例，同一 Chart 可多次安装，每次产生独立的 Release。",
+            "【Helm v3 架构】Helm v3 移除了服务端组件 Tiller，直接使用 kubeconfig 认证，安全性和简洁性大幅提升。Release 信息存储在 Kubernetes 的 Secret（默认）或 ConfigMap 中。"
         ],
         keyDifficulties: [
-            "Chart.yaml 必填字段：apiVersion（v2 表示 Helm 3）、name（Chart 名称）、version（Chart 版本，遵循 SemVer）。可选字段包括 appVersion（应用版本）、description、dependencies 等。",
-            "values.yaml 与覆盖：values.yaml 定义默认值，安装时可通过 -f custom-values.yaml 或 --set key=value 覆盖。模板中通过 .Values.xxx 访问配置值。",
-            "Release 生命周期：helm install 创建 Release，helm upgrade 更新，helm rollback 回滚到历史版本，helm uninstall 卸载。每次操作都会创建新的 Revision。",
-            "仓库管理：helm repo add 添加仓库，helm repo update 更新仓库索引，helm search repo 搜索本地仓库，helm search hub 搜索 Artifact Hub（公共仓库聚合）。"
+            "【Chart.yaml 必填字段】官方文档要求三个必填字段：apiVersion（v2 表示 Helm 3）、name（Chart 名称）、version（Chart 版本，必须遵循 SemVer 2 标准）。可选字段包括 appVersion、description、dependencies 等。",
+            "【values.yaml 配置覆盖】官方文档：values.yaml 定义默认配置，模板通过 .Values 对象访问。安装时可通过 '-f/--values' 指定覆盖文件或 '--set' 命令行直接指定参数覆盖默认值。",
+            "【Release 生命周期管理】官方命令：helm install 创建 Release，helm upgrade 更新现有 Release，'helm rollback [RELEASE] [REVISION]' 回滚到指定版本，helm uninstall 移除 Release。",
+            "【仓库管理命令】官方文档：'helm repo add' 添加新仓库，'helm repo list' 列出已配置仓库，'helm repo update' 同步最新 Chart 信息，'helm search hub/repo' 搜索 Chart。",
+            "【Chart 目录结构】标准结构包括：Chart.yaml（元数据）、values.yaml（默认配置）、templates/（Kubernetes 清单模板）、charts/（依赖 Chart）、crds/（自定义资源定义）。"
         ],
         handsOnPath: [
             "安装 Helm CLI（brew install helm 或官方脚本），运行 helm version 验证安装，了解 Helm 命令结构。",
@@ -354,183 +356,147 @@ export const week7Quizzes: Record<string, QuizQuestion[]> = {
     "w7-3": [
         {
             id: "w7-3-q1",
-            question: "Helm 在 Kubernetes 生态中的角色是什么？",
+            question: "官方文档对 Helm 的定位是什么？",
             options: [
-                "容器运行时",
-                "Kubernetes 的包管理器",
-                "网络插件",
-                "监控工具"
+                "'The package manager for Kubernetes'——Kubernetes 的包管理器",
+                "Kubernetes 的容器运行时",
+                "Kubernetes 的网络插件",
+                "Kubernetes 的监控平台"
             ],
-            answer: 1,
-            rationale: "Helm 是 Kubernetes 的包管理器，类似于 Linux 的 apt/yum 或 macOS 的 Homebrew，简化应用的打包、分发和部署。"
+            answer: 0,
+            rationale: "官方文档定义 Helm 为'The package manager for Kubernetes'，类似 Linux 的 apt/yum 或 macOS 的 Homebrew。"
         },
         {
             id: "w7-3-q2",
-            question: "Helm 的三个核心概念是什么？",
+            question: "官方文档对 Chart 的定义是什么？",
             options: [
-                "Pod、Service、Deployment",
-                "Chart、Repository、Release",
-                "Image、Container、Volume",
-                "Node、Cluster、Namespace"
+                "Kubernetes 的配置文件格式",
+                "Helm 的版本控制系统",
+                "'A Helm package that contains all resource definitions necessary to run an application'",
+                "Kubernetes 的日志收集器"
             ],
-            answer: 1,
-            rationale: "Helm 三个核心概念：Chart（应用包）、Repository（存储和分享 Chart 的仓库）、Release（Chart 在集群中的运行实例）。"
+            answer: 2,
+            rationale: "官方文档：'A Helm package. It contains all of the resource definitions necessary to run an application'——包含运行应用所需全部资源定义的 Helm 包。"
         },
         {
             id: "w7-3-q3",
-            question: "Chart 中的 Chart.yaml 文件的作用是什么？",
+            question: "官方文档对 Release 的定义是什么？",
             options: [
-                "定义 Kubernetes 资源模板",
-                "存储默认配置值",
-                "包含 Chart 的元数据（名称、版本、描述等）",
-                "定义依赖关系"
+                "Chart 的源代码版本",
+                "'An instance of a chart running in a Kubernetes cluster'——Chart 在集群中的部署实例",
+                "Helm CLI 的发布版本",
+                "Kubernetes API 的版本号"
             ],
-            answer: 2,
-            rationale: "Chart.yaml 是 Chart 的元数据文件，包含 apiVersion、name、version（Chart 版本）、appVersion（应用版本）、description 等信息。"
+            answer: 1,
+            rationale: "官方文档：'An instance of a chart running in a Kubernetes cluster'——同一 Chart 可多次安装，每次产生独立的 Release。"
         },
         {
             id: "w7-3-q4",
-            question: "values.yaml 文件的作用是什么？",
+            question: "Chart.yaml 文件的三个必填字段是什么？",
             options: [
-                "定义 Chart 的元数据",
-                "存储 Chart 的默认配置值，可在安装时覆盖",
-                "定义 Kubernetes 资源",
-                "存储 TLS 证书"
+                "name、description、maintainers",
+                "version、appVersion、keywords",
+                "type、home、sources",
+                "apiVersion、name、version——API 版本、Chart 名称、Chart 版本"
             ],
-            answer: 1,
-            rationale: "values.yaml 定义 Chart 的默认配置值，用户可以通过 -f 或 --set 在安装时覆盖这些值，模板中通过 .Values 访问。"
+            answer: 3,
+            rationale: "官方文档要求三个必填字段：apiVersion（v2 表示 Helm 3）、name（Chart 名称）、version（必须遵循 SemVer 2 标准）。"
         },
         {
             id: "w7-3-q5",
-            question: "如何覆盖 Chart 的默认配置值？",
+            question: "values.yaml 文件的作用是什么？",
             options: [
-                "只能修改 Chart 源代码",
-                "使用 -f custom-values.yaml 或 --set key=value",
-                "使用 --config 参数",
-                "必须修改 values.yaml 文件"
+                "定义 Chart 的默认配置值，模板通过 .Values 对象访问",
+                "存储 Kubernetes 集群的连接信息",
+                "定义 Chart 的元数据信息",
+                "存储 TLS 证书和密钥"
             ],
-            answer: 1,
-            rationale: "安装时可用 -f（或 --values）指定自定义 values 文件，或用 --set 直接设置单个值，两者可以组合使用。"
+            answer: 0,
+            rationale: "官方文档：values.yaml 定义默认配置参数，模板通过 .Values 对象引用，用户可在安装时覆盖这些默认值。"
         },
         {
             id: "w7-3-q6",
-            question: "Helm v3 相比 v2 最大的变化是什么？",
+            question: "如何在安装时覆盖 Chart 的默认配置？",
             options: [
-                "不再支持 Chart",
-                "移除了服务端组件 Tiller，直接使用 kubeconfig 认证",
-                "不支持滚动更新",
-                "必须使用私有仓库"
+                "只能直接修改 Chart 源代码中的 values.yaml",
+                "使用 --config 参数指定配置文件",
+                "使用 '-f/--values' 指定覆盖文件或 '--set' 命令行指定参数",
+                "必须在 Chart.yaml 中定义覆盖规则"
             ],
-            answer: 1,
-            rationale: "Helm v3 移除了 Tiller（服务端组件），直接使用 kubeconfig 进行认证，大幅提升安全性和简洁性。"
+            answer: 2,
+            rationale: "官方文档：可通过 '-f/--values' 指定 YAML 覆盖文件或 '--set' 命令行直接指定参数，两者可组合使用。"
         },
         {
             id: "w7-3-q7",
-            question: "Release 是什么？",
+            question: "Helm v3 相比 v2 最重要的架构变化是什么？",
             options: [
-                "Chart 的源代码版本",
-                "Chart 在集群中运行的实例",
-                "Helm CLI 的版本",
-                "Kubernetes 的版本"
+                "增加了更多的 Chart 类型支持",
+                "移除了服务端组件 Tiller，直接使用 kubeconfig 认证",
+                "引入了新的模板语法",
+                "改变了 Release 的命名规则"
             ],
             answer: 1,
-            rationale: "Release 是 Chart 在 Kubernetes 集群中的运行实例。同一个 Chart 可以安装多次，每次生成一个独立的 Release。"
+            rationale: "Helm v3 移除了 Tiller（服务端组件），直接使用 kubeconfig 进行认证，大幅提升了安全性和简洁性。"
         },
         {
             id: "w7-3-q8",
-            question: "如何添加 Helm 仓库？",
+            question: "添加 Helm 仓库的正确命令是什么？",
             options: [
                 "helm add repo <name> <url>",
-                "helm repo add <name> <url>",
                 "helm repository add <name> <url>",
-                "helm install repo <name> <url>"
+                "helm install repo <name> <url>",
+                "helm repo add <name> <url>"
             ],
-            answer: 1,
-            rationale: "使用 helm repo add <name> <url> 添加仓库，如 helm repo add bitnami https://charts.bitnami.com/bitnami。"
+            answer: 3,
+            rationale: "官方命令：'helm repo add' 添加新仓库，如 helm repo add bitnami https://charts.bitnami.com/bitnami。"
         },
         {
             id: "w7-3-q9",
-            question: "如何更新本地仓库的索引？",
+            question: "官方文档中回滚 Release 的命令格式是什么？",
             options: [
-                "helm repo refresh",
-                "helm repo update",
-                "helm update repo",
-                "helm sync repo"
+                "'helm rollback [RELEASE] [REVISION]'——回滚到指定的历史版本",
+                "helm undo <release> --to-version <n>",
+                "helm restore <release> <revision>",
+                "helm revert <release> --revision <n>"
             ],
-            answer: 1,
-            rationale: "helm repo update 从已添加的仓库获取最新的 Chart 索引，确保能搜索到最新版本的 Chart。"
+            answer: 0,
+            rationale: "官方文档：'helm rollback [RELEASE] [REVISION]' 回滚到指定版本，可用 helm history 查看版本历史。"
         },
         {
             id: "w7-3-q10",
-            question: "如何查看 Chart 的默认配置值？",
-            options: [
-                "helm get values <chart>",
-                "helm show values <chart>",
-                "helm inspect <chart>",
-                "helm describe <chart>"
-            ],
-            answer: 1,
-            rationale: "helm show values <chart> 显示 Chart 的默认 values.yaml 内容，帮助了解可配置的选项。"
-        },
-        {
-            id: "w7-3-q11",
-            question: "如何回滚 Release 到历史版本？",
-            options: [
-                "helm undo <release>",
-                "helm rollback <release> <revision>",
-                "helm revert <release>",
-                "helm restore <release>"
-            ],
-            answer: 1,
-            rationale: "helm rollback <release> <revision> 将 Release 回滚到指定的历史版本。可以用 helm history 查看版本历史。"
-        },
-        {
-            id: "w7-3-q12",
-            question: "helm history <release> 命令显示什么信息？",
-            options: [
-                "Chart 的开发历史",
-                "Release 的所有 Revision 及其状态",
-                "Kubernetes 集群的历史",
-                "Helm CLI 的使用历史"
-            ],
-            answer: 1,
-            rationale: "helm history 显示 Release 的所有修订版本（Revision），包括版本号、更新时间、状态、Chart 版本和描述。"
-        },
-        {
-            id: "w7-3-q13",
-            question: "Chart.yaml 中 apiVersion: v2 表示什么？",
-            options: [
-                "Kubernetes API 版本",
-                "表示这是 Helm 3 格式的 Chart",
-                "Chart 的第二个版本",
-                "values.yaml 的版本"
-            ],
-            answer: 1,
-            rationale: "apiVersion: v2 表示这是 Helm 3 格式的 Chart。Helm 2 使用 apiVersion: v1，两者在功能上有差异。"
-        },
-        {
-            id: "w7-3-q14",
-            question: "如何搜索 Artifact Hub 上的公共 Chart？",
-            options: [
-                "helm search repo <keyword>",
-                "helm search hub <keyword>",
-                "helm find <keyword>",
-                "helm lookup <keyword>"
-            ],
-            answer: 1,
-            rationale: "helm search hub 搜索 Artifact Hub（公共 Chart 聚合平台），helm search repo 搜索本地已添加的仓库。"
-        },
-        {
-            id: "w7-3-q15",
             question: "Helm 3 中 Release 信息存储在哪里？",
             options: [
-                "Tiller Pod 中",
-                "本地文件系统",
-                "Kubernetes 的 Secret 或 ConfigMap 中",
-                "etcd 的专用空间"
+                "Tiller Pod 的内存中",
+                "用户本地的 .helm 目录",
+                "Kubernetes 的 Secret（默认）或 ConfigMap 中",
+                "etcd 的专用命名空间"
             ],
             answer: 2,
             rationale: "Helm 3 将 Release 信息存储在 Kubernetes 的 Secret（默认）或 ConfigMap 中，与 Release 同命名空间。"
+        },
+        {
+            id: "w7-3-q11",
+            question: "helm search hub 和 helm search repo 的区别是什么？",
+            options: [
+                "两者功能完全相同",
+                "hub 搜索 Artifact Hub 公共仓库，repo 搜索本地已添加的仓库",
+                "hub 搜索本地仓库，repo 搜索远程仓库",
+                "hub 用于生产环境，repo 用于开发环境"
+            ],
+            answer: 1,
+            rationale: "官方文档：helm search hub 在 Artifact Hub 搜索公开 Chart，helm search repo 在已添加的本地仓库中搜索。"
+        },
+        {
+            id: "w7-3-q12",
+            question: "Chart.yaml 中 apiVersion: v2 表示什么？",
+            options: [
+                "Kubernetes API 版本 v2",
+                "Chart 的第二次修订版本",
+                "values.yaml 的格式版本",
+                "表示这是 Helm 3 格式的 Chart"
+            ],
+            answer: 3,
+            rationale: "apiVersion: v2 表示这是 Helm 3 格式的 Chart。Helm 2 使用 apiVersion: v1，两者在功能和依赖管理上有差异。"
         }
     ],
     "w7-2": [
