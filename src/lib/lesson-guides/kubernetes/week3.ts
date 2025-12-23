@@ -129,16 +129,18 @@ export const week3Guides: Record<string, LessonGuide> = {
     "w3-4": {
         lessonId: "w3-4",
         background: [
-            "Pod 生命周期包含多个阶段（Phase）：Pending（等待调度或拉取镜像）、Running（至少一个容器运行中）、Succeeded（所有容器成功退出）、Failed（至少一个容器失败退出）、Unknown（无法获取状态）。",
-            "容器有三种状态：Waiting（等待启动，如拉取镜像）、Running（正在执行）、Terminated（已退出，成功或失败）。kubectl describe pod 可以查看容器的详细状态和原因。",
-            "Kubernetes 提供三种探针检测容器健康：Liveness Probe（存活探针，失败则重启容器）、Readiness Probe（就绪探针，失败则从 Service 中移除）、Startup Probe（启动探针，保护慢启动应用）。",
-            "重启策略（restartPolicy）控制容器退出后的行为：Always（总是重启，Deployment 默认）、OnFailure（仅失败时重启，Job 常用）、Never（从不重启）。CrashLoopBackOff 表示容器反复崩溃，kubelet 应用指数退避延迟重启。"
+            "【Pod 阶段定义】官方文档定义五个 phase：Pending（已接受但容器未就绪）、Running（已绑定节点且至少一个容器运行中）、Succeeded（所有容器成功终止）、Failed（至少一个容器非零退出）、Unknown（无法获取状态，通常是节点通信问题）。",
+            "【容器三状态】官方文档：Waiting（执行启动操作如拉取镜像）、Running（正在执行无问题）、Terminated（已完成或失败，显示 reason/exit code/时间）。使用 kubectl describe pod 查看详细 Reason。",
+            "【重启策略】官方文档：restartPolicy 控制容器失败后的行为——Always（总是重启）、OnFailure（仅失败时重启）、Never（从不重启）。重复崩溃时应用指数退避延迟，约 10 分钟成功运行后重置。",
+            "【三种探针类型】官方文档：Liveness Probe（检测容器是否需要重启，用于恢复死锁）、Readiness Probe（判断是否就绪接收流量，控制 Service 后端成员）、Startup Probe（检查应用是否启动，保护慢启动应用免受过早杀死）。",
+            "【探测方式】官方文档：Exec（执行命令检查返回码）、HTTP GET（检查状态码 200-399 为成功）、TCP Socket（尝试连接端口，连接成功为健康）。"
         ],
         keyDifficulties: [
-            "探针类型选择：Liveness 检测死锁/无响应（失败则杀死重启），Readiness 检测是否就绪接收流量（失败则暂时移出负载均衡），Startup 用于慢启动应用（未成功前其他探针不生效）。",
-            "探针配置参数：initialDelaySeconds（启动后延迟首次探测）、periodSeconds（探测间隔）、timeoutSeconds（超时）、failureThreshold（连续失败次数判定失败）、successThreshold（连续成功次数判定成功）。",
-            "CrashLoopBackOff 排查：通过 kubectl describe pod 查看事件、kubectl logs 查看容器日志、kubectl logs --previous 查看崩溃前日志。常见原因：应用错误、配置错误、资源不足、探针配置过于激进。",
-            "Init Containers：在应用容器之前按顺序运行，用于初始化准备工作（如等待依赖服务、下载配置）。所有 Init Containers 必须成功完成，Pod 才会启动应用容器。"
+            "【CrashLoopBackOff 本质】官方文档指出这不是真正的 phase 值而是 kubectl 显示字段——表示容器反复崩溃，kubelet 应用指数退避机制延迟重启。约 10 分钟成功运行后视新崩溃为首次。",
+            "【探针参数配置】官方文档关键参数：initialDelaySeconds（首次探测延迟，默认 0）、periodSeconds（探测频率，默认 10）、timeoutSeconds（超时，默认 1）、failureThreshold（失败次数阈值，默认 3）、successThreshold（成功次数阈值，默认 1）。",
+            "【Liveness vs Readiness 最佳实践】官方建议：可用相同端点但不同阈值——Readiness 用低 failureThreshold 快速从负载均衡移除；Liveness 用高 failureThreshold 避免过早重启。避免虚假阳性导致级联故障。",
+            "【Init Containers 顺序执行】官方文档：Init Containers 在应用容器之前按顺序运行，每个必须成功完成后下一个才启动。所有 Init Containers 完成后才启动应用容器——用于等待依赖服务或下载配置。",
+            "【调试流程】官方文档推荐流程：kubectl get pods（检查状态）→ kubectl describe pod（查看事件和条件）→ kubectl logs（查看应用输出）→ kubectl get pod -o yaml（检查完整配置）。"
         ],
         handsOnPath: [
             "创建一个带 Liveness Probe（HTTP GET）的 Pod，故意让探针失败，观察 kubectl describe pod 中的事件和容器重启次数。",
@@ -609,27 +611,27 @@ export const week3Quizzes: Record<string, QuizQuestion[]> = {
     "w3-4": [
         {
             id: "w3-4-q1",
-            question: "Pod 的 Pending 阶段表示什么？",
+            question: "官方文档定义的 Pod Pending 阶段表示什么？",
             options: [
                 "Pod 正在运行",
-                "Pod 已被接受但容器尚未就绪（等待调度或拉取镜像）",
                 "Pod 已成功完成",
+                "Pod 已被接受但容器尚未就绪（包括调度和镜像下载时间）",
                 "Pod 失败退出"
             ],
-            answer: 1,
-            rationale: "Pending 表示 Pod 已被 API Server 接受，但一个或多个容器尚未创建运行，可能在等待调度或拉取镜像。"
+            answer: 2,
+            rationale: "官方文档：Pending 表示 Pod 已被集群接受，但容器尚未就绪，包括调度时间和镜像下载时间。"
         },
         {
             id: "w3-4-q2",
             question: "Liveness Probe 失败后会发生什么？",
             options: [
+                "容器被重启——用于恢复死锁或无响应的应用",
                 "Pod 被删除",
-                "容器被重启",
                 "Pod 从 Service 中移除",
                 "Pod 进入 Pending 状态"
             ],
-            answer: 1,
-            rationale: "Liveness Probe 检测容器是否存活，失败表示容器不健康，kubelet 会杀死并重启该容器。"
+            answer: 0,
+            rationale: "官方文档：Liveness Probe 检测容器是否处于需要重启的损坏状态，失败时 kubelet 会杀死并重启该容器。"
         },
         {
             id: "w3-4-q3",
@@ -637,155 +639,119 @@ export const week3Quizzes: Record<string, QuizQuestion[]> = {
             options: [
                 "容器被重启",
                 "Pod 被删除",
-                "Pod 的 IP 从 Service 的 Endpoints 中移除",
-                "Pod 进入 Failed 阶段"
+                "Pod 进入 Failed 阶段",
+                "Pod 的 IP 从 Service 的 Endpoints 中移除——不再接收流量"
             ],
-            answer: 2,
-            rationale: "Readiness Probe 检测容器是否就绪接收流量，失败时 Pod IP 会从 Service Endpoints 中移除，不再接收请求。"
+            answer: 3,
+            rationale: "官方文档：Readiness Probe 判断容器是否就绪接收流量，失败时 Pod 从 Service 后端移除，不再接收请求。"
         },
         {
             id: "w3-4-q4",
-            question: "Startup Probe 的主要用途是什么？",
+            question: "官方文档关于 CrashLoopBackOff 的说明是什么？",
             options: [
-                "加速容器启动",
-                "保护慢启动应用，在启动完成前禁用其他探针",
-                "检测容器是否存活",
-                "检测容器是否就绪接收流量"
+                "这是一个真正的 Pod phase 值",
+                "这是 kubectl 显示字段而非 phase 值——表示容器反复崩溃，正应用指数退避",
+                "这表示 Pod 正常运行",
+                "这表示 Pod 等待调度"
             ],
             answer: 1,
-            rationale: "Startup Probe 用于慢启动应用，在它成功之前，Liveness 和 Readiness 探针都不会生效，防止应用被过早杀死。"
+            rationale: "官方文档指出 CrashLoopBackOff 不是真正的 phase 值而是 kubectl 显示字段，表示退避机制正在生效。"
         },
         {
             id: "w3-4-q5",
-            question: "CrashLoopBackOff 状态表示什么？",
+            question: "探针支持哪三种探测方式？",
             options: [
-                "容器正在启动",
-                "容器反复崩溃，kubelet 应用指数退避延迟重启",
-                "Pod 被成功删除",
-                "容器镜像拉取失败"
+                "Exec（命令执行）、HTTP GET、TCP Socket",
+                "GET、POST、PUT",
+                "Ping、Telnet、SSH",
+                "REST、gRPC、WebSocket"
             ],
-            answer: 1,
-            rationale: "CrashLoopBackOff 表示容器反复启动后立即崩溃，kubelet 会以指数退避方式延迟重启（10s、20s、40s...最长5分钟）。"
+            answer: 0,
+            rationale: "官方文档：三种探测方式——Exec（检查命令返回码）、HTTP GET（检查状态码 200-399）、TCP Socket（检查端口连通性）。"
         },
         {
             id: "w3-4-q6",
-            question: "探针支持哪三种探测方式？",
-            options: [
-                "GET、POST、PUT",
-                "HTTP GET、TCP Socket、Exec（执行命令）",
-                "REST、gRPC、WebSocket",
-                "Ping、Telnet、SSH"
-            ],
-            answer: 1,
-            rationale: "探针支持三种方式：HTTP GET（检查 HTTP 响应码）、TCP Socket（检查端口连通性）、Exec（执行命令检查返回码）。"
-        },
-        {
-            id: "w3-4-q7",
-            question: "探针的 initialDelaySeconds 参数的作用是什么？",
-            options: [
-                "探测间隔时间",
-                "容器启动后延迟多久开始首次探测",
-                "探测超时时间",
-                "连续失败次数阈值"
-            ],
-            answer: 1,
-            rationale: "initialDelaySeconds 定义容器启动后等待多久开始首次探测，给应用预留启动时间。"
-        },
-        {
-            id: "w3-4-q8",
-            question: "restartPolicy: Always 的含义是什么？",
-            options: [
-                "容器失败时重启",
-                "容器退出时总是重启（无论成功或失败）",
-                "容器永不重启",
-                "只在首次启动时运行"
-            ],
-            answer: 1,
-            rationale: "Always 表示容器退出时总是重启，无论退出码是 0（成功）还是非 0（失败），这是 Deployment 的默认策略。"
-        },
-        {
-            id: "w3-4-q9",
-            question: "如何查看崩溃容器的上一次日志？",
-            options: [
-                "kubectl logs <pod> --all",
-                "kubectl logs <pod> --previous",
-                "kubectl describe pod <pod>",
-                "kubectl get pod <pod> -o yaml"
-            ],
-            answer: 1,
-            rationale: "kubectl logs --previous 可以查看容器上一次运行（崩溃前）的日志，对于排查 CrashLoopBackOff 非常有用。"
-        },
-        {
-            id: "w3-4-q10",
-            question: "Init Containers 的特点是什么？",
-            options: [
-                "与应用容器并行运行",
-                "在应用容器之前按顺序运行，全部成功后才启动应用容器",
-                "只在 Pod 终止时运行",
-                "可选的，不影响 Pod 启动"
-            ],
-            answer: 1,
-            rationale: "Init Containers 在应用容器之前按顺序运行，每个都必须成功完成，Pod 才会启动应用容器。"
-        },
-        {
-            id: "w3-4-q11",
-            question: "容器的 Terminated 状态包含哪些信息？",
-            options: [
-                "只有退出码",
-                "退出原因、退出码、开始和结束时间",
-                "只有结束时间",
-                "只有错误信息"
-            ],
-            answer: 1,
-            rationale: "Terminated 状态包含丰富的信息：reason、exitCode、startedAt、finishedAt 等，帮助诊断容器退出原因。"
-        },
-        {
-            id: "w3-4-q12",
             question: "HTTP GET 探针判定成功的条件是什么？",
             options: [
                 "响应体不为空",
-                "HTTP 状态码 >= 200 且 < 400",
+                "HTTP 状态码 200-399",
                 "响应时间小于 1 秒",
                 "返回 JSON 格式数据"
             ],
             answer: 1,
-            rationale: "HTTP GET 探针在响应状态码 >= 200 且 < 400 时判定成功，其他状态码判定失败。"
+            rationale: "官方文档：HTTP GET 探针在响应状态码 200-399 时判定成功，其他状态码判定失败。"
         },
         {
-            id: "w3-4-q13",
-            question: "failureThreshold 参数的作用是什么？",
+            id: "w3-4-q7",
+            question: "官方文档推荐的 Liveness vs Readiness 最佳实践是什么？",
             options: [
-                "单次探测的超时时间",
-                "连续失败多少次后判定探针失败",
-                "首次探测的延迟时间",
-                "探测的间隔时间"
+                "两者必须使用不同的端点",
+                "可用相同端点但不同阈值：Readiness 低 failureThreshold 快速移除；Liveness 高 failureThreshold 避免过早重启",
+                "只需要配置 Liveness，不需要 Readiness",
+                "两者配置必须完全相同"
             ],
             answer: 1,
-            rationale: "failureThreshold 定义连续探测失败多少次后才判定探针失败，默认值是 3，可以避免偶发失败导致误判。"
+            rationale: "官方最佳实践：可用相同端点但 Readiness 用低 failureThreshold 快速从负载均衡移除，Liveness 用高 failureThreshold 避免过早重启。"
         },
         {
-            id: "w3-4-q14",
-            question: "Pod 的 Unknown 阶段通常意味着什么？",
+            id: "w3-4-q8",
+            question: "failureThreshold 参数的作用和默认值是什么？",
             options: [
-                "Pod 配置错误",
-                "无法获取 Pod 状态，通常是节点通信问题",
-                "Pod 正在启动",
-                "容器镜像不存在"
+                "单次探测的超时时间，默认 1",
+                "连续失败多少次后判定探针失败，默认 3",
+                "首次探测的延迟时间，默认 0",
+                "探测的间隔时间，默认 10"
             ],
             answer: 1,
-            rationale: "Unknown 表示无法获取 Pod 状态，通常是 kubelet 与控制平面通信中断，如节点网络问题或节点故障。"
+            rationale: "官方文档：failureThreshold 定义连续失败多少次后判定探针失败，默认值是 3。"
         },
         {
-            id: "w3-4-q15",
-            question: "restartPolicy: OnFailure 常用于什么场景？",
+            id: "w3-4-q9",
+            question: "restartPolicy: Always 的含义是什么？",
             options: [
-                "长期运行的服务",
-                "需要运行到完成的批处理任务（Job）",
-                "一次性初始化任务",
-                "定时任务"
+                "容器失败时重启",
+                "容器退出时总是重启（无论成功或失败），是 Deployment 的默认策略",
+                "容器永不重启",
+                "只在首次启动时运行"
             ],
             answer: 1,
-            rationale: "OnFailure 常用于 Job，只在容器失败时重启，成功完成（退出码 0）则不重启，适合批处理任务。"
+            rationale: "官方文档：Always 表示容器退出时总是重启，无论退出码是 0 还是非 0，这是 Deployment 的默认策略。"
+        },
+        {
+            id: "w3-4-q10",
+            question: "Init Containers 的执行特点是什么？",
+            options: [
+                "与应用容器并行运行",
+                "可选的，不影响 Pod 启动",
+                "在应用容器之前按顺序运行，每个必须成功完成后下一个才启动",
+                "只在 Pod 终止时运行"
+            ],
+            answer: 2,
+            rationale: "官方文档：Init Containers 在应用容器之前按顺序运行，每个必须成功完成，Pod 才会启动应用容器。"
+        },
+        {
+            id: "w3-4-q11",
+            question: "官方文档推荐的 Pod 调试流程是什么？",
+            options: [
+                "kubectl logs → kubectl describe → kubectl get",
+                "kubectl get pods → kubectl describe pod → kubectl logs → kubectl get pod -o yaml",
+                "kubectl delete → kubectl create → kubectl get",
+                "kubectl exec → kubectl cp → kubectl port-forward"
+            ],
+            answer: 1,
+            rationale: "官方文档推荐：kubectl get pods（检查状态）→ describe pod（查看事件）→ logs（查看输出）→ get pod -o yaml（检查配置）。"
+        },
+        {
+            id: "w3-4-q12",
+            question: "如何查看崩溃容器的上一次日志？",
+            options: [
+                "kubectl logs <pod> --all",
+                "kubectl describe pod <pod>",
+                "kubectl logs <pod> --previous",
+                "kubectl get pod <pod> -o yaml"
+            ],
+            answer: 2,
+            rationale: "kubectl logs --previous 可以查看容器上一次运行（崩溃前）的日志，对于排查 CrashLoopBackOff 非常有用。"
         }
     ]
 }
