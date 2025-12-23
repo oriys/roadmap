@@ -87,10 +87,11 @@ export const week10Guides: Record<string, LessonGuide> = {
     "w10-3": {
         lessonId: "w10-3",
         background: [
-            "多环境管理是 GitOps 落地的核心挑战。开发、测试、预发布、生产等环境需要部署相同的应用，但配置（副本数、资源限制、环境变量）不同。Kustomize 和 Helm 是 ArgoCD 支持的两种主流配置管理工具。",
-            "Kustomize 采用 Base + Overlay 模式：Base 定义通用配置，Overlay 针对不同环境进行差异化配置。目录结构通常为 base/（基础配置）、overlays/dev/、overlays/staging/、overlays/prod/。ArgoCD 直接指向 overlay 目录即可。",
-            "Helm 通过 Values 文件实现多环境配置。ArgoCD 支持指定多个 values 文件（如 values.yaml、values-prod.yaml），后面的文件覆盖前面的值。也可以在 Application 中直接设置 parameters 覆盖特定值。",
-            "ArgoCD 的 values 优先级从低到高：Helm 仓库默认 values.yaml → valueFiles 列表（后面覆盖前面）→ values（内联字符串）→ valuesObject（内联对象）→ parameters（最高优先级）。"
+            "【Helm 渲染机制】官方文档：ArgoCD 使用 'helm template' 渲染 Helm Chart 而非直接通过 Helm 管理——'Argo CD uses helm template to render charts, application lifecycle is handled by Argo CD'。这意味着不会创建 Helm Release 对象。",
+            "【Values 优先级层次】官方文档明确优先级从低到高：valueFiles（多文件时后面覆盖前面）→ values（内联字符串）→ valuesObject（结构化对象）→ parameters（最高优先级）。'When multiple parameters share the same key, the last declaration takes effect'。",
+            "【Kustomize 配置选项】官方文档：ArgoCD 通过 spec.source.kustomize 支持 namePrefix/nameSuffix（资源命名）、commonLabels/commonAnnotations（统一标签）、images（镜像覆盖）、replicas（副本数覆盖）、patches（内联补丁）等声明式配置。",
+            "【多源配置能力】官方文档 v2.6+：'Files can originate from separate repositories'——支持从不同仓库获取 values 文件。配合 'ignoreMissingValueFiles: true' 实现可选覆盖模式，适用于多环境配置场景。",
+            "【OCI Registry 支持】官方文档：ArgoCD 支持 OCI Helm Chart 部署，'Omit the oci:// protocol prefix in the repository URL'——使用 registry-1.docker.io/bitnamicharts 格式而非 oci://registry-1.docker.io/bitnamicharts。"
         ],
         keyDifficulties: [
             "Kustomize vs Helm 的选择：Kustomize 是声明式补丁，适合 YAML 微调；Helm 是模板引擎，适合复杂逻辑和条件渲染。简单应用推荐 Kustomize，复杂应用或需要社区 Chart 时使用 Helm。",
@@ -462,183 +463,147 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
     "w10-3": [
         {
             id: "w10-3-q1",
-            question: "Kustomize 的 Base/Overlay 模式如何工作？",
+            question: "官方文档对 ArgoCD 渲染 Helm Chart 机制的描述是什么？",
             options: [
-                "Base 和 Overlay 是两个独立的应用",
-                "Base 定义通用配置，Overlay 针对不同环境进行差异化覆盖",
-                "Base 用于生产，Overlay 用于开发",
-                "Base 是 Helm，Overlay 是原生 YAML"
+                "'Argo CD uses helm template to render charts, application lifecycle is handled by Argo CD'",
+                "ArgoCD 创建 Helm Release 对象管理生命周期",
+                "ArgoCD 直接调用 helm install/upgrade 命令",
+                "ArgoCD 只支持 Helm 2 格式的 Chart"
             ],
-            answer: 1,
-            rationale: "Base 包含所有环境共用的基础配置，Overlay 为特定环境（dev/staging/prod）定义差异化配置，通过 patch 覆盖 Base。"
+            answer: 0,
+            rationale: "官方文档：'Argo CD uses helm template to render charts, application lifecycle is handled by Argo CD'——使用 helm template 渲染，不创建 Helm Release。"
         },
         {
             id: "w10-3-q2",
-            question: "ArgoCD 中 Helm values 的优先级顺序（从低到高）是什么？",
+            question: "官方文档对 Helm values 优先级的描述，从低到高的顺序是什么？",
             options: [
                 "parameters → values → valueFiles",
-                "valueFiles → values → parameters",
-                "values → valueFiles → parameters",
-                "parameters → valueFiles → values"
+                "values → parameters → valueFiles",
+                "valueFiles → values → valuesObject → parameters",
+                "parameters → valuesObject → values → valueFiles"
             ],
-            answer: 1,
-            rationale: "优先级从低到高：默认 values.yaml → valueFiles → values → valuesObject → parameters，后者覆盖前者。"
+            answer: 2,
+            rationale: "官方文档明确优先级从低到高：valueFiles → values → valuesObject → parameters。后者覆盖前者。"
         },
         {
             id: "w10-3-q3",
-            question: "使用 Helm valueFiles 配置多环境时，文件覆盖顺序是怎样的？",
+            question: "官方文档对 Helm valueFiles 中多个文件覆盖顺序的说明是什么？",
             options: [
-                "随机顺序",
                 "按文件名字母顺序",
-                "列表中靠后的文件覆盖前面的值",
-                "列表中靠前的文件优先级最高"
+                "'last file listed wins when multiple'——列表中靠后的文件覆盖前面",
+                "随机顺序，无法预测",
+                "按文件大小顺序"
             ],
-            answer: 2,
-            rationale: "valueFiles 列表中后面的文件会覆盖前面文件的同名配置，因此通常先写通用配置再写环境特定配置。"
+            answer: 1,
+            rationale: "官方文档：'last file listed wins when multiple'——valueFiles 列表中后面的文件覆盖前面文件的同名配置。"
         },
         {
             id: "w10-3-q4",
-            question: "什么情况下应该选择 Kustomize 而非 Helm？",
+            question: "官方文档对 ignoreMissingValueFiles 选项的说明是什么？",
             options: [
-                "需要复杂的条件逻辑和循环",
-                "简单的 YAML 微调和声明式补丁",
-                "使用社区 Helm Chart",
-                "需要模板函数"
+                "忽略所有 values 文件错误",
+                "忽略 values 文件中的缺失字段",
+                "忽略 Chart 中的默认 values",
+                "'implement optional override patterns'——实现可选覆盖模式，文件不存在时跳过"
             ],
-            answer: 1,
-            rationale: "Kustomize 适合简单的声明式补丁和 YAML 微调，不需要学习模板语法。复杂逻辑场景更适合 Helm。"
+            answer: 3,
+            rationale: "官方文档：使用 'ignoreMissingValueFiles: true' 可以 'implement optional override patterns'——文件不存在时跳过而非报错。"
         },
         {
             id: "w10-3-q5",
-            question: "ArgoCD 的 ignoreDifferences 配置的作用是什么？",
+            question: "官方文档对 ArgoCD Kustomize 配置选项的说明包括哪些功能？",
             options: [
-                "忽略所有差异",
-                "忽略特定字段的差异，避免误报 OutOfSync",
-                "忽略特定资源类型",
-                "忽略特定命名空间的差异"
+                "namePrefix/nameSuffix、commonLabels、images、replicas、patches 等声明式配置",
+                "只支持 namePrefix 和 nameSuffix",
+                "只支持 images 覆盖",
+                "不支持任何声明式配置"
             ],
-            answer: 1,
-            rationale: "ignoreDifferences 让 ArgoCD 忽略指定字段的差异（如 HPA 管理的 replicas），避免预期的漂移被报告为 OutOfSync。"
+            answer: 0,
+            rationale: "官方文档：ArgoCD 通过 spec.source.kustomize 支持 namePrefix/nameSuffix、commonLabels/commonAnnotations、images、replicas、patches 等配置。"
         },
         {
             id: "w10-3-q6",
-            question: "单仓库（Mono-repo）结构的主要优势是什么？",
+            question: "官方文档对 ArgoCD 多源配置（Multiple Sources）能力的说明是什么？",
             options: [
-                "更好的权限隔离",
-                "配置变更原子化，所有环境在一个 PR 中管理",
-                "更容易扩展到大团队",
-                "每个环境可以独立版本控制"
+                "不支持从多个仓库获取配置",
+                "只能从单一仓库获取所有配置",
+                "'Files can originate from separate repositories'——v2.6+ 支持从不同仓库获取 values",
+                "需要特殊插件支持"
             ],
-            answer: 1,
-            rationale: "单仓库让所有环境配置在一起，配置变更更容易追踪，一个 PR 可以同时修改多环境。但权限控制粒度较粗。"
+            answer: 2,
+            rationale: "官方文档 v2.6+：'Files can originate from separate repositories'——支持从不同仓库获取 values 文件。"
         },
         {
             id: "w10-3-q7",
-            question: "ArgoCD 如何识别应用使用 Kustomize？",
+            question: "官方文档对 OCI Registry Helm Chart URL 格式的说明是什么？",
             options: [
-                "需要手动指定",
-                "检测到 kustomization.yaml 文件时自动使用 Kustomize",
-                "根据文件扩展名判断",
-                "通过 Application 的 type 字段指定"
+                "必须使用 oci:// 协议前缀",
+                "'Omit the oci:// protocol prefix in the repository URL'——省略 oci:// 前缀",
+                "使用 https:// 协议前缀",
+                "使用 helm:// 协议前缀"
             ],
             answer: 1,
-            rationale: "如果 source.path 指向的目录存在 kustomization.yaml 文件，ArgoCD 会自动使用 Kustomize 渲染清单。"
+            rationale: "官方文档：'Omit the oci:// protocol prefix in the repository URL'——使用 registry-1.docker.io/bitnamicharts 格式。"
         },
         {
             id: "w10-3-q8",
-            question: "Helm 的 ignoreMissingValueFiles 选项的作用是什么？",
+            question: "官方文档对 parameters 字段的说明是什么？",
             options: [
-                "忽略所有 values 文件",
-                "如果指定的 values 文件不存在则跳过而非报错",
-                "忽略 values 文件中的缺失字段",
-                "忽略 Chart 中的默认 values"
+                "优先级最低，会被 valueFiles 覆盖",
+                "只用于定义环境变量",
+                "最高优先级，'When multiple parameters share the same key, the last declaration takes effect'",
+                "与 valueFiles 优先级相同"
             ],
-            answer: 1,
-            rationale: "ignoreMissingValueFiles: true 允许配置可选的 values 文件，不存在时跳过，适合环境特定配置可能不存在的场景。"
+            answer: 2,
+            rationale: "官方文档：parameters 具有最高优先级，'When multiple parameters share the same key, the last declaration takes effect'。"
         },
         {
             id: "w10-3-q9",
-            question: "环境晋级（Promotion）的 Git 分支策略通常是怎样的？",
+            question: "为什么需要为 HPA 管理的 replicas 字段配置 ignoreDifferences？",
             options: [
-                "所有环境使用同一分支",
-                "dev 分支 → main 分支（staging）→ 创建 Tag（prod）",
-                "每个环境一个独立仓库",
-                "只使用 Tag，不使用分支"
+                "HPA 会自动调整 replicas，导致与 Git 定义不一致，是预期的漂移",
+                "HPA 不支持 ArgoCD",
+                "HPA 需要特殊权限才能工作",
+                "ArgoCD 不支持检测 replicas 字段"
             ],
-            answer: 1,
-            rationale: "典型策略是 dev 分支合并到 main 触发 staging 部署，验证后创建 Tag 触发 prod 部署，实现渐进式晋级。"
+            answer: 0,
+            rationale: "HPA 会根据负载动态调整 Deployment 的 replicas，这个预期的漂移不应被报告为 OutOfSync，需要用 ignoreDifferences 忽略。"
         },
         {
             id: "w10-3-q10",
-            question: "ArgoCD 中 parameters 的作用是什么？",
+            question: "官方文档对 Kustomize patches 字段的说明是什么？",
             options: [
-                "定义应用的环境变量",
-                "在最高优先级覆盖 Helm values",
-                "配置 Git 仓库参数",
-                "定义同步参数"
+                "不支持内联补丁",
+                "只支持外部补丁文件",
+                "'supports inline JSON patch operations'——支持内联 JSON 补丁操作",
+                "只支持 YAML 格式补丁"
             ],
-            answer: 1,
-            rationale: "parameters 具有最高优先级，可以覆盖所有 valueFiles 和 values 的配置，常用于临时覆盖或动态参数。"
+            answer: 2,
+            rationale: "官方文档：patches 字段'supports inline JSON patch operations, allowing modifications without separate overlay files'。"
         },
         {
             id: "w10-3-q11",
-            question: "为什么需要为 HPA 管理的 replicas 字段配置 ignoreDifferences？",
+            question: "ArgoCD 如何自动识别应用使用 Kustomize？",
             options: [
-                "HPA 不支持 ArgoCD",
-                "HPA 会自动调整 replicas，导致与 Git 定义不一致",
-                "HPA 需要特殊权限",
-                "ArgoCD 不支持 HPA"
+                "需要在 Application 中手动指定 type: kustomize",
+                "根据文件扩展名判断",
+                "检测到 kustomization.yaml 文件时自动使用 Kustomize",
+                "通过环境变量配置"
             ],
-            answer: 1,
-            rationale: "HPA 会根据负载动态调整 Deployment 的 replicas，这个预期的漂移不应被报告为 OutOfSync。"
+            answer: 2,
+            rationale: "如果 source.path 指向的目录存在 kustomization.yaml 文件，ArgoCD 会自动检测并使用 Kustomize 渲染清单。"
         },
         {
             id: "w10-3-q12",
-            question: "Kustomize 的 components 功能用于什么场景？",
+            question: "官方文档对 Helm fileParameters 功能的说明是什么？",
             options: [
-                "引用外部 Helm Chart",
-                "定义可复用的配置片段，按需组合",
-                "自动生成 ConfigMap",
-                "管理镜像版本"
+                "用于配置文件路径",
+                "'Pass file contents as parameter values'——将文件内容作为参数值传递",
+                "用于指定 values 文件列表",
+                "用于配置 Chart 依赖"
             ],
             answer: 1,
-            rationale: "components 是可复用的配置模块，不同 overlay 可以按需引入不同的 components，实现更灵活的组合。"
-        },
-        {
-            id: "w10-3-q13",
-            question: "ArgoCD 如何配置从不同仓库读取 Helm values 文件？",
-            options: [
-                "不支持此功能",
-                "使用 multiple sources 配置多个 source",
-                "使用 valueFiles 的 URL 语法",
-                "通过 ConfigMap 引用"
-            ],
-            answer: 1,
-            rationale: "ArgoCD 2.6+ 支持 multiple sources，可以从一个仓库读取 Chart，从另一个仓库读取 values 文件。"
-        },
-        {
-            id: "w10-3-q14",
-            question: "Kustomize overlay 目录通常包含什么文件？",
-            options: [
-                "完整的应用 YAML 文件",
-                "kustomization.yaml 和环境特定的 patch 文件",
-                "Helm values 文件",
-                "Docker 镜像构建文件"
-            ],
-            answer: 1,
-            rationale: "overlay 目录包含 kustomization.yaml（引用 base 并定义覆盖）和环境特定的 patch 文件或配置。"
-        },
-        {
-            id: "w10-3-q15",
-            question: "ArgoCD 的 namePrefix 和 nameSuffix 选项的作用是什么？",
-            options: [
-                "修改 ArgoCD 组件名称",
-                "为 Kustomize 生成的资源名称添加前缀或后缀",
-                "修改 Git 分支名称",
-                "修改命名空间名称"
-            ],
-            answer: 1,
-            rationale: "namePrefix/nameSuffix 是 Kustomize 的功能，ArgoCD 支持在 Application 中直接配置，为所有资源名称添加前缀或后缀。"
+            rationale: "官方文档：fileParameters 可以'Pass file contents as parameter values'——将指定路径的文件内容作为 Helm 参数值传递。"
         }
     ],
     "w10-4": [
