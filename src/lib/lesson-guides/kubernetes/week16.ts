@@ -47,17 +47,18 @@ export const week16Guides: Record<string, LessonGuide> = {
     "w16-2": {
         lessonId: "w16-2",
         background: [
-            "Kubernetes 故障排查需要系统性思维：从表象定位根因。常见问题分层：应用层（Pod 不启动、CrashLoopBackOff）、服务层（Service 不通、Ingress 配置错误）、节点层（节点 NotReady、资源不足）、网络层（Pod 间不通、DNS 解析失败）。",
-            "Pod 故障排查是最常见场景。关键命令：kubectl describe pod（查看事件和状态）、kubectl logs（查看容器日志）、kubectl exec（进入容器调试）。常见问题：镜像拉取失败、资源不足、健康检查失败、配置错误。",
-            "Service 和网络故障排查：验证 Service selector 与 Pod label 匹配；检查 Endpoints 是否有后端 Pod；测试 Pod 内部 DNS 解析（nslookup service-name）；使用 kubectl port-forward 绑定调试。",
-            "节点故障排查：kubectl describe node 查看 Conditions 和 Events；检查 kubelet 日志（journalctl -u kubelet）；验证容器运行时状态（crictl）；检查系统资源（CPU、内存、磁盘、inode）。",
-            "高效排查需要可观测性基础设施：集中日志（Loki/ELK）快速搜索；指标监控（Prometheus）发现异常；分布式追踪（Jaeger）定位链路问题。没有可观测性基础设施，排查效率会大大降低。"
+            "【ImagePullBackOff 状态】官方文档：'ImagePullBackOff means that a container could not start because Kubernetes could not pull a container image (for reasons such as invalid image name, or pulling from a private registry without imagePullSecret)'——容器无法启动因为镜像拉取失败。BackOff 表示 Kubernetes 会以递增延迟持续重试，最大重试延迟 300 秒（5 分钟）。",
+            "【Pod Pending 原因】官方文档：Pod 处于 Pending 表示无法调度到节点。常见原因包括'Insufficient resources'——资源不足（CPU/内存），需删除 Pod、调整资源请求或添加节点；'Using hostPort'——使用 hostPort 限制调度位置，建议使用 Service 替代。",
+            "【Pod Waiting 状态】官方文档：Pod 已调度但无法运行，通常是镜像拉取问题。排查步骤：验证镜像名称正确、验证镜像在仓库中存在、手动执行'docker pull <image>'测试。如果是私有仓库，需配置 imagePullSecret。",
+            "【Pod Terminating 卡住】官方文档：删除操作已发起但控制面无法移除 Pod，通常由于'Finalizers with blocking admission webhooks'——Finalizer 被 webhook 阻塞。检查 ValidatingWebhookConfiguration 和 MutatingWebhookConfiguration 是否对 pods UPDATE 操作有问题。",
+            "【调试命令工作流】官方文档：系统化排查流程——1) 'kubectl describe pods ${POD_NAME}'查看状态、条件和事件；2) 检查 Container 状态（Running/Waiting/Terminated）；3) 查看最近重启信息；4) 如有调度器消息则分析调度失败原因。"
         ],
         keyDifficulties: [
-            "理解 Pod 生命周期和状态：Pending（调度中）、ContainerCreating（拉取镜像/挂载卷）、Running（运行中）、CrashLoopBackOff（反复崩溃）。不同状态指向不同问题域。",
-            "区分应用问题和平台问题：应用 bug 导致的崩溃 vs 资源限制导致的 OOMKilled vs 配置错误导致的启动失败。需要结合日志和 describe 信息判断。",
-            "网络故障的分层排查：先验证 Pod IP 可达性（ping）→ 再验证端口连通性（nc/telnet）→ 再验证 DNS 解析 → 最后验证应用协议。逐层缩小问题范围。",
-            "使用 ephemeral container 调试：kubectl debug 可以向运行中的 Pod 注入临时调试容器（带有调试工具），而不需要修改原始 Pod 配置。特别适合 distroless 镜像调试。"
+            "【配置验证方法】官方文档：使用'kubectl apply --validate -f mypod.yaml'验证 Pod 清单。常见配置错误包括字段名拼写错误（如'commnd'而非'command'）、YAML 嵌套不正确、类型不匹配。对比期望配置与实际配置：'kubectl get pods/mypod -o yaml > mypod-on-apiserver.yaml'。",
+            "【Service Endpoints 排查】官方文档：使用'kubectl get endpointslices -l kubernetes.io/service-name=${SERVICE_NAME}'查看 Service 端点。如果端点缺失，验证 Pod 选择器：'kubectl get pods --selector=name=nginx,type=frontend'。确认 Pod labels 匹配 selector，containerPort 匹配 Service targetPort。",
+            "【私有仓库镜像拉取】官方文档：ImagePullBackOff 常因私有仓库认证失败。解决方案：创建 kubernetes.io/dockercfg 类型的 Secret，然后在 Pod spec 中引用'imagePullSecrets'。建议使用显式标签而非':latest'，生产环境使用镜像摘要'image@sha256:<hash>'保证版本一致。",
+            "【Webhook 阻塞删除】官方文档：Pod 卡在 Terminating 状态时，检查'ValidatingWebhookConfiguration'和'MutatingWebhookConfiguration'是否阻塞。解决方案：更新 webhook 到最新版本、确保 mutating webhook 不修改不可变字段、确保 validating webhook 允许现有违规通过。",
+            "【资源不足调度失败】官方文档：Pod Pending 且事件显示资源不足时，参考'Compute Resources document'。解决方案：删除不需要的 Pod 释放资源、调整 Pod 的资源请求（requests）、添加新节点扩展集群容量。"
         ],
         handsOnPath: [
             "Pod 故障排查实战：创建一个故意配置错误的 Pod（错误镜像名、资源请求过大、错误的健康检查）。使用 describe/logs 定位问题。修复后验证。",
@@ -81,8 +82,8 @@ export const week16Guides: Record<string, LessonGuide> = {
         ],
         sourceUrls: [
             "https://kubernetes.io/docs/tasks/debug/debug-application/",
-            "https://kubernetes.io/docs/tasks/debug/debug-cluster/",
-            "https://kubernetes.io/docs/reference/kubectl/cheatsheet/"
+            "https://kubernetes.io/docs/concepts/containers/images/#imagepullbackoff",
+            "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
         ]
     },
     "w16-3": {
@@ -319,183 +320,147 @@ export const week16Quizzes: Record<string, QuizQuestion[]> = {
     "w16-2": [
         {
             id: "w16-2-q1",
-            question: "Pod 处于 Pending 状态通常是什么原因？",
+            question: "官方文档对 ImagePullBackOff 状态的定义是什么？",
             options: [
-                "容器运行正常",
-                "调度失败（资源不足、节点选择器不匹配等）",
-                "容器崩溃",
-                "网络问题"
+                "镜像正在后台拉取",
+                "镜像拉取成功等待启动",
+                "'a container could not start because Kubernetes could not pull a container image'——容器无法启动因为镜像拉取失败",
+                "镜像版本不兼容"
             ],
-            answer: 1,
-            rationale: "Pending 表示 Pod 已创建但未被调度到节点。常见原因：资源请求超过可用资源、节点选择器/亲和性不匹配、PVC 未绑定等。"
+            answer: 2,
+            rationale: "官方文档：'ImagePullBackOff means that a container could not start because Kubernetes could not pull a container image (for reasons such as invalid image name, or pulling from a private registry without imagePullSecret)'。"
         },
         {
             id: "w16-2-q2",
-            question: "查看 Pod 详细信息和事件的命令是什么？",
+            question: "官方文档描述的 ImagePullBackOff 最大重试延迟是多少？",
             options: [
-                "kubectl logs",
-                "kubectl describe pod",
-                "kubectl get pod -o wide",
-                "kubectl top pod"
+                "300 秒（5 分钟）——编译时固定的最大延迟",
+                "60 秒",
+                "600 秒",
+                "无限制"
             ],
-            answer: 1,
-            rationale: "kubectl describe pod 显示 Pod 的完整信息，包括状态、条件、事件等，是排查问题的第一步。"
+            answer: 0,
+            rationale: "官方文档：ImagePullBackOff 的最大重试延迟是 300 秒（5 分钟），这是编译时固定的值。"
         },
         {
             id: "w16-2-q3",
-            question: "容器 OOMKilled 表示什么？",
+            question: "官方文档描述的 Pod Pending 常见原因不包括哪个？",
             options: [
-                "网络超时",
-                "内存使用超过限制被 Linux OOM Killer 终止",
-                "CPU 使用过高",
-                "磁盘空间不足"
+                "'Insufficient resources'——资源不足",
+                "'Using hostPort'——使用 hostPort",
+                "镜像拉取失败",
+                "PVC 未绑定"
             ],
-            answer: 1,
-            rationale: "OOMKilled 表示容器内存使用超过了 resources.limits.memory，被 Linux OOM Killer 终止。需要增加内存限制或优化应用内存使用。"
+            answer: 2,
+            rationale: "官方文档：Pod Pending 原因包括资源不足、hostPort 限制等调度问题。镜像拉取失败导致的是 Waiting 状态而非 Pending。"
         },
         {
             id: "w16-2-q4",
-            question: "Service 的 Endpoints 为空通常是什么原因？",
+            question: "官方文档建议如何解决 hostPort 导致的调度问题？",
             options: [
-                "Service 配置正确",
-                "selector 与 Pod label 不匹配或 Pod 未 Ready",
-                "网络策略阻止",
-                "DNS 问题"
+                "增加节点数量",
+                "使用 Service 对象替代 hostPort",
+                "降低资源请求",
+                "使用 DaemonSet"
             ],
             answer: 1,
-            rationale: "Endpoints 为空意味着没有 Pod 匹配 Service 的 selector，或匹配的 Pod 未通过 readinessProbe。检查 label 和 Pod 状态。"
+            rationale: "官方文档：使用 hostPort 限制调度位置，'Consider using a Service object instead of hostPort'——建议使用 Service 替代。"
         },
         {
             id: "w16-2-q5",
-            question: "在 Pod 内测试 DNS 解析的命令是什么？",
+            question: "官方文档描述的 Pod 卡在 Terminating 状态的原因是什么？",
             options: [
-                "ping service-name",
-                "nslookup service-name 或 dig service-name",
-                "curl service-name",
-                "traceroute service-name"
+                "网络连接未断开",
+                "容器进程未响应信号",
+                "'Finalizers with blocking admission webhooks'——Finalizer 被 webhook 阻塞",
+                "存储卷未卸载"
             ],
-            answer: 1,
-            rationale: "nslookup 或 dig 可以测试 DNS 解析。如果解析失败，检查 CoreDNS 状态、Service 名称和命名空间。"
+            answer: 2,
+            rationale: "官方文档：Pod Terminating 卡住通常因为'Finalizers with blocking admission webhooks'，检查 ValidatingWebhookConfiguration 和 MutatingWebhookConfiguration。"
         },
         {
             id: "w16-2-q6",
-            question: "CrashLoopBackOff 表示什么状态？",
+            question: "官方文档建议的 Pod 调试第一步命令是什么？",
             options: [
-                "Pod 正在创建",
-                "容器反复启动后崩溃，Kubernetes 延长重启间隔",
-                "Pod 调度失败",
-                "镜像拉取中"
+                "kubectl logs",
+                "kubectl exec",
+                "kubectl get events",
+                "'kubectl describe pods ${POD_NAME}'——查看状态、条件和事件"
             ],
-            answer: 1,
-            rationale: "CrashLoopBackOff 表示容器反复崩溃，Kubernetes 使用指数退避延长重启间隔（10s, 20s, 40s...）。需要查看日志找出崩溃原因。"
+            answer: 3,
+            rationale: "官方文档：'Start by looking at the current state of the Pod and recent events with kubectl describe pods ${POD_NAME}'。"
         },
         {
             id: "w16-2-q7",
-            question: "kubectl debug 命令的用途是什么？",
+            question: "官方文档建议如何验证 Pod 配置是否正确？",
             options: [
-                "删除 Pod",
-                "向运行中的 Pod 注入临时调试容器",
-                "重启 Pod",
-                "修改 Pod 配置"
+                "直接部署观察结果",
+                "使用'kubectl apply --validate -f mypod.yaml'验证清单",
+                "检查 Pod 日志",
+                "使用 kubectl diff"
             ],
             answer: 1,
-            rationale: "kubectl debug 可以创建临时调试容器（ephemeral container），在不修改原 Pod 的情况下注入调试工具，特别适合 distroless 镜像。"
+            rationale: "官方文档：'Use kubectl apply --validate -f mypod.yaml to validate your pod manifest'——使用 --validate 参数验证配置。"
         },
         {
             id: "w16-2-q8",
-            question: "节点 NotReady 的常见原因是什么？",
+            question: "官方文档列举的常见 YAML 配置错误不包括哪个？",
             options: [
-                "Pod 太多",
-                "kubelet 故障、资源耗尽、网络问题",
-                "只有镜像拉取问题",
-                "ConfigMap 配置错误"
+                "字段名拼写错误（如'commnd'）",
+                "YAML 嵌套不正确",
+                "使用了错误的 API 版本",
+                "类型不匹配"
             ],
-            answer: 1,
-            rationale: "NotReady 常见原因：kubelet 服务故障、资源耗尽（磁盘、内存、PID）、容器运行时故障、网络问题、证书过期等。"
+            answer: 2,
+            rationale: "官方文档列举的配置错误包括：字段名拼写错误（如'commnd'而非'command'）、YAML 嵌套不正确、类型不匹配。API 版本错误不在此列。"
         },
         {
             id: "w16-2-q9",
-            question: "如何查看 kubelet 的日志？",
+            question: "官方文档建议如何检查 Service 的端点？",
             options: [
-                "kubectl logs kubelet",
-                "journalctl -u kubelet",
-                "cat /var/log/kubelet",
-                "kubectl describe node"
+                "kubectl describe service",
+                "kubectl get pods",
+                "'kubectl get endpointslices -l kubernetes.io/service-name=${SERVICE_NAME}'",
+                "kubectl logs"
             ],
-            answer: 1,
-            rationale: "kubelet 作为 systemd 服务运行，使用 journalctl -u kubelet 查看日志。添加 -f 可以实时跟踪。"
+            answer: 2,
+            rationale: "官方文档：使用'kubectl get endpointslices -l kubernetes.io/service-name=${SERVICE_NAME}'查看 Service 端点。"
         },
         {
             id: "w16-2-q10",
-            question: "ImagePullBackOff 表示什么？",
+            question: "官方文档对私有仓库 ImagePullBackOff 的解决方案是什么？",
             options: [
-                "镜像正在拉取",
-                "镜像拉取失败，Kubernetes 延长重试间隔",
-                "镜像已存在",
-                "镜像正在构建"
+                "使用公共镜像仓库",
+                "在节点上预拉取镜像",
+                "创建 imagePullSecret 并在 Pod spec 中引用",
+                "修改 kubelet 配置"
             ],
-            answer: 1,
-            rationale: "ImagePullBackOff 表示镜像拉取失败（镜像不存在、仓库认证失败、网络问题），Kubernetes 使用退避策略延长重试间隔。"
+            answer: 2,
+            rationale: "官方文档：私有仓库需要创建 kubernetes.io/dockercfg 类型的 Secret，然后在 Pod spec 中通过 imagePullSecrets 引用。"
         },
         {
             id: "w16-2-q11",
-            question: "网络故障排查应该从哪里开始？",
+            question: "官方文档建议生产环境使用什么格式指定镜像版本？",
             options: [
-                "直接检查应用代码",
-                "从 Pod IP 连通性开始，逐层验证端口、DNS、应用协议",
-                "重启所有 Pod",
-                "检查镜像版本"
+                "使用 latest 标签",
+                "使用镜像摘要'image@sha256:<hash>'保证版本一致",
+                "不指定标签",
+                "使用日期标签"
             ],
             answer: 1,
-            rationale: "网络排查分层进行：验证 Pod IP 可达（ping）→ 端口连通（nc/telnet）→ DNS 解析 → 应用协议。逐层缩小问题范围。"
+            rationale: "官方文档：建议使用显式标签而非':latest'，生产环境使用镜像摘要'image@sha256:<hash>'保证版本一致。"
         },
         {
             id: "w16-2-q12",
-            question: "kubectl port-forward 的用途是什么？",
+            question: "官方文档描述 Service Endpoints 缺失时应验证什么？",
             options: [
-                "永久暴露服务",
-                "临时将本地端口转发到 Pod/Service，用于调试",
-                "配置网络策略",
-                "修改 Service 端口"
+                "网络策略配置",
+                "DNS 解析是否正常",
+                "Pod labels 匹配 selector 且 containerPort 匹配 targetPort",
+                "Ingress 配置"
             ],
-            answer: 1,
-            rationale: "kubectl port-forward 创建临时隧道，将本地端口转发到集群内的 Pod 或 Service，方便在本地调试而无需暴露服务。"
-        },
-        {
-            id: "w16-2-q13",
-            question: "如何查看节点的资源使用情况？",
-            options: [
-                "kubectl logs node",
-                "kubectl describe node 或 kubectl top node",
-                "kubectl get node -o wide",
-                "kubectl exec node"
-            ],
-            answer: 1,
-            rationale: "kubectl describe node 显示详细信息包括 Capacity 和 Allocatable。kubectl top node 显示实时 CPU 和内存使用（需要 metrics-server）。"
-        },
-        {
-            id: "w16-2-q14",
-            question: "crictl 工具的用途是什么？",
-            options: [
-                "管理 Kubernetes API",
-                "调试容器运行时（containerd/CRI-O）",
-                "管理 Helm Charts",
-                "配置网络"
-            ],
-            answer: 1,
-            rationale: "crictl 是 CRI（Container Runtime Interface）的客户端工具，用于调试和管理 containerd/CRI-O 容器运行时。"
-        },
-        {
-            id: "w16-2-q15",
-            question: "高效故障排查需要什么基础设施支持？",
-            options: [
-                "只需要 kubectl",
-                "集中日志、指标监控、分布式追踪",
-                "只需要更多节点",
-                "只需要更大的磁盘"
-            ],
-            answer: 1,
-            rationale: "可观测性基础设施大大提高排查效率：集中日志（Loki/ELK）快速搜索、指标（Prometheus）发现异常、追踪（Jaeger）定位链路问题。"
+            answer: 2,
+            rationale: "官方文档：如果端点缺失，验证'Pod labels match selector'且'containerPort matches Service targetPort'。"
         }
     ],
     "w16-3": [
