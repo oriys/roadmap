@@ -47,16 +47,18 @@ export const week12Guides: Record<string, LessonGuide> = {
     "w12-2": {
         lessonId: "w12-2",
         background: [
-            "Loki 是 Grafana Labs 开发的日志聚合系统，与 Prometheus 理念相似，采用标签索引而非全文索引。PLG 栈（Promtail/Loki/Grafana）是云原生日志解决方案的轻量级选择，相比 ELK 栈资源消耗更低。",
-            "Loki 的核心设计是「只索引标签，不索引日志内容」。日志流（Log Stream）由一组标签唯一标识，如 {namespace=\"prod\", app=\"frontend\"}。查询时先通过标签筛选流，再在流内进行内容过滤。这种设计大幅降低了索引开销。",
-            "LogQL 是 Loki 的查询语言，语法类似 PromQL。基本查询包括：流选择器（Stream Selector）选择日志流、行过滤器（Line Filter）过滤日志内容、解析器（Parser）提取字段、标签过滤器（Label Filter）基于提取的字段过滤。",
-            "Loki 架构包括：Distributor（接收日志并分发）、Ingester（构建块和索引）、Querier（执行查询）、Compactor（压缩旧数据）。支持单体模式（all-in-one）和微服务模式部署，后者适合大规模场景。"
+            "【Loki 设计哲学】官方文档：Loki 与传统日志系统的核心区别在于'indexes metadata about your logs as a set of labels for each log stream'——只索引标签元数据而非日志内容。这种设计'dramatically reduces storage costs and operational complexity'。",
+            "【三组件架构】官方文档：PLG 栈由三部分组成——Agent（Grafana Alloy/Promtail）'Scrapes logs, applies labels, pushes to Loki'；Loki Server 负责'Ingests, stores logs, processes queries'；Grafana 提供可视化和查询界面。",
+            "【LogQL 查询结构】官方文档：LogQL 基本格式为'{ log stream selector } | log pipeline'——流选择器是必需的，管道是可选的。'LogQL allows you to create a schema at query'——无需预先定义 schema，查询时动态解析。",
+            "【存储优势】官方文档：Loki'Log data compressed into chunks stored in object storage (S3, GCS, filesystem)'——利用廉价对象存储而非 SSD/HDD。'Smaller Index: Only label metadata indexed, not full log content'大幅降低索引开销。",
+            "【多租户与告警】官方文档：Loki 提供'Multi-Tenancy - Complete data isolation between tenants'完整租户隔离；'Alerting via Ruler - Continuous query evaluation with Prometheus Alertmanager integration'支持基于日志的告警。"
         ],
         keyDifficulties: [
-            "理解标签基数限制：Loki 对标签基数（cardinality）敏感，不应将高基数值（如 user_id、request_id）作为标签。高基数会导致大量小日志流，降低查询性能。应在查询时通过 LogQL 解析提取，而非作为静态标签。",
-            "LogQL 流选择器语法：{app=\"nginx\"}（精确匹配）、{namespace=~\"prod|staging\"}（正则匹配）、{container!=\"sidecar\"}（不等于）。流选择器是必需的，决定了查询的日志范围，是性能优化的关键。",
-            "LogQL 管道操作符：流选择器后可链式添加操作符。行过滤器（|= \"error\"、!= \"debug\"、|~ \"error|warn\"）过滤内容；解析器（| json、| logfmt、| regexp）提取字段；标签过滤器（| level=\"error\"）基于提取字段过滤。顺序影响性能，应先过滤再解析。",
-            "Loki 的存储架构：日志数据存储在对象存储（S3、GCS、MinIO）或文件系统，索引存储在 BoltDB 或 TSDB。数据按时间分片，旧数据会被压缩。retention 配置控制数据保留时间。"
+            "【标签基数限制】官方文档：'DO use fewer labels, aim to have 10 - 15 labels at a maximum. Fewer labels means a smaller index, which leads to better performance'。高基数'results from labels with unbounded values or too many labels combined, creating thousands of tiny chunks and massive index bloat'。",
+            "【流选择器操作符】官方文档：LogQL 使用四种标签匹配操作符——'=' (exact match)、'!=' (not equal)、'=~' (regex match)、'!~' (not regex match)。示例：{service_name=\"nginx\", status=\"500\"}。流选择器是必需的。",
+            "【管道过滤表达式】官方文档：行过滤器包括'|=' (contains string)、'!=' (doesn't contain)、'|~' (regex match)、'!~' (no regex match)；标签过滤器支持'==, !=, >, >=, <, <='，可用'and/or'链接条件。",
+            "【解析器类型】官方文档：LogQL 支持多种解析器——'JSON, logfmt, pattern, regexp, unpack'。解析后可提取字段为标签。'line_format() and label_format() for display customization'用于格式化输出。",
+            "【高基数解决方案】官方文档：'Avoid labels for one-time searches or very specific identifiers (user IDs, customer IDs)'；'Don't extract log message content as labels—use structured metadata instead'——高基数数据应使用结构化元数据而非标签。"
         ],
         handsOnPath: [
             "部署 Loki 单体模式：使用 Helm 安装 grafana/loki-stack（包含 Loki + Promtail）。配置 Grafana 添加 Loki 数据源。在 Explore 页面验证日志查询功能。",
@@ -316,183 +318,147 @@ export const week12Quizzes: Record<string, QuizQuestion[]> = {
     "w12-2": [
         {
             id: "w12-2-q1",
-            question: "Loki 与 Elasticsearch 在日志索引上的核心区别是什么？",
+            question: "官方文档对 Loki 索引策略的描述是什么？",
             options: [
-                "Loki 使用全文索引，Elasticsearch 只索引标签",
-                "Loki 只索引标签，Elasticsearch 使用全文索引",
-                "两者都使用全文索引",
-                "两者都只索引标签"
+                "索引所有日志内容和元数据",
+                "使用全文索引技术",
+                "'indexes metadata about your logs as a set of labels for each log stream'——只索引标签元数据",
+                "不使用任何索引"
             ],
-            answer: 1,
-            rationale: "Loki 只索引标签（元数据），不索引日志内容，查询时先过滤流再在内容中搜索。这大幅降低了索引开销，但需要合理设计标签。"
+            answer: 2,
+            rationale: "官方文档：Loki 'indexes metadata about your logs as a set of labels for each log stream'——只索引标签元数据而非日志内容。"
         },
         {
             id: "w12-2-q2",
-            question: "为什么不应该将高基数值（如 user_id）作为 Loki 标签？",
+            question: "官方文档对 Loki 标签数量的建议是什么？",
             options: [
-                "Loki 不支持数字类型标签",
-                "高基数会产生大量小日志流，降低查询性能",
-                "标签值长度有限制",
-                "高基数标签会增加网络开销"
+                "'DO use fewer labels, aim to have 10 - 15 labels at a maximum'——最多 10-15 个标签",
+                "标签数量没有限制",
+                "建议使用 50 个以上标签",
+                "每个日志流至少需要 20 个标签"
             ],
-            answer: 1,
-            rationale: "Loki 每个唯一标签组合对应一个日志流，高基数标签（如每个用户一个值）会产生海量小流，导致索引膨胀和查询性能下降。"
+            answer: 0,
+            rationale: "官方文档：'DO use fewer labels, aim to have 10 - 15 labels at a maximum. Fewer labels means a smaller index, which leads to better performance'。"
         },
         {
             id: "w12-2-q3",
-            question: "LogQL 流选择器 {namespace=~\"prod|staging\"} 的含义是什么？",
+            question: "LogQL 的流选择器支持哪些匹配操作符？",
             options: [
-                "精确匹配 namespace 为 prod|staging",
-                "正则匹配 namespace 为 prod 或 staging",
-                "排除 prod 和 staging 命名空间",
-                "匹配包含 prod 或 staging 的命名空间"
+                "只支持精确匹配",
+                "'=' (exact match)、'!=' (not equal)、'=~' (regex match)、'!~' (not regex match)",
+                "只支持正则匹配",
+                "只支持等于和不等于"
             ],
             answer: 1,
-            rationale: "=~ 是正则匹配操作符，prod|staging 是正则表达式，表示匹配 namespace 为 prod 或 staging 的日志流。"
+            rationale: "官方文档：LogQL 使用四种标签匹配操作符——'=' (exact match)、'!=' (not equal)、'=~' (regex match)、'!~' (not regex match)。"
         },
         {
             id: "w12-2-q4",
-            question: "LogQL 中 |= \"error\" 的作用是什么？",
+            question: "官方文档描述的 LogQL 行过滤器操作符有哪些？",
             options: [
-                "设置标签 error 的值",
-                "过滤包含 \"error\" 字符串的日志行",
-                "解析 error 字段",
-                "统计 error 数量"
+                "只有 |= 一种",
+                "只支持精确匹配过滤",
+                "不支持行过滤功能",
+                "'|=' (contains string)、'!=' (doesn't contain)、'|~' (regex match)、'!~' (no regex match)"
             ],
-            answer: 1,
-            rationale: "|= 是行过滤器（line filter），|= \"error\" 表示只保留包含 \"error\" 字符串的日志行，不区分大小写需要加 |~。"
+            answer: 3,
+            rationale: "官方文档：行过滤器包括 '|=' (contains string)、'!=' (doesn't contain)、'|~' (regex match)、'!~' (no regex match)。"
         },
         {
             id: "w12-2-q5",
-            question: "LogQL 中 | json 的作用是什么？",
+            question: "官方文档列出的 LogQL 解析器类型有哪些？",
             options: [
-                "将日志转换为 JSON 格式",
-                "解析 JSON 格式的日志，提取字段为标签",
-                "过滤 JSON 格式的日志",
-                "验证日志是否为有效 JSON"
+                "只支持 JSON 解析",
+                "'JSON, logfmt, pattern, regexp, unpack'——五种解析器",
+                "只支持正则表达式解析",
+                "不支持日志解析"
             ],
             answer: 1,
-            rationale: "| json 是解析器（parser），将 JSON 格式的日志内容解析，自动将 JSON 字段提取为标签，后续可以基于这些标签过滤。"
+            rationale: "官方文档：LogQL 支持多种解析器——'JSON, logfmt, pattern, regexp, unpack'。"
         },
         {
             id: "w12-2-q6",
-            question: "LogQL 查询性能优化的最佳实践是什么？",
-            options: [
-                "先解析再过滤",
-                "先过滤再解析",
-                "顺序无所谓",
-                "只使用流选择器"
-            ],
-            answer: 1,
-            rationale: "应该先使用行过滤器（|=）减少数据量，再使用解析器（| json）。解析开销大，先过滤可以减少需要解析的日志量。"
-        },
-        {
-            id: "w12-2-q7",
-            question: "rate({app=\"nginx\"} |= \"error\" [5m]) 返回什么？",
-            options: [
-                "过去 5 分钟的错误日志原文",
-                "错误日志的每秒速率",
-                "错误日志的总数",
-                "错误日志的百分比"
-            ],
-            answer: 1,
-            rationale: "rate() 计算范围向量的每秒速率，这里返回 nginx 应用每秒产生的包含 error 的日志条数，用于监控错误趋势。"
-        },
-        {
-            id: "w12-2-q8",
-            question: "Loki 的 Distributor 组件的职责是什么？",
-            options: [
-                "执行查询",
-                "接收日志并分发到 Ingester",
-                "压缩旧数据",
-                "提供 Web UI"
-            ],
-            answer: 1,
-            rationale: "Distributor 是日志的入口点，负责接收来自 Agent 的日志数据，进行验证后根据一致性哈希分发到对应的 Ingester。"
-        },
-        {
-            id: "w12-2-q9",
-            question: "LogQL 中 !~ 操作符的含义是什么？",
-            options: [
-                "正则匹配",
-                "正则不匹配",
-                "精确匹配",
-                "大小写不敏感匹配"
-            ],
-            answer: 1,
-            rationale: "!~ 是正则不匹配操作符，排除匹配正则表达式的标签值。例如 {app!~\"test.*\"} 排除所有 app 以 test 开头的日志流。"
-        },
-        {
-            id: "w12-2-q10",
-            question: "Loki 的数据存储在哪里？",
+            question: "官方文档描述的 Loki 存储架构是什么？",
             options: [
                 "只能存储在本地文件系统",
-                "只能存储在 Elasticsearch",
-                "可以存储在对象存储（S3/GCS）或文件系统",
+                "必须使用 Elasticsearch 后端",
+                "'Log data compressed into chunks stored in object storage (S3, GCS, filesystem)'——对象存储或文件系统",
                 "只能存储在内存中"
             ],
             answer: 2,
-            rationale: "Loki 支持多种存储后端：对象存储（S3、GCS、MinIO）用于生产环境，文件系统用于测试环境。索引可以存储在 BoltDB 或 TSDB。"
+            rationale: "官方文档：Loki 'Log data compressed into chunks stored in object storage (S3, GCS, filesystem)'。"
+        },
+        {
+            id: "w12-2-q7",
+            question: "官方文档描述的 PLG 栈三组件是什么？",
+            options: [
+                "Agent (Grafana Alloy/Promtail)、Loki Server、Grafana",
+                "Prometheus、Loki、Grafana",
+                "Promtail、Logstash、Grafana",
+                "Fluentd、Loki、Kibana"
+            ],
+            answer: 0,
+            rationale: "官方文档：PLG 栈由三部分组成——Agent (Grafana Alloy/Promtail)、Loki Server、Grafana。"
+        },
+        {
+            id: "w12-2-q8",
+            question: "官方文档对 LogQL 查询结构的描述是什么？",
+            options: [
+                "必须包含时间范围",
+                "'{ log stream selector } | log pipeline'——流选择器必需，管道可选",
+                "流选择器和管道都是可选的",
+                "只能使用流选择器"
+            ],
+            answer: 1,
+            rationale: "官方文档：LogQL 基本格式为 '{ log stream selector } | log pipeline'——流选择器是必需的，管道是可选的。"
+        },
+        {
+            id: "w12-2-q9",
+            question: "官方文档描述的 LogQL 标签过滤器支持哪些比较操作符？",
+            options: [
+                "只支持等于和不等于",
+                "不支持数值比较",
+                "只支持字符串匹配",
+                "'==, !=, >, >=, <, <='，可用 'and/or' 链接条件"
+            ],
+            answer: 3,
+            rationale: "官方文档：标签过滤器支持 '==, !=, >, >=, <, <='，可用 'and/or' 链接条件。"
+        },
+        {
+            id: "w12-2-q10",
+            question: "官方文档对高基数问题的描述是什么？",
+            options: [
+                "高基数不影响性能",
+                "'creates thousands of tiny chunks and massive index bloat'——产生大量小块和索引膨胀",
+                "高基数可以提升查询速度",
+                "Loki 自动处理高基数问题"
+            ],
+            answer: 1,
+            rationale: "官方文档：高基数 'results from labels with unbounded values or too many labels combined, creating thousands of tiny chunks and massive index bloat'。"
         },
         {
             id: "w12-2-q11",
-            question: "LogQL 的 | line_format 用于什么？",
+            question: "官方文档对格式化输出的说明是什么？",
             options: [
-                "压缩日志行",
-                "重新格式化日志行的输出",
-                "验证日志格式",
-                "按行排序日志"
+                "不支持格式化输出",
+                "只支持 JSON 格式输出",
+                "'line_format() and label_format() for display customization'——用于自定义显示格式",
+                "只能使用默认格式"
             ],
-            answer: 1,
-            rationale: "| line_format 使用 Go 模板语法重新格式化日志行输出，例如 | line_format \"{{.level}}: {{.message}}\" 可以自定义输出格式。"
+            answer: 2,
+            rationale: "官方文档：'line_format() and label_format() for display customization'——用于格式化输出。"
         },
         {
             id: "w12-2-q12",
-            question: "count_over_time({app=\"nginx\"}[1h]) 返回什么？",
+            question: "官方文档对避免高基数标签的建议是什么？",
             options: [
-                "每秒日志数",
-                "过去 1 小时的日志总数",
-                "日志的平均长度",
-                "不同日志类型的数量"
+                "'Avoid labels for one-time searches or very specific identifiers'——避免使用用户 ID 等高基数值作为标签",
+                "可以使用任何值作为标签",
+                "用户 ID 应该作为标签",
+                "IP 地址适合作为标签"
             ],
-            answer: 1,
-            rationale: "count_over_time() 统计指定时间范围内的日志条数，这里返回 nginx 应用在过去 1 小时内产生的日志总数。"
-        },
-        {
-            id: "w12-2-q13",
-            question: "Loki 的 Compactor 组件的作用是什么？",
-            options: [
-                "实时压缩日志数据",
-                "压缩和合并旧的索引和数据块",
-                "压缩网络传输",
-                "压缩查询结果"
-            ],
-            answer: 1,
-            rationale: "Compactor 负责压缩和合并旧的数据块和索引，减少存储空间占用，同时清理过期数据（根据 retention 配置）。"
-        },
-        {
-            id: "w12-2-q14",
-            question: "如何在 LogQL 中实现大小写不敏感的搜索？",
-            options: [
-                "使用 |= 操作符",
-                "使用 |~ \"(?i)pattern\" 正则匹配",
-                "设置全局配置",
-                "Loki 默认大小写不敏感"
-            ],
-            answer: 1,
-            rationale: "|~ 是正则匹配操作符，(?i) 是正则表达式的大小写不敏感标志。|~ \"(?i)error\" 会匹配 error、ERROR、Error 等。"
-        },
-        {
-            id: "w12-2-q15",
-            question: "PLG 栈中的三个组件分别是什么？",
-            options: [
-                "Prometheus、Loki、Grafana",
-                "Promtail、Loki、Grafana",
-                "Prometheus、Logstash、Grafana",
-                "Promtail、Logstash、Grafana"
-            ],
-            answer: 1,
-            rationale: "PLG 栈指 Promtail（日志收集）+ Loki（日志存储和查询）+ Grafana（可视化），是轻量级的云原生日志解决方案。"
+            answer: 0,
+            rationale: "官方文档：'Avoid labels for one-time searches or very specific identifiers (user IDs, customer IDs)'——高基数数据应使用结构化元数据。"
         }
     ],
     "w12-3": [
