@@ -131,17 +131,18 @@ export const week15Guides: Record<string, LessonGuide> = {
     "w15-4": {
         lessonId: "w15-4",
         background: [
-            "Operator 是 Kubernetes 的扩展模式，用于管理复杂的有状态应用。核心思想是「将运维知识编码」：把人类运维专家的经验（如数据库备份、故障恢复、版本升级）写成代码，让软件自动执行。",
-            "Operator 的技术基础是 CRD（Custom Resource Definition）和 Controller。CRD 定义应用特定的资源类型（如 MySQLCluster），Controller 监听资源变化并执行调和逻辑（Reconciliation），确保实际状态符合期望状态。",
-            "Controller 的调和循环（Reconcile Loop）是 Operator 的核心：监听 CR 变化 → 比较期望状态和实际状态 → 执行必要操作 → 更新状态。循环持续运行，处理任何偏离期望的情况。这是 Kubernetes 声明式 API 的实现机制。",
-            "Operator 的成熟度模型（Operator Capability Levels）分为五级：Basic Install → Seamless Upgrades → Full Lifecycle → Deep Insights → Auto Pilot。不同级别代表不同的自动化程度，从简单安装到完全自治。",
-            "Operator 适用于有复杂运维需求的应用：数据库（MySQL、PostgreSQL、MongoDB）、消息队列（Kafka、RabbitMQ）、监控系统（Prometheus）等。简单无状态应用不需要 Operator，用 Deployment 足够。"
+            "【Operator 定义】官方文档：Operator 是'a software extension to Kubernetes that makes use of custom resources to manage applications and their components'——使用自定义资源管理应用及其组件的软件扩展。Operator 遵循 Kubernetes 原则，特别是控制循环（control loop）模式。",
+            "【控制循环模式】官方文档：Operator 实现控制循环原则——'continuously watching the desired state and taking actions to match reality to that state'——持续监控期望状态并采取行动使实际状态匹配期望状态。这是 Kubernetes 声明式 API 的核心实现机制。",
+            "【Custom Resource 定义】官方文档：Custom resources 是'extensions of the Kubernetes API that allow you to define and use new object types beyond the built-in resources'——扩展 K8s API 以定义内置资源之外的新对象类型。可动态注册，支持 kubectl 完整操作。",
+            "【Operator 成熟度模型】CNCF 标准定义五个级别——Basic Install（可部署应用）、Seamless Upgrades（处理升级）、Full Lifecycle（备份恢复故障恢复）、Deep Insights（指标告警日志）、Auto Pilot（完全自治管理）。",
+            "【CRD vs Aggregated API】官方文档：两种扩展 API 方式——CRD 更简单'no programming required'无需编程，由 API Server 处理；Aggregated API 更灵活'More control over API behavior'但需要额外服务部署维护。大多数场景 CRD 足够。"
         ],
         keyDifficulties: [
-            "CRD 设计原则：好的 CRD 应该是声明式的（描述期望状态，而非操作）、版本化的（支持 v1beta1 → v1 升级）、有 status 子资源的（分离 spec 和 status）。遵循 Kubernetes API 约定使用户体验一致。",
-            "调和逻辑的幂等性：Reconcile 函数必须是幂等的，同样的输入多次执行结果一致。原因是 Controller 会因为各种事件（资源变化、定时重试、重启）多次调用 Reconcile。幂等性避免重复创建资源或错误状态。",
-            "错误处理和重试：Reconcile 返回错误时 Controller 会重试。使用指数退避避免风暴。区分可恢复错误（网络超时）和不可恢复错误（配置错误）。在 status 中记录错误信息便于用户排查。",
-            "多 CR 的所有权和级联删除：Operator 创建的子资源（如 Deployment、Service）应设置 OwnerReference 指向 CR。这实现级联删除（删除 CR 自动删除子资源）和垃圾回收。理解所有权机制避免资源泄漏。"
+            "【CRD schema 验证】官方文档：CRD 使用 OpenAPI v3 schema 验证——'schema.openAPIV3Schema'定义字段类型、必填项和正则模式。subresources.status 分离 spec（期望状态）和 status（观测状态），遵循 Kubernetes API 约定。",
+            "【Reconcile 幂等性】Kubebuilder 核心原则：Reconcile 函数必须幂等——同样输入多次执行结果一致。Controller 会因资源变化、定时重试、重启等多次调用 Reconcile。'controller-runtime handles the reconciliation loop and resource watching'自动处理循环。",
+            "【OwnerReference 级联删除】官方文档：Operator 创建的子资源应设置 OwnerReference。'Use finalizers for graceful deletion'——Finalizer 阻止资源立即删除，让 Controller 有机会执行清理逻辑（如释放外部资源），清理完成后移除 Finalizer。",
+            "【Operator vs Helm】官方对比：Operator 是'Active control loop (imperative automation)'——主动控制循环，部署后持续管理生命周期；Helm 是'Package/template manager (declarative config)'——包管理器，主要负责安装卸载。复杂有状态应用选 Operator。",
+            "【开发框架选择】官方文档：Kubebuilder 是 Go SDK（最流行），Operator SDK 支持 Go/Ansible/Helm 三种方式。SDK 提供'generate bundle, scorecard testing, OLM integration'——打包测试和 OLM 集成。Ansible/Helm 方式适合已有自动化资产的团队。"
         ],
         handsOnPath: [
             "探索现有 Operator：在 OperatorHub.io 浏览常用 Operator（如 Prometheus Operator）。安装一个 Operator，创建 CR，观察 Operator 如何创建底层资源。阅读 CR 的 status 理解状态报告。",
@@ -613,183 +614,147 @@ export const week15Quizzes: Record<string, QuizQuestion[]> = {
     "w15-4": [
         {
             id: "w15-4-q1",
-            question: "Kubernetes Operator 的核心思想是什么？",
+            question: "官方文档对 Kubernetes Operator 的定义是什么？",
             options: [
-                "自动化部署应用",
-                "将运维知识编码，让软件自动执行复杂运维任务",
-                "监控应用性能",
-                "管理网络策略"
+                "一种容器编排工具",
+                "'a software extension to Kubernetes that makes use of custom resources to manage applications'——使用自定义资源管理应用的软件扩展",
+                "Kubernetes 的监控组件",
+                "一种网络策略管理器"
             ],
             answer: 1,
-            rationale: "Operator 的核心思想是「将运维知识编码」：把人类运维专家的经验（备份、恢复、升级）写成代码，让软件自动执行。"
+            rationale: "官方文档定义 Operator 为'a software extension to Kubernetes that makes use of custom resources to manage applications and their components'，遵循控制循环原则。"
         },
         {
             id: "w15-4-q2",
-            question: "CRD 和 Controller 的关系是什么？",
+            question: "官方文档对 Custom Resources 的定义是什么？",
             options: [
-                "CRD 执行逻辑，Controller 定义资源",
-                "CRD 定义资源类型，Controller 监听并执行调和逻辑",
-                "两者功能相同",
-                "CRD 替代 Controller"
+                "'extensions of the Kubernetes API that allow you to define and use new object types beyond the built-in resources'——扩展 API 定义新对象类型",
+                "Kubernetes 内置的 Pod 资源",
+                "只能用于存储配置的对象",
+                "不支持 kubectl 操作的资源"
             ],
-            answer: 1,
-            rationale: "CRD 定义自定义资源类型（如 MySQLCluster 的结构），Controller 监听该资源的变化并执行调和逻辑确保实际状态匹配期望。"
+            answer: 0,
+            rationale: "官方文档：Custom resources 是'extensions of the Kubernetes API that allow you to define and use new object types beyond the built-in resources'，可动态注册并支持 kubectl 完整操作。"
         },
         {
             id: "w15-4-q3",
-            question: "Reconcile 函数为什么必须是幂等的？",
+            question: "CNCF 定义的 Operator 成熟度模型最高级别是什么？",
             options: [
-                "提高性能",
-                "因为会被多次调用（事件、重试、重启），同样输入必须产生同样结果",
-                "简化代码",
-                "Kubernetes 要求"
+                "Deep Insights（深度洞察）",
+                "Full Lifecycle（完整生命周期）",
+                "Seamless Upgrades（无缝升级）",
+                "Auto Pilot（完全自治）"
             ],
-            answer: 1,
-            rationale: "Reconcile 会因为资源变化、定时重试、Controller 重启等原因被多次调用。幂等性确保多次执行不会产生副作用（如重复创建资源）。"
+            answer: 3,
+            rationale: "CNCF 成熟度模型五级：Basic Install → Seamless Upgrades → Full Lifecycle → Deep Insights → Auto Pilot（完全自治管理）。"
         },
         {
             id: "w15-4-q4",
-            question: "OwnerReference 的主要作用是什么？",
+            question: "CRD 和 Aggregated API 两种扩展方式的主要区别是什么？",
             options: [
-                "记录创建者",
-                "实现级联删除，删除 CR 时自动删除其创建的子资源",
-                "设置权限",
-                "配置网络"
+                "两者功能完全相同",
+                "CRD 需要编程，Aggregated API 不需要",
+                "CRD 更简单'no programming required'，Aggregated API 更灵活但需要额外服务",
+                "Aggregated API 已被废弃"
             ],
-            answer: 1,
-            rationale: "OwnerReference 建立资源间的所有权关系。当父资源（CR）被删除时，Kubernetes 垃圾回收器自动删除带有该 OwnerReference 的子资源。"
+            answer: 2,
+            rationale: "官方文档：CRD 更简单'no programming required'无需编程，由 API Server 处理；Aggregated API 更灵活'More control over API behavior'但需要额外服务部署维护。"
         },
         {
             id: "w15-4-q5",
-            question: "Operator 成熟度模型的最高级别是什么？",
+            question: "官方文档对 Operator 控制循环模式的描述是什么？",
             options: [
-                "Basic Install",
-                "Full Lifecycle",
-                "Auto Pilot",
-                "Deep Insights"
+                "只在启动时执行一次",
+                "'continuously watching the desired state and taking actions to match reality to that state'——持续监控并调和状态",
+                "定时轮询资源状态",
+                "只处理创建事件"
             ],
-            answer: 2,
-            rationale: "Operator 成熟度五级：Basic Install → Seamless Upgrades → Full Lifecycle → Deep Insights → Auto Pilot（完全自治）。"
+            answer: 1,
+            rationale: "官方文档：Operator 实现控制循环原则——'continuously watching the desired state and taking actions to match reality to that state'。"
         },
         {
             id: "w15-4-q6",
-            question: "Operator 和 Helm Chart 的主要区别是什么？",
+            question: "CRD 的 subresources.status 的作用是什么？",
             options: [
-                "Helm 更复杂",
-                "Operator 有持续运行的 Controller 管理应用生命周期，Helm 只做一次性安装",
-                "Operator 只能用 Go 编写",
-                "Helm 不支持自定义资源"
+                "存储敏感信息",
+                "定义资源的网络策略",
+                "分离 spec（期望状态）和 status（观测状态）",
+                "配置资源的持久化存储"
             ],
-            answer: 1,
-            rationale: "Helm 是模板化的一次性部署工具。Operator 有持续运行的 Controller，能够监控应用状态、自动恢复、执行升级等复杂生命周期管理。"
+            answer: 2,
+            rationale: "官方文档：subresources.status 分离 spec（期望状态）和 status（观测状态），遵循 Kubernetes API 约定，让用户定义期望状态，Controller 报告观测状态。"
         },
         {
             id: "w15-4-q7",
-            question: "调和循环（Reconcile Loop）的工作流程是什么？",
+            question: "为什么 Reconcile 函数必须是幂等的？",
             options: [
-                "创建 → 更新 → 删除",
-                "观察当前状态 → 比较期望状态 → 执行操作 → 更新状态",
-                "读取 → 验证 → 写入",
-                "启动 → 运行 → 停止"
+                "Controller 会因资源变化、定时重试、重启等多次调用 Reconcile",
+                "幂等性可以提高性能",
+                "Kubernetes API 的强制要求",
+                "只有幂等函数才能编译通过"
             ],
-            answer: 1,
-            rationale: "调和循环持续执行：观察集群中的实际状态 → 与 CR 定义的期望状态比较 → 执行必要操作消除差异 → 更新 CR status。"
+            answer: 0,
+            rationale: "Controller 会因资源变化、定时重试、重启等原因多次调用 Reconcile。幂等性确保同样输入多次执行结果一致，避免重复创建资源或产生错误状态。"
         },
         {
             id: "w15-4-q8",
-            question: "什么类型的应用最适合使用 Operator？",
+            question: "官方文档对 Finalizer 的用途描述是什么？",
             options: [
-                "简单无状态应用",
-                "有复杂运维需求的有状态应用（数据库、消息队列等）",
-                "静态网站",
-                "单次执行的批处理任务"
+                "加速资源删除",
+                "验证资源格式",
+                "'Use finalizers for graceful deletion'——阻止立即删除以执行清理逻辑",
+                "记录操作日志"
             ],
-            answer: 1,
-            rationale: "Operator 适合有复杂运维需求的应用：数据库（备份、恢复、主从切换）、消息队列（分区管理）等。简单应用用 Deployment 足够。"
+            answer: 2,
+            rationale: "官方文档：'Use finalizers for graceful deletion'——Finalizer 阻止资源立即删除，让 Controller 有机会执行清理逻辑（如释放外部资源），清理完成后移除 Finalizer。"
         },
         {
             id: "w15-4-q9",
-            question: "Kubebuilder 的作用是什么？",
+            question: "官方文档对 Operator 和 Helm 的对比描述是什么？",
             options: [
-                "构建 Kubernetes 集群",
-                "帮助开发 Operator 的框架，生成 CRD 和 Controller 脚手架",
-                "管理 Kubernetes 网络",
-                "监控 Kubernetes 资源"
+                "两者功能完全相同",
+                "Helm 更适合复杂有状态应用",
+                "Operator 是'Active control loop'主动控制循环，Helm 是'Package manager'包管理器",
+                "Operator 只能用 Go 编写"
             ],
-            answer: 1,
-            rationale: "Kubebuilder 是 Go 语言的 Operator 开发框架，提供脚手架生成（kubebuilder init/create api）、CRD 生成、Controller 模板等功能。"
+            answer: 2,
+            rationale: "官方对比：Operator 是'Active control loop (imperative automation)'——部署后持续管理生命周期；Helm 是'Package/template manager (declarative config)'——主要负责安装卸载。"
         },
         {
             id: "w15-4-q10",
-            question: "Reconcile 返回错误时会发生什么？",
+            question: "Operator SDK 支持哪些开发方式？",
             options: [
-                "Operator 停止运行",
-                "Controller 会按指数退避策略重试",
-                "资源被删除",
-                "错误被忽略"
+                "只支持 Go 语言",
+                "Go、Ansible、Helm 三种方式",
+                "只支持 Python 和 Java",
+                "只支持 Helm"
             ],
             answer: 1,
-            rationale: "Reconcile 返回错误时 Controller 会重试，默认使用指数退避策略（间隔逐渐增加），避免对集群造成压力。"
+            rationale: "官方文档：Operator SDK 支持 Go/Ansible/Helm 三种方式。SDK 提供'generate bundle, scorecard testing, OLM integration'——打包测试和 OLM 集成。"
         },
         {
             id: "w15-4-q11",
-            question: "CRD 设计时应该遵循什么原则？",
+            question: "使用 Kubebuilder 创建 API 的命令是什么？",
             options: [
-                "使用命令式 API",
-                "声明式设计、版本化、有 status 子资源",
-                "只使用字符串类型",
-                "避免使用嵌套结构"
+                "kubebuilder generate api",
+                "kubebuilder new api",
+                "kubebuilder create api --group <group> --version <version> --kind <Kind>",
+                "kubebuilder add api"
             ],
-            answer: 1,
-            rationale: "好的 CRD 应该是声明式的（描述期望状态）、版本化的（支持升级）、有 status 子资源的（分离用户输入和系统状态）。"
+            answer: 2,
+            rationale: "Kubebuilder 文档：使用'kubebuilder create api'命令指定 group、version 和 Kind 名称，生成 API 类型定义和 Controller 代码。"
         },
         {
             id: "w15-4-q12",
-            question: "Finalizer 的用途是什么？",
+            question: "什么场景最适合使用 Operator？",
             options: [
-                "加速删除",
-                "在资源删除前执行清理逻辑",
-                "验证资源格式",
-                "记录操作日志"
+                "简单无状态的 Web 应用",
+                "复杂有状态应用（数据库、消息队列）需要深度运维知识",
+                "一次性批处理任务",
+                "静态网站部署"
             ],
             answer: 1,
-            rationale: "Finalizer 阻止资源被立即删除，让 Controller 有机会执行清理逻辑（如释放外部资源）。清理完成后移除 Finalizer，资源才会被删除。"
-        },
-        {
-            id: "w15-4-q13",
-            question: "OLM（Operator Lifecycle Manager）的作用是什么？",
-            options: [
-                "开发 Operator",
-                "管理 Operator 的安装、升级和依赖",
-                "监控 Operator 性能",
-                "生成 CRD"
-            ],
-            answer: 1,
-            rationale: "OLM 管理 Operator 的完整生命周期：安装、升级、依赖解析、权限管理。是 OperatorHub 的基础组件。"
-        },
-        {
-            id: "w15-4-q14",
-            question: "controllerutil.CreateOrUpdate 函数的作用是什么？",
-            options: [
-                "只创建资源",
-                "幂等地创建或更新资源",
-                "只更新资源",
-                "删除资源"
-            ],
-            answer: 1,
-            rationale: "CreateOrUpdate 是 controller-runtime 提供的工具函数，幂等地创建资源（不存在时）或更新资源（存在时），简化 Reconcile 逻辑。"
-        },
-        {
-            id: "w15-4-q15",
-            question: "Operator 通常以什么形式部署在集群中？",
-            options: [
-                "DaemonSet",
-                "Deployment",
-                "StatefulSet",
-                "Job"
-            ],
-            answer: 1,
-            rationale: "Operator 通常以 Deployment 形式部署，运行 Controller 进程。一般单副本即可，配合 Leader Election 实现高可用。"
+            rationale: "官方文档：Operator 适合'Complex stateful applications (databases, caches, message queues)'和'Applications requiring deep operational knowledge'。简单应用用 Deployment 足够。"
         }
     ]
 }
