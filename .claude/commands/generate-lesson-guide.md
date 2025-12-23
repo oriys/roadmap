@@ -127,12 +127,14 @@ WebFetch(url: "https://www.docker.com/play-with-docker/", prompt: "了解这个�
 #### 内容生成要求
 
 **background (背景补充)** - 必须来自文档：
+- 使用【标签】格式开头，如【核心概念】、【设计原理】、【官方定义】
 - 提取文档中对核心概念的定义和解释
 - 引用文档中提到的设计原理和动机
 - 总结文档中的关键术语和分类
-- 每条应标注来源文档
+- 引用文档原文时使用单引号包裹英文原文
 
 **keyDifficulties (重难点拆解)** - 必须来自文档：
+- 使用【标签】格式开头，如【常见陷阱】、【版本差异】、【性能考量】
 - 识别文档中强调的注意事项
 - 提取文档中的常见陷阱和误区
 - 总结文档中的对比说明（如 v1 vs v2）
@@ -164,7 +166,7 @@ WebFetch(url: "https://www.docker.com/play-with-docker/", prompt: "了解这个�
 2. 题目覆盖文档中的关键知识点
 3. 不出文档未提及的内容
 
-为每个课时生成 10-15 道测验题：
+为每个课时生成 12 道测验题（固定数量）：
 
 ```typescript
 {
@@ -190,9 +192,10 @@ WebFetch(url: "https://www.docker.com/play-with-docker/", prompt: "了解这个�
    - 2-3 道对比分析题（文档中的差异说明）
 
 3. **选项设计**：
-   - 正确答案放在第一个位置 (answer: 0)
+   - 正确答案位置随机分布（answer: 0-3），不要总是放在第一位
    - 错误选项基于文档中的相关但不同的概念
    - 避免明显错误的干扰项
+   - 正确选项应包含文档原文或关键引用
 
 4. **解析说明**：
    - 引用文档中的原文或要点
@@ -211,11 +214,15 @@ export const week<N>Guides: Record<string, LessonGuide> = {
     "<lessonId>": {
         lessonId: "<lessonId>",
         background: [
-            "【来源: 文档1】核心概念说明...",
-            "【来源: 文档2】设计原理解释...",
+            "【核心概念】官方文档：'原文引用'——中文解释...",
+            "【设计原理】官方文档：'原文引用'——中文解释...",
             // ...
         ],
-        keyDifficulties: [...],
+        keyDifficulties: [
+            "【常见陷阱】官方文档警告：'原文引用'——中文解释...",
+            "【版本差异】官方文档：v1 和 v2 的区别...",
+            // ...
+        ],
         handsOnPath: [...],
         selfCheck: [...],
         extensions: [...],
@@ -228,12 +235,17 @@ export const week<N>Quizzes: Record<string, QuizQuestion[]> = {
     "<lessonId>": [
         {
             id: "<lessonId>-q1",
-            question: "根据文档，...",
-            options: [...],
-            answer: 0,
-            rationale: "文档中明确指出..."
+            question: "官方文档对 XXX 的定义是什么？",
+            options: [
+                "干扰项 A",
+                "'正确答案引用原文'——正确描述",
+                "干扰项 B",
+                "干扰项 C"
+            ],
+            answer: 1,  // 随机位置
+            rationale: "官方文档明确指出：'原文引用'..."
         },
-        // ... 10-15 道题
+        // ... 共 12 道题
     ],
     // ... 更多课时
 }
@@ -264,10 +276,27 @@ export const week<N>Quizzes: Record<string, QuizQuestion[]> = {
 ### 测验题检查
 - [ ] 每道题的答案都能在文档中验证
 - [ ] 题目覆盖了文档的主要内容
-- [ ] 10-15 道题，难度分布合理
+- [ ] 固定 12 道题，难度分布合理
 - [ ] Quiz ID 格式正确: `<lessonId>-q<number>`
-- [ ] answer 始终为 0（正确答案在第一位）
+- [ ] answer 随机分布（0-3），不要总是 0
 - [ ] rationale 引用了文档依据
+
+---
+
+## 工作流程建议
+
+**每次处理一个 topic（课时）**：
+1. 读取 roadmap 定义，获取该课时的 resources
+2. 使用 WebFetch 读取所有文档
+3. 生成/更新 LessonGuide 和 Quiz
+4. 运行 `pnpm build` 检查
+5. 提交并推送代码
+6. 继续下一个 topic
+
+**批量处理时**：
+- 不要一次性处理多个 topic
+- 每个 topic 完成后检查构建
+- 有问题立即修复再继续
 
 ---
 
