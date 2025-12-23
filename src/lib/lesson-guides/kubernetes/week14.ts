@@ -5,17 +5,18 @@ export const week14Guides: Record<string, LessonGuide> = {
     "w14-1": {
         lessonId: "w14-1",
         background: [
-            "云原生安全采用 4C 模型：Cloud（云基础设施）、Cluster（集群）、Container（容器）、Code（代码）。这是一个纵深防御模型，每一层都需要适当的安全控制。外层的安全是内层安全的基础，但不能完全依赖外层。",
-            "Cloud 层面的安全包括云账户安全（IAM、MFA）、网络边界（VPC、安全组）、审计日志（CloudTrail、Activity Log）。云提供商的安全责任是共享模型，用户需要正确配置和使用云安全功能。",
-            "Cluster 层面的安全包括 API Server 访问控制（认证、授权、准入）、etcd 加密、网络策略、审计日志。Kubernetes 默认配置可能不够安全，需要根据安全基线进行加固。",
-            "Container 层面关注镜像安全（漏洞扫描、签名验证）、运行时安全（只读根文件系统、非 root 运行）、资源限制。容器提供进程隔离但不是完全的安全边界，需要结合 Pod Security Standards。",
-            "Code 层面涉及应用安全开发（OWASP Top 10）、依赖管理（SBOM、漏洞扫描）、Secret 管理（避免硬编码）。安全左移（Shift Left）是现代 DevSecOps 的核心理念。"
+            "【4C 安全模型】官方文档：云原生安全采用纵深防御的 4C 模型——Cloud（基础设施提供商安全）、Cluster（集群组件安全配置）、Container（容器安全性，包括镜像、运行时）、Code（应用代码安全）。外层安全是内层的基础，但'You cannot safeguard against poor security standards in the base layers by addressing security at a higher level'——不能用高层安全弥补底层缺陷。",
+            "【Cluster 安全层】官方文档：Cluster 层安全关注两大领域——'Components that make up the cluster'（集群组件如 API Server、etcd 的安全配置）和'Applications which run in the cluster'（运行在集群中的工作负载安全）。API Server 访问控制通过'Authentication → Authorization → Admission Control'三阶段实现。",
+            "【API 访问控制链】官方文档：请求到达 API Server 后经过三阶段——Authentication（'determines the identity of the client'确认身份）→ Authorization（'determines if the request is allowed'检查权限）→ Admission Control（验证和变更请求）。任何阶段失败都会拒绝请求。",
+            "【Pod Security Standards 三级别】官方文档定义三种安全策略级别——Privileged（'completely unrestricted policy, providing the widest possible level of permissions'无限制）；Baseline（'minimally restrictive policy which prevents known privilege escalations'阻止已知提权）；Restricted（'heavily restricted policy, following current Pod hardening best practices'遵循加固最佳实践）。",
+            "【命名空间级别执行】官方文档：通过标签在命名空间级别执行 PSS——'pod-security.kubernetes.io/<MODE>: <LEVEL>'。三种模式：enforce（违反时拒绝 Pod）、audit（记录审计事件）、warn（触发用户警告）。建议从 warn 模式开始逐步过渡到 enforce。"
         ],
         keyDifficulties: [
-            "理解纵深防御原则：每一层安全控制都是必要的，不能因为有外层保护就忽略内层。例如，有网络边界不代表容器内可以不安全运行。攻击者可能通过应用漏洞进入容器，此时容器层的加固就是最后防线。",
-            "Pod Security Standards 的三个级别：Privileged（无限制，仅限系统组件）、Baseline（阻止已知提权手段）、Restricted（最佳安全实践）。生产环境应至少使用 Baseline，安全敏感应用使用 Restricted。",
-            "Kubernetes API 访问控制链：认证（Authentication，确认身份）→ 授权（Authorization，确认权限）→ 准入控制（Admission，策略验证和变更）。三者按顺序执行，任何一步失败都会拒绝请求。",
-            "容器安全最佳实践：使用最小化基础镜像（distroless、scratch）；以非 root 用户运行（runAsNonRoot: true）；只读根文件系统（readOnlyRootFilesystem: true）；禁止特权提升（allowPrivilegeEscalation: false）；显式放弃所有 capabilities（drop: ALL）。"
+            "【纵深防御原则】官方文档核心观点：'You cannot safeguard against poor security standards in the base layers by addressing security at a higher level'——高层安全无法弥补底层缺陷。每层都需独立的安全控制，攻击者可能通过应用漏洞绕过外层进入容器，此时内层加固是最后防线。",
+            "【Baseline 级别控制项】官方文档：Baseline 级别禁止——hostNetwork/hostPID/hostIPC、hostPath 挂载、hostPorts、特权容器（privileged: true）、新增 capabilities、/proc 挂载类型。这些控制阻止已知的特权提升途径。",
+            "【Restricted 级别额外要求】官方文档：在 Baseline 基础上，Restricted 还要求——'must run as non-root'（runAsNonRoot: true）、'must drop ALL capabilities'（capabilities.drop: [ALL]）、'must not allow privilege escalation'、Seccomp profile 必须为 RuntimeDefault 或 Localhost。",
+            "【SecurityContext 配置要点】官方文档：Pod 和 Container 级别都可设置 securityContext。关键字段包括 runAsUser/runAsGroup（指定运行身份）、fsGroup（文件系统组）、allowPrivilegeEscalation（禁止 setuid 提权）、readOnlyRootFilesystem（只读根文件系统）、seccompProfile（系统调用过滤）。",
+            "【PSS 与 PSP 迁移】官方文档：Pod Security Standards 通过内置准入控制器实现，替代已废弃的 PodSecurityPolicy（v1.25 移除）。PSS 更简单，三个预定义级别覆盖常见场景，不需要编写自定义策略。建议从 warn 模式开始评估影响后再 enforce。"
         ],
         handsOnPath: [
             "评估当前集群安全状态：使用 kube-bench 检查 CIS Kubernetes Benchmark 合规性。分析报告，识别关键风险项。制定修复计划和优先级。",
@@ -172,183 +173,147 @@ export const week14Quizzes: Record<string, QuizQuestion[]> = {
     "w14-1": [
         {
             id: "w14-1-q1",
-            question: "4C 安全模型中的四层分别是什么？",
+            question: "官方文档对 4C 安全模型的核心观点是什么？",
             options: [
-                "Cloud、Cluster、Container、Code",
-                "CI、CD、Container、Cloud",
-                "Client、Cloud、Container、Code",
-                "Cloud、Compute、Container、Config"
+                "高层安全可以弥补底层缺陷",
+                "只需要关注最外层的 Cloud 安全",
+                "'You cannot safeguard against poor security standards in the base layers by addressing security at a higher level'——高层无法弥补底层缺陷",
+                "四层安全可以选择性实施"
             ],
-            answer: 0,
-            rationale: "4C 模型指 Cloud（云）、Cluster（集群）、Container（容器）、Code（代码）四层，是纵深防御的安全架构。"
+            answer: 2,
+            rationale: "官方文档明确：'You cannot safeguard against poor security standards in the base layers by addressing security at a higher level'——必须每层都有适当的安全控制。"
         },
         {
             id: "w14-1-q2",
-            question: "Pod Security Standards 的三个级别是什么？",
+            question: "官方文档定义的 Pod Security Standards 三个级别是什么？",
             options: [
+                "Privileged（无限制）、Baseline（阻止已知提权）、Restricted（加固最佳实践）",
                 "Low、Medium、High",
-                "Privileged、Baseline、Restricted",
                 "None、Basic、Advanced",
                 "Open、Standard、Strict"
             ],
-            answer: 1,
-            rationale: "Pod Security Standards 定义三个级别：Privileged（无限制）、Baseline（阻止已知提权）、Restricted（最佳安全实践）。"
+            answer: 0,
+            rationale: "官方文档定义三级别：Privileged（'completely unrestricted'）、Baseline（'prevents known privilege escalations'）、Restricted（'following current Pod hardening best practices'）。"
         },
         {
             id: "w14-1-q3",
-            question: "Kubernetes API 访问控制的执行顺序是什么？",
+            question: "官方文档描述的 Kubernetes API 访问控制链顺序是什么？",
             options: [
-                "授权 → 认证 → 准入",
-                "准入 → 认证 → 授权",
-                "认证 → 授权 → 准入",
-                "认证 → 准入 → 授权"
+                "授权 → 认证 → 准入控制",
+                "准入控制 → 认证 → 授权",
+                "认证 → 准入控制 → 授权",
+                "认证（Authentication）→ 授权（Authorization）→ 准入控制（Admission Control）"
             ],
-            answer: 2,
-            rationale: "请求首先经过认证（确认身份），然后授权（检查权限），最后准入控制（策略验证和变更）。"
+            answer: 3,
+            rationale: "官方文档：请求经过 Authentication（确认身份）→ Authorization（检查权限）→ Admission Control（验证和变更）三阶段。"
         },
         {
             id: "w14-1-q4",
-            question: "以下哪个不是容器安全最佳实践？",
+            question: "官方文档对 Privileged 级别 PSS 的描述是什么？",
             options: [
-                "以非 root 用户运行",
-                "使用只读根文件系统",
-                "以 Privileged 模式运行以获得最大性能",
-                "禁止特权提升"
+                "最安全的策略级别",
+                "阻止已知的特权提升",
+                "遵循 Pod 加固最佳实践",
+                "'completely unrestricted policy, providing the widest possible level of permissions'——完全无限制"
             ],
-            answer: 2,
-            rationale: "Privileged 模式会关闭容器隔离，是安全风险而非最佳实践。应避免使用特权容器。"
+            answer: 3,
+            rationale: "官方文档：Privileged 是'completely unrestricted policy, providing the widest possible level of permissions'，仅适用于系统和基础设施级别的工作负载。"
         },
         {
             id: "w14-1-q5",
-            question: "Baseline 级别的 Pod Security Standard 禁止什么？",
+            question: "官方文档对 Baseline 级别禁止的内容不包括哪个？",
             options: [
-                "使用 ConfigMap",
-                "使用 hostPath 卷",
-                "使用 Service",
-                "使用 Ingress"
+                "hostNetwork/hostPID/hostIPC",
+                "hostPath 挂载",
+                "使用 ConfigMap 和 Secret",
+                "特权容器（privileged: true）"
             ],
-            answer: 1,
-            rationale: "Baseline 禁止 hostPath 卷、特权容器、host 网络/PID/IPC 等可能导致提权的配置。"
+            answer: 2,
+            rationale: "Baseline 禁止 hostNetwork/hostPID/hostIPC、hostPath、hostPorts、privileged 容器等。ConfigMap 和 Secret 是正常功能，不被禁止。"
         },
         {
             id: "w14-1-q6",
-            question: "kube-bench 工具的作用是什么？",
+            question: "如何在命名空间级别启用 PSS 的 enforce 模式？",
             options: [
-                "性能基准测试",
-                "检查 CIS Kubernetes Benchmark 合规性",
-                "网络延迟测试",
-                "存储性能测试"
+                "修改 Pod 的 YAML 配置",
+                "kubectl label namespace <name> pod-security.kubernetes.io/enforce=<level>",
+                "配置 API Server 参数",
+                "安装第三方策略引擎"
             ],
             answer: 1,
-            rationale: "kube-bench 根据 CIS Kubernetes Benchmark 检查集群配置的安全合规性。"
+            rationale: "官方文档：通过标签'pod-security.kubernetes.io/<MODE>: <LEVEL>'在命名空间级别执行 PSS。"
         },
         {
             id: "w14-1-q7",
-            question: "Restricted 级别相比 Baseline 增加了哪个要求？",
+            question: "官方文档对 Restricted 级别相比 Baseline 的额外要求不包括哪个？",
             options: [
-                "禁止使用 Secret",
-                "必须以非 root 用户运行",
-                "禁止使用 Service",
-                "必须使用 Ingress"
+                "必须以非 root 运行（runAsNonRoot: true）",
+                "必须放弃所有 capabilities（drop: [ALL]）",
+                "必须使用特定的镜像仓库",
+                "必须禁止特权提升（allowPrivilegeEscalation: false）"
             ],
-            answer: 1,
-            rationale: "Restricted 级别要求 runAsNonRoot: true，不允许以 root 用户运行，这是 Baseline 没有的要求。"
+            answer: 2,
+            rationale: "Restricted 要求 runAsNonRoot、drop ALL capabilities、禁止 privilege escalation、Seccomp profile。镜像仓库限制不是 PSS 的要求。"
         },
         {
             id: "w14-1-q8",
-            question: "为什么外层安全不能替代内层安全？",
+            question: "官方文档对 PSS 三种执行模式的描述是什么？",
             options: [
-                "外层安全更贵",
-                "攻击者可能通过应用漏洞绕过外层进入内层",
-                "内层性能更好",
-                "外层配置更复杂"
+                "enforce（拒绝违规 Pod）、audit（记录审计事件）、warn（触发用户警告）",
+                "block、log、ignore",
+                "strict、moderate、permissive",
+                "deny、allow、neutral"
             ],
-            answer: 1,
-            rationale: "纵深防御的原则是每层都有独立的安全控制。攻击者可能通过应用漏洞进入容器，此时内层安全是最后防线。"
+            answer: 0,
+            rationale: "官方文档：三种模式——enforce（违反时拒绝 Pod）、audit（记录审计事件但不阻止）、warn（触发用户警告但不阻止）。"
         },
         {
             id: "w14-1-q9",
-            question: "allowPrivilegeEscalation: false 的作用是什么？",
+            question: "4C 安全模型中 Cluster 层安全关注的两大领域是什么？",
+            options: [
+                "网络和存储",
+                "CPU 和内存",
+                "'Components that make up the cluster' 和 'Applications which run in the cluster'",
+                "用户认证和日志记录"
+            ],
+            answer: 2,
+            rationale: "官方文档：Cluster 层关注'Components that make up the cluster'（集群组件）和'Applications which run in the cluster'（运行的工作负载）。"
+        },
+        {
+            id: "w14-1-q10",
+            question: "securityContext 中 allowPrivilegeEscalation: false 的作用是什么？",
             options: [
                 "禁止容器使用网络",
-                "禁止进程获得比父进程更高的权限",
+                "禁止进程通过 setuid 等机制获得更高权限",
                 "禁止容器写入文件",
                 "禁止容器使用 CPU"
             ],
             answer: 1,
-            rationale: "allowPrivilegeEscalation: false 禁止容器内进程通过 setuid 等机制获得更高权限，防止提权攻击。"
-        },
-        {
-            id: "w14-1-q10",
-            question: "云安全责任共担模型中，用户需要负责什么？",
-            options: [
-                "物理数据中心安全",
-                "正确配置和使用云安全功能",
-                "硬件维护",
-                "网络基础设施"
-            ],
-            answer: 1,
-            rationale: "在责任共担模型中，云提供商负责基础设施安全，用户负责正确配置和使用云安全功能保护自己的工作负载。"
+            rationale: "allowPrivilegeEscalation: false 禁止容器内进程获得比父进程更高的权限，防止通过 setuid 二进制文件提权。"
         },
         {
             id: "w14-1-q11",
-            question: "securityContext 中 capabilities.drop: [\"ALL\"] 的作用是什么？",
+            question: "Pod Security Standards 替代了哪个已废弃的功能？",
             options: [
-                "删除所有容器",
-                "放弃所有 Linux capabilities，遵循最小权限原则",
-                "删除所有文件",
-                "关闭所有网络"
+                "NetworkPolicy",
+                "ResourceQuota",
+                "PodSecurityPolicy（PSP，v1.25 移除）",
+                "LimitRange"
             ],
-            answer: 1,
-            rationale: "drop: ALL 放弃所有 Linux capabilities，然后可以根据需要显式添加少量必要的 capabilities，遵循最小权限原则。"
+            answer: 2,
+            rationale: "官方文档：PSS 通过内置准入控制器实现，替代已废弃的 PodSecurityPolicy（v1.25 移除）。PSS 更简单，三个预定义级别覆盖常见场景。"
         },
         {
             id: "w14-1-q12",
-            question: "哪个工具不是用于 Kubernetes 安全评估的？",
+            question: "官方文档建议如何推广 Pod Security Standards？",
             options: [
-                "kube-bench",
-                "kubescape",
-                "Polaris",
-                "kubectl top"
+                "直接在所有命名空间启用 enforce 模式",
+                "只在开发环境使用",
+                "从 warn 模式开始评估影响，逐步过渡到 enforce",
+                "不需要 PSS，使用第三方工具即可"
             ],
-            answer: 3,
-            rationale: "kubectl top 是查看资源使用情况的命令，不是安全评估工具。kube-bench、kubescape、Polaris 都是安全评估工具。"
-        },
-        {
-            id: "w14-1-q13",
-            question: "readOnlyRootFilesystem: true 有什么安全价值？",
-            options: [
-                "提高读取速度",
-                "防止攻击者在容器内写入恶意文件",
-                "减少存储使用",
-                "简化备份"
-            ],
-            answer: 1,
-            rationale: "只读根文件系统防止攻击者写入恶意脚本或修改配置文件，是容器加固的重要措施。"
-        },
-        {
-            id: "w14-1-q14",
-            question: "Code 层面的安全主要关注什么？",
-            options: [
-                "网络边界",
-                "应用安全开发、依赖管理、Secret 管理",
-                "物理安全",
-                "硬件配置"
-            ],
-            answer: 1,
-            rationale: "Code 层面关注应用安全开发（OWASP Top 10）、依赖管理（SBOM）、Secret 管理（避免硬编码）等。"
-        },
-        {
-            id: "w14-1-q15",
-            question: "如何为命名空间启用 Restricted Pod Security Standard？",
-            options: [
-                "kubectl label namespace <name> pod-security.kubernetes.io/enforce=restricted",
-                "kubectl annotate namespace <name> security=restricted",
-                "修改 namespace YAML 的 spec.security 字段",
-                "在 Pod 中添加 security: restricted 标签"
-            ],
-            answer: 0,
-            rationale: "通过 pod-security.kubernetes.io/enforce=restricted 标签在命名空间级别启用 Restricted 安全标准。"
+            answer: 2,
+            rationale: "官方文档建议：从 warn 模式开始评估影响，确认工作负载合规后再切换到 enforce 模式，实现渐进式推广。"
         }
     ],
     "w14-2": [
