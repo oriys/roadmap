@@ -131,16 +131,18 @@ export const week13Guides: Record<string, LessonGuide> = {
     "w13-4": {
         lessonId: "w13-4",
         background: [
-            "Istio 的安全模型基于零信任原则：默认不信任任何流量，所有通信需要经过身份验证和授权。核心能力包括：mTLS（双向 TLS 加密）、身份认证（PeerAuthentication/RequestAuthentication）、访问控制（AuthorizationPolicy）。",
-            "mTLS（双向 TLS）是网格安全的基石。Istio 为每个工作负载签发 X.509 证书（基于 ServiceAccount），Sidecar 自动进行 TLS 握手和证书轮换。服务间通信加密且双向认证，防止窃听和中间人攻击。",
-            "PeerAuthentication 控制服务接收流量的 mTLS 要求：PERMISSIVE（允许 mTLS 和明文）、STRICT（仅允许 mTLS）、DISABLE（禁用 mTLS）。迁移期通常先用 PERMISSIVE，稳定后切换到 STRICT。",
-            "AuthorizationPolicy 实现细粒度访问控制，支持 ALLOW、DENY、CUSTOM 三种动作。策略基于来源（from，如 ServiceAccount、命名空间）、操作（to，如 HTTP 方法、路径）和条件（when，如请求属性）进行匹配。"
+            "【零信任架构】官方文档：Istio 实现'security by default: no changes needed to application code and infrastructure'——默认安全无需修改应用代码。基于零信任原则，假设所有流量都需要验证，提供'defense in depth: integrate with existing security systems to provide multiple layers of defense'多层防御。",
+            "【双向认证机制】官方文档：Peer Authentication（mTLS）保护服务间通信，支持三种模式——PERMISSIVE（接受加密和明文，迁移友好）、STRICT（仅接受 mTLS）、DISABLE（不推荐）。Request Authentication 通过 JWT 验证终端用户凭证。",
+            "【证书自动管理】官方文档：istiod 控制面自动管理 X.509 证书，处理工作负载代理的证书签名请求，执行周期性轮换'without manual intervention'——无需人工干预。证书绑定服务身份，防止冒充攻击。",
+            "【授权策略类型】官方文档：AuthorizationPolicy CRD 支持三种动作——ALLOW rules（允许访问）、DENY rules（拒绝访问，'evaluated first for security'优先评估）、CUSTOM rules（委托外部授权系统）。策略基于工作负载选择器和请求属性（principals、namespaces、HTTP methods、paths）匹配。",
+            "【安全命名机制】官方文档：'Server identities are encoded in certificates, but service names are retrieved through the discovery service or DNS'——服务器身份编码在证书中，服务名通过发现服务获取。这种绑定防止恶意行为者使用有效证书冒充未授权服务。"
         ],
         keyDifficulties: [
-            "mTLS 模式的选择和迁移：新集群建议直接 STRICT；已有集群从 PERMISSIVE 开始，用 Kiali 观察哪些服务还有明文流量，逐步切换到 STRICT。端口级别配置允许特殊端口例外（如健康检查）。",
-            "证书管理和 SPIFFE：Istio 使用 SPIFFE（Secure Production Identity Framework For Everyone）标准的身份格式：spiffe://cluster.local/ns/<namespace>/sa/<serviceaccount>。证书默认 24 小时轮换，可配置。外部 CA 集成需要额外配置。",
-            "AuthorizationPolicy 的评估顺序：DENY 优先于 ALLOW。多个策略叠加时：先评估 CUSTOM，再 DENY，最后 ALLOW。没有匹配的 ALLOW 策略时，请求被拒绝（默认拒绝）。需要仔细设计策略避免意外阻断。",
-            "JWT 认证（RequestAuthentication）：验证 JWT token 的签名和声明，但不强制携带 token。需要配合 AuthorizationPolicy 要求 requestPrincipals 存在来强制认证。支持多个 JWT 发行者配置。"
+            "【mTLS 迁移策略】官方文档：建议三阶段迁移——首先 PERMISSIVE 模式'automatically configures workload sidecars to use mutual TLS when calling other workloads'；然后逐命名空间启用 STRICT；最后'deploy the authentication policy to the istio-system namespace to enforce STRICT mode across the entire cluster'全集群强制。",
+            "【策略评估顺序】官方文档：AuthorizationPolicy 评估遵循层级顺序——'Explicit deny rules take precedence'显式拒绝优先；然后 Allow policies 决定允许的流量；Custom policies 集成外部授权系统。没有匹配 ALLOW 策略时请求被拒绝。",
+            "【迁移验证方法】官方文档：通过 Grafana dashboard 监控迁移进度，识别仍发送明文流量的工作负载。测试方法：非 Sidecar Pod 访问 STRICT 服务返回'error code 000'，Sidecar Pod 继续收到 200 响应。",
+            "【PERMISSIVE 安全权衡】官方文档：对于无法立即迁移所有服务的环境，'maintaining PERMISSIVE mode combined with authorization policies provides security without complete sidecar deployment'——PERMISSIVE + 授权策略可在不完全部署 Sidecar 的情况下提供安全保护。",
+            "【身份与服务绑定】官方文档：安全命名机制确保'server identities are encoded in certificates'但服务名通过发现服务获取，这种绑定防止持有有效证书的攻击者冒充未授权服务，是零信任模型的关键组件。"
         ],
         handsOnPath: [
             "启用全局 mTLS：创建命名空间级别的 PeerAuthentication（mode: STRICT）。使用 Kiali 观察流量是否全部加密（锁图标）。尝试从非网格客户端访问，验证被拒绝。",
@@ -612,183 +614,147 @@ export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "w13-4": [
         {
             id: "w13-4-q1",
-            question: "Istio 的 mTLS 提供什么能力？",
+            question: "官方文档对 Istio 安全模型的核心描述是什么？",
             options: [
-                "只加密流量",
-                "加密流量并双向身份验证",
-                "只验证客户端身份",
-                "只验证服务端身份"
+                "'security by default: no changes needed to application code and infrastructure'——默认安全无需修改代码",
+                "需要大量代码修改才能启用安全功能",
+                "只支持手动配置证书",
+                "安全功能是付费企业版特性"
             ],
-            answer: 1,
-            rationale: "mTLS（双向 TLS）同时加密流量和验证双方身份。客户端和服务端都需要提供证书，确保通信双方都是可信的。"
+            answer: 0,
+            rationale: "官方文档：Istio 实现'security by default: no changes needed to application code and infrastructure'——默认安全无需修改应用代码。"
         },
         {
             id: "w13-4-q2",
             question: "PeerAuthentication 的 STRICT 模式意味着什么？",
             options: [
                 "允许 mTLS 和明文流量",
-                "只允许 mTLS 流量，拒绝明文",
                 "禁用所有安全功能",
-                "只验证 JWT"
+                "只允许 mTLS 流量，拒绝明文",
+                "只验证 JWT 令牌"
             ],
-            answer: 1,
-            rationale: "STRICT 模式只接受 mTLS 加密流量，明文请求会被拒绝。适合在迁移完成后全面启用，确保所有通信加密。"
+            answer: 2,
+            rationale: "官方文档：Peer Authentication 支持三种模式——PERMISSIVE（接受加密和明文）、STRICT（仅接受 mTLS）、DISABLE（不推荐）。"
         },
         {
             id: "w13-4-q3",
-            question: "从 PERMISSIVE 迁移到 STRICT mTLS 的建议策略是什么？",
+            question: "官方文档建议的 mTLS 迁移策略是什么？",
             options: [
-                "直接切换到 STRICT",
-                "在 Kiali 观察还有哪些明文流量，逐步迁移后切换",
-                "禁用 mTLS",
-                "等待自动切换"
+                "直接全集群启用 STRICT 模式",
+                "永久保持 PERMISSIVE 模式",
+                "三阶段迁移：先 PERMISSIVE，再逐命名空间 STRICT，最后全集群强制",
+                "禁用 mTLS 使用其他加密方案"
             ],
-            answer: 1,
-            rationale: "建议先用 PERMISSIVE 模式允许混合流量，用 Kiali 或指标观察哪些服务还有明文通信，确保所有服务都支持 mTLS 后再切换到 STRICT。"
+            answer: 2,
+            rationale: "官方文档：建议三阶段迁移——首先 PERMISSIVE 模式，然后逐命名空间启用 STRICT，最后部署到 istio-system 全集群强制。"
         },
         {
             id: "w13-4-q4",
-            question: "AuthorizationPolicy 的评估顺序是什么？",
+            question: "官方文档对 AuthorizationPolicy 评估顺序的描述是什么？",
             options: [
-                "ALLOW -> DENY -> CUSTOM",
-                "CUSTOM -> DENY -> ALLOW",
-                "DENY -> ALLOW -> CUSTOM",
-                "按创建时间顺序"
+                "ALLOW 规则优先于 DENY 规则",
+                "按创建时间顺序评估",
+                "'Explicit deny rules take precedence'——显式拒绝优先",
+                "随机选择匹配的策略"
             ],
-            answer: 1,
-            rationale: "AuthorizationPolicy 评估顺序：先 CUSTOM（外部授权），再 DENY（任一匹配则拒绝），最后 ALLOW（任一匹配则允许）。DENY 优先于 ALLOW。"
+            answer: 2,
+            rationale: "官方文档：AuthorizationPolicy 评估遵循层级顺序——'Explicit deny rules take precedence'显式拒绝优先。"
         },
         {
             id: "w13-4-q5",
-            question: "如何配置只允许来自 frontend 命名空间的请求？",
+            question: "官方文档对 PERMISSIVE 模式的描述是什么？",
             options: [
-                "使用 VirtualService",
-                "在 AuthorizationPolicy 的 from.source.namespaces 指定 frontend",
-                "使用 NetworkPolicy",
-                "配置 DestinationRule"
+                "'automatically configures workload sidecars to use mutual TLS when calling other workloads'——自动配置 mTLS",
+                "禁用所有加密功能",
+                "只允许明文流量",
+                "需要手动配置每个连接"
             ],
-            answer: 1,
-            rationale: "AuthorizationPolicy 的 rules.from.source.namespaces 字段可以限制请求来源命名空间。配合 ALLOW action 实现命名空间级别的访问控制。"
+            answer: 0,
+            rationale: "官方文档：PERMISSIVE 模式'automatically configures workload sidecars to use mutual TLS when calling other workloads'——同时接受加密和明文。"
         },
         {
             id: "w13-4-q6",
-            question: "RequestAuthentication 和 AuthorizationPolicy 如何配合实现 JWT 强制认证？",
+            question: "如何验证 STRICT 模式是否正确启用？",
             options: [
-                "只需要 RequestAuthentication",
-                "RequestAuthentication 验证 token，AuthorizationPolicy 要求 requestPrincipals 存在",
-                "只需要 AuthorizationPolicy",
-                "需要修改应用代码"
+                "检查 Pod 日志",
+                "非 Sidecar Pod 访问返回'error code 000'，Sidecar Pod 返回 200",
+                "查看 ConfigMap 配置",
+                "检查 DNS 解析"
             ],
             answer: 1,
-            rationale: "RequestAuthentication 验证 JWT 的有效性但不强制携带。需要配合 AuthorizationPolicy 的 from.source.requestPrincipals 条件，要求必须有有效的身份。"
+            rationale: "官方文档：测试方法——非 Sidecar Pod 访问 STRICT 服务返回'error code 000'，Sidecar Pod 继续收到 200 响应。"
         },
         {
             id: "w13-4-q7",
-            question: "Istio 使用什么标准定义服务身份？",
+            question: "官方文档对证书管理的描述是什么？",
             options: [
-                "OAuth 2.0",
-                "SPIFFE",
-                "LDAP",
-                "Kerberos"
+                "需要手动生成和轮换证书",
+                "istiod 自动管理证书签名和轮换'without manual intervention'",
+                "只支持自签名证书",
+                "证书永不过期"
             ],
             answer: 1,
-            rationale: "Istio 使用 SPIFFE（Secure Production Identity Framework For Everyone）标准，身份格式为 spiffe://cluster.local/ns/<namespace>/sa/<serviceaccount>。"
+            rationale: "官方文档：istiod 控制面自动管理 X.509 证书，执行周期性轮换'without manual intervention'——无需人工干预。"
         },
         {
             id: "w13-4-q8",
-            question: "AuthorizationPolicy 中没有任何 ALLOW 规则时会怎样？",
+            question: "官方文档对安全命名机制的描述是什么？",
             options: [
-                "允许所有流量",
-                "默认拒绝所有流量",
-                "使用上级策略",
-                "报错"
+                "'Server identities are encoded in certificates, but service names are retrieved through the discovery service'",
+                "服务名和身份完全独立",
+                "不需要证书验证",
+                "服务名直接编码在证书中"
             ],
-            answer: 1,
-            rationale: "如果有 AuthorizationPolicy 但没有 ALLOW 规则匹配请求，请求会被拒绝（默认拒绝原则）。这是零信任模型的体现。"
+            answer: 0,
+            rationale: "官方文档：'Server identities are encoded in certificates, but service names are retrieved through the discovery service or DNS'——防止冒充攻击。"
         },
         {
             id: "w13-4-q9",
-            question: "Istio 证书的默认轮换周期是多少？",
+            question: "AuthorizationPolicy 支持哪三种动作？",
             options: [
-                "1 小时",
-                "24 小时",
-                "7 天",
-                "30 天"
+                "CREATE、UPDATE、DELETE",
+                "READ、WRITE、EXECUTE",
+                "ALLOW、DENY、CUSTOM",
+                "PERMIT、BLOCK、FORWARD"
             ],
-            answer: 1,
-            rationale: "Istio 工作负载证书默认 24 小时轮换。这个周期可以配置，频繁轮换增加安全性但也增加控制面负载。"
+            answer: 2,
+            rationale: "官方文档：AuthorizationPolicy CRD 支持三种动作——ALLOW rules、DENY rules（优先评估）、CUSTOM rules（委托外部授权系统）。"
         },
         {
             id: "w13-4-q10",
-            question: "如何限制只允许 GET 方法访问 /api/public 路径？",
+            question: "官方文档对 Istio 防御策略的描述是什么？",
             options: [
-                "使用 VirtualService",
-                "在 AuthorizationPolicy 的 to.operation 指定 methods 和 paths",
-                "使用 NetworkPolicy",
-                "配置 Ingress"
+                "单层防护足够安全",
+                "'defense in depth: integrate with existing security systems to provide multiple layers of defense'",
+                "只依赖网络隔离",
+                "安全功能相互独立"
             ],
             answer: 1,
-            rationale: "AuthorizationPolicy 的 rules.to.operation.methods 和 paths 字段可以限制 HTTP 方法和路径。配合 ALLOW action 实现细粒度访问控制。"
+            rationale: "官方文档：Istio 提供'defense in depth: integrate with existing security systems to provide multiple layers of defense'——多层防御。"
         },
         {
             id: "w13-4-q11",
-            question: "PERMISSIVE mTLS 模式的用途是什么？",
+            question: "无法立即迁移所有服务时，官方建议的安全策略是什么？",
             options: [
-                "生产环境最佳实践",
-                "迁移期间允许同时接受 mTLS 和明文流量",
-                "禁用安全功能",
-                "仅用于测试"
+                "'maintaining PERMISSIVE mode combined with authorization policies'——PERMISSIVE + 授权策略",
+                "完全禁用安全功能",
+                "等待所有服务就绪后再启用",
+                "使用外部防火墙替代"
             ],
-            answer: 1,
-            rationale: "PERMISSIVE 模式允许服务同时接受加密和明文流量，用于迁移期间。非网格客户端可以继续访问，逐步迁移到全 mTLS。"
+            answer: 0,
+            rationale: "官方文档：'maintaining PERMISSIVE mode combined with authorization policies provides security without complete sidecar deployment'。"
         },
         {
             id: "w13-4-q12",
-            question: "以下哪个不是 AuthorizationPolicy 的有效 action？",
+            question: "Request Authentication 的作用是什么？",
             options: [
-                "ALLOW",
-                "DENY",
-                "CUSTOM",
-                "REJECT"
+                "加密服务间流量",
+                "管理证书轮换",
+                "通过 JWT 验证终端用户凭证",
+                "配置负载均衡策略"
             ],
-            answer: 3,
-            rationale: "AuthorizationPolicy 支持三种 action：ALLOW（允许匹配请求）、DENY（拒绝匹配请求）、CUSTOM（委托外部授权服务）。没有 REJECT。"
-        },
-        {
-            id: "w13-4-q13",
-            question: "RequestAuthentication 对没有携带 JWT 的请求会怎样处理？",
-            options: [
-                "直接拒绝",
-                "默认接受（不强制携带 token）",
-                "返回 401",
-                "转发到认证服务"
-            ],
-            answer: 1,
-            rationale: "RequestAuthentication 只验证携带的 token 是否有效，不强制要求携带 token。无 token 的请求默认被接受，需要 AuthorizationPolicy 强制认证。"
-        },
-        {
-            id: "w13-4-q14",
-            question: "如何调试 Istio 授权策略导致的 403 错误？",
-            options: [
-                "重启 Pod",
-                "检查 AuthorizationPolicy 配置，使用 istioctl analyze 和代理日志",
-                "增加超时时间",
-                "修改 Service 端口"
-            ],
-            answer: 1,
-            rationale: "排查 403 错误应检查 AuthorizationPolicy 配置是否正确、使用 istioctl analyze 检查问题、查看 Envoy 访问日志确定拒绝原因。"
-        },
-        {
-            id: "w13-4-q15",
-            question: "PeerAuthentication 支持端口级别配置的用途是什么？",
-            options: [
-                "提高性能",
-                "允许特定端口（如健康检查）不使用 mTLS",
-                "配置负载均衡",
-                "设置超时"
-            ],
-            answer: 1,
-            rationale: "端口级别配置允许为特定端口设置不同的 mTLS 模式。例如健康检查端口可以设置为 DISABLE，而其他端口保持 STRICT。"
+            answer: 2,
+            rationale: "官方文档：Request Authentication 通过 JWT 验证终端用户凭证，支持 Keycloak 或 Auth0 等提供商，实现用户级访问决策。"
         }
     ]
 }
