@@ -5,16 +5,18 @@ export const week8Guides: Record<string, LessonGuide> = {
     "w8-1": {
         lessonId: "w8-1",
         background: [
-            "Terraform 是 HashiCorp 开发的基础设施即代码（IaC）工具，使用声明式配置文件定义云端和本地资源。它通过 Provider 与各种平台 API 交互，支持 AWS、Azure、GCP、Kubernetes 等数千种服务。",
-            "Terraform 使用 HCL（HashiCorp Configuration Language）作为配置语言。HCL 的核心元素包括：Block（配置块，如 resource、provider）、Argument（参数赋值）、Expression（表达式，引用或组合值）。",
-            "Terraform 的核心工作流是 Write-Plan-Apply：编写配置文件定义期望状态，plan 生成执行计划预览变更，apply 执行变更并更新状态。这种方式提供了变更可预测性和安全性。",
-            "State（状态文件）是 Terraform 的核心概念，存储托管资源与配置的映射关系。默认存储在本地 terraform.tfstate 文件，团队协作推荐使用远程后端（如 S3、Terraform Cloud）存储状态。"
+            "【Terraform 定义】官方文档：'infrastructure-as-code tool enabling teams to define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share'——基础设施即代码工具，用声明式配置管理云端和本地资源。",
+            "【HCL 语法三要素】官方文档：'Blocks are containers for other content...represent configuration of some kind of object'；Arguments assign values；Expressions represent values。基本格式：<BLOCK TYPE> \"<LABEL>\" { <IDENTIFIER> = <EXPRESSION> }。",
+            "【核心工作流】官方文档：'Write → Plan → Apply'——Write 定义资源配置，Plan 生成执行计划预览变更，Apply 执行变更。官方强调 Plan 阶段'generates an execution blueprint showing proposed changes'提供安全性。",
+            "【State 核心价值】官方文档：'Terraform must store state about your managed infrastructure...map real world resources to your configuration, keep track of metadata, and improve performance'——State 是资源与配置的绑定关系。",
+            "【Provider 生态】官方文档：'Thousands of providers in the Terraform Registry support AWS, Azure, GCP, Kubernetes, GitHub'——通过 Provider 插件与各平台 API 交互，Registry 提供数千种 Provider。"
         ],
         keyDifficulties: [
-            "依赖图（Dependency Graph）：Terraform 自动分析资源间的依赖关系构建有向无环图，确保按正确顺序创建和销毁资源。显式依赖使用 depends_on，隐式依赖通过引用其他资源属性自动建立。",
-            "State 管理挑战：State 文件包含敏感信息（如密码、密钥），需要加密存储；团队协作需要远程后端和状态锁定防止并发修改；State 漂移（drift）需要定期检测和修复。",
-            "生命周期管理（lifecycle）：create_before_destroy（先建后删，减少停机）、prevent_destroy（防止误删）、ignore_changes（忽略特定属性变更）、replace_triggered_by（触发替换）。",
-            "Provider 配置与版本约束：每个 Provider 需要配置认证信息；使用 required_providers 块锁定版本范围（如 ~> 4.0）；多账号/多区域场景使用 alias 配置多个 Provider 实例。"
+            "【依赖图机制】官方文档：Terraform 自动构建依赖图'provision resources efficiently in parallel'。显式依赖使用 depends_on；隐式依赖通过引用属性（如 aws_instance.example.id）自动建立，无需手动声明。",
+            "【State 管理】官方文档警告：State 默认存储在本地'terraform.tfstate'文件，推荐'storing it in HCP Terraform to version, encrypt, and securely share it with your team'——团队协作需远程后端+状态锁定。",
+            "【生命周期控制】官方文档 lifecycle 块四选项：create_before_destroy（'先建后删减少停机'）、prevent_destroy（'防止误删'）、ignore_changes（'忽略外部变更'）、replace_triggered_by（'触发替换条件'）。",
+            "【版本约束语法】官方文档：required_providers 块锁定版本——'~> 4.0' 允许 4.x 但不允许 5.0；'>= 1.0, < 2.0' 范围约束。'Terraform configuration written for one version should continue to work with any later minor version'。",
+            "【State 命令】官方文档：'terraform state' 命令提供 CLI 级状态操作——state list（列出资源）、state show（查看详情）、state mv（移动/重命名）、state rm（从状态移除）、import（导入现有资源）。"
         ],
         handsOnPath: [
             "安装 Terraform CLI，创建第一个配置文件（main.tf）定义一个本地文件资源（local_file），运行 terraform init、plan、apply 完成完整工作流。",
@@ -710,183 +712,147 @@ export const week8Quizzes: Record<string, QuizQuestion[]> = {
     "w8-1": [
         {
             id: "w8-1-q1",
-            question: "Terraform 是什么类型的工具？",
+            question: "官方文档对 Terraform 的定义是什么？",
             options: [
-                "容器编排工具",
-                "基础设施即代码（IaC）工具",
-                "监控告警工具",
+                "'infrastructure-as-code tool enabling teams to define cloud and on-prem resources in human-readable configuration files'",
+                "容器编排平台",
+                "监控告警系统",
                 "日志分析工具"
             ],
-            answer: 1,
-            rationale: "Terraform 是 HashiCorp 开发的基础设施即代码工具，用声明式配置管理云端和本地资源。"
+            answer: 0,
+            rationale: "官方文档定义 Terraform 为'infrastructure-as-code tool enabling teams to define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share'。"
         },
         {
             id: "w8-1-q2",
-            question: "Terraform 使用什么配置语言？",
+            question: "官方文档描述的 HCL 语法三要素是什么？",
             options: [
-                "YAML",
-                "JSON",
-                "HCL（HashiCorp Configuration Language）",
-                "XML"
+                "Variables、Outputs、Modules",
+                "Resources、Providers、State",
+                "Blocks（配置块）、Arguments（参数赋值）、Expressions（表达式）",
+                "Plan、Apply、Destroy"
             ],
             answer: 2,
-            rationale: "Terraform 使用 HCL（HashiCorp Configuration Language），也支持 JSON 格式，但 HCL 更易读。"
+            rationale: "官方文档：'Blocks are containers for other content'、Arguments assign values to names、Expressions represent values。基本格式：<BLOCK TYPE> \"<LABEL>\" { <IDENTIFIER> = <EXPRESSION> }。"
         },
         {
             id: "w8-1-q3",
-            question: "Terraform 的核心工作流是什么？",
+            question: "官方文档描述的 Terraform 核心工作流是什么？",
             options: [
                 "Build-Test-Deploy",
-                "Write-Plan-Apply",
                 "Create-Update-Delete",
-                "Init-Run-Stop"
+                "Init-Run-Stop",
+                "'Write → Plan → Apply'——编写配置、预览变更、执行变更"
             ],
-            answer: 1,
-            rationale: "Terraform 工作流是 Write（编写配置）→ Plan（预览变更）→ Apply（执行变更），提供变更可预测性。"
+            answer: 3,
+            rationale: "官方文档：核心工作流是 Write（定义配置）→ Plan（'generates an execution blueprint showing proposed changes'）→ Apply（执行变更）。"
         },
         {
             id: "w8-1-q4",
-            question: "terraform init 命令的作用是什么？",
+            question: "官方文档对 State 作用的描述是什么？",
             options: [
-                "创建资源",
-                "初始化工作目录，下载 Provider 和模块",
-                "销毁所有资源",
-                "查看资源状态"
+                "存储配置文件备份",
+                "'map real world resources to your configuration, keep track of metadata, and improve performance'",
+                "存储 Provider 认证信息",
+                "记录执行日志"
             ],
             answer: 1,
-            rationale: "terraform init 初始化工作目录，下载配置中声明的 Provider 插件和模块，是使用 Terraform 的第一步。"
+            rationale: "官方文档：'Terraform must store state about your managed infrastructure...map real world resources to your configuration, keep track of metadata, and improve performance'。"
         },
         {
             id: "w8-1-q5",
-            question: "State 文件的主要作用是什么？",
+            question: "terraform init 命令的作用是什么？",
             options: [
-                "存储配置文件的备份",
-                "存储托管资源与配置声明的映射关系",
-                "存储 Provider 的认证信息",
-                "存储执行日志"
+                "'Prepares your working directory'——初始化工作目录，下载 Provider 和模块",
+                "创建云资源",
+                "销毁所有资源",
+                "查看资源状态"
             ],
-            answer: 1,
-            rationale: "State 文件存储远程资源与配置声明的绑定关系，使 Terraform 能够跟踪和管理资源的生命周期。"
+            answer: 0,
+            rationale: "官方文档：'Initialize: terraform init - Prepares your working directory'——这是使用 Terraform 的第一步，下载所需的 Provider 插件和模块。"
         },
         {
             id: "w8-1-q6",
-            question: "默认情况下，State 文件存储在哪里？",
+            question: "官方文档对 State 存储位置的建议是什么？",
             options: [
-                "云端存储",
-                "本地 terraform.tfstate 文件",
-                "Terraform Cloud",
-                "内存中"
+                "只使用本地文件存储",
+                "存储在代码仓库中",
+                "'storing it in HCP Terraform to version, encrypt, and securely share it with your team'——推荐远程后端",
+                "存储在内存中"
             ],
-            answer: 1,
-            rationale: "默认 State 存储在本地 terraform.tfstate 文件，团队协作推荐使用远程后端（如 S3）。"
+            answer: 2,
+            rationale: "官方文档：默认存储在本地'terraform.tfstate'，但推荐'storing it in HCP Terraform to version, encrypt, and securely share it with your team'——团队协作需远程后端。"
         },
         {
             id: "w8-1-q7",
-            question: "terraform plan 命令的作用是什么？",
+            question: "官方文档描述 Terraform 如何处理资源依赖？",
             options: [
-                "执行资源变更",
-                "生成执行计划，预览将要进行的变更",
-                "初始化工作目录",
-                "验证配置语法"
+                "需要手动指定所有依赖",
+                "随机顺序处理",
+                "自动构建依赖图'provision resources efficiently in parallel'",
+                "按配置文件顺序执行"
             ],
-            answer: 1,
-            rationale: "terraform plan 对比当前状态和期望配置，生成执行计划显示将创建、修改或删除的资源。"
+            answer: 2,
+            rationale: "官方文档：Terraform 自动构建依赖图'provision resources efficiently in parallel'——隐式依赖通过属性引用自动建立，显式依赖使用 depends_on。"
         },
         {
             id: "w8-1-q8",
-            question: "Provider 在 Terraform 中的作用是什么？",
+            question: "lifecycle 块的 create_before_destroy 选项作用是什么？",
             options: [
-                "提供配置模板",
-                "与目标平台 API 交互的插件",
-                "管理 State 文件",
-                "执行代码测试"
+                "先删除旧资源再创建新资源",
+                "同时创建和删除",
+                "禁用资源创建",
+                "替换资源时先创建新资源再删除旧资源，减少服务中断"
             ],
-            answer: 1,
-            rationale: "Provider 是 Terraform 插件，负责与各种平台（AWS、Azure、GCP、K8s 等）的 API 交互。"
+            answer: 3,
+            rationale: "官方文档：create_before_destroy = true 在需要替换资源时'先建后删减少停机'，确保服务连续性。"
         },
         {
             id: "w8-1-q9",
-            question: "depends_on 参数的作用是什么？",
+            question: "官方文档对 Provider 的描述是什么？",
             options: [
-                "定义资源名称",
-                "显式声明资源间的依赖关系",
-                "设置资源标签",
-                "配置超时时间"
+                "只支持 AWS 一种平台",
+                "'Thousands of providers in the Terraform Registry support AWS, Azure, GCP, Kubernetes, GitHub'",
+                "Terraform 内置的固定组件",
+                "只用于本地资源管理"
             ],
             answer: 1,
-            rationale: "depends_on 用于显式声明资源依赖，当隐式依赖（属性引用）无法表达依赖关系时使用。"
+            rationale: "官方文档：'Thousands of providers in the Terraform Registry support AWS, Azure, GCP, Kubernetes, GitHub'——Provider 是与各平台 API 交互的插件。"
         },
         {
             id: "w8-1-q10",
-            question: "lifecycle 块中 prevent_destroy 的作用是什么？",
+            question: "terraform import 命令的作用是什么？",
             options: [
-                "自动销毁资源",
-                "防止资源被意外销毁",
-                "加速资源创建",
-                "忽略资源变更"
+                "导入配置文件",
+                "导入 Provider 插件",
+                "将已存在的资源导入 State，纳入 Terraform 管理",
+                "导入模块定义"
             ],
-            answer: 1,
-            rationale: "prevent_destroy = true 保护重要资源，当 plan 包含销毁该资源时会报错，防止误删。"
+            answer: 2,
+            rationale: "官方文档：terraform import 将非 Terraform 创建的现有资源导入 State，使 Terraform 可以管理这些资源的后续生命周期。"
         },
         {
             id: "w8-1-q11",
-            question: "如何导入已存在的资源到 Terraform 管理？",
+            question: "官方文档对版本兼容性的说明是什么？",
             options: [
-                "terraform init",
-                "terraform import",
-                "terraform apply",
-                "terraform add"
+                "每个版本都不兼容",
+                "'Terraform configuration written for one version should continue to work with any later minor version'",
+                "只支持最新版本",
+                "需要手动迁移配置"
             ],
             answer: 1,
-            rationale: "terraform import 将已存在的资源导入 State，使 Terraform 可以管理非 Terraform 创建的资源。"
+            rationale: "官方文档：'Terraform configuration written for one version should continue to work with any later minor version update'——保持向后兼容。"
         },
         {
             id: "w8-1-q12",
-            question: "为什么团队协作时需要远程后端存储 State？",
-            options: [
-                "提高执行速度",
-                "支持状态锁定和共享访问，防止并发冲突",
-                "减少配置文件大小",
-                "自动备份配置"
-            ],
-            answer: 1,
-            rationale: "远程后端提供状态锁定（防止并发修改）、团队共享访问、加密存储等功能，是协作必需。"
-        },
-        {
-            id: "w8-1-q13",
             question: "terraform destroy 命令的作用是什么？",
             options: [
                 "删除配置文件",
-                "销毁所有托管资源",
                 "重置 Provider",
-                "清理缓存"
+                "清理本地缓存",
+                "'Removes managed infrastructure'——销毁所有托管资源"
             ],
-            answer: 1,
-            rationale: "terraform destroy 销毁 State 中跟踪的所有资源，是 apply 的逆操作，用于清理环境。"
-        },
-        {
-            id: "w8-1-q14",
-            question: "required_providers 块的作用是什么？",
-            options: [
-                "定义输出变量",
-                "声明和锁定 Provider 版本",
-                "配置远程后端",
-                "定义本地变量"
-            ],
-            answer: 1,
-            rationale: "required_providers 在 terraform 块中声明项目需要的 Provider 及版本约束，确保版本一致性。"
-        },
-        {
-            id: "w8-1-q15",
-            question: "create_before_destroy 生命周期选项的用途是什么？",
-            options: [
-                "删除资源前先创建新资源",
-                "创建资源前先删除旧资源",
-                "同时创建和删除资源",
-                "禁用资源创建"
-            ],
-            answer: 0,
-            rationale: "create_before_destroy = true 在需要替换资源时先创建新资源再删除旧资源，减少服务中断时间。"
+            answer: 3,
+            rationale: "官方文档：'Destroy: terraform destroy - Removes managed infrastructure'——销毁 State 中跟踪的所有资源，是清理环境的关键命令。"
         }
     ]
 }
