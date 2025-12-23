@@ -89,16 +89,18 @@ export const week13Guides: Record<string, LessonGuide> = {
     "w13-3": {
         lessonId: "w13-3",
         background: [
-            "Istio 的流量治理通过 VirtualService 和 DestinationRule 两个核心 CRD 实现。VirtualService 定义流量路由规则（如何到达服务），DestinationRule 定义目标策略（到达后如何处理）。两者配合实现金丝雀、熔断、故障注入等高级功能。",
-            "VirtualService 支持基于请求属性的路由：按权重（金丝雀）、按 Header（A/B 测试）、按 URI（路径路由）。路由规则按顺序匹配，第一个匹配的规则生效。未匹配的请求走默认路由或返回错误。",
-            "DestinationRule 定义服务子集（subsets）和流量策略。子集通过 Pod 标签选择不同版本（如 v1/v2）；流量策略包括负载均衡（ROUND_ROBIN/LEAST_CONN/RANDOM）、连接池、熔断器等。这些策略应用于到达目标服务的流量。",
-            "熔断和故障注入是提高系统韧性的关键能力。熔断器通过限制连接数和请求队列防止级联故障；故障注入（延迟和中止）用于混沌工程测试，验证系统在异常条件下的行为。"
+            "【VirtualService 职责】官方文档：VirtualService'configure how requests are routed to a service within an Istio service mesh'——定义请求如何路由到服务。支持匹配条件（headers、URIs、ports）和加权流量分配，实现 A/B 测试、金丝雀发布和流量分割。",
+            "【DestinationRule 职责】官方文档：DestinationRule 在 VirtualService 路由之后应用于实际目标，职责包括——定义按标签分组的服务子集（subsets）、指定负载均衡算法、配置连接池和熔断阈值、设置 TLS 模式和异常检测策略。",
+            "【路由规则顺序】官方文档：路由规则'evaluated in sequential order from top to bottom'——从上到下顺序评估，第一个匹配的规则生效。Match 条件支持精确值、URI 前缀和正则模式匹配。",
+            "【金丝雀流量配置】官方文档：使用 VirtualService 的 weight 字段'configure a sequence of routing rules that redirect a percentage of traffic from one destination to another'——配置流量百分比重定向。典型流程：100% v1 → 50/50 分割 → 100% v3。",
+            "【熔断配置模型】官方文档：通过 DestinationRule 的 trafficPolicy 配置熔断——connectionPool 控制连接和请求限制（tcp.maxConnections、http.http1MaxPendingRequests）；outlierDetection 检测并驱逐不健康实例（consecutive5xxErrors、interval、baseEjectionTime）。超过阈值返回 503。"
         ],
         keyDifficulties: [
-            "理解 VirtualService 和 DestinationRule 的关系：VirtualService 的 destination.subset 引用 DestinationRule 定义的子集。没有 DestinationRule，VirtualService 的子集路由不会生效。常见错误是只配置了一个而忘记另一个。",
-            "金丝雀发布的配置：VirtualService 使用 weight 字段分配流量比例（如 v1: 90%, v2: 10%）。权重必须加起来等于 100。DestinationRule 定义 v1 和 v2 子集对应的 Pod 标签（如 version: v1）。",
-            "熔断器参数调优：connectionPool 控制连接限制（tcp.maxConnections、http.h2UpgradePolicy）；outlierDetection 配置异常检测（连续错误数、驱逐时间）。参数需要根据服务特性调整，过严会误伤正常请求，过松则失去保护作用。",
-            "故障注入的使用场景：延迟注入（fault.delay）测试超时处理；中止注入（fault.abort）测试错误处理。建议在测试环境或 A/B 测试中使用，生产环境需谨慎。percentage 字段控制影响范围。"
+            "【VS/DR 依赖关系】官方文档：VirtualService 的 destination.subset 引用 DestinationRule 中定义的子集。DestinationRule 使用 Kubernetes labels 将服务实例分组为'subsets such as all instances with a certain version'。没有 DestinationRule 定义子集，VirtualService 的子集路由不会生效。",
+            "【路由匹配机制】官方文档：路由规则'evaluated in sequential order from top to bottom, with the first rule in the list having highest priority'——第一个匹配的规则生效。Match 条件支持 exact（精确匹配）、prefix（前缀匹配）和 regex（正则匹配）。",
+            "【熔断阈值语义】官方文档：outlierDetection 的 consecutive5xxErrors 定义'the number of consecutive 5xx errors before a host is ejected'——连续 5xx 错误导致驱逐；baseEjectionTime 是'minimum eviction duration'——最小驱逐时间。超过 connectionPool 阈值返回 503。",
+            "【流量权重规则】官方文档：金丝雀发布使用 weight 字段，'configure a sequence of routing rules that redirect a percentage of traffic from one destination to another'。所有 destination 的 weight 总和必须为 100。典型流程：100% v1 → 90/10 → 50/50 → 100% v2。",
+            "【故障注入类型】官方文档：VirtualService 的 fault 字段支持两种注入——delay'used to mimic increased network latency or an overloaded upstream service'；abort'used to mimic failures in upstream services'。percentage.value 控制受影响请求的比例。"
         ],
         handsOnPath: [
             "部署多版本应用：创建同一服务的 v1 和 v2 版本（只有 Pod 标签 version 不同）。创建 DestinationRule 定义两个子集。验证两个版本都能正常访问。",
@@ -464,139 +466,43 @@ export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "w13-3": [
         {
             id: "w13-3-q1",
-            question: "VirtualService 和 DestinationRule 的关系是什么？",
+            question: "官方文档对 VirtualService 职责的描述是什么？",
             options: [
-                "两者功能完全相同",
-                "VirtualService 定义路由规则，DestinationRule 定义目标策略",
-                "DestinationRule 必须先于 VirtualService 创建",
-                "它们不能同时使用"
+                "管理 Pod 的生命周期",
+                "'configure how requests are routed to a service within an Istio service mesh'——定义请求路由",
+                "存储服务的配置数据",
+                "监控服务的健康状态"
             ],
             answer: 1,
-            rationale: "VirtualService 定义流量如何路由到服务（路由规则），DestinationRule 定义到达目标后的处理策略（负载均衡、熔断、子集）。"
+            rationale: "官方文档：VirtualService 'configure how requests are routed to a service within an Istio service mesh'——定义请求如何路由到服务。"
         },
         {
             id: "w13-3-q2",
-            question: "如何配置金丝雀发布将 10% 流量路由到 v2 版本？",
+            question: "DestinationRule 的 subsets 如何选择服务实例？",
             options: [
-                "只配置 DestinationRule",
-                "在 VirtualService 中设置 weight: 10 到 v2 子集",
-                "修改 Deployment 副本数",
-                "配置 HPA"
+                "通过 Kubernetes labels 将服务实例分组",
+                "通过 Pod 名称匹配",
+                "通过 IP 地址范围",
+                "通过命名空间"
             ],
-            answer: 1,
-            rationale: "VirtualService 的 route.destination.weight 字段控制流量比例。设置 v1: 90, v2: 10 实现 10% 金丝雀流量。"
+            answer: 0,
+            rationale: "官方文档：DestinationRule 使用 Kubernetes labels 将服务实例分组为'subsets such as all instances with a certain version'。"
         },
         {
             id: "w13-3-q3",
-            question: "DestinationRule 的 subsets 如何选择 Pod？",
+            question: "官方文档对路由规则评估顺序的描述是什么？",
             options: [
-                "通过 Pod 名称",
-                "通过 Pod 标签（如 version: v1）",
-                "通过命名空间",
-                "通过 IP 地址"
+                "按权重从高到低评估",
+                "随机选择匹配的规则",
+                "同时应用所有匹配规则",
+                "'evaluated in sequential order from top to bottom'——从上到下顺序评估"
             ],
-            answer: 1,
-            rationale: "DestinationRule 的 subsets 通过 labels 字段匹配 Pod 标签。例如 labels: {version: v1} 选择所有带有 version=v1 标签的 Pod。"
+            answer: 3,
+            rationale: "官方文档：路由规则'evaluated in sequential order from top to bottom, with the first rule in the list having highest priority'。"
         },
         {
             id: "w13-3-q4",
-            question: "熔断器在 Istio 中通过什么资源配置？",
-            options: [
-                "VirtualService",
-                "DestinationRule 的 trafficPolicy",
-                "PeerAuthentication",
-                "AuthorizationPolicy"
-            ],
-            answer: 1,
-            rationale: "熔断器通过 DestinationRule 的 trafficPolicy.connectionPool 和 outlierDetection 配置，控制连接限制和异常检测。"
-        },
-        {
-            id: "w13-3-q5",
-            question: "Istio 故障注入支持哪些类型？",
-            options: [
-                "只支持延迟注入",
-                "延迟（delay）和中止（abort）",
-                "只支持网络分区",
-                "只支持 CPU 压力"
-            ],
-            answer: 1,
-            rationale: "Istio 支持两种故障注入：delay（模拟网络延迟或服务过载）和 abort（模拟服务错误，返回 HTTP 错误码或 TCP 失败）。"
-        },
-        {
-            id: "w13-3-q6",
-            question: "VirtualService 路由规则的匹配顺序是什么？",
-            options: [
-                "随机匹配",
-                "按定义顺序，第一个匹配的规则生效",
-                "同时应用所有规则",
-                "按优先级字段排序"
-            ],
-            answer: 1,
-            rationale: "VirtualService 的路由规则按定义顺序从上到下匹配，第一个匹配的规则生效。因此更具体的规则应该放在前面。"
-        },
-        {
-            id: "w13-3-q7",
-            question: "如果只创建了 VirtualService 的子集路由但没有 DestinationRule，会怎样？",
-            options: [
-                "路由正常工作",
-                "路由不生效，因为子集未定义",
-                "自动创建默认 DestinationRule",
-                "istiod 会报错"
-            ],
-            answer: 1,
-            rationale: "VirtualService 的 destination.subset 引用 DestinationRule 定义的子集。如果 DestinationRule 不存在或没有定义对应子集，路由不会生效。"
-        },
-        {
-            id: "w13-3-q8",
-            question: "outlierDetection 的作用是什么？",
-            options: [
-                "检测恶意流量",
-                "检测并驱逐异常的服务实例",
-                "检测配置错误",
-                "检测证书过期"
-            ],
-            answer: 1,
-            rationale: "outlierDetection 配置异常检测，当某个实例连续出错超过阈值时，将其从负载均衡池中临时驱逐，防止持续向故障实例发送请求。"
-        },
-        {
-            id: "w13-3-q9",
-            question: "如何配置基于 HTTP Header 的路由（A/B 测试）？",
-            options: [
-                "使用 DestinationRule",
-                "在 VirtualService 的 match 条件中匹配 headers",
-                "修改 Service 选择器",
-                "使用 NetworkPolicy"
-            ],
-            answer: 1,
-            rationale: "VirtualService 的 match.headers 字段可以匹配 HTTP 请求头。例如 match: headers: x-user: exact: test 将测试用户路由到特定版本。"
-        },
-        {
-            id: "w13-3-q10",
-            question: "connectionPool.tcp.maxConnections 的作用是什么？",
-            options: [
-                "限制 Envoy 的内存使用",
-                "限制到目标服务的最大 TCP 连接数",
-                "限制请求速率",
-                "限制响应大小"
-            ],
-            answer: 1,
-            rationale: "maxConnections 限制 Envoy 到上游服务的最大 TCP 连接数。超过限制的请求会排队或返回错误，是熔断的一部分。"
-        },
-        {
-            id: "w13-3-q11",
-            question: "故障注入的 percentage 字段用于什么？",
-            options: [
-                "设置错误码",
-                "控制受影响请求的比例",
-                "设置延迟时间",
-                "设置重试次数"
-            ],
-            answer: 1,
-            rationale: "percentage.value 控制故障注入影响的请求百分比。例如 percentage: value: 50 表示 50% 的请求会受到故障注入影响。"
-        },
-        {
-            id: "w13-3-q12",
-            question: "VirtualService 的 weight 字段的总和必须是多少？",
+            question: "VirtualService 的 weight 字段总和必须是多少？",
             options: [
                 "1",
                 "10",
@@ -604,43 +510,103 @@ export const week13Quizzes: Record<string, QuizQuestion[]> = {
                 "任意值"
             ],
             answer: 2,
-            rationale: "VirtualService 中同一规则的所有 destination 的 weight 必须加起来等于 100，表示百分比分配。"
+            rationale: "官方文档：金丝雀发布配置中，所有 destination 的 weight 总和必须为 100，表示百分比分配。"
         },
         {
-            id: "w13-3-q13",
-            question: "流量镜像（Mirror）的用途是什么？",
+            id: "w13-3-q5",
+            question: "熔断器在 Istio 中通过什么资源配置？",
             options: [
-                "加密流量",
-                "将生产流量复制到测试环境进行验证",
-                "记录流量日志",
-                "限制流量速率"
+                "VirtualService 的 fault 字段",
+                "Gateway 资源",
+                "DestinationRule 的 trafficPolicy",
+                "ServiceEntry 资源"
+            ],
+            answer: 2,
+            rationale: "官方文档：熔断器通过 DestinationRule 的 trafficPolicy 配置，包含 connectionPool 和 outlierDetection 设置。"
+        },
+        {
+            id: "w13-3-q6",
+            question: "官方文档对 outlierDetection 的 consecutive5xxErrors 的描述是什么？",
+            options: [
+                "5xx 错误的总数限制",
+                "'the number of consecutive 5xx errors before a host is ejected'——连续错误导致驱逐",
+                "5xx 错误的采样率",
+                "5xx 错误的记录周期"
             ],
             answer: 1,
-            rationale: "流量镜像将真实流量的副本发送到另一个服务（如测试环境），用于验证新版本，而不影响用户。镜像请求是「发后即忘」的。"
+            rationale: "官方文档：consecutive5xxErrors 定义'the number of consecutive 5xx errors before a host is ejected from the connection pool'。"
         },
         {
-            id: "w13-3-q14",
-            question: "以下哪个不是 DestinationRule 支持的负载均衡策略？",
+            id: "w13-3-q7",
+            question: "官方文档对 fault.delay 的用途描述是什么？",
             options: [
-                "ROUND_ROBIN",
-                "LEAST_CONN",
-                "RANDOM",
-                "PRIORITY"
+                "'used to mimic increased network latency or an overloaded upstream service'——模拟延迟",
+                "用于重试失败的请求",
+                "用于限制请求速率",
+                "用于加密网络流量"
             ],
-            answer: 3,
-            rationale: "DestinationRule 支持 ROUND_ROBIN（轮询）、LEAST_CONN（最少连接）、RANDOM（随机）、PASSTHROUGH（直通）。没有 PRIORITY 策略。"
+            answer: 0,
+            rationale: "官方文档：delay'used to mimic increased network latency or an overloaded upstream service'——模拟网络延迟或过载。"
         },
         {
-            id: "w13-3-q15",
-            question: "如果金丝雀路由不生效，应该首先检查什么？",
+            id: "w13-3-q8",
+            question: "如果只创建 VirtualService 的子集路由但没有 DestinationRule，会怎样？",
             options: [
-                "Kubernetes 版本",
-                "DestinationRule 的 subsets 是否正确定义，VirtualService 是否引用正确",
-                "网络带宽",
-                "CPU 使用率"
+                "自动创建默认 DestinationRule",
+                "istiod 会报错阻止配置",
+                "路由不生效，因为子集未定义",
+                "使用轮询负载均衡"
+            ],
+            answer: 2,
+            rationale: "官方文档：VirtualService 的 destination.subset 引用 DestinationRule 定义的子集。没有 DestinationRule 定义子集，VirtualService 的子集路由不会生效。"
+        },
+        {
+            id: "w13-3-q9",
+            question: "VirtualService match 条件支持哪些匹配类型？",
+            options: [
+                "只支持精确匹配",
+                "只支持正则匹配",
+                "exact（精确）、prefix（前缀）、regex（正则）",
+                "只支持前缀匹配"
+            ],
+            answer: 2,
+            rationale: "官方文档：Match 条件支持 exact（精确匹配）、prefix（前缀匹配）和 regex（正则匹配）三种类型。"
+        },
+        {
+            id: "w13-3-q10",
+            question: "官方文档对 baseEjectionTime 的描述是什么？",
+            options: [
+                "连接超时时间",
+                "请求重试间隔",
+                "'minimum eviction duration'——最小驱逐时间",
+                "健康检查间隔"
+            ],
+            answer: 2,
+            rationale: "官方文档：baseEjectionTime 是'minimum eviction duration'——主机被驱逐后的最小隔离时间。"
+        },
+        {
+            id: "w13-3-q11",
+            question: "官方文档对 fault.abort 的用途描述是什么？",
+            options: [
+                "用于终止长时间运行的请求",
+                "用于取消排队的请求",
+                "'used to mimic failures in upstream services'——模拟上游服务故障",
+                "用于关闭空闲连接"
+            ],
+            answer: 2,
+            rationale: "官方文档：abort'used to mimic failures in upstream services'——用于模拟上游服务返回错误。"
+        },
+        {
+            id: "w13-3-q12",
+            question: "超过 connectionPool 阈值时会返回什么状态码？",
+            options: [
+                "返回 200 但降级响应",
+                "返回 503 Service Unavailable",
+                "返回 429 Too Many Requests",
+                "返回 504 Gateway Timeout"
             ],
             answer: 1,
-            rationale: "金丝雀路由不生效的常见原因：DestinationRule 未创建或 subsets 未定义；VirtualService 引用的 subset 名称拼写错误；Pod 标签与 subset 定义不匹配。"
+            rationale: "官方文档：超过 connectionPool 配置的阈值（如 maxConnections、http1MaxPendingRequests）时返回 503。"
         }
     ],
     "w13-4": [
