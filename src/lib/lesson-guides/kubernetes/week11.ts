@@ -134,16 +134,19 @@ export const week11Guides: Record<string, LessonGuide> = {
     "w11-4": {
         lessonId: "w11-4",
         background: [
-            "Alertmanager 是 Prometheus 告警处理的核心组件，接收来自 Prometheus 的告警，进行分组（Grouping）、去重（Deduplication）、抑制（Inhibition）和静默（Silencing），然后路由到合适的接收器（Receiver）发送通知。",
-            "路由树（Routing Tree）是 Alertmanager 配置的核心。根路由匹配所有告警，子路由通过 matchers 匹配特定标签。告警从根节点向下遍历，匹配的路由决定分组方式和接收器。continue 参数控制是否继续匹配兄弟路由。",
-            "分组（Grouping）将相似的告警合并为一个通知，避免告警风暴。group_by 指定分组标签，group_wait 是首次通知前的等待时间（聚合同组告警），group_interval 是同组后续通知的间隔，repeat_interval 是重复通知的间隔。",
-            "抑制（Inhibition）规则定义告警间的依赖关系：当「源告警」触发时，匹配的「目标告警」被静音。例如，当集群级别的告警触发时，抑制该集群下的所有节点级别告警。静默（Silence）则是手动创建的临时静音规则，用于维护窗口或已知问题。"
+            "【Grouping 分组机制】官方文档：分组将相似告警归类为统一通知，'sends a single compact notification rather than overwhelming users with hundreds of individual alerts'——在故障期间避免告警风暴，发送单个紧凑通知。",
+            "【Inhibition 抑制机制】官方文档：当相关的关键告警已触发时，抑制可静默特定告警的通知。'prevents alert fatigue by muting secondary issues when a root cause alert is active'——防止根因告警触发时收到大量从属告警。",
+            "【Silencing 静默机制】官方文档：'Provides straightforward muting of alerts for specified periods using matchers'——使用匹配器在指定时间段内静默告警，通过 Alertmanager Web UI 配置。",
+            "【Routing Tree 路由树】官方文档：配置结构决定告警如何分组、定时和路由到接收器。告警从根节点向下遍历，匹配的路由决定分组方式和目标接收器（Email、PagerDuty、Slack 等）。",
+            "【高可用部署】官方文档：支持通过 --cluster-* 参数组成集群。重要警告：'traffic should not be load-balanced between Prometheus and Alertmanagers; instead, Prometheus should reference all Alertmanager instances directly'。",
+            "【告警规则持续时间】官方文档：for 子句指定'a certain duration between first encountering a new expression output vector element and counting an alert as firing'——表达式首次匹配到触发之间必须持续的时间，防止瞬时抖动触发告警。"
         ],
         keyDifficulties: [
-            "路由树的设计：如何组织路由层级？通常先按环境（prod/staging）分组，再按服务或团队分组。matchers 支持 =（精确）、!=、=~（正则）、!~。理解 continue: true 何时使用（如需要发送到多个接收器）。",
-            "分组策略的权衡：group_by: [...] 使用所有标签会导致每个告警单独通知；group_by: [alertname, cluster] 按告警名和集群分组。group_wait 太短可能遗漏同组告警，太长则延迟通知。需要根据场景调整。",
-            "抑制规则的编写：source_matchers 定义源告警条件，target_matchers 定义目标告警条件，equal 列表指定必须相同的标签。例如：当 severity=critical 的集群告警触发时，抑制同集群的 severity=warning 告警。",
-            "高可用部署：多个 Alertmanager 实例通过 --cluster.* 参数组成集群，使用 Gossip 协议同步静默和通知状态。Prometheus 应配置所有 Alertmanager 实例地址，而非使用负载均衡器，以确保告警被所有实例接收。"
+            "【group_by 分组策略】官方文档：定义告警分组的标签，如 ['cluster', 'alertname'] 按集群和告警名分组。'使用 [...] 可禁用聚合，逐条传递告警'——空列表表示每个告警独立通知。分组太粗会混淆不同问题，太细会产生告警风暴。",
+            "【时间参数三件套】官方文档：group_wait'等待 30 秒后发送新告警组的首个通知'——聚合同组告警；group_interval'每 5 分钟检查一次现有告警组'——发送更新；repeat_interval'每 4 小时重复最后一次通知'——持续告警的提醒间隔。",
+            "【matchers 匹配语法】官方文档：告警必须满足的匹配条件，支持'等于 (=)、不等 (!=)、正则匹配 (=~) 和反向匹配 (!~)'。子路由继承父路由配置，可以覆盖。continue: true 允许匹配后继续检查兄弟路由。",
+            "【keep_firing_for 防抖动】官方文档：'keep this alert firing for the specified duration after the firing condition was last met'——条件最后满足后继续保持 firing 状态，'prevents flapping alerts and false resolutions'——防止告警抖动和误恢复。",
+            "【Labels 与 Annotations】官方文档：labels 是'Additional labels to be attached to the alert'——附加到告警的标签，用于路由和分组；annotations 存储'longer additional information such as alert descriptions or runbook links'——描述和 runbook 链接。两者都支持 {{ $labels.xxx }} 和 {{ $value }} 模板。"
         ],
         handsOnPath: [
             "部署 Alertmanager 并配置基础路由：设置 global 参数（resolve_timeout、smtp 配置）；创建根路由和默认接收器；添加 Slack/Webhook 接收器并测试通知。",
@@ -615,183 +618,147 @@ export const week11Quizzes: Record<string, QuizQuestion[]> = {
     "w11-4": [
         {
             id: "w11-4-q1",
-            question: "Alertmanager 的主要职责是什么？",
+            question: "官方文档对 Grouping 分组机制的核心价值描述是什么？",
             options: [
-                "接收告警，进行分组、去重、抑制和静默，然后路由到接收器发送通知",
-                "采集指标",
-                "存储时序数据",
-                "生成 Dashboard"
+                "按告警名称排序通知",
+                "加速告警发送速度",
+                "'sends a single compact notification rather than overwhelming users with hundreds of individual alerts'——避免告警风暴",
+                "减少存储空间占用"
             ],
-            answer: 0,
-            rationale: "Alertmanager 负责告警的后处理和通知，Prometheus 负责告警规则的评估和触发。"
+            answer: 2,
+            rationale: "官方文档：Grouping 'sends a single compact notification rather than overwhelming users with hundreds of individual alerts'——在故障期间避免告警风暴。"
         },
         {
             id: "w11-4-q2",
-            question: "路由树（Routing Tree）的工作方式是什么？",
+            question: "官方文档对 Inhibition 抑制机制的描述是什么？",
             options: [
-                "告警从根路由向下匹配，根据 matchers 选择子路由，决定分组和接收器",
-                "随机选择路由",
-                "总是发送到所有接收器",
-                "按时间顺序轮流发送"
+                "'prevents alert fatigue by muting secondary issues when a root cause alert is active'——根因告警触发时静音从属告警",
+                "永久删除告警记录",
+                "限制告警发送频率",
+                "阻止告警规则执行"
             ],
             answer: 0,
-            rationale: "路由树是层级结构，告警按标签匹配规则遍历树，找到匹配的路由后按其配置进行分组和发送。"
+            rationale: "官方文档：Inhibition 'prevents alert fatigue by muting secondary issues when a root cause alert is active'——防止根因告警触发时收到大量从属告警。"
         },
         {
             id: "w11-4-q3",
-            question: "group_by 配置的作用是什么？",
+            question: "官方文档对 Silencing 静默机制的描述是什么？",
             options: [
-                "指定按哪些标签将告警分组，同组告警合并为一个通知",
-                "删除标签",
-                "按时间分组",
-                "分组数据源"
+                "自动删除告警规则",
+                "需要重启 Alertmanager 生效",
+                "只能通过 API 配置",
+                "'Provides straightforward muting of alerts for specified periods using matchers'——使用匹配器临时静音"
             ],
-            answer: 0,
-            rationale: "group_by 决定哪些标签相同的告警被归为一组。例如 group_by: [alertname, cluster] 按告警名和集群分组。"
+            answer: 3,
+            rationale: "官方文档：Silencing 'Provides straightforward muting of alerts for specified periods using matchers'——通过 Web UI 配置匹配器和持续时间。"
         },
         {
             id: "w11-4-q4",
-            question: "抑制（Inhibition）和静默（Silence）的区别是什么？",
+            question: "官方文档对高可用部署 Prometheus 与 Alertmanager 连接方式的警告是什么？",
             options: [
-                "抑制基于告警间的依赖关系自动静音；静默是手动创建的临时静音规则",
-                "两者完全相同",
-                "抑制是永久的",
-                "静默需要重启才生效"
+                "必须使用负载均衡器",
+                "'traffic should not be load-balanced; Prometheus should reference all Alertmanager instances directly'",
+                "只需要配置一个 Alertmanager 地址",
+                "使用 DNS 轮询即可"
             ],
-            answer: 0,
-            rationale: "Inhibition 定义告警间的依赖（如主告警触发时静音从告警）；Silence 是手动或定时创建的静音规则。"
+            answer: 1,
+            rationale: "官方文档警告：'traffic should not be load-balanced between Prometheus and Alertmanagers; instead, Prometheus should reference all Alertmanager instances directly'。"
         },
         {
             id: "w11-4-q5",
-            question: "group_wait 参数的含义是什么？",
+            question: "官方文档对告警规则 for 子句的描述是什么？",
             options: [
-                "新告警组首次发送通知前的等待时间，用于聚合同组告警",
-                "告警重复间隔",
-                "告警超时时间",
-                "数据保留时间"
+                "设置告警持续时间上限",
+                "定义告警发送频率",
+                "'a certain duration between first encountering expression output and counting an alert as firing'——防止瞬时抖动",
+                "指定数据保留时间"
             ],
-            answer: 0,
-            rationale: "group_wait 让 Alertmanager 等待一段时间收集同组的其他告警，然后一起发送，避免短时间内发送多个通知。"
+            answer: 2,
+            rationale: "官方文档：for 子句指定'a certain duration between first encountering a new expression output vector element and counting an alert as firing'——防止瞬时抖动触发告警。"
         },
         {
             id: "w11-4-q6",
-            question: "常见的 Alertmanager 接收器（Receiver）有哪些？",
+            question: "官方文档对 group_by 配置的说明，使用 [...] 空列表表示什么？",
             options: [
-                "Email、Slack、PagerDuty、Webhook、OpsGenie、WeChat 等",
-                "只有 Email",
-                "只有 Slack",
-                "只能写文件"
+                "按所有标签分组",
+                "使用默认分组策略",
+                "禁用聚合，每个告警独立通知",
+                "分组所有告警为单个通知"
             ],
-            answer: 0,
-            rationale: "Alertmanager 支持多种通知渠道，也可以通过 Webhook 接收器实现自定义集成。"
+            answer: 2,
+            rationale: "官方文档：'使用 [...] 可禁用聚合，逐条传递告警'——空列表表示每个告警独立通知，不进行分组。"
         },
         {
             id: "w11-4-q7",
-            question: "repeat_interval 参数的作用是什么？",
+            question: "官方文档描述的时间参数三件套（group_wait、group_interval、repeat_interval）各自的作用是什么？",
             options: [
-                "控制已发送告警在持续触发时重复通知的时间间隔",
-                "首次通知延迟",
-                "告警评估间隔",
-                "数据采集间隔"
+                "group_wait 等待首次通知，group_interval 检查现有告警组，repeat_interval 重复发送持续告警",
+                "三者功能完全相同",
+                "只有 group_wait 是必需的",
+                "这些参数只用于 Prometheus 配置"
             ],
             answer: 0,
-            rationale: "repeat_interval 决定同一个告警在持续 firing 状态时多久重新发送一次通知，避免告警被遗忘。"
+            rationale: "官方文档：group_wait 等待 30 秒后发送首个通知；group_interval 每 5 分钟检查现有告警组；repeat_interval 每 4 小时重复持续告警的通知。"
         },
         {
             id: "w11-4-q8",
-            question: "如何配置 Alertmanager 高可用？",
+            question: "官方文档对 matchers 匹配语法支持哪些操作符？",
             options: [
-                "部署多个实例，使用 --cluster.* 参数组成集群，通过 Gossip 同步状态",
-                "使用单节点",
-                "依赖 Kubernetes Service",
-                "配置 DNS 轮询"
+                "只支持等于（=）",
+                "只支持正则匹配（=~）",
+                "不支持正则表达式",
+                "'等于 (=)、不等 (!=)、正则匹配 (=~) 和反向匹配 (!~)'"
             ],
-            answer: 0,
-            rationale: "多个 Alertmanager 实例通过 Gossip 协议同步静默和通知状态，Prometheus 应配置所有实例地址而非负载均衡器。"
+            answer: 3,
+            rationale: "官方文档：matchers 支持'等于 (=)、不等 (!=)、正则匹配 (=~) 和反向匹配 (!~)'四种操作符。"
         },
         {
             id: "w11-4-q9",
-            question: "resolve_timeout 参数的作用是什么？",
+            question: "官方文档对 keep_firing_for 参数的描述是什么？",
             options: [
-                "在未收到 resolved 通知时，自动在指定时间后标记告警已解决",
-                "HTTP 请求超时",
-                "告警评估超时",
-                "查询超时"
+                "设置告警自动清除时间",
+                "'keep this alert firing for the specified duration after the firing condition was last met'——防止告警抖动",
+                "控制告警发送速率",
+                "限制告警存储时间"
             ],
-            answer: 0,
-            rationale: "当 Prometheus 停止发送某个告警时，Alertmanager 会在 resolve_timeout 后自动将其标记为已解决。"
+            answer: 1,
+            rationale: "官方文档：keep_firing_for 'keep this alert firing for the specified duration after the firing condition was last met'，'prevents flapping alerts and false resolutions'。"
         },
         {
             id: "w11-4-q10",
-            question: "Alertmanager 通知模板使用什么语言？",
+            question: "官方文档对 Labels 和 Annotations 的区别描述是什么？",
             options: [
-                "Go template，支持引用告警的标签和注释",
-                "Jinja2",
-                "Mustache",
-                "JavaScript"
+                "两者功能完全相同",
+                "Labels 只用于存储，Annotations 只用于显示",
+                "Labels 用于路由和分组，Annotations 存储描述信息如 runbook 链接",
+                "Annotations 优先级高于 Labels"
             ],
-            answer: 0,
-            rationale: "Alertmanager 使用 Go 模板语法，可以在通知消息中使用 {{ .Labels.alertname }}、{{ .Annotations.summary }} 等。"
+            answer: 2,
+            rationale: "官方文档：labels 是'Additional labels to be attached to the alert'用于路由和分组；annotations 存储'longer additional information such as alert descriptions or runbook links'。"
         },
         {
             id: "w11-4-q11",
-            question: "Prometheus 如何配置发送告警到 Alertmanager？",
+            question: "路由配置中 continue: true 的作用是什么？",
             options: [
-                "在 prometheus.yml 的 alerting > alertmanagers 部分配置地址列表",
-                "自动发现",
-                "写入 etcd",
-                "通过环境变量"
+                "跳过当前路由",
+                "永远继续重试发送",
+                "继续发送已解决的告警",
+                "匹配当前路由后继续检查兄弟路由，允许发送到多个接收器"
             ],
-            answer: 0,
-            rationale: "Prometheus 配置中需要明确指定 Alertmanager 的地址，可以是静态地址或通过服务发现。"
+            answer: 3,
+            rationale: "官方文档：子路由默认匹配后停止。continue: true 允许匹配后继续检查兄弟路由，实现同一告警发送到多个渠道。"
         },
         {
             id: "w11-4-q12",
-            question: "continue: true 在路由配置中的作用是什么？",
-            options: [
-                "匹配当前路由后继续检查兄弟路由，允许发送到多个接收器",
-                "跳过当前路由",
-                "永远继续重试",
-                "继续发送已解决的告警"
-            ],
-            answer: 0,
-            rationale: "默认情况下告警匹配到路由后停止。设置 continue: true 后会继续匹配后续路由，实现同一告警发送到多个渠道。"
-        },
-        {
-            id: "w11-4-q13",
-            question: "Prometheus 告警规则中 for 子句的作用是什么？",
-            options: [
-                "指定告警条件必须持续满足的时间才触发，避免瞬时抖动",
-                "设置告警持续时间上限",
-                "定义发送频率",
-                "指定数据保留时间"
-            ],
-            answer: 0,
-            rationale: "for: 10m 表示告警条件必须持续 10 分钟才从 pending 变为 firing，避免短暂的指标波动触发告警。"
-        },
-        {
-            id: "w11-4-q14",
             question: "抑制规则中 equal 列表的作用是什么？",
             options: [
-                "指定源告警和目标告警必须具有相同值的标签，才会触发抑制",
+                "指定源告警和目标告警必须具有相同值的标签才会触发抑制",
                 "删除相同的标签",
-                "比较告警值",
+                "比较告警的数值",
                 "设置相同的接收器"
             ],
             answer: 0,
-            rationale: "equal 确保抑制只发生在相关告警之间，如同一集群的告警才会相互抑制。"
-        },
-        {
-            id: "w11-4-q15",
-            question: "如何在维护窗口期间避免收到告警通知？",
-            options: [
-                "在 Alertmanager 中创建 Silence，匹配相关告警并设置持续时间",
-                "停止 Prometheus",
-                "删除告警规则",
-                "断开网络"
-            ],
-            answer: 0,
-            rationale: "Silence 是临时静音机制，可以通过 Web UI 或 API 创建，在计划维护前静音相关告警，维护后自动失效。"
+            rationale: "官方文档：equal 确保抑制只发生在相关告警之间，例如同一集群的告警才会相互抑制，避免跨集群误抑制。"
         }
     ]
 }
