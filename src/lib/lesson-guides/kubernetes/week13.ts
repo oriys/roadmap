@@ -47,16 +47,18 @@ export const week13Guides: Record<string, LessonGuide> = {
     "w13-2": {
         lessonId: "w13-2",
         background: [
-            "Istio 是目前最流行的服务网格实现，由 Google、Lyft 和 IBM 联合开发，现为 CNCF 毕业项目。核心架构分为控制面（istiod）和数据面（Envoy Sidecar），通过声明式配置实现复杂的流量治理。",
-            "控制面 istiod 是 Istio 的「大脑」，整合了 Pilot（配置下发）、Citadel（证书管理）、Galley（配置验证）三个组件。istiod 监听 Kubernetes API，将 VirtualService、DestinationRule 等 CRD 转换为 Envoy 配置，通过 xDS 协议推送到数据面。",
-            "数据面由 Envoy Sidecar 代理构成，作为每个 Pod 的「贴身保镖」拦截所有网络流量。Envoy 是高性能的 C++ 代理，支持 HTTP/1.1、HTTP/2、gRPC、TCP 等协议，通过 xDS API 动态接收配置，无需重启即可更新路由规则。",
-            "Sidecar 注入是 Istio 的核心机制。通过 Kubernetes Admission Controller，在 Pod 创建时自动注入 Envoy 容器和 init 容器。init 容器配置 iptables 规则，将 Pod 的所有入站出站流量重定向到 Envoy。"
+            "【双平面架构】官方架构文档：Istio 分为数据面和控制面——数据面由'intelligent proxies (Envoy) deployed as sidecars'组成，处理服务间所有网络流量；控制面 istiod 负责管理和配置代理以路由流量、执行策略。",
+            "【istiod 核心职责】官方文档：istiod 整合三大功能——Traffic Management（将高层路由规则转换为 Envoy 配置并运行时分发）；Service Discovery（抽象平台特定机制为 Envoy API 兼容格式）；Security & Certificates（作为 CA 管理 mTLS 证书和访问控制）。",
+            "【Envoy 数据面能力】官方文档：Envoy 代理提供'Dynamic service discovery and load balancing, TLS termination and protocol support (HTTP/2, gRPC), Circuit breaking and health checks, Traffic splitting and fault injection, Rich telemetry collection'——全面的流量管理能力。",
+            "【Sidecar 设计价值】官方文档：Sidecar 模式允许 Istio'enforce policies and extract telemetry without requiring code changes'——无需代码修改即可执行策略和收集遥测。Envoy 代理中介所有流量，istiod 编排其行为。",
+            "【安装方式】官方文档：使用'istioctl install'命令安装，可通过'--set profile=demo'选择配置 profile。生产环境推荐使用 YAML 配置文件而非内联 --set 参数，'istioctl manifest generate'可预览清单而不实际部署。"
         ],
         keyDifficulties: [
-            "理解 xDS 协议：Envoy 通过 xDS（LDS/RDS/CDS/EDS/SDS）协议从控制面获取配置。LDS（监听器）、RDS（路由）、CDS（集群）、EDS（端点）、SDS（密钥）分别管理代理的不同层面。理解这些概念有助于调试配置问题。",
-            "Sidecar 注入条件：命名空间需要标记 istio-injection=enabled，或 Pod 添加 sidecar.istio.io/inject=true 注解。某些系统 Pod（如 DaemonSet）可能不应该注入。验证注入状态：kubectl get pods -l app=xxx -o jsonpath='{.items[*].spec.containers[*].name}'。",
-            "Envoy 配置调试：使用 istioctl proxy-config 命令查看 Envoy 的实际配置（clusters、routes、listeners、endpoints）。当路由不生效时，通过这些命令排查配置是否正确下发到代理。",
-            "资源配置优化：Sidecar 默认资源可能过大或过小，需要根据流量调整。使用 Sidecar CRD 限制代理只监听需要的服务，减少配置大小和内存消耗。大型集群尤其重要。"
+            "【xDS 协议体系】官方文档：Envoy 通过 xDS 协议从 istiod 获取动态配置。核心协议包括：LDS（Listener Discovery Service）管理监听器、RDS（Route）管理路由、CDS（Cluster）管理集群定义、EDS（Endpoint）管理服务端点、SDS（Secret）管理证书密钥。",
+            "【流量流向理解】官方调试文档：流量经过 Envoy 的配置链——Listeners（接收流量，15001 出站/15006 入站端口）→ Routes（决定请求路由到哪个集群）→ Clusters（定义服务端点通过 EDS）→ Endpoints（实际 Pod IP 和健康状态）。",
+            "【proxy-status 命令】官方文档：'istioctl proxy-status'显示 Envoy 与 istiod 的同步状态——SYNCED（已同步）、NOT SENT（未发送）、STALE（过期）。这是排查配置下发问题的首要命令。",
+            "【proxy-config 调试】官方文档：'istioctl proxy-config [clusters|listeners|routes|endpoints] <pod-name>'检查特定代理配置。'understanding Envoy clusters/listeners/routes/endpoints and how they all interact is essential for effective debugging'——理解交互是有效调试的基础。",
+            "【安装 profile 选择】官方文档：default profile 适合生产环境；demo profile 包含更多组件用于学习。'istioctl manifest generate > manifest.yaml'可预览安装内容，'istioctl uninstall --purge'完全卸载。"
         ],
         handsOnPath: [
             "安装 Istio：下载 istioctl，执行 istioctl install --set profile=demo。验证安装：kubectl get pods -n istio-system。了解不同 profile（minimal/default/demo）的差异。",
@@ -316,183 +318,147 @@ export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "w13-2": [
         {
             id: "w13-2-q1",
-            question: "Istio 的控制面组件是什么？",
+            question: "官方架构文档对 Istio 数据面的描述是什么？",
             options: [
-                "Envoy",
-                "istiod",
-                "Kiali",
-                "Prometheus"
+                "由 istiod 组件组成",
+                "由 Kubernetes API Server 管理",
+                "'intelligent proxies (Envoy) deployed as sidecars'——作为 Sidecar 部署的智能代理",
+                "由 Prometheus 组成"
             ],
-            answer: 1,
-            rationale: "istiod 是 Istio 的控制面，整合了 Pilot（配置）、Citadel（证书）、Galley（验证）功能。Envoy 是数据面代理。"
+            answer: 2,
+            rationale: "官方架构文档明确：数据面由'intelligent proxies (Envoy) deployed as sidecars'组成，处理服务间所有网络流量。"
         },
         {
             id: "w13-2-q2",
-            question: "Envoy Sidecar 通过什么协议从控制面获取配置？",
+            question: "官方文档描述的 istiod 三大核心职责是什么？",
             options: [
-                "HTTP REST",
-                "gRPC/xDS",
-                "MQTT",
-                "WebSocket"
+                "Traffic Management、Service Discovery、Security & Certificates",
+                "日志收集、指标暴露、追踪生成",
+                "Pod 调度、资源分配、存储管理",
+                "代码编译、镜像构建、部署推送"
             ],
-            answer: 1,
-            rationale: "Envoy 通过 xDS（LDS/RDS/CDS/EDS/SDS）协议从 istiod 获取配置。xDS 基于 gRPC，支持增量更新和流式推送。"
+            answer: 0,
+            rationale: "官方文档：istiod 整合三大功能——Traffic Management（配置分发）、Service Discovery（服务发现抽象）、Security & Certificates（证书和访问控制管理）。"
         },
         {
             id: "w13-2-q3",
-            question: "启用命名空间级别 Sidecar 自动注入的命令是什么？",
+            question: "官方文档描述的 Envoy 数据面能力不包括哪项？",
             options: [
-                "kubectl label namespace default sidecar=enabled",
-                "kubectl label namespace default istio-injection=enabled",
-                "kubectl annotate namespace default istio.io/inject=true",
-                "istioctl inject namespace default"
+                "Dynamic service discovery",
+                "TLS termination",
+                "数据库事务管理",
+                "Circuit breaking"
             ],
-            answer: 1,
-            rationale: "kubectl label namespace <name> istio-injection=enabled 为命名空间启用自动 Sidecar 注入。新创建的 Pod 会自动注入 Envoy。"
+            answer: 2,
+            rationale: "官方文档列出 Envoy 能力：Dynamic service discovery, TLS termination, Circuit breaking, Traffic splitting, Rich telemetry。数据库事务管理是应用层功能。"
         },
         {
             id: "w13-2-q4",
-            question: "Istio 的 init 容器做了什么？",
+            question: "官方文档对 Sidecar 模式核心价值的描述是什么？",
             options: [
-                "启动 Envoy 代理",
-                "配置 iptables 规则重定向流量到 Envoy",
-                "下载证书",
-                "验证应用健康"
+                "提高应用性能",
+                "简化代码开发",
+                "减少网络延迟",
+                "'enforce policies and extract telemetry without requiring code changes'"
             ],
-            answer: 1,
-            rationale: "istio-init 容器配置 iptables 规则，将 Pod 的所有入站和出站流量重定向到 Envoy 代理的端口（15001/15006）。"
+            answer: 3,
+            rationale: "官方文档：Sidecar 模式允许 Istio'enforce policies and extract telemetry without requiring code changes'——无需代码修改即可执行策略和收集遥测。"
         },
         {
             id: "w13-2-q5",
-            question: "查看 Pod 的 Envoy 路由配置的命令是什么？",
+            question: "xDS 协议中 EDS 的全称和职责是什么？",
             options: [
-                "kubectl describe pod",
-                "istioctl proxy-config routes <pod>",
-                "kubectl logs istio-proxy",
-                "istioctl analyze"
+                "Event Discovery Service——管理事件",
+                "Endpoint Discovery Service——管理服务端点",
+                "Extension Discovery Service——管理扩展",
+                "Encryption Discovery Service——管理加密"
             ],
             answer: 1,
-            rationale: "istioctl proxy-config routes <pod> 显示 Envoy 代理的路由配置。类似命令还有 clusters、listeners、endpoints 等。"
+            rationale: "xDS 协议中 EDS 是 Endpoint Discovery Service，负责管理服务端点信息，即服务背后的实际 Pod IP 列表。"
         },
         {
             id: "w13-2-q6",
-            question: "xDS 协议中，EDS 负责什么配置？",
+            question: "官方调试文档描述的流量经过 Envoy 的配置链顺序是什么？",
             options: [
-                "监听器",
-                "路由",
-                "端点（服务实例）",
-                "密钥"
+                "Clusters → Routes → Listeners → Endpoints",
+                "Endpoints → Clusters → Routes → Listeners",
+                "Routes → Listeners → Endpoints → Clusters",
+                "Listeners → Routes → Clusters → Endpoints"
             ],
-            answer: 2,
-            rationale: "EDS（Endpoint Discovery Service）负责服务端点发现，即服务背后的 Pod IP 列表。LDS 是监听器、RDS 是路由、CDS 是集群、SDS 是密钥。"
+            answer: 3,
+            rationale: "官方文档：流量流向为 Listeners（接收流量）→ Routes（决定路由）→ Clusters（定义服务）→ Endpoints（实际 Pod IP）。"
         },
         {
             id: "w13-2-q7",
-            question: "如何验证 Pod 是否正确注入了 Sidecar？",
+            question: "istioctl proxy-status 命令显示的同步状态有哪些？",
             options: [
-                "检查 Pod 是否有 istio-proxy 容器",
-                "检查 Pod 标签",
-                "检查 Service 配置",
-                "检查 ConfigMap"
+                "SYNCED、NOT SENT、STALE",
+                "OK、ERROR、PENDING",
+                "READY、NOT READY、UNKNOWN",
+                "ACTIVE、INACTIVE、FAILED"
             ],
             answer: 0,
-            rationale: "正确注入 Sidecar 的 Pod 会有 istio-proxy 容器。可以用 kubectl get pod -o jsonpath='{.spec.containers[*].name}' 验证。"
+            rationale: "官方文档：'istioctl proxy-status'显示 Envoy 与 istiod 的同步状态——SYNCED（已同步）、NOT SENT（未发送）、STALE（过期）。"
         },
         {
             id: "w13-2-q8",
-            question: "istioctl analyze 的作用是什么？",
+            question: "查看 Pod 的 Envoy 路由配置应该使用什么命令？",
             options: [
-                "分析流量",
-                "检查 Istio 配置的潜在问题",
-                "分析性能",
-                "分析日志"
+                "kubectl describe pod",
+                "kubectl logs istio-proxy",
+                "istioctl proxy-config routes <pod>",
+                "istioctl analyze"
             ],
-            answer: 1,
-            rationale: "istioctl analyze 检查 Istio 配置（VirtualService、DestinationRule 等）的潜在问题，如引用不存在的主机、配置冲突等。"
+            answer: 2,
+            rationale: "官方文档：'istioctl proxy-config [clusters|listeners|routes|endpoints] <pod-name>'检查特定代理配置，routes 子命令查看路由配置。"
         },
         {
             id: "w13-2-q9",
-            question: "Istio 的 demo profile 与 default profile 的区别是什么？",
+            question: "安装 Istio 时如何使用 demo profile？",
             options: [
-                "demo 不包含 istiod",
-                "demo 包含更多可观测性组件，资源需求更高",
-                "default 不支持 mTLS",
-                "两者完全相同"
+                "istioctl install --profile demo",
+                "istioctl install -f demo.yaml",
+                "istioctl install --demo",
+                "istioctl install --set profile=demo"
             ],
-            answer: 1,
-            rationale: "demo profile 启用更多组件（如 Kiali、Jaeger、Grafana）用于学习和演示，资源需求更高。default 适合生产环境。"
+            answer: 3,
+            rationale: "官方文档：使用'istioctl install --set profile=demo'选择 demo profile 安装，demo 包含更多组件用于学习和演示。"
         },
         {
             id: "w13-2-q10",
-            question: "Sidecar CRD 的主要用途是什么？",
+            question: "官方文档对 default 和 demo profile 的区别描述是什么？",
             options: [
-                "定义 Sidecar 资源限制",
-                "限制代理只监听需要的服务，减少配置大小",
-                "配置日志级别",
-                "启用或禁用注入"
+                "两者完全相同",
+                "default 适合生产环境，demo 包含更多组件用于学习",
+                "demo 适合生产环境，default 用于学习",
+                "都不适合生产环境"
             ],
             answer: 1,
-            rationale: "Sidecar CRD 允许配置 Envoy 只监听指定的服务（egress.hosts），减少配置大小和内存消耗，对大型集群尤其重要。"
+            rationale: "官方文档：default profile 适合生产环境（suits production environments better than the larger demo profile），demo 包含更多可观测性组件用于学习。"
         },
         {
             id: "w13-2-q11",
-            question: "istiod 整合了哪些原先独立的组件？",
+            question: "预览 Istio 安装内容而不实际部署应使用什么命令？",
             options: [
-                "Envoy 和 Kiali",
-                "Pilot、Citadel 和 Galley",
-                "Prometheus 和 Grafana",
-                "Jaeger 和 Zipkin"
+                "istioctl preview",
+                "istioctl install --dry-run",
+                "istioctl manifest generate > manifest.yaml",
+                "istioctl plan"
             ],
-            answer: 1,
-            rationale: "istiod 是 Istio 1.5+ 的单一控制面二进制，整合了 Pilot（配置下发）、Citadel（证书管理）、Galley（配置验证）。"
+            answer: 2,
+            rationale: "官方文档：'istioctl manifest generate > manifest.yaml'可以预览安装清单而不实际部署（Preview the installation without deploying）。"
         },
         {
             id: "w13-2-q12",
-            question: "以下哪种情况不应该注入 Sidecar？",
+            question: "官方文档对有效调试 Envoy 的关键建议是什么？",
             options: [
-                "普通业务服务",
-                "系统组件如 kube-system 命名空间的 Pod",
-                "需要 mTLS 的服务",
-                "需要流量治理的服务"
+                "只需查看日志即可",
+                "重启 Pod 解决大多数问题",
+                "直接修改 Envoy 配置文件",
+                "'understanding Envoy clusters/listeners/routes/endpoints and how they all interact is essential'"
             ],
-            answer: 1,
-            rationale: "系统组件（如 CoreDNS、kube-proxy）通常不应注入 Sidecar，可能导致循环依赖或启动问题。kube-system 默认不启用注入。"
-        },
-        {
-            id: "w13-2-q13",
-            question: "Envoy 为什么需要动态配置而不是静态配置文件？",
-            options: [
-                "静态配置性能差",
-                "动态配置允许不重启代理就更新路由规则",
-                "静态配置不支持 TLS",
-                "Kubernetes 不支持静态配置"
-            ],
-            answer: 1,
-            rationale: "动态配置（xDS）允许 Envoy 在运行时更新路由、端点等配置，无需重启代理，支持快速响应服务变化和配置更新。"
-        },
-        {
-            id: "w13-2-q14",
-            question: "Kiali 在 Istio 生态中的作用是什么？",
-            options: [
-                "存储指标",
-                "提供服务网格可视化和管理界面",
-                "签发证书",
-                "收集日志"
-            ],
-            answer: 1,
-            rationale: "Kiali 是 Istio 的管理控制台，提供服务拓扑图、流量可视化、配置验证等功能，是理解和管理网格的重要工具。"
-        },
-        {
-            id: "w13-2-q15",
-            question: "Istio CNI 插件的优势是什么？",
-            options: [
-                "提高性能",
-                "避免 init 容器需要 NET_ADMIN 权限",
-                "简化安装",
-                "支持更多协议"
-            ],
-            answer: 1,
-            rationale: "Istio CNI 使用 CNI 插件而非 init 容器配置流量重定向，避免了 Pod 需要 NET_ADMIN 特权，提高安全性。"
+            answer: 3,
+            rationale: "官方调试文档强调：'understanding Envoy clusters/listeners/routes/endpoints and how they all interact is essential for effective debugging'——理解组件交互是有效调试的基础。"
         }
     ],
     "w13-3": [
