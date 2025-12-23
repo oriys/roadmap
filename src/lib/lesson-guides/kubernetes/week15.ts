@@ -5,17 +5,18 @@ export const week15Guides: Record<string, LessonGuide> = {
     "w15-1": {
         lessonId: "w15-1",
         background: [
-            "Kubernetes 提供多层次的弹性伸缩能力：HPA（Horizontal Pod Autoscaler）水平扩展 Pod 数量、VPA（Vertical Pod Autoscaler）调整单 Pod 资源配额、Cluster Autoscaler 动态调整节点数量。三者协同工作，实现从 Pod 到节点的全栈弹性。",
-            "HPA 是最常用的自动扩缩器，根据 CPU、内存或自定义指标调整 Pod 副本数。核心算法是：desiredReplicas = ceil(currentReplicas × currentMetric / desiredMetric)。默认同步周期 15 秒，缩容有 5 分钟稳定窗口防止抖动。",
-            "VPA 解决的是「资源配额不准确」问题。很多团队凭经验设置 requests/limits，导致过度分配（浪费）或不足（OOM）。VPA 分析历史使用数据，推荐合理的资源配置。注意：VPA 和 HPA 不能同时基于 CPU/内存工作。",
-            "Cluster Autoscaler 在节点层面工作：当 Pod 因资源不足无法调度时自动扩容节点；当节点长时间利用率低且 Pod 可迁移时自动缩容。它与 HPA 形成闭环：HPA 扩 Pod → 资源不足 → CA 扩节点 → Pod 调度成功。",
-            "三者的协同策略：HPA 响应业务流量变化（秒级）；CA 响应资源容量变化（分钟级）；VPA 优化资源配置（可离线分析）。生产环境通常 HPA + CA 组合使用，VPA 仅用于推荐模式或无状态工作负载。"
+            "【HPA 定义与工作原理】官方文档：HorizontalPodAutoscaler 'automatically scales workload resources (Deployments, StatefulSets) by adjusting the number of Pods based on observed metrics'——根据观测指标自动调整 Pod 数量。控制循环默认 15 秒运行一次（--horizontal-pod-autoscaler-sync-period），不适用于 DaemonSet 等不可扩缩对象。",
+            "【HPA 核心算法】官方文档：扩缩公式为 'desiredReplicas = ceil(currentReplicas × (currentMetricValue / desiredMetricValue))'。默认容忍度 0.1（10%），指标比率在 0.9-1.1 之间不触发伸缩。缩容稳定窗口 5 分钟（--horizontal-pod-autoscaler-downscale-stabilization）防止抖动。",
+            "【VPA 核心架构】官方文档：VPA 由三个组件构成——Recommender'analyzes historical resource usage to generate recommendations'分析历史使用生成推荐；Updater'applies recommendations by restarting pods'通过重启 Pod 应用推荐；Admission Controller'enforces recommendations on new pod creation'在新 Pod 创建时执行推荐。",
+            "【Cluster Autoscaler 定义】官方文档：CA 是'a tool that automatically adjusts the size of the Kubernetes cluster'——自动调整集群大小的工具。响应两种条件：'unschedulable pods due to insufficient resources'（资源不足导致 Pod 无法调度）和'underutilized nodes for extended periods'（节点长时间低利用率）。",
+            "【CA 版本兼容性】官方文档：'Starting from Kubernetes 1.12, versioning scheme was changed to match Kubernetes minor releases exactly'——CA 版本应与 K8s 小版本匹配。CA 内置调度器模拟器，版本不匹配可能导致调度判断错误。当前支持 K8s 1.8 至 1.34.x。"
         ],
         keyDifficulties: [
-            "HPA 算法细节：容忍度（tolerance）默认 0.1，指标比率在 0.9-1.1 之间不触发伸缩。缩容稳定窗口防止抖动，但可能导致缩容滞后。多指标时取最大副本数。理解这些机制有助于调优伸缩行为。",
-            "VPA 的三种模式：Off（仅推荐）、Initial（仅新 Pod 生效）、Auto（自动更新，会重启 Pod）。Auto 模式会驱逐 Pod 应用新配置，对有状态服务需谨慎。VPA 由 Recommender、Updater、Admission Controller 三组件构成。",
-            "Cluster Autoscaler 与调度器的关系：CA 内置调度器模拟器，预测 Pod 能否调度。版本不匹配可能导致判断错误。CA 不会移除运行非镜像 kube-system Pod 的节点（除非有 PDB）。理解缩容条件避免节点「缩不下去」。",
-            "HPA + VPA 冲突：两者都可以基于 CPU 指标工作，但逻辑冲突（一个加 Pod，一个加资源）。解决方案：VPA 用 Off 模式仅提供推荐；或 HPA 使用自定义指标，VPA 管理资源。Multidimensional Pod Autoscaler 是未来方向。"
+            "【HPA Pod 初始化处理】官方文档：CPU 初始化期（默认 5 分钟）内忽略初始化中 Pod 的 CPU 指标，'exception: if Pod is Ready AND metric was taken during Ready period'——防止 Java 预热等启动高 CPU 误触发扩缩。初始就绪延迟（30 秒）处理 Pod 状态转换。",
+            "【HPA 指标源与多指标决策】官方文档：支持三类指标源——Resource Metrics API（CPU/内存）、Custom Metrics API（自定义指标）、External Metrics API（外部指标）。多指标场景'Largest desired replica count is chosen'——取最大值确保满足所有指标需求。",
+            "【VPA 限制与兼容性】官方文档警告：'VPA is not compatible with workloads that define pod-level resources stanzas'——VPA 与 Pod 级资源定义不兼容。Container-level limits 超过 pod-level limits 会导致 Pod 创建失败。VPA 和 HPA 不能同时基于 CPU/内存工作。",
+            "【CA 缩容保护机制】官方文档：节点标记 'cluster-autoscaler.kubernetes.io/scale-down-disabled' 不会被缩容；CA 遵守 PodDisruptionBudgets 和 safe-to-evict 注解；'the tool simulates Kubernetes scheduler behavior internally'——模拟调度器可能与实际调度器不一致。",
+            "【CA 扩展策略 Expander】官方文档：当多个节点组都可满足扩容需求时，Expander 决定选择哪个组——random（随机）、most-pods（容纳最多 Pod）、least-waste（最小浪费）、priority（优先级）。不同策略影响成本和资源利用效率。"
         ],
         handsOnPath: [
             "配置 HPA 基础场景：部署一个 CPU 密集型应用，创建 HPA 目标 50% CPU 利用率。使用压测工具（如 hey、wrk）模拟负载，观察 Pod 扩容。停止压测观察缩容（等待 5 分钟稳定窗口）。",
@@ -172,183 +173,147 @@ export const week15Quizzes: Record<string, QuizQuestion[]> = {
     "w15-1": [
         {
             id: "w15-1-q1",
-            question: "HPA 的核心扩缩算法公式是什么？",
+            question: "官方文档描述的 HPA 控制循环默认运行周期是多少？",
             options: [
-                "desiredReplicas = currentReplicas + currentMetric / desiredMetric",
-                "desiredReplicas = ceil(currentReplicas × currentMetric / desiredMetric)",
-                "desiredReplicas = floor(currentReplicas × desiredMetric / currentMetric)",
-                "desiredReplicas = currentReplicas × (1 + currentMetric / desiredMetric)"
+                "5 秒",
+                "10 秒",
+                "15 秒（--horizontal-pod-autoscaler-sync-period）",
+                "30 秒"
             ],
-            answer: 1,
-            rationale: "HPA 使用 desiredReplicas = ceil(currentReplicas × currentMetric / desiredMetric) 公式。例如当前 2 个副本，CPU 200m，目标 100m，则期望 2 × 200/100 = 4 个副本。"
+            answer: 2,
+            rationale: "官方文档：HPA 控制循环默认每 15 秒运行一次，可通过 --horizontal-pod-autoscaler-sync-period 参数调整。"
         },
         {
             id: "w15-1-q2",
-            question: "HPA 默认的缩容稳定窗口是多长？",
+            question: "官方文档对 HPA 扩缩算法的描述是什么？",
             options: [
-                "30 秒",
-                "1 分钟",
-                "5 分钟",
-                "10 分钟"
+                "'desiredReplicas = ceil(currentReplicas × (currentMetricValue / desiredMetricValue))'",
+                "desiredReplicas = currentReplicas + currentMetric / desiredMetric",
+                "desiredReplicas = floor(currentReplicas × desiredMetric / currentMetric)",
+                "desiredReplicas = currentReplicas × 2"
             ],
-            answer: 2,
-            rationale: "HPA 缩容稳定窗口默认 5 分钟（--horizontal-pod-autoscaler-downscale-stabilization），在此期间选择最大的建议副本数，防止频繁缩容抖动。"
+            answer: 0,
+            rationale: "官方文档明确公式：desiredReplicas = ceil(currentReplicas × (currentMetricValue / desiredMetricValue))。"
         },
         {
             id: "w15-1-q3",
-            question: "VPA 的三种更新模式分别是什么？",
+            question: "官方文档描述的 HPA 缩容稳定窗口默认值是多少？",
             options: [
-                "None、Manual、Auto",
-                "Off、Initial、Auto",
-                "Disabled、Recommend、Apply",
-                "Static、Dynamic、Adaptive"
-            ],
-            answer: 1,
-            rationale: "VPA 支持三种模式：Off（仅推荐不更新）、Initial（仅新 Pod 应用）、Auto（自动更新，会重启现有 Pod）。"
-        },
-        {
-            id: "w15-1-q4",
-            question: "Cluster Autoscaler 扩容节点的触发条件是什么？",
-            options: [
-                "CPU 使用率超过阈值",
-                "Pod 因资源不足无法调度",
-                "节点数量低于最小值",
-                "内存使用率超过阈值"
-            ],
-            answer: 1,
-            rationale: "Cluster Autoscaler 在发现 Pending Pod 因资源不足无法调度时触发扩容，它会模拟调度器判断需要多少新节点。"
-        },
-        {
-            id: "w15-1-q5",
-            question: "为什么 HPA 和 VPA 不能同时基于 CPU 工作？",
-            options: [
-                "技术实现限制",
-                "一个增加 Pod 数量，一个增加单 Pod 资源，逻辑冲突",
-                "两者使用不同的指标 API",
-                "Kubernetes 不支持多个 Autoscaler"
-            ],
-            answer: 1,
-            rationale: "HPA 在 CPU 高时增加 Pod 数量分摊负载，VPA 在 CPU 高时增加单 Pod 资源。两者对同一指标的响应策略冲突，同时使用会导致不可预测的行为。"
-        },
-        {
-            id: "w15-1-q6",
-            question: "HPA 的 tolerance 参数作用是什么？",
-            options: [
-                "设置最大副本数",
-                "定义指标采集间隔",
-                "在比率接近 1.0 时避免不必要的伸缩",
-                "设置缩容速率"
-            ],
-            answer: 2,
-            rationale: "tolerance 默认 0.1（10%），当指标比率在 0.9-1.1 之间时不触发伸缩，避免因为小幅波动频繁调整副本数。"
-        },
-        {
-            id: "w15-1-q7",
-            question: "VPA 的哪个组件负责分析 Pod 资源使用并生成推荐？",
-            options: [
-                "Updater",
-                "Recommender",
-                "Admission Controller",
-                "Scheduler"
-            ],
-            answer: 1,
-            rationale: "VPA Recommender 分析 Pod 历史资源使用情况并生成推荐值。Updater 负责驱逐 Pod 应用新配置，Admission Controller 在 Pod 创建时注入推荐值。"
-        },
-        {
-            id: "w15-1-q8",
-            question: "Cluster Autoscaler 不会缩容哪种节点？",
-            options: [
-                "运行 DaemonSet Pod 的节点",
-                "运行非镜像 kube-system Pod 且无 PDB 的节点",
-                "标记为 unschedulable 的节点",
-                "刚创建不到 10 分钟的节点"
-            ],
-            answer: 1,
-            rationale: "CA 不会移除运行非镜像 kube-system Pod 的节点（除非有 PodDisruptionBudget 允许），因为这些 Pod 通常是关键系统组件。"
-        },
-        {
-            id: "w15-1-q9",
-            question: "HPA 多指标场景下如何决定副本数？",
-            options: [
-                "取各指标建议的平均值",
-                "取各指标建议的最小值",
-                "取各指标建议的最大值",
-                "只使用第一个指标"
-            ],
-            answer: 2,
-            rationale: "HPA 多指标时取最大值。例如 CPU 建议 3 副本，内存建议 5 副本，则最终决定 5 副本，确保满足所有指标需求。"
-        },
-        {
-            id: "w15-1-q10",
-            question: "VPA 的 Auto 模式有什么缺点？",
-            options: [
-                "推荐值不准确",
-                "需要手动应用变更",
-                "会驱逐并重启 Pod 应用新配置",
-                "不支持内存调整"
-            ],
-            answer: 2,
-            rationale: "VPA Auto 模式会自动驱逐 Pod 并用新资源配置重新创建，这会导致服务中断。对有状态服务需要谨慎使用。"
-        },
-        {
-            id: "w15-1-q11",
-            question: "HPA 的 CPU 初始化期（cpu-initialization-period）默认是多长？",
-            options: [
-                "30 秒",
                 "1 分钟",
-                "5 分钟",
+                "3 分钟",
+                "5 分钟（--horizontal-pod-autoscaler-downscale-stabilization）",
                 "10 分钟"
             ],
             answer: 2,
-            rationale: "cpu-initialization-period 默认 5 分钟，在此期间忽略 Pod 的 CPU 使用数据（除非已 Ready），避免启动期间的高 CPU 影响扩缩决策。"
+            rationale: "官方文档：缩容稳定窗口默认 5 分钟，在此期间选择最大的建议副本数，防止频繁缩容抖动。"
+        },
+        {
+            id: "w15-1-q4",
+            question: "官方文档描述的 VPA 三个组件分别是什么？",
+            options: [
+                "Controller、Manager、Agent",
+                "Scheduler、Allocator、Monitor",
+                "Analyzer、Executor、Validator",
+                "Recommender、Updater、Admission Controller"
+            ],
+            answer: 3,
+            rationale: "官方文档：VPA 由 Recommender（分析生成推荐）、Updater（重启 Pod 应用推荐）、Admission Controller（新 Pod 创建时执行推荐）三组件构成。"
+        },
+        {
+            id: "w15-1-q5",
+            question: "官方文档对 Cluster Autoscaler 扩容触发条件的描述是什么？",
+            options: [
+                "'unschedulable pods due to insufficient resources'——Pod 因资源不足无法调度",
+                "CPU 使用率超过阈值",
+                "节点数量低于最小值",
+                "内存使用率超过阈值"
+            ],
+            answer: 0,
+            rationale: "官方文档：CA 响应 'unschedulable pods due to insufficient resources'（资源不足导致 Pod 无法调度）触发扩容。"
+        },
+        {
+            id: "w15-1-q6",
+            question: "官方文档对 HPA 多指标场景决策的描述是什么？",
+            options: [
+                "取各指标建议的平均值",
+                "取各指标建议的最小值",
+                "'Largest desired replica count is chosen'——取最大值",
+                "只使用第一个指标"
+            ],
+            answer: 2,
+            rationale: "官方文档：多指标时 'Largest desired replica count is chosen'——取最大副本数确保满足所有指标需求。"
+        },
+        {
+            id: "w15-1-q7",
+            question: "官方文档对 VPA 兼容性限制的警告是什么？",
+            options: [
+                "不支持 StatefulSet",
+                "'VPA is not compatible with workloads that define pod-level resources stanzas'",
+                "不支持多容器 Pod",
+                "不支持 HPA 同时启用"
+            ],
+            answer: 1,
+            rationale: "官方文档警告：'VPA is not compatible with workloads that define pod-level resources stanzas'——VPA 与 Pod 级资源定义不兼容。"
+        },
+        {
+            id: "w15-1-q8",
+            question: "官方文档对 CA 版本兼容性的说明是什么？",
+            options: [
+                "CA 版本可以随意选择",
+                "CA 只需与 K8s 主版本匹配",
+                "'versioning scheme was changed to match Kubernetes minor releases exactly'——应与 K8s 小版本匹配",
+                "CA 版本必须比 K8s 版本高"
+            ],
+            answer: 2,
+            rationale: "官方文档：'Starting from Kubernetes 1.12, versioning scheme was changed to match Kubernetes minor releases exactly'。"
+        },
+        {
+            id: "w15-1-q9",
+            question: "官方文档描述的 HPA 默认容忍度（tolerance）是多少？",
+            options: [
+                "0.1（10%）——指标比率在 0.9-1.1 之间不触发伸缩",
+                "0.05（5%）",
+                "0.2（20%）",
+                "0.01（1%）"
+            ],
+            answer: 0,
+            rationale: "官方文档：默认容忍度 0.1（10%），当指标比率在 0.9-1.1 之间时不触发伸缩。"
+        },
+        {
+            id: "w15-1-q10",
+            question: "如何防止节点被 Cluster Autoscaler 缩容？",
+            options: [
+                "删除节点上的所有 Pod",
+                "设置节点为 unschedulable",
+                "标记节点 'cluster-autoscaler.kubernetes.io/scale-down-disabled'",
+                "增加节点内存"
+            ],
+            answer: 2,
+            rationale: "官方文档：节点标记 'cluster-autoscaler.kubernetes.io/scale-down-disabled' 注解后不会被 CA 缩容。"
+        },
+        {
+            id: "w15-1-q11",
+            question: "官方文档描述的 HPA CPU 初始化期默认值是多少？",
+            options: [
+                "30 秒",
+                "1 分钟",
+                "3 分钟",
+                "5 分钟——在此期间忽略初始化中 Pod 的 CPU 指标"
+            ],
+            answer: 3,
+            rationale: "官方文档：CPU 初始化期（--horizontal-pod-autoscaler-cpu-initialization-period）默认 5 分钟，防止启动高 CPU 误触发扩缩。"
         },
         {
             id: "w15-1-q12",
-            question: "Cluster Autoscaler 的 Expander 策略用于什么？",
+            question: "官方文档列出的 CA Expander 策略不包括哪个？",
             options: [
-                "决定缩容顺序",
-                "决定多节点组时选择哪个组扩容",
-                "决定 Pod 调度优先级",
-                "决定节点类型"
+                "random（随机）",
+                "most-pods（容纳最多 Pod）",
+                "fastest（最快响应）",
+                "least-waste（最小浪费）"
             ],
-            answer: 1,
-            rationale: "Expander 决定当多个节点组都可以满足扩容需求时选择哪个。策略包括 random、most-pods、least-waste、priority 等。"
-        },
-        {
-            id: "w15-1-q13",
-            question: "HPA 和 CA 的协同工作流程是什么？",
-            options: [
-                "CA 扩节点 → HPA 扩 Pod",
-                "HPA 扩 Pod → 资源不足 → CA 扩节点 → Pod 调度",
-                "HPA 和 CA 独立工作，无协同",
-                "CA 先评估后通知 HPA"
-            ],
-            answer: 1,
-            rationale: "正确的协同流程是：HPA 响应负载增加扩 Pod → Pod Pending 资源不足 → CA 检测到扩容节点 → 新节点 Ready → Pod 调度成功。"
-        },
-        {
-            id: "w15-1-q14",
-            question: "VPA 解决的核心问题是什么？",
-            options: [
-                "Pod 数量不够",
-                "资源配额不准确导致浪费或不足",
-                "节点资源不足",
-                "网络带宽不够"
-            ],
-            answer: 1,
-            rationale: "VPA 解决资源配额设置不准确的问题。很多团队凭经验设置 requests/limits，VPA 通过分析实际使用推荐合理配置，减少浪费或避免 OOM。"
-        },
-        {
-            id: "w15-1-q15",
-            question: "Cluster Autoscaler 版本应该与什么保持一致？",
-            options: [
-                "Kubernetes 主版本（如 1.x）",
-                "Kubernetes 小版本（如 1.28.x）",
-                "kubectl 版本",
-                "容器运行时版本"
-            ],
-            answer: 1,
-            rationale: "CA 内置调度器模拟器，版本应该与 Kubernetes 小版本匹配（如 CA 1.28.x 对应 K8s 1.28.x），避免调度逻辑不一致导致判断错误。"
+            answer: 2,
+            rationale: "官方文档：Expander 策略包括 random、most-pods、least-waste、priority，不包括 fastest。"
         }
     ],
     "w15-2": [
