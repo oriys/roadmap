@@ -46,16 +46,18 @@ export const week8Guides: Record<string, LessonGuide> = {
     "w8-2": {
         lessonId: "w8-2",
         background: [
-            "Terraform 可以使用官方 Provider 或社区模块在 AWS EKS 和 GCP GKE 上创建 Kubernetes 集群。使用 IaC 方式管理集群可实现版本控制、可重复部署和快速销毁，避免手动配置导致的漂移。",
-            "AWS EKS 集群需要 VPC、子网、IAM 角色和安全组等前置资源。核心资源包括 aws_eks_cluster（控制平面）和 aws_eks_node_group（工作节点）。社区模块 terraform-aws-modules/eks 封装了最佳实践。",
-            "GCP GKE 使用 google_container_cluster 资源创建集群。GKE 支持 Autopilot（全托管节点）和 Standard（自管理节点池）两种模式。节点池通过 google_container_node_pool 独立管理更灵活。",
-            "两种云的 Terraform 配置都支持配置 kubectl 访问：EKS 通过 aws eks update-kubeconfig 命令，GKE 通过 gcloud container clusters get-credentials。Terraform 可以输出必要信息供后续配置使用。"
+            "【EKS 核心架构】HashiCorp 教程：Terraform 配置'定义了一个新的 VPC，在其中部署集群，并使用公共 EKS 模块创建所需资源，包括自动扩展组、安全组以及 IAM 角色和策略'——完整的 EKS 部署包含网络、计算、权限三大模块。",
+            "【GKE 高可用设计】HashiCorp 教程：GKE 配置'采用 2 节点规模配置，跨三个区域部署实现高可用'——实际部署会产生 6 个节点（每个区域 2 个），支持'单独管理的节点池'功能允许根据资源需求定制 Pod 配置。",
+            "【EKS 节点组配置】官方文档：aws_eks_node_group 必需参数包括 cluster_name、node_role_arn、scaling_config（min_size/max_size/desired_size）、subnet_ids。子网必须有'kubernetes.io/cluster/CLUSTER_NAME'标签。",
+            "【GKE 节点池管理】官方文档：google_container_node_pool 支持 name（自动生成或指定前缀）、node_count（实例数）、management（auto-repair/auto-upgrade）、upgrade_settings（最多 20 节点同时升级）等配置。",
+            "【成本警示】HashiCorp 教程强调：'AWS EKS 集群成本为每小时 $0.10'，'Google Cloud 对每个 GKE 集群收取约每小时 10 美分的管理费'——使用后务必运行 terraform destroy 清理资源避免持续计费。"
         ],
         keyDifficulties: [
-            "EKS 网络配置：VPC 需要跨多个可用区的公有和私有子网；控制平面需要配置 endpoint_public_access 和 endpoint_private_access；工作节点子网标签（kubernetes.io/cluster/<name>）影响 AWS 负载均衡器自动发现。",
-            "GKE 节点池分离：建议设置 remove_default_node_pool = true 删除默认节点池，使用独立的 google_container_node_pool 资源管理。这样可以在不重建集群的情况下修改节点配置。",
-            "认证与授权：EKS 使用 IAM 与 Kubernetes RBAC 映射（aws-auth ConfigMap 或 EKS Access Entry）；GKE 集成 Google Cloud IAM。需要正确配置才能让 Terraform 和用户访问集群。",
-            "模块化与可重用性：生产环境推荐使用官方社区模块（terraform-aws-modules/eks、terraform-google-modules/kubernetes-engine）而非从零编写，它们封装了网络、安全、监控等最佳实践。"
+            "【EKS AMI 类型】官方文档：'Starting on Kubernetes 1.30, AL2023 is the default AMI type'——支持 AL2_x86_64、AL2_ARM_64、BOTTLEROCKET、WINDOWS 等多种类型。capacity_type 支持 ON_DEMAND 或 SPOT，默认磁盘 Windows 50GiB、其他 20GiB。",
+            "【GKE 版本管理陷阱】官方文档警告：'If version and auto_upgrade are both specified, they will fight each other'——强烈不建议同时设置明确版本和自动升级，建议使用明确版本避免 Terraform 检测到伪差异（spurious diffs）。",
+            "【EKS IAM 依赖顺序】官方文档：'Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling using depends_on'——否则 EKS 无法正确删除 EC2 实例和弹性网络接口，导致资源残留。",
+            "【GKE 节点池与 Autoscaling 冲突】官方文档：node_count'should not be used alongside autoscaling'——如果启用自动伸缩，应使用 initial_node_count 设置初始值，而非 node_count，否则 Terraform 会与 autoscaler 冲突。",
+            "【EKS Autoscaling 集成】官方文档建议：使用 lifecycle { ignore_changes } 忽略外部自动伸缩器（如 Cluster Autoscaler）对节点数量的修改，避免 Terraform apply 时回滚自动伸缩的变更。"
         ],
         handsOnPath: [
             "使用 Terraform 在 AWS 创建 VPC 和 EKS 集群：配置 2-3 个可用区子网，创建 EKS 集群和托管节点组，使用 terraform output 获取 kubeconfig 配置信息。",
@@ -530,183 +532,147 @@ export const week8Quizzes: Record<string, QuizQuestion[]> = {
     "w8-2": [
         {
             id: "w8-2-q1",
-            question: "AWS EKS 集群创建需要哪些核心 Terraform 资源？",
+            question: "HashiCorp EKS 教程描述的 Terraform 配置创建了哪些资源？",
             options: [
-                "只需要 aws_eks_cluster",
-                "aws_eks_cluster 和 aws_eks_node_group",
-                "只需要 aws_instance",
-                "aws_ecs_cluster 和 aws_ecs_service"
+                "VPC、自动扩展组、安全组以及 IAM 角色和策略",
+                "只创建 EKS 控制平面",
+                "只创建 EC2 实例",
+                "只创建网络资源"
             ],
-            answer: 1,
-            rationale: "EKS 需要 aws_eks_cluster（控制平面）和 aws_eks_node_group（工作节点组）两个核心资源，还需 VPC、IAM 等前置资源。"
+            answer: 0,
+            rationale: "HashiCorp 教程：配置'定义了一个新的 VPC，在其中部署集群，并使用公共 EKS 模块创建所需资源，包括自动扩展组、安全组以及 IAM 角色和策略'。"
         },
         {
             id: "w8-2-q2",
-            question: "GKE 创建集群使用什么 Terraform 资源？",
+            question: "HashiCorp GKE 教程中，2 节点规模配置跨 3 个区域部署后实际产生多少节点？",
             options: [
-                "google_kubernetes_cluster",
-                "google_container_cluster",
-                "google_gke_cluster",
-                "google_compute_cluster"
+                "2 个节点",
+                "3 个节点",
+                "6 个节点（每个区域 2 个）",
+                "9 个节点"
             ],
-            answer: 1,
-            rationale: "GKE 使用 google_container_cluster 资源创建集群，节点池使用 google_container_node_pool 资源。"
+            answer: 2,
+            rationale: "HashiCorp 教程：'采用 2 节点规模配置，跨三个区域部署实现高可用'——实际部署会产生 6 个节点（每个区域 2 个）。"
         },
         {
             id: "w8-2-q3",
-            question: "为什么 EKS 的 VPC 需要跨多个可用区的子网？",
+            question: "AWS EKS 集群的管理费用是多少？",
             options: [
-                "降低成本",
-                "实现高可用性，工作节点可以分布在不同可用区",
-                "加快创建速度",
-                "简化网络配置"
+                "免费",
+                "每小时 $1.00",
+                "每月固定 $100",
+                "每小时 $0.10（约 $73/月）"
             ],
-            answer: 1,
-            rationale: "跨可用区部署可以在单个可用区故障时保持服务可用，是生产环境高可用的基本要求。"
+            answer: 3,
+            rationale: "HashiCorp 教程强调：'AWS EKS 集群成本为每小时 $0.10'，这还不包括节点 EC2 实例费用。"
         },
         {
             id: "w8-2-q4",
-            question: "GKE 中 remove_default_node_pool = true 的作用是什么？",
+            question: "从 Kubernetes 1.30 开始，EKS 托管节点组的默认 AMI 类型是什么？",
             options: [
-                "创建更多节点池",
-                "删除默认节点池，改用独立的 node_pool 资源管理",
-                "禁用自动伸缩",
-                "启用 Autopilot 模式"
+                "AL2023 是默认 AMI 类型",
+                "Amazon Linux 2 (AL2)",
+                "Ubuntu 22.04",
+                "Bottlerocket"
             ],
-            answer: 1,
-            rationale: "删除默认节点池后使用独立的 google_container_node_pool 资源，可以在不重建集群的情况下灵活调整节点配置。"
+            answer: 0,
+            rationale: "官方文档：'Starting on Kubernetes 1.30, AL2023 is the default AMI type for EKS managed node groups'。"
         },
         {
             id: "w8-2-q5",
-            question: "GKE Autopilot 和 Standard 模式的主要区别是什么？",
+            question: "aws_eks_node_group 资源的子网必须具有什么标签？",
             options: [
-                "Autopilot 更贵",
-                "Autopilot 由 Google 全托管节点，Standard 需要自己管理节点池",
-                "Standard 不支持自动伸缩",
-                "Autopilot 不支持 GPU"
+                "不需要任何标签",
+                "aws:eks:cluster-name",
+                "kubernetes.io/cluster/CLUSTER_NAME",
+                "eks.amazonaws.com/nodegroup"
             ],
-            answer: 1,
-            rationale: "Autopilot 模式由 Google 完全管理节点，按 Pod 资源计费；Standard 模式需要自己配置和管理节点池。"
+            answer: 2,
+            rationale: "官方文档：子网必须有'kubernetes.io/cluster/CLUSTER_NAME'标签，这影响 AWS 负载均衡器自动发现。"
         },
         {
             id: "w8-2-q6",
-            question: "terraform-aws-modules/eks 模块的优势是什么？",
+            question: "GKE 节点池中 version 和 auto_upgrade 同时设置会发生什么？",
             options: [
-                "官方支持",
-                "封装了最佳实践，减少配置代码量",
-                "免费使用",
-                "支持更多云平台"
+                "version 优先生效",
+                "auto_upgrade 优先生效",
+                "两者会互相冲突（fight each other），强烈不建议同时设置",
+                "两者独立工作，互不影响"
             ],
-            answer: 1,
-            rationale: "社区模块封装了 VPC、安全组、IAM、节点组等最佳实践配置，大幅减少需要编写的代码量。"
+            answer: 2,
+            rationale: "官方文档警告：'If version and auto_upgrade are both specified, they will fight each other'——强烈不建议同时设置。"
         },
         {
             id: "w8-2-q7",
-            question: "如何配置 kubectl 访问 Terraform 创建的 EKS 集群？",
+            question: "为什么 EKS Node Group 需要使用 depends_on 声明 IAM 角色依赖？",
             options: [
-                "手动编辑 kubeconfig 文件",
-                "使用 aws eks update-kubeconfig 命令",
-                "重新安装 kubectl",
-                "使用 SSH 连接到节点"
+                "提高部署速度",
+                "确保 IAM 角色在节点组之前创建、之后删除，否则无法正确清理资源",
+                "减少 API 调用次数",
+                "满足 AWS 安全要求"
             ],
             answer: 1,
-            rationale: "aws eks update-kubeconfig 命令自动配置 kubeconfig 文件，包括集群端点、证书和认证信息。"
+            rationale: "官方文档：'Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling using depends_on'——否则 EKS 无法正确删除 EC2 实例和弹性网络接口。"
         },
         {
             id: "w8-2-q8",
-            question: "EKS 如何实现 IAM 用户与 Kubernetes RBAC 的映射？",
+            question: "GKE 节点池启用自动伸缩时，应该使用哪个参数设置初始节点数？",
             options: [
-                "不支持映射",
-                "通过 aws-auth ConfigMap 或 EKS Access Entry",
-                "自动映射所有 IAM 用户",
-                "使用 Service Account"
+                "node_count",
+                "initial_node_count",
+                "desired_size",
+                "min_node_count"
             ],
             answer: 1,
-            rationale: "EKS 通过 aws-auth ConfigMap（传统方式）或 EKS Access Entry（新方式）映射 IAM 身份到 K8s RBAC。"
+            rationale: "官方文档：node_count'should not be used alongside autoscaling'——启用自动伸缩时应使用 initial_node_count 设置初始值。"
         },
         {
             id: "w8-2-q9",
-            question: "EKS 子网标签 kubernetes.io/cluster/<name> 的作用是什么？",
+            question: "如何防止 Terraform 与 Cluster Autoscaler 冲突？",
             options: [
-                "美观标识",
-                "帮助 AWS 负载均衡器自动发现正确的子网",
-                "计费用途",
-                "安全隔离"
+                "禁用 Cluster Autoscaler",
+                "不使用 Terraform 管理节点组",
+                "使用 lifecycle { ignore_changes } 忽略节点数量变化",
+                "每次 apply 前手动更新 desired_size"
             ],
-            answer: 1,
-            rationale: "子网标签帮助 AWS 云控制器识别哪些子网属于集群，用于自动创建 ELB/ALB 负载均衡器。"
+            answer: 2,
+            rationale: "官方文档建议：使用 lifecycle { ignore_changes } 忽略外部自动伸缩器对节点数量的修改，避免 Terraform apply 时回滚变更。"
         },
         {
             id: "w8-2-q10",
-            question: "EKS 控制平面的 endpoint_public_access 配置什么？",
+            question: "EKS 节点组的 capacity_type 支持哪些值？",
             options: [
-                "节点是否有公网 IP",
-                "API Server 是否可以从公网访问",
-                "Pod 是否可以访问公网",
-                "日志是否公开"
+                "STANDARD 和 PREMIUM",
+                "RESERVED 和 ON_DEMAND",
+                "ON_DEMAND 和 SPOT",
+                "DEDICATED 和 SHARED"
             ],
-            answer: 1,
-            rationale: "endpoint_public_access 控制 Kubernetes API Server 是否有公网端点，生产环境通常设为 false 仅允许私网访问。"
+            answer: 2,
+            rationale: "官方文档：capacity_type'支持 valid values: ON_DEMAND or SPOT'——按需实例或 Spot 实例。"
         },
         {
             id: "w8-2-q11",
-            question: "GKE 如何配置 kubectl 访问集群？",
+            question: "GKE 节点升级设置中，最多可以同时升级多少个节点？",
             options: [
-                "aws eks update-kubeconfig",
-                "gcloud container clusters get-credentials",
-                "kubectl config set-cluster",
-                "terraform kubectl init"
+                "5 个",
+                "10 个",
+                "最多 20 个节点",
+                "无限制"
             ],
-            answer: 1,
-            rationale: "gcloud container clusters get-credentials 命令自动配置 kubeconfig，包括端点、证书和 gcloud 认证插件。"
+            answer: 2,
+            rationale: "官方文档：upgrade_settings'最大 20 节点同时升级'——确保升级期间集群稳定性。"
         },
         {
             id: "w8-2-q12",
-            question: "AWS EKS 集群每小时的费用大约是多少？",
+            question: "配置 kubectl 访问 GKE 集群使用什么命令？",
             options: [
-                "免费",
-                "约 $0.10/小时",
-                "约 $1.00/小时",
-                "约 $10.00/小时"
+                "kubectl config set-cluster",
+                "aws eks update-kubeconfig",
+                "az aks get-credentials",
+                "gcloud container clusters get-credentials"
             ],
-            answer: 1,
-            rationale: "EKS 控制平面费用约 $0.10/小时（$73/月），另加节点 EC2 实例费用，测试后记得销毁避免账单。"
-        },
-        {
-            id: "w8-2-q13",
-            question: "EKS Fargate Profile 的作用是什么？",
-            options: [
-                "创建更多 EC2 实例",
-                "无服务器运行 Pod，无需管理节点",
-                "加速镜像拉取",
-                "提供 GPU 支持"
-            ],
-            answer: 1,
-            rationale: "Fargate Profile 让 Pod 运行在 AWS 管理的无服务器基础设施上，无需预置或管理 EC2 节点。"
-        },
-        {
-            id: "w8-2-q14",
-            question: "为什么生产环境推荐使用社区 Terraform 模块？",
-            options: [
-                "官方强制要求",
-                "封装最佳实践、减少代码、经过社区验证",
-                "性能更好",
-                "免费使用"
-            ],
-            answer: 1,
-            rationale: "社区模块（如 terraform-aws-modules）经过大量生产验证，封装了安全、网络、监控等最佳实践，减少重复造轮子。"
-        },
-        {
-            id: "w8-2-q15",
-            question: "terraform destroy 在 EKS/GKE 场景中的作用是什么？",
-            options: [
-                "只删除 Terraform 状态",
-                "销毁 Terraform 创建的所有云资源",
-                "删除本地配置文件",
-                "重启集群"
-            ],
-            answer: 1,
-            rationale: "terraform destroy 销毁所有托管资源（VPC、集群、节点组等），是清理测试环境、避免持续计费的关键命令。"
+            answer: 3,
+            rationale: "HashiCorp 教程：使用'gcloud container clusters get-credentials'获取访问凭证配置 kubectl。"
         }
     ],
     "w8-1": [
