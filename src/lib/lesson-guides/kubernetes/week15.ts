@@ -47,17 +47,18 @@ export const week15Guides: Record<string, LessonGuide> = {
     "w15-2": {
         lessonId: "w15-2",
         background: [
-            "Knative Serving 是 Kubernetes 上的 Serverless 平台，提供自动扩缩容（包括缩至零）、流量路由、版本管理等能力。核心理念是「代码即服务」：开发者只需提供容器镜像，Knative 处理所有运维细节。",
-            "Knative Serving 的核心资源：Service（顶层抽象，管理整个生命周期）、Configuration（期望状态，代码+配置）、Revision（不可变快照，每次变更生成新版本）、Route（流量路由，支持金丝雀和蓝绿）。四者形成完整的部署模型。",
-            "自动扩缩容是 Knative 的核心能力。默认使用 KPA（Knative Pod Autoscaler），支持缩至零（scale-to-zero）。当请求到来时，Activator 组件拦截请求并唤醒 Pod，实现冷启动。也可以配置使用 Kubernetes HPA。",
-            "并发（Concurrency）是 Knative 扩缩容的核心指标。containerConcurrency 定义单 Pod 处理的最大并发请求数，软限制用于扩缩决策，硬限制用于实际限流。理解并发模型是调优性能的关键。",
-            "Knative 与 Istio/Kourier/Contour 等网络层集成，提供 L7 流量管理。支持 HTTPS、自定义域名、流量分割等企业级特性。选择合适的网络层影响功能范围和资源消耗。"
+            "【四大核心资源】官方文档：Knative Serving 通过四个互联的 CRD 运作——Service'manages the whole lifecycle of your workload'管理工作负载全生命周期；Configuration'maintains the desired state for your deployment'维护期望状态；Revision'a point-in-time snapshot of the code and configuration'代码和配置的不可变快照；Route 将网络端点映射到一个或多个 Revision。",
+            "【KPA 自动扩缩】官方文档：Knative Serving 默认使用 Knative Pod Autoscaler (KPA)，提供'automatic scaling for applications to match incoming demand'——自动扩缩以匹配流入请求。支持缩至零（scale-to-zero）和向上扩展，也可选用 Kubernetes HPA 替代。",
+            "【Scale-to-Zero 机制】官方文档：scale-to-zero-grace-period 是'upper time boundary allowing internal network programming to be in place before removing final replica'——允许移除最后副本前网络编程就绪的上限时间（默认 30 秒）。Pod 保留期（pod retention period）是自动扩缩器启动缩零后最后一个 Pod 保持活跃的最小时长。",
+            "【并发配置模型】官方文档：软限制（soft limit）是'a target rather than enforced bound, system may exceed during traffic bursts'——目标值而非强制边界；硬限制（hard limit）是'enforced upper bound, surplus requests buffered until capacity free'——强制上限，超出请求被缓冲。默认软限制 100，硬限制 0（无限）。",
+            "【网络层选择】官方文档：安装时需选择网络层——Kourier'most lightweight option'最轻量（推荐）；Istio 提供完整服务网格集成；Contour 是企业级 Ingress 控制器。单节点最低要求：6 CPU、6 GB 内存、30 GB 磁盘。"
         ],
         keyDifficulties: [
-            "Revision 的不可变性：每次 Configuration 变更都生成新 Revision，旧 Revision 保留可回滚。Revision 名称自动生成或可指定。理解 Revision 与 Deployment/Pod 的映射关系有助于排查问题。",
-            "KPA vs HPA：KPA 支持缩至零和基于并发的扩缩，响应更快；HPA 基于 CPU/内存，更通用但不支持缩至零。选择取决于场景：事件驱动选 KPA，CPU 密集选 HPA。可以通过注解切换。",
-            "冷启动优化：缩至零节省资源但有冷启动延迟（通常 1-3 秒）。优化方向：保留最小副本（minScale）、优化镜像大小、使用 preStop 延迟缩容、选择快速启动的运行时。权衡成本与延迟。",
-            "并发调优：软并发（target）是扩缩目标，默认 100；硬并发（containerConcurrency）是上限，默认 0（无限）。设置硬并发可以保护应用不被压垮，但过低会导致过度扩容。需要根据应用特性调整。"
+            "【Revision 不可变性】官方文档：Revision 是'point-in-time snapshot'不可变快照，每次 Configuration 变更生成新 Revision。Service 遵循 Twelve-Factor App 原则'enforces separation between code and configuration'——代码与配置分离。流量可分配到多个 Revision 实现金丝雀发布。",
+            "【KPA vs HPA 选择】官方文档：KPA 是默认自动扩缩器，支持 scale-to-zero；HPA 需要'installing optional Serving extensions'安装可选扩展。KPA 基于并发/RPS 指标响应更快，HPA 基于 CPU/内存更通用但不支持缩零。事件驱动场景选 KPA。",
+            "【目标利用率机制】官方文档：target-utilization-percentage 决定扩缩触发时机——'At 70% default, if hard limit is 10, autoscaling triggers at 7 concurrent requests'。允许在容量耗尽前主动创建副本，避免请求被缓冲。",
+            "【Grace Period vs Retention】官方文档：scale-to-zero-grace-period 是移除最后副本前的最大等待时间（默认 30 秒）；pod-retention-period 是最小保持时间（默认 0 秒）。前者防止请求丢失，后者控制成本与延迟的权衡。",
+            "【并发配置方式】官方文档：Per-Revision 使用注解'autoscaling.knative.dev/target'设置软限制，spec 中 containerConcurrency 设置硬限制；Global 通过 config-autoscaler ConfigMap 的'container-concurrency-target-default'配置。硬限制超出时请求被缓冲等待。"
         ],
         handsOnPath: [
             "部署第一个 Knative Service：安装 Knative Serving 和网络层（如 Kourier）。使用 kn CLI 或 YAML 部署一个简单应用。访问服务 URL，观察 Pod 创建和自动缩放。",
@@ -319,183 +320,147 @@ export const week15Quizzes: Record<string, QuizQuestion[]> = {
     "w15-2": [
         {
             id: "w15-2-q1",
-            question: "Knative Serving 的四个核心资源是什么？",
-            options: [
-                "Deployment、Service、Ingress、Pod",
-                "Service、Configuration、Revision、Route",
-                "Function、Trigger、Event、Sink",
-                "Container、Runtime、Scale、Traffic"
-            ],
-            answer: 1,
-            rationale: "Knative Serving 四个核心资源：Service（顶层抽象）、Configuration（期望状态）、Revision（不可变快照）、Route（流量路由）。"
-        },
-        {
-            id: "w15-2-q2",
-            question: "Knative Revision 的特点是什么？",
-            options: [
-                "可以原地修改",
-                "不可变的快照，每次变更生成新版本",
-                "只保留最新版本",
-                "自动删除旧版本"
-            ],
-            answer: 1,
-            rationale: "Revision 是 Configuration 的不可变快照，每次 Configuration 变更都会生成新的 Revision。旧 Revision 保留，支持回滚和流量分割。"
-        },
-        {
-            id: "w15-2-q3",
-            question: "KPA 和 HPA 的主要区别是什么？",
-            options: [
-                "KPA 性能更差",
-                "KPA 支持缩至零和基于并发扩缩，HPA 不支持缩至零",
-                "HPA 支持更多指标",
-                "两者功能完全相同"
-            ],
-            answer: 1,
-            rationale: "KPA（Knative Pod Autoscaler）支持缩至零和基于并发/RPS 的扩缩，响应更快。HPA 基于 CPU/内存，更通用但不支持缩至零。"
-        },
-        {
-            id: "w15-2-q4",
-            question: "containerConcurrency 设置的是什么？",
-            options: [
-                "容器的 CPU 核数",
-                "单个 Pod 处理的最大并发请求数",
-                "容器的内存大小",
-                "Pod 的副本数"
-            ],
-            answer: 1,
-            rationale: "containerConcurrency 定义单个 Pod 可以处理的最大并发请求数。超过此限制的请求会被缓冲或路由到其他 Pod，保护应用不被压垮。"
-        },
-        {
-            id: "w15-2-q5",
-            question: "Knative 的冷启动是什么？",
-            options: [
-                "服务首次部署",
-                "缩至零后首次请求需要等待 Pod 启动",
-                "容器重启",
-                "配置更新"
-            ],
-            answer: 1,
-            rationale: "冷启动指 minScale=0 时服务缩至零后，首次请求到来需要等待 Pod 创建和启动，这个延迟通常是 1-3 秒（取决于镜像大小和应用启动时间）。"
-        },
-        {
-            id: "w15-2-q6",
-            question: "如何避免 Knative 服务冷启动？",
-            options: [
-                "使用更小的镜像",
-                "设置 minScale >= 1 保持最小副本",
-                "使用 HPA 替代 KPA",
-                "禁用自动扩缩"
-            ],
-            answer: 1,
-            rationale: "设置 minScale >= 1 确保始终保留至少一个 Pod，避免缩至零带来的冷启动延迟。代价是即使没有流量也消耗资源。"
-        },
-        {
-            id: "w15-2-q7",
-            question: "Knative Route 的作用是什么？",
-            options: [
-                "定义应用配置",
-                "管理 Revision 生命周期",
-                "将流量路由到一个或多个 Revision",
-                "收集应用指标"
-            ],
-            answer: 2,
-            rationale: "Route 将网络端点映射到一个或多个 Revision，支持流量分割（如 90/10 金丝雀）和命名路由。"
-        },
-        {
-            id: "w15-2-q8",
-            question: "autoscaling.knative.dev/target 注解的作用是什么？",
-            options: [
-                "设置最大副本数",
-                "设置扩缩容的目标并发/RPS 值",
-                "设置容器资源限制",
-                "设置缩容延迟"
-            ],
-            answer: 1,
-            rationale: "target 注解设置扩缩容的目标值，默认 100。当实际并发超过 target 时扩容，低于时缩容。这是软限制，用于扩缩决策。"
-        },
-        {
-            id: "w15-2-q9",
-            question: "Knative 支持哪些网络层实现？",
-            options: [
-                "只支持 Istio",
-                "Istio、Kourier、Contour 等",
-                "只支持 Nginx",
-                "只支持 Envoy"
-            ],
-            answer: 1,
-            rationale: "Knative 支持多种网络层：Istio（功能丰富）、Kourier（轻量级）、Contour、Ambassador 等。选择影响功能范围和资源消耗。"
-        },
-        {
-            id: "w15-2-q10",
-            question: "Knative 如何实现金丝雀发布？",
-            options: [
-                "创建两个 Service",
-                "通过 Route 将流量按比例分配到多个 Revision",
-                "使用不同的域名",
-                "修改 Deployment 副本数"
-            ],
-            answer: 1,
-            rationale: "Knative 通过 Route 的 traffic 配置将流量分配到多个 Revision，如 v1 90%、v2 10%。修改比例可以逐步迁移流量。"
-        },
-        {
-            id: "w15-2-q11",
-            question: "当流量为零时，Knative Activator 的作用是什么？",
-            options: [
-                "删除所有 Pod",
-                "缓冲请求并唤醒 Pod",
-                "返回 503 错误",
-                "转发到备用服务"
-            ],
-            answer: 1,
-            rationale: "当服务缩至零时，Activator 拦截请求、缓冲起来，触发 Pod 创建。Pod Ready 后将请求转发给它，实现无缝冷启动。"
-        },
-        {
-            id: "w15-2-q12",
-            question: "Knative Configuration 遵循什么设计原则？",
-            options: [
-                "面向对象设计",
-                "Twelve-Factor App，代码与配置分离",
-                "微服务架构",
-                "领域驱动设计"
-            ],
-            answer: 1,
-            rationale: "Knative Configuration 遵循 Twelve-Factor App 原则，将代码（镜像）与配置分离，每次变更生成新的不可变 Revision。"
-        },
-        {
-            id: "w15-2-q13",
-            question: "如何在 Knative 中切换使用 HPA 而非 KPA？",
-            options: [
-                "修改 Knative 配置文件",
-                "使用注解 autoscaling.knative.dev/class: hpa",
-                "重新安装 Knative",
-                "删除 KPA 组件"
-            ],
-            answer: 1,
-            rationale: "通过设置注解 autoscaling.knative.dev/class: hpa 可以切换到使用 Kubernetes HPA，适用于更适合 CPU/内存指标的场景。"
-        },
-        {
-            id: "w15-2-q14",
-            question: "maxScale 注解的作用是什么？",
-            options: [
-                "设置最小副本数",
-                "设置最大副本数上限",
-                "设置并发上限",
-                "设置请求超时"
-            ],
-            answer: 1,
-            rationale: "maxScale 设置 Knative 服务可以扩展到的最大副本数，防止意外流量或攻击导致过度扩容消耗大量资源。"
-        },
-        {
-            id: "w15-2-q15",
-            question: "Knative Service 资源的作用是什么？",
+            question: "官方文档描述的 Knative Service 资源的职责是什么？",
             options: [
                 "只管理网络路由",
-                "管理完整生命周期，自动创建 Configuration、Revision、Route",
+                "'manages the whole lifecycle of your workload'——管理工作负载全生命周期",
                 "只管理扩缩容",
                 "只管理容器镜像"
             ],
             answer: 1,
-            rationale: "Knative Service 是顶层抽象，创建时自动管理 Configuration、Revision、Route，简化用户操作。用户只需定义 Service 即可获得完整的 Serverless 能力。"
+            rationale: "官方文档：Service'manages the whole lifecycle of your workload'，自动创建和控制 Routes、Configurations 和 Revisions。"
+        },
+        {
+            id: "w15-2-q2",
+            question: "官方文档对 Revision 的定义是什么？",
+            options: [
+                "'a point-in-time snapshot of the code and configuration'——代码和配置的不可变快照",
+                "可以原地修改的配置",
+                "只保留最新版本",
+                "自动删除旧版本"
+            ],
+            answer: 0,
+            rationale: "官方文档：Revision 是'a point-in-time snapshot of the code and configuration'，是不可变的，支持基于流量自动扩缩。"
+        },
+        {
+            id: "w15-2-q3",
+            question: "官方文档描述的 Knative 默认自动扩缩器是什么？",
+            options: [
+                "Kubernetes HPA",
+                "Vertical Pod Autoscaler",
+                "Cluster Autoscaler",
+                "Knative Pod Autoscaler (KPA)——支持 scale-to-zero"
+            ],
+            answer: 3,
+            rationale: "官方文档：Knative Serving 默认使用 Knative Pod Autoscaler (KPA)，支持 scale-to-zero，也可选用 HPA 替代。"
+        },
+        {
+            id: "w15-2-q4",
+            question: "官方文档描述的 scale-to-zero-grace-period 默认值是多少？",
+            options: [
+                "10 秒",
+                "60 秒",
+                "30 秒——允许移除最后副本前网络编程就绪的上限时间",
+                "5 分钟"
+            ],
+            answer: 2,
+            rationale: "官方文档：scale-to-zero-grace-period 默认 30 秒，是'upper time boundary allowing internal network programming to be in place before removing final replica'。"
+        },
+        {
+            id: "w15-2-q5",
+            question: "官方文档对软限制（soft limit）的描述是什么？",
+            options: [
+                "'enforced upper bound'——强制上限",
+                "'a target rather than enforced bound, system may exceed during traffic bursts'——可在流量突发时超出",
+                "永远不能超过的限制",
+                "只用于告警的阈值"
+            ],
+            answer: 1,
+            rationale: "官方文档：软限制是'a target rather than enforced bound, system may exceed during traffic bursts'，不是强制边界。"
+        },
+        {
+            id: "w15-2-q6",
+            question: "官方文档对硬限制（hard limit）超出时的行为描述是什么？",
+            options: [
+                "请求立即被拒绝",
+                "自动扩容处理",
+                "请求被丢弃",
+                "'surplus requests will be buffered and must wait until enough capacity is free'——超出请求被缓冲等待"
+            ],
+            answer: 3,
+            rationale: "官方文档：硬限制是'enforced upper bound, surplus requests will be buffered and must wait until enough capacity is free'。"
+        },
+        {
+            id: "w15-2-q7",
+            question: "官方文档描述的默认软限制和硬限制值分别是什么？",
+            options: [
+                "软限制 100，硬限制 0（无限）",
+                "软限制 50，硬限制 100",
+                "软限制 200，硬限制 500",
+                "两者都是 100"
+            ],
+            answer: 0,
+            rationale: "官方文档：'Soft limit default: 100, Hard limit default: 0 (unlimited)'——默认软限制 100，硬限制 0 表示无限。"
+        },
+        {
+            id: "w15-2-q8",
+            question: "官方文档对 target-utilization-percentage 默认值 70% 的解释是什么？",
+            options: [
+                "70% CPU 使用率时扩容",
+                "70% 内存使用率时扩容",
+                "'if hard limit is 10, autoscaling triggers at 7 concurrent requests'——硬限制 10 时 7 个并发触发扩缩",
+                "副本保持 70% 的空闲率"
+            ],
+            answer: 2,
+            rationale: "官方文档：'At 70% default, if hard limit is 10, autoscaling triggers at 7 concurrent requests'——在容量耗尽前主动创建副本。"
+        },
+        {
+            id: "w15-2-q9",
+            question: "官方文档推荐不确定时选择哪个网络层？",
+            options: [
+                "Istio",
+                "Contour",
+                "Kourier——'most lightweight option'",
+                "NGINX"
+            ],
+            answer: 2,
+            rationale: "官方文档：Kourier 是'most lightweight option'，推荐在不确定时选择。"
+        },
+        {
+            id: "w15-2-q10",
+            question: "官方文档描述的单节点安装最低内存要求是多少？",
+            options: [
+                "2 GB",
+                "4 GB",
+                "8 GB",
+                "6 GB——单节点最低要求"
+            ],
+            answer: 3,
+            rationale: "官方文档：单节点最低要求'6 CPUs, 6 GB memory, 30 GB disk storage'。"
+        },
+        {
+            id: "w15-2-q11",
+            question: "如何通过注解设置 Per-Revision 的软限制？",
+            options: [
+                "containerConcurrency 字段",
+                "resources.limits 字段",
+                "'autoscaling.knative.dev/target' 注解",
+                "replicas 字段"
+            ],
+            answer: 2,
+            rationale: "官方文档：Per-Revision 使用注解'autoscaling.knative.dev/target'设置软限制，containerConcurrency 设置硬限制。"
+        },
+        {
+            id: "w15-2-q12",
+            question: "官方文档对 Configuration 遵循的设计原则描述是什么？",
+            options: [
+                "面向对象设计",
+                "微服务架构",
+                "Twelve-Factor App——'enforces separation between code and configuration'",
+                "领域驱动设计"
+            ],
+            answer: 2,
+            rationale: "官方文档：Configuration'enforces separation between code and configuration following Twelve-Factor App principles'。"
         }
     ],
     "w15-3": [
