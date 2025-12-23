@@ -89,16 +89,18 @@ export const week12Guides: Record<string, LessonGuide> = {
     "w12-3": {
         lessonId: "w12-3",
         background: [
-            "分布式追踪是微服务可观测性的关键支柱。当请求跨越多个服务时，追踪帮助理解请求的完整路径、识别延迟瓶颈和故障点。追踪与日志、指标共同构成可观测性的三大支柱（Three Pillars of Observability）。",
-            "追踪的核心概念包括：Trace（追踪）是一个请求的完整调用链；Span（跨度）是追踪中的单个操作单元，包含操作名、开始时间、持续时间和状态；Span 之间通过 parent-child 关系形成树状结构，反映服务调用层级。",
-            "Context Propagation（上下文传播）是分布式追踪的关键机制。Trace ID 和 Span ID 需要在服务间传递，通常通过 HTTP Header（如 traceparent、b3）或 gRPC Metadata 实现。标准化的传播格式（W3C Trace Context）确保跨系统互操作。",
-            "采样（Sampling）是控制追踪数据量的策略。头部采样（Head-based）在请求入口决定是否追踪；尾部采样（Tail-based）在请求完成后根据特征（如错误、高延迟）决定是否保留。高流量系统必须采样，否则追踪系统会成为性能瓶颈。"
+            "【Trace 定义】官方文档：'Traces give us the big picture of what happens when a request is made to an application'——追踪展现请求在应用中的完整路径。一个 Trace 由多个相关联的 Span 组成，共享同一个 Trace ID。",
+            "【Span 结构】官方文档：Span 代表一个操作单元，包含'名称、父 Span ID、开始/结束时间、Span 上下文、属性、事件、链接和状态'。Span 可以嵌套，子 Span 通过 parent_id 关联父 Span。",
+            "【SpanContext 内容】官方文档：SpanContext 是不可变对象，包含'Trace ID（标识追踪）、Span ID（标识该 Span）、Trace Flags（二进制编码）、Trace State（键值对列表）'。",
+            "【上下文传播】官方文档：'Context Propagation is the core concept that enables Distributed Tracing'——上下文传播是实现分布式追踪的核心，允许跨进程、服务、数据中心关联 Span。",
+            "【traceparent 格式】W3C 规范：格式为'version-trace-id-parent-id-trace-flags'，如'00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'。trace-id 32 位十六进制（16 字节），parent-id 16 位十六进制（8 字节）。"
         ],
         keyDifficulties: [
-            "理解 Trace、Span、SpanContext 的关系：Trace 由多个 Span 组成；每个 Span 有 Trace ID（全链路唯一）、Span ID（当前 Span 唯一）、Parent Span ID（父 Span）；SpanContext 是传播的最小信息单元，包含 Trace ID、Span ID 和采样标志。",
-            "上下文传播的实现：自动 instrumentation（SDK 自动注入 Header）vs 手动 instrumentation（开发者显式传递）。框架集成（如 Spring Cloud Sleuth、OpenTelemetry SDK）可以自动完成大部分传播，但跨异步边界或消息队列需要额外处理。",
-            "采样策略选择：固定比例采样（如 1%）简单但可能遗漏关键请求；概率采样基于 Trace ID hash 确保同一 Trace 的所有 Span 采样一致；自适应采样根据流量动态调整；尾部采样可以保留所有错误请求但需要更多资源。",
-            "Span 属性与事件：Span Attributes 记录操作的上下文信息（如 http.method、db.statement）；Span Events 记录 Span 生命周期内的关键时间点（如异常发生）；Span Status 标记操作成功或失败。这些数据是追踪分析的基础。"
+            "【头部采样特点】官方文档：'Head sampling is a sampling technique used to make a sampling decision as early as possible'——在收集过程早期决策。优点是'简单易懂且易于配置、计算效率高'；缺点是'无法基于完整追踪数据做决策'。",
+            "【尾部采样应用】官方文档：'Tail sampling is where the decision to sample a trace takes place by considering all or most of the spans within the trace'。应用场景包括'采样所有包含错误的追踪、基于整体延迟采样、基于特定属性值采样'。",
+            "【尾部采样挑战】官方文档：尾部采样的挑战包括'实现和操作复杂度高、需要有状态系统承载大量数据、常为供应商专有技术'——需要权衡复杂度与收益。",
+            "【trace-flags 含义】W3C 规范：'the least significant bit denotes that the caller may have recorded trace data'——最低位为 1 表示采样。值'00'表示无采样发生，'01'表示调用方已记录数据。",
+            "【无效值处理】W3C 规范：'trace-id and parent-id cannot be all zeros'；'If trace-id or parent-id is invalid, implementations must ignore the entire traceparent'——无效时必须忽略整个 traceparent header。"
         ],
         handsOnPath: [
             "理解追踪数据结构：查看一个多服务请求的追踪数据（JSON 格式），识别 Trace ID、Span ID、Parent Span ID、开始时间、持续时间。绘制 Span 的树状结构图，理解调用关系。",
@@ -464,183 +466,147 @@ export const week12Quizzes: Record<string, QuizQuestion[]> = {
     "w12-3": [
         {
             id: "w12-3-q1",
-            question: "分布式追踪中 Trace 和 Span 的关系是什么？",
+            question: "官方文档对 Trace 的定义是什么？",
             options: [
-                "Trace 是 Span 的一部分",
-                "一个 Trace 由多个 Span 组成",
-                "Trace 和 Span 是同一概念",
-                "每个 Span 包含多个 Trace"
+                "单个服务的日志记录",
+                "数据库查询优化工具",
+                "'Traces give us the big picture of what happens when a request is made to an application'——展现请求完整路径",
+                "性能监控指标"
             ],
-            answer: 1,
-            rationale: "Trace 代表一个请求的完整调用链，由多个 Span 组成。每个 Span 代表一个单独的操作（如一次 HTTP 调用、数据库查询）。"
+            answer: 2,
+            rationale: "官方文档：'Traces give us the big picture of what happens when a request is made to an application'——追踪展现请求在应用中的完整路径。"
         },
         {
             id: "w12-3-q2",
-            question: "Span 之间的父子关系用什么标识？",
+            question: "官方文档对 Context Propagation 的描述是什么？",
             options: [
-                "Trace ID",
-                "Span ID",
-                "Parent Span ID",
-                "Request ID"
+                "'Context Propagation is the core concept that enables Distributed Tracing'——实现分布式追踪的核心",
+                "一种数据压缩技术",
+                "日志收集机制",
+                "性能优化方案"
             ],
-            answer: 2,
-            rationale: "每个 Span 都有 Parent Span ID 指向其父 Span，通过这种方式形成树状结构，反映服务调用的层级关系。"
+            answer: 0,
+            rationale: "官方文档：'Context Propagation is the core concept that enables Distributed Tracing'——上下文传播是实现分布式追踪的核心。"
         },
         {
             id: "w12-3-q3",
-            question: "Context Propagation 的作用是什么？",
+            question: "W3C traceparent header 的格式是什么？",
             options: [
-                "压缩追踪数据",
-                "在服务间传递 Trace ID 和 Span ID",
-                "存储追踪数据",
-                "过滤无效的追踪"
+                "trace-id:span-id",
+                "'version-trace-id-parent-id-trace-flags'——四个字段用连字符分隔",
+                "只包含 trace-id",
+                "JSON 格式的对象"
             ],
             answer: 1,
-            rationale: "Context Propagation 确保 Trace ID 和 Span ID 在服务间传递（通过 HTTP Header 等），让不同服务的 Span 能够关联到同一个 Trace。"
+            rationale: "W3C 规范：traceparent 格式为 'version-trace-id-parent-id-trace-flags'，如 '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'。"
         },
         {
             id: "w12-3-q4",
-            question: "W3C Trace Context 标准的 traceparent header 包含什么信息？",
+            question: "W3C 规范对 trace-id 字段的要求是什么？",
             options: [
-                "只有 Trace ID",
-                "Trace ID、Span ID 和采样标志",
-                "服务名和操作名",
-                "时间戳和持续时间"
+                "8 位十六进制字符",
+                "任意长度的字符串",
+                "UUID 格式",
+                "'32 hex chars'——32 位十六进制字符（16 字节）"
             ],
-            answer: 1,
-            rationale: "traceparent header 格式为 version-trace_id-span_id-flags，包含版本号、Trace ID、Parent Span ID 和采样标志。"
+            answer: 3,
+            rationale: "W3C 规范：trace-id 是 '32 hex chars'，即 16 字节的全局唯一标识符。"
         },
         {
             id: "w12-3-q5",
-            question: "头部采样（Head-based Sampling）的特点是什么？",
+            question: "官方文档对头部采样的描述是什么？",
             options: [
-                "在请求完成后决定是否采样",
-                "在请求入口决定是否追踪",
-                "基于错误状态决定采样",
-                "基于延迟决定采样"
+                "在请求完成后决定采样",
+                "'Head sampling is a sampling technique used to make a sampling decision as early as possible'——尽早做出采样决策",
+                "基于错误率决定采样",
+                "由后端系统决定采样"
             ],
             answer: 1,
-            rationale: "头部采样在请求入口（第一个服务）决定是否追踪，采样决策随 Context 传播，确保同一 Trace 的所有 Span 要么都采样要么都不采样。"
+            rationale: "官方文档：'Head sampling is a sampling technique used to make a sampling decision as early as possible'——在收集过程早期决策。"
         },
         {
             id: "w12-3-q6",
-            question: "尾部采样（Tail-based Sampling）的主要优势是什么？",
+            question: "官方文档对尾部采样的描述是什么？",
             options: [
-                "实现简单",
-                "资源消耗低",
-                "可以基于请求结果（如错误、高延迟）决定是否保留",
-                "不需要 Collector"
+                "只采样最后一个 Span",
+                "在请求入口决定采样",
+                "'decision to sample a trace takes place by considering all or most of the spans within the trace'——考虑所有 Span 后决策",
+                "随机采样"
             ],
             answer: 2,
-            rationale: "尾部采样在请求完成后决定是否保留，可以基于整个 Trace 的特征（如包含错误、延迟超过阈值）做决策，避免丢失重要的追踪。"
+            rationale: "官方文档：'Tail sampling is where the decision to sample a trace takes place by considering all or most of the spans within the trace'。"
         },
         {
             id: "w12-3-q7",
-            question: "Span Attributes 和 Span Events 的区别是什么？",
+            question: "官方文档列出的尾部采样应用场景有哪些？",
             options: [
-                "Attributes 是键值对，Events 是带时间戳的日志",
-                "两者完全相同",
-                "Attributes 只能是字符串，Events 可以是任何类型",
-                "Events 必须在 Span 结束后添加"
+                "'采样所有包含错误的追踪、基于整体延迟采样、基于特定属性值采样'",
+                "只用于测试环境",
+                "只采样成功的请求",
+                "随机选择请求"
             ],
             answer: 0,
-            rationale: "Span Attributes 是描述操作的键值对（如 http.method、db.statement）；Span Events 是 Span 生命周期内的带时间戳的事件（如异常发生时刻）。"
+            rationale: "官方文档：尾部采样应用场景包括 '采样所有包含错误的追踪、基于整体延迟采样、基于特定属性值采样、对不同服务应用不同采样率'。"
         },
         {
             id: "w12-3-q8",
-            question: "一个 HTTP 请求经过 A→B→C 三个服务，会产生多少个 Span？",
+            question: "官方文档描述的尾部采样挑战有哪些？",
             options: [
-                "1 个",
-                "2 个",
-                "3 个或更多",
-                "取决于采样率"
+                "没有任何挑战",
+                "只是配置复杂",
+                "只影响性能",
+                "'实现和操作复杂度高、需要有状态系统承载大量数据、常为供应商专有技术'"
             ],
-            answer: 2,
-            rationale: "至少 3 个 Span（每个服务一个），如果服务内部有额外的操作（如数据库调用、内部方法）可能产生更多子 Span。"
+            answer: 3,
+            rationale: "官方文档：尾部采样的挑战包括 '实现和操作复杂度高、需要有状态系统承载大量数据、常为供应商专有技术'。"
         },
         {
             id: "w12-3-q9",
-            question: "为什么高流量系统必须进行追踪采样？",
+            question: "W3C 规范对 trace-flags 采样位的描述是什么？",
             options: [
-                "降低追踪的准确性",
-                "避免追踪系统成为性能瓶颈和成本问题",
-                "符合安全合规要求",
-                "简化追踪数据结构"
+                "最高位表示采样",
+                "'the least significant bit denotes that the caller may have recorded trace data'——最低位表示采样",
+                "所有位都表示采样",
+                "不包含采样信息"
             ],
             answer: 1,
-            rationale: "全量追踪会产生海量数据，消耗大量存储、网络和计算资源。采样在保留足够诊断信息的同时，控制追踪系统的成本和性能影响。"
+            rationale: "W3C 规范：'the least significant bit denotes that the caller may have recorded trace data' when set to 1。值 '00' 表示无采样，'01' 表示已采样。"
         },
         {
             id: "w12-3-q10",
-            question: "什么情况下会导致追踪断链？",
+            question: "W3C 规范对无效 traceparent 的处理要求是什么？",
             options: [
-                "使用了 JSON 格式",
-                "异步处理未正确传递 Context",
-                "Span 持续时间太长",
-                "使用了多个数据中心"
+                "尝试修复并使用",
+                "使用默认值替代",
+                "'implementations must ignore the entire traceparent'——必须忽略整个 traceparent",
+                "返回错误响应"
             ],
-            answer: 1,
-            rationale: "追踪断链常见于：异步处理（线程池、消息队列）未传递 Context；跨语言调用未正确提取/注入 Header；中间件不支持传播等场景。"
+            answer: 2,
+            rationale: "W3C 规范：'If trace-id or parent-id is invalid, implementations must ignore the entire traceparent'——无效时必须忽略整个 header。"
         },
         {
             id: "w12-3-q11",
-            question: "TraceIdRatioBased 采样器的工作原理是什么？",
+            question: "官方文档描述的 SpanContext 包含哪些内容？",
             options: [
-                "随机决定每个请求是否采样",
-                "基于 Trace ID 的 hash 值决定，确保同一 Trace 一致",
-                "每 N 个请求采样一个",
-                "基于请求内容决定"
+                "只包含 Trace ID",
+                "只包含时间戳",
+                "'Trace ID、Span ID、Trace Flags、Trace State'",
+                "只包含服务名称"
             ],
-            answer: 1,
-            rationale: "TraceIdRatioBased 根据 Trace ID 的 hash 值与阈值比较决定是否采样，确保同一 Trace 的所有 Span（跨服务）采样决策一致。"
+            answer: 2,
+            rationale: "官方文档：SpanContext 是不可变对象，包含 'Trace ID、Span ID、Trace Flags（二进制编码）、Trace State（键值对列表）'。"
         },
         {
             id: "w12-3-q12",
-            question: "B3 Propagation 和 W3C Trace Context 的关系是什么？",
+            question: "W3C 规范对 trace-id 和 parent-id 全零值的规定是什么？",
             options: [
-                "B3 是 W3C 的子集",
-                "两者是不同的传播标准，W3C 是较新的标准",
-                "B3 只用于 Zipkin",
-                "两者完全相同"
+                "全零是有效的默认值",
+                "'trace-id and parent-id cannot be all zeros'——全零是禁止的",
+                "全零表示根 Span",
+                "全零表示未采样"
             ],
             answer: 1,
-            rationale: "B3 是 Zipkin 定义的较早的传播标准，W3C Trace Context 是后来的标准化规范。现代追踪系统通常两者都支持以确保互操作性。"
-        },
-        {
-            id: "w12-3-q13",
-            question: "Span Status 的作用是什么？",
-            options: [
-                "记录 Span 的开始时间",
-                "标记操作成功或失败的状态",
-                "记录 Span 的父子关系",
-                "存储 Span 的属性"
-            ],
-            answer: 1,
-            rationale: "Span Status 标记操作的结果状态：Unset（未设置）、Ok（成功）、Error（失败）。Error 状态通常会在追踪 UI 中突出显示。"
-        },
-        {
-            id: "w12-3-q14",
-            question: "自动 instrumentation 的优势是什么？",
-            options: [
-                "提供更细粒度的控制",
-                "零代码修改即可收集追踪数据",
-                "性能开销更低",
-                "只支持特定语言"
-            ],
-            answer: 1,
-            rationale: "自动 instrumentation（如 Java Agent、Python auto-instrumentation）可以无需修改代码即可为常见框架添加追踪，降低接入成本。"
-        },
-        {
-            id: "w12-3-q15",
-            question: "Span Links 的用途是什么？",
-            options: [
-                "建立父子关系",
-                "关联非父子关系的 Span（如批处理、扇入扇出）",
-                "链接到外部系统",
-                "创建 Span 的副本"
-            ],
-            answer: 1,
-            rationale: "Span Links 用于关联有因果关系但不是父子关系的 Span，如批处理场景（多个输入 Span 触发一个处理 Span）或消息队列的扇入扇出。"
+            rationale: "W3C 规范：'All-zeros forbidden: Both trace-id and parent-id cannot be all zeros'——全零是无效值。"
         }
     ],
     "w12-4": [
