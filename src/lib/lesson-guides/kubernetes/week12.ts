@@ -5,16 +5,18 @@ export const week12Guides: Record<string, LessonGuide> = {
     "w12-1": {
         lessonId: "w12-1",
         background: [
-            "Kubernetes 日志收集是可观测性的基础支柱。容器化环境中，日志具有短暂性（Pod 销毁后日志丢失）和分散性（多 Pod、多节点）特点，需要统一收集到中央存储进行查询分析。常见方案包括 DaemonSet 模式和 Sidecar 模式。",
-            "DaemonSet 模式在每个节点部署一个日志收集 Agent（如 Fluentd、Promtail、Filebeat），通过挂载 /var/log/containers 目录读取所有容器的标准输出日志。优点是资源效率高（每节点一个 Agent），运维简单；缺点是所有 Pod 共享 Agent 资源，无法针对单个应用定制。",
-            "Sidecar 模式为每个 Pod 注入一个日志收集容器，与应用容器共享 Volume。优点是隔离性好、可针对应用定制（如多行日志解析）；缺点是资源开销大（每 Pod 一个 Agent）、配置复杂。适合对日志有特殊需求的应用。",
-            "日志流转链路通常为：应用写入 stdout/stderr → 容器运行时捕获 → 写入节点 /var/log/containers/ → Agent 读取并解析 → 发送到中央存储（如 Loki、Elasticsearch）。Agent 负责添加 Kubernetes 元数据（Pod 名、命名空间、标签等）。"
+            "【日志架构概述】官方文档：Kubernetes 捕获每个运行 Pod 中容器的日志，'captures logs from each container in running Pods'，但'doesn't provide native storage'——平台本身不提供原生日志存储，需要独立后端实现完整日志方案。",
+            "【三种日志收集模式】官方文档定义三种集群级日志架构：Node-level logging agent（节点级代理，在每个节点运行专用代理，访问所有应用容器的日志文件）；Sidecar container（边车容器，与应用共同运行，转发日志到后端）；Application-level logging（应用级，应用直接推送到后端）。",
+            "【日志存储路径】官方文档：Linux 系统容器日志默认存储在 '/var/log/pods/'，系统组件通过 Journald（使用 journalctl 访问）或 '/var/log/' 文件记录。Windows 系统日志在 'C:\\var\\log\\pods\\'，系统日志在 'C:\\var\\logs\\' 或 'C:\\var\\log\\kubelet\\'。",
+            "【Fluent Bit DaemonSet 部署】官方文档：Fluent Bit 使用 DaemonSet 模型，'runs on every node of the cluster'——确保日志收集覆盖整个集群。默认配置'Consume all containers logs from the running node and parse them with either the docker or cri multi-line parser'。",
+            "【日志轮转机制】官方文档：kubelet 管理容器日志轮转，配置参数包括 containerLogMaxSize（默认 10Mi，单文件最大大小）、containerLogMaxFiles（默认 5，每容器最大文件数）、containerLogMaxWorkers（并发轮转数）、containerLogMonitorInterval（监控间隔）。"
         ],
         keyDifficulties: [
-            "理解 Kubernetes 日志路径：应用写入 stdout 后，容器运行时（containerd/CRI-O）将日志写入 /var/log/containers/<pod>_<namespace>_<container>-<id>.log，这是软链接指向 /var/log/pods/ 下的实际文件。DaemonSet Agent 需要挂载这些目录。",
-            "DaemonSet vs Sidecar 的权衡：DaemonSet 适合标准化日志收集（大多数场景）；Sidecar 适合需要特殊处理的应用（如多行日志、非 stdout 日志文件）。混合使用时要避免重复收集。部分场景也可使用 Sidecar 仅做日志转发到 stdout，再由 DaemonSet 统一收集。",
-            "多行日志处理：Java 堆栈跟踪、Python traceback 等多行日志需要合并为单条。DaemonSet 模式下需要在 Agent 配置多行匹配规则（如以时间戳开头判断新日志）；Sidecar 模式可以在应用侧或 Sidecar 中处理，灵活性更高。",
-            "日志元数据丰富：Agent 需要调用 Kubernetes API 或读取本地缓存获取 Pod 的 namespace、labels、annotations 等元数据。Promtail 使用 kubernetes_sd_configs 服务发现；Fluentd 使用 kubernetes_metadata filter。元数据是后续查询和过滤的关键。"
+            "【Node-level Agent 优势】官方文档：节点级日志代理'Exposes or pushes logs to backend, Accesses container log files from all application containers'——优点是'Minimal app changes'无需修改应用；缺点是'Requires agent on every node'需要在每个节点运行代理。",
+            "【Sidecar 模式权衡】官方文档：Sidecar 容器'Tails application logs and forwards to backend'——优点是'App-specific logging control'可针对应用定制控制；缺点是'Additional resource overhead'额外资源开销。适合有特殊日志处理需求的应用。",
+            "【日志可用性限制】官方文档警告：'Only the latest log file contents are available through kubectl logs. If a 40Mi workload logs and rotation occurs at 10Mi, kubectl logs returns only 10Mi maximum'——kubectl logs 只返回当前文件内容，不含已轮转的历史。",
+            "【元数据丰富机制】Fluent Bit 文档：Kubernetes filter 自动添加'pod labels, annotations, and container metadata'——元数据丰富是关键能力。支持 DNS_Retries（默认 6 次）和 DNS_Wait_Time（30 秒间隔）处理 DNS 延迟。",
+            "【自定义日志目录风险】官方文档警告：podLogsDir 参数可修改默认 /var/log/pods 路径，但'Use with care; some processes assume the default path, and logs must remain on the same disk as /var/'——日志必须与 /var 在同一磁盘，否则可能导致系统问题。"
         ],
         handsOnPath: [
             "部署 Promtail DaemonSet：使用 Helm 安装 grafana/promtail，配置 scrape_configs 发现 Pod 日志。检查 /var/log/containers 和 /var/log/pods 挂载是否正确。验证 Promtail 成功读取日志并发送到 Loki。",
@@ -168,183 +170,147 @@ export const week12Quizzes: Record<string, QuizQuestion[]> = {
     "w12-1": [
         {
             id: "w12-1-q1",
-            question: "DaemonSet 日志收集模式的主要优势是什么？",
+            question: "官方文档对 Kubernetes 日志原生能力的描述是什么？",
             options: [
-                "每个节点部署一个 Agent，资源效率高，运维简单",
-                "可以针对每个应用定制日志处理逻辑",
-                "隔离性最好，一个应用故障不影响其他应用",
-                "支持收集非 stdout 的日志文件"
+                "提供完整的日志存储和查询功能",
+                "自动将日志发送到 Elasticsearch",
+                "'captures logs from each container' 但 'doesn't provide native storage'——只捕获不存储",
+                "只支持 stdout 日志收集"
             ],
-            answer: 0,
-            rationale: "DaemonSet 模式在每个节点只部署一个 Agent，多个 Pod 共享，资源开销比 Sidecar 模式低得多，运维也更简单。"
+            answer: 2,
+            rationale: "官方文档：Kubernetes 'captures logs from each container in running Pods' 但 'doesn't provide native storage'——平台不提供原生存储，需要独立后端。"
         },
         {
             id: "w12-1-q2",
-            question: "Sidecar 日志收集模式适用于什么场景？",
+            question: "官方文档定义的三种集群级日志架构是什么？",
             options: [
-                "标准化的容器日志收集",
-                "资源受限的小型集群",
-                "需要特殊处理的应用，如多行日志或非 stdout 日志",
-                "日志量非常大的高流量服务"
+                "Node-level logging agent、Sidecar container、Application-level logging",
+                "DaemonSet、Deployment、StatefulSet",
+                "Stdout、Stderr、File",
+                "Fluentd、Promtail、Filebeat"
             ],
-            answer: 2,
-            rationale: "Sidecar 模式允许针对特定应用定制日志处理逻辑，适合有特殊需求的应用，如多行日志合并、解析非 stdout 的日志文件等。"
+            answer: 0,
+            rationale: "官方文档定义三种模式：Node-level logging agent（节点级代理）、Sidecar container（边车容器）、Application-level logging（应用级日志）。"
         },
         {
             id: "w12-1-q3",
-            question: "Kubernetes 容器日志的默认存储路径是什么？",
+            question: "官方文档对 Node-level logging agent 模式优缺点的描述是什么？",
             options: [
-                "/var/log/kubernetes/",
-                "/var/log/containers/",
-                "/var/lib/docker/containers/",
-                "/var/log/pods/containers/"
+                "优点是隔离性好，缺点是配置复杂",
+                "优点是完全控制日志格式，缺点是需要修改应用",
+                "优点和缺点都未明确说明",
+                "优点是 'Minimal app changes'，缺点是 'Requires agent on every node'"
             ],
-            answer: 1,
-            rationale: "/var/log/containers/ 存储容器日志的软链接，格式为 <pod>_<namespace>_<container>-<id>.log，指向 /var/log/pods/ 下的实际文件。"
+            answer: 3,
+            rationale: "官方文档：Node-level agent 优点是 'Minimal app changes'（无需修改应用），缺点是 'Requires agent on every node'（每节点需要代理）。"
         },
         {
             id: "w12-1-q4",
-            question: "DaemonSet Agent 需要挂载哪些目录才能读取容器日志？",
+            question: "官方文档对 Sidecar 日志收集模式的描述是什么？",
             options: [
-                "只需要 /var/log/containers/",
-                "/var/log/containers/ 和 /var/log/pods/",
-                "/var/lib/kubelet/",
-                "/var/run/containerd/"
+                "资源消耗最低的方案",
+                "'Tails application logs and forwards to backend'，优点是 'App-specific logging control'，缺点是 'Additional resource overhead'",
+                "只适用于无状态应用",
+                "必须与 DaemonSet 模式配合使用"
             ],
             answer: 1,
-            rationale: "/var/log/containers/ 包含软链接，/var/log/pods/ 包含实际日志文件。Agent 需要挂载两者才能正确读取日志内容。"
+            rationale: "官方文档：Sidecar 'Tails application logs and forwards to backend'，优点是 'App-specific logging control'，缺点是 'Additional resource overhead'。"
         },
         {
             id: "w12-1-q5",
-            question: "如何处理 Java 堆栈跟踪等多行日志？",
+            question: "Linux 系统中容器日志的默认存储路径是什么？",
             options: [
-                "忽略多行日志",
-                "将堆栈跟踪写入单独的文件",
-                "配置 Agent 的多行匹配规则，合并为单条日志",
-                "让应用将堆栈跟踪转为单行"
+                "/var/log/containers/",
+                "/var/lib/docker/containers/",
+                "/var/log/pods/",
+                "/var/log/kubernetes/"
             ],
             answer: 2,
-            rationale: "Agent 可以配置多行匹配规则（如以时间戳开头判断新日志起始），将多行日志合并为单条记录，保持日志的完整性。"
+            rationale: "官方文档：Linux 系统容器日志默认存储在 '/var/log/pods/'，系统组件通过 Journald 或 '/var/log/' 文件记录。"
         },
         {
             id: "w12-1-q6",
-            question: "Promtail 如何获取 Pod 的 Kubernetes 元数据？",
+            question: "官方文档描述的 kubelet 日志轮转参数 containerLogMaxSize 的默认值是多少？",
             options: [
-                "从 etcd 直接读取",
-                "通过 kubernetes_sd_configs 服务发现",
-                "从容器环境变量读取",
-                "手动配置每个 Pod 的元数据"
+                "5Mi",
+                "10Mi",
+                "20Mi",
+                "50Mi"
             ],
             answer: 1,
-            rationale: "Promtail 使用 kubernetes_sd_configs 发现 Pod，并通过 Kubernetes API 获取 namespace、labels、annotations 等元数据，自动添加到日志中。"
+            rationale: "官方文档：containerLogMaxSize 默认 10Mi（单文件最大大小），containerLogMaxFiles 默认 5（每容器最大文件数）。"
         },
         {
             id: "w12-1-q7",
-            question: "应用日志写入 stdout 后经历的流转路径是什么？",
+            question: "官方文档对 kubectl logs 日志可用性的警告是什么？",
             options: [
-                "stdout → Agent → 中央存储",
-                "stdout → 容器运行时 → 节点文件 → Agent → 中央存储",
-                "stdout → Kubernetes API → 中央存储",
-                "stdout → kubelet → 中央存储"
+                "kubectl logs 可以访问所有历史日志",
+                "kubectl logs 需要 cluster-admin 权限",
+                "'Only the latest log file contents are available'——只返回当前文件内容，不含已轮转历史",
+                "kubectl logs 有 1000 行的硬限制"
             ],
-            answer: 1,
-            rationale: "应用写入 stdout/stderr → 容器运行时（containerd/CRI-O）捕获 → 写入节点 /var/log/ 目录 → Agent 读取并解析 → 发送到中央存储。"
+            answer: 2,
+            rationale: "官方文档警告：'Only the latest log file contents are available through kubectl logs'——如果日志轮转，kubectl logs 只返回当前文件内容。"
         },
         {
             id: "w12-1-q8",
-            question: "如何在 Promtail 中过滤敏感信息？",
+            question: "Fluent Bit 官方文档描述的 Kubernetes 部署模式是什么？",
             options: [
-                "使用 kubernetes 过滤器",
-                "配置 firewall 规则",
-                "使用 pipeline_stages 的 drop 或 replace 阶段",
-                "在 Loki 端配置过滤规则"
+                "Deployment 模式，运行在指定节点",
+                "StatefulSet 模式，保证日志顺序",
+                "Job 模式，定期收集日志",
+                "DaemonSet 模式，'runs on every node of the cluster'"
             ],
-            answer: 2,
-            rationale: "Promtail 的 pipeline_stages 可以配置 drop（丢弃匹配的日志行）或 replace（替换敏感内容）阶段，在发送前过滤敏感信息。"
+            answer: 3,
+            rationale: "Fluent Bit 官方文档：使用 DaemonSet 模型，'runs on every node of the cluster'——确保日志收集覆盖整个集群。"
         },
         {
             id: "w12-1-q9",
-            question: "DaemonSet 和 Sidecar 模式混合使用时需要注意什么？",
+            question: "Fluent Bit Kubernetes filter 自动添加什么元数据？",
             options: [
-                "必须使用不同的日志存储后端",
-                "避免重复收集同一条日志",
-                "Sidecar 必须比 DaemonSet 先启动",
-                "两种模式不能同时使用"
+                "只添加 Pod 名称",
+                "只添加 namespace",
+                "'pod labels, annotations, and container metadata'——标签、注解和容器元数据",
+                "只添加时间戳"
             ],
-            answer: 1,
-            rationale: "混合使用时，如果 Sidecar 将日志转发到 stdout，DaemonSet 也会收集，导致重复。需要配置避免重复收集。"
+            answer: 2,
+            rationale: "Fluent Bit 文档：Kubernetes filter 自动添加 'pod labels, annotations, and container metadata'——这是元数据丰富的关键能力。"
         },
         {
             id: "w12-1-q10",
-            question: "Sidecar 模式相比 DaemonSet 模式的主要缺点是什么？",
+            question: "官方文档对修改 podLogsDir 的警告是什么？",
             options: [
-                "无法收集容器日志",
-                "不支持 Kubernetes 元数据",
-                "资源开销大，每个 Pod 都需要一个 Agent",
-                "不支持多行日志处理"
+                "会导致性能下降",
+                "需要重启所有 Pod",
+                "'logs must remain on the same disk as /var/'——日志必须与 /var 在同一磁盘",
+                "不支持 Windows 系统"
             ],
             answer: 2,
-            rationale: "Sidecar 模式为每个 Pod 都部署一个 Agent 容器，资源消耗（CPU、内存）随 Pod 数量线性增长，在大规模集群中开销显著。"
+            rationale: "官方文档警告：'Use with care; some processes assume the default path, and logs must remain on the same disk as /var/'——否则可能导致系统问题。"
         },
         {
             id: "w12-1-q11",
-            question: "容器运行时如何处理容器的 stdout/stderr？",
+            question: "Fluent Bit 默认配置如何解析容器日志？",
             options: [
-                "直接发送到网络",
-                "保存到内存中",
-                "写入节点的文件系统",
-                "发送到 Kubernetes API Server"
+                "只支持 JSON 格式",
+                "不进行任何解析",
+                "'parse them with either the docker or cri multi-line parser'——使用 docker 或 cri 多行解析器",
+                "需要手动配置解析规则"
             ],
             answer: 2,
-            rationale: "容器运行时（containerd/CRI-O）捕获容器的 stdout/stderr，写入节点文件系统的 /var/log/pods/ 目录，这是日志持久化的第一步。"
+            rationale: "Fluent Bit 文档：默认配置 'Consume all containers logs from the running node and parse them with either the docker or cri multi-line parser'。"
         },
         {
             id: "w12-1-q12",
-            question: "Promtail 的 relabel_configs 用于什么目的？",
+            question: "官方文档对日志轮转责任的说明是什么？",
             options: [
-                "重新标记日志内容",
-                "从 Kubernetes 元数据提取标签",
-                "修改日志时间戳",
-                "压缩日志数据"
+                "kubelet 自动管理所有日志轮转",
+                "必须使用外部工具",
+                "Kubernetes 不管理集群组件共享卷的日志轮转，需 OS 或部署工具处理",
+                "只有 DaemonSet 需要配置轮转"
             ],
-            answer: 1,
-            rationale: "relabel_configs 用于从服务发现的元数据（__meta_kubernetes_*）中提取有用信息，转换为 Loki 的日志标签。"
-        },
-        {
-            id: "w12-1-q13",
-            question: "为什么建议应用将日志写入 stdout 而非文件？",
-            options: [
-                "stdout 性能更好",
-                "符合 12-Factor App 原则，便于容器化和统一收集",
-                "stdout 支持更多格式",
-                "Kubernetes 只能收集 stdout 日志"
-            ],
-            answer: 1,
-            rationale: "12-Factor App 建议将日志视为事件流，写入 stdout 让运行环境决定如何处理。容器化环境中，stdout 便于统一收集和处理。"
-        },
-        {
-            id: "w12-1-q14",
-            question: "Fluentd 使用什么机制获取 Kubernetes 元数据？",
-            options: [
-                "kubernetes_sd_configs",
-                "kubernetes_metadata filter",
-                "kubectl get pods",
-                "etcd 直接查询"
-            ],
-            answer: 1,
-            rationale: "Fluentd 使用 fluent-plugin-kubernetes_metadata_filter 插件，根据容器 ID 查询 Kubernetes API 获取 Pod 的元数据。"
-        },
-        {
-            id: "w12-1-q15",
-            question: "Sidecar 模式中，应用容器和 Sidecar 容器通常如何共享日志？",
-            options: [
-                "通过网络 Socket",
-                "通过 emptyDir Volume",
-                "通过 ConfigMap",
-                "通过 Kubernetes API"
-            ],
-            answer: 1,
-            rationale: "应用容器将日志写入挂载的 emptyDir Volume 中的文件，Sidecar 容器从同一 Volume 读取日志文件，实现日志共享。"
+            answer: 2,
+            rationale: "官方文档：'Kubernetes does not manage log rotation for cluster components sharing volumes. Your OS or deployment tools must handle this'——需要外部处理。"
         }
     ],
     "w12-2": [
