@@ -10,6 +10,7 @@ import { week7Guides, week7Quizzes } from "./week7"
 import { week8Guides, week8Quizzes } from "./week8"
 import { week9Guides, week9Quizzes } from "./week9"
 import { week10Guides, week10Quizzes } from "./week10"
+import { week11Guides, week11Quizzes } from "./week11"
 
 // 课时测验接口
 export interface LessonQuiz {
@@ -29,6 +30,7 @@ export const systemDesignGuides: Record<string, LessonGuide> = {
     ...week8Guides,
     ...week9Guides,
     ...week10Guides,
+    ...week11Guides,
 }
 
 // 课时测验汇总
@@ -43,4 +45,5 @@ export const systemDesignLessonQuizzes: Record<string, QuizQuestion[]> = {
     ...week8Quizzes,
     ...week9Quizzes,
     ...week10Quizzes,
+    ...week11Quizzes,
 }
