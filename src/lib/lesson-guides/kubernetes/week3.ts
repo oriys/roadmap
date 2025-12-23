@@ -88,16 +88,18 @@ export const week3Guides: Record<string, LessonGuide> = {
     "w3-3": {
         lessonId: "w3-3",
         background: [
-            "Kubernetes 对象是集群中的持久化实体，代表用户的'意图记录'（Records of Intent）。每个对象包含 spec（期望状态）和 status（实际状态）两个核心字段，控制平面持续将 status 向 spec 靠拢。",
-            "YAML/JSON 配置文件描述 Kubernetes 对象，必须包含四个字段：apiVersion（API 版本）、kind（对象类型）、metadata（元数据，如 name、namespace、labels）、spec（期望状态）。",
-            "Kubernetes 提供三种对象管理方式：命令式命令（kubectl create deployment）、命令式配置（kubectl create -f）、声明式配置（kubectl apply -f）。生产环境推荐使用声明式配置结合版本控制。",
-            "kubectl apply 实现声明式管理，通过三方合并（three-way merge）比较配置文件、集群当前状态和上次应用的配置（last-applied-configuration 注解），智能地合并变更而非简单替换。"
+            "【对象本质】官方文档：Kubernetes 对象是'records of intent'——意图记录。一旦创建，Kubernetes 就会持续工作以维护该对象的存在状态，确保集群状态与用户声明的期望状态匹配。",
+            "【spec vs status】官方文档：spec 描述'desired characteristics and configuration'（期望特征），status 描述'what actually exists'（实际状态）。用户定义 spec，系统管理 status。",
+            "【必需字段】官方文档：每个 manifest 必须包含四个字段：apiVersion（API 版本如 apps/v1）、kind（对象类型如 Deployment）、metadata（标识数据如 name/UID/namespace）、spec（期望状态，格式因类型而异）。",
+            "【三种管理方式】官方文档区分：Imperative Commands（kubectl run/scale，一次性任务）、Imperative Configuration（kubectl create -f，简单工作流）、Declarative Configuration（kubectl apply -f，生产环境和 GitOps 推荐）。",
+            "【三方合并策略】官方文档：kubectl apply 执行'three-way merge'——比较配置文件、集群当前状态、last-applied-configuration 注解，智能地设置新字段、清除删除字段、保留外部修改的字段。"
         ],
         keyDifficulties: [
-            "spec vs status：spec 是用户声明的期望状态，status 是系统观测到的实际状态。控制器的调和循环不断读取 spec、检查 status、执行动作缩小差距。用户只写 spec，系统填充 status。",
-            "三方合并机制：kubectl apply 在对象的 metadata.annotations 中存储 kubectl.kubernetes.io/last-applied-configuration。合并时比较三者：配置文件新增字段会添加，删除字段会移除，手动修改的字段会保留（如果配置文件未指定）。",
-            "声明式 vs 命令式：命令式（kubectl scale）直接操作集群，不留痕迹；声明式（kubectl apply -f）以配置文件为真相来源，支持 diff/review/回滚。混用两种方式会导致配置漂移。",
-            "标签与选择器：labels 是对象的键值对标签，selectors 用于筛选对象。Deployment 通过 selector 关联 Pod，Service 通过 selector 选择后端 Pod。标签设计影响资源管理的灵活性。"
+            "【last-applied-configuration 注解】官方文档：每个用 kubectl apply 创建的对象都带有此注解，存储原始配置的 JSON。这使得 apply 能够区分：用户删除了字段还是从未设置过该字段。",
+            "【保留外部修改】官方文档示例：用 apply 创建 Deployment 后用 kubectl scale 扩容，再次 apply（不含 replicas 字段）时会保留 scale 设置的副本数——因为配置文件从未定义过 replicas。",
+            "【声明式 vs 命令式抉择】官方最佳实践：声明式配置支持版本控制和 GitOps；但混用命令式操作会导致'last-applied'与实际状态不一致。建议'Use declarative apply consistently'。",
+            "【Labels 和 Selectors】官方文档：labels 是组织和选择对象的键值对；selectors 是基于 labels 的查询。Deployment 通过 spec.selector.matchLabels 关联 Pod，这是控制器识别其管理对象的机制。",
+            "【kubectl diff 预览】官方推荐：'Use kubectl diff before applying'——在应用前预览变更。需要 kube-apiserver 支持 server-side dry-run，以及 PATCH/CREATE/UPDATE 权限。"
         ],
         handsOnPath: [
             "编写一个 Deployment 的 YAML 文件，使用 kubectl apply -f 部署，然后修改 image 版本再次 apply，观察 kubectl diff 输出和 rollout 过程。",
@@ -461,175 +463,139 @@ export const week3Quizzes: Record<string, QuizQuestion[]> = {
     "w3-3": [
         {
             id: "w3-3-q1",
-            question: "Kubernetes 对象的 spec 字段代表什么？",
+            question: "官方文档如何描述 Kubernetes 对象的本质？",
             options: [
-                "对象的唯一标识符",
-                "用户声明的期望状态",
-                "系统观测到的实际状态",
-                "对象的历史版本"
+                "临时的运行时数据结构",
+                "数据库中的记录",
+                "'records of intent'——意图记录，Kubernetes 持续维护其存在",
+                "配置文件的缓存"
             ],
-            answer: 1,
-            rationale: "spec 是期望状态（Desired State），由用户定义。控制器读取 spec 并努力使实际状态向其靠拢。"
+            answer: 2,
+            rationale: "官方文档明确指出 Kubernetes 对象是'records of intent'——一旦创建，系统就会持续工作以维护该对象的存在状态。"
         },
         {
             id: "w3-3-q2",
-            question: "Kubernetes 对象的 status 字段由谁填充？",
+            question: "官方文档对 spec 和 status 字段的描述是什么？",
             options: [
-                "用户在 YAML 中定义",
-                "kubectl apply 自动生成",
-                "Kubernetes 控制平面根据实际状态填充",
-                "容器运行时填充"
+                "spec 描述'desired characteristics'，status 描述'what actually exists'",
+                "两者都由用户定义",
+                "两者都由系统自动生成",
+                "spec 是只读的，status 是可写的"
             ],
-            answer: 2,
-            rationale: "status 是实际状态（Current State），由 Kubernetes 系统组件（控制器、kubelet）观测并写入，用户不应手动修改。"
+            answer: 0,
+            rationale: "官方文档：spec 描述'desired characteristics and configuration'（期望特征），status 描述'what actually exists'（实际状态）。"
         },
         {
             id: "w3-3-q3",
-            question: "一个有效的 Kubernetes YAML 配置文件必须包含哪些字段？",
+            question: "Kubernetes manifest 必须包含哪些字段？",
             options: [
-                "只需要 kind 和 name",
+                "name、namespace、labels、spec",
+                "只需要 kind 和 spec",
                 "apiVersion、kind、metadata、spec",
-                "name、namespace、labels",
-                "kind、replicas、image"
+                "kind、replicas、image、ports"
             ],
-            answer: 1,
-            rationale: "必须字段：apiVersion（API 版本）、kind（对象类型）、metadata（元数据）、spec（期望状态）。"
+            answer: 2,
+            rationale: "官方文档：每个 manifest 必须包含 apiVersion、kind、metadata、spec 四个必需字段。"
         },
         {
             id: "w3-3-q4",
-            question: "kubectl apply 使用什么机制来智能合并配置变更？",
+            question: "官方推荐的生产环境对象管理方式是什么？",
             options: [
-                "简单替换整个对象",
-                "三方合并（three-way merge）",
-                "只添加新字段，不删除旧字段",
-                "完全覆盖现有配置"
+                "Imperative Commands（kubectl run/scale）",
+                "Imperative Configuration（kubectl create -f）",
+                "kubectl edit 直接编辑",
+                "Declarative Configuration（kubectl apply -f）——支持版本控制和 GitOps"
             ],
-            answer: 1,
-            rationale: "kubectl apply 比较配置文件、集群当前状态和 last-applied-configuration 注解，执行三方合并。"
+            answer: 3,
+            rationale: "官方文档推荐 Declarative Configuration 用于生产环境，因为它支持版本控制、可审计和 GitOps 工作流。"
         },
         {
             id: "w3-3-q5",
-            question: "last-applied-configuration 注解存储在哪里？",
+            question: "kubectl apply 的三方合并（three-way merge）比较哪三方？",
             options: [
-                "本地文件系统",
-                "etcd 的独立键",
-                "对象的 metadata.annotations 中",
-                "kubectl 配置文件中"
+                "配置文件、集群当前状态、last-applied-configuration 注解",
+                "本地文件、远程文件、Git 仓库",
+                "用户输入、系统默认值、环境变量",
+                "spec、status、metadata"
             ],
-            answer: 2,
-            rationale: "kubectl apply 将上次应用的配置存储在对象的 metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'] 中。"
+            answer: 0,
+            rationale: "官方文档：kubectl apply 执行 three-way merge，比较配置文件、集群当前状态、last-applied-configuration 注解。"
         },
         {
             id: "w3-3-q6",
-            question: "以下哪种是声明式对象管理方式？",
+            question: "last-applied-configuration 注解的作用是什么？",
             options: [
-                "kubectl create deployment nginx --image=nginx",
-                "kubectl scale deployment nginx --replicas=3",
-                "kubectl apply -f deployment.yaml",
-                "kubectl delete pod nginx-xxx"
+                "记录对象创建时间",
+                "存储上次应用的配置 JSON，使 apply 能区分用户删除字段还是从未设置过",
+                "存储对象的 status",
+                "记录对象的版本号"
             ],
-            answer: 2,
-            rationale: "kubectl apply -f 是声明式管理，以配置文件为真相来源。其他都是命令式操作。"
+            answer: 1,
+            rationale: "官方文档：此注解存储原始配置的 JSON，使 apply 能够区分：用户删除了字段还是从未设置过该字段。"
         },
         {
             id: "w3-3-q7",
-            question: "混用命令式和声明式管理会导致什么问题？",
+            question: "用 apply 创建 Deployment 后用 scale 扩容，再次 apply（不含 replicas）会发生什么？",
             options: [
-                "没有任何问题",
-                "配置漂移（Configuration Drift）",
-                "集群崩溃",
-                "Pod 无法启动"
+                "replicas 被重置为默认值 1",
+                "scale 设置的副本数被保留，因为配置文件从未定义过 replicas",
+                "apply 命令会报错",
+                "整个 Deployment 被替换"
             ],
             answer: 1,
-            rationale: "命令式操作不更新 last-applied-configuration，导致配置文件与实际状态不一致，产生配置漂移。"
+            rationale: "官方示例：配置文件从未定义 replicas，所以三方合并会保留外部（scale）设置的值。"
         },
         {
             id: "w3-3-q8",
-            question: "如何在 kubectl apply 之前预览变更？",
+            question: "官方文档对混用命令式和声明式操作的建议是什么？",
             options: [
-                "kubectl preview -f deployment.yaml",
-                "kubectl diff -f deployment.yaml",
-                "kubectl show -f deployment.yaml",
-                "kubectl check -f deployment.yaml"
+                "可以自由混用，没有问题",
+                "建议'Use declarative apply consistently'，混用会导致状态不一致",
+                "只能使用命令式操作",
+                "每次操作前必须重置配置"
             ],
             answer: 1,
-            rationale: "kubectl diff 使用 server-side dry-run 比较配置文件与集群当前状态的差异，在应用前预览变更。"
+            rationale: "官方最佳实践：混用命令式操作会导致 last-applied 与实际状态不一致，建议'Use declarative apply consistently'。"
         },
         {
             id: "w3-3-q9",
-            question: "Kubernetes 中 labels 的作用是什么？",
+            question: "Deployment 如何识别其管理的 Pod？",
             options: [
-                "存储敏感数据",
-                "为对象添加键值对标签，用于组织和筛选",
-                "定义容器的环境变量",
-                "配置网络策略"
+                "通过 Pod 名称前缀匹配",
+                "通过 namespace 隔离",
+                "通过 spec.selector.matchLabels 匹配 Pod 的 labels",
+                "通过 Pod 的创建时间"
             ],
-            answer: 1,
-            rationale: "labels 是附加到对象的键值对，用于组织、分类和通过选择器（selector）筛选资源。"
+            answer: 2,
+            rationale: "官方文档：Deployment 通过 spec.selector.matchLabels 关联 Pod，这是控制器识别其管理对象的机制。"
         },
         {
             id: "w3-3-q10",
-            question: "Deployment 如何关联其管理的 Pod？",
+            question: "kubectl diff 命令的作用和要求是什么？",
             options: [
-                "通过 Pod 名称前缀",
-                "通过 selector 匹配 Pod 的 labels",
-                "通过 namespace",
-                "通过 Pod 的 IP 地址"
+                "显示两个文件的差异，无特殊要求",
+                "比较配置文件与仓库版本的差异",
+                "预览 apply 将产生的变更，需要 server-side dry-run 支持",
+                "显示对象的历史版本"
             ],
-            answer: 1,
-            rationale: "Deployment 使用 spec.selector.matchLabels 选择器匹配具有相应 labels 的 Pod，建立关联关系。"
+            answer: 2,
+            rationale: "官方推荐'Use kubectl diff before applying'预览变更，需要 kube-apiserver 支持 server-side dry-run。"
         },
         {
             id: "w3-3-q11",
-            question: "使用 kubectl apply 删除配置文件中的字段后，该字段会怎样？",
+            question: "apiVersion: apps/v1 中的 'apps' 代表什么？",
             options: [
-                "保持不变",
-                "从集群中的对象里删除",
-                "被设置为默认值",
-                "产生错误"
+                "应用程序名称",
+                "命名空间名称",
+                "API Group（API 组），用于组织相关 API 资源",
+                "资源版本号"
             ],
-            answer: 1,
-            rationale: "三方合并时，如果字段在 last-applied-configuration 中存在但在新配置中不存在，该字段会被删除。"
+            answer: 2,
+            rationale: "apps 是 API Group，Kubernetes 将 API 按功能组织到不同的 Group（如 apps、batch、networking.k8s.io）。"
         },
         {
             id: "w3-3-q12",
-            question: "如果手动 kubectl scale 修改了 replicas，然后 apply 不含 replicas 的配置会怎样？",
-            options: [
-                "replicas 被重置为 1",
-                "手动修改的 replicas 值被保留",
-                "产生冲突错误",
-                "Pod 全部被删除"
-            ],
-            answer: 1,
-            rationale: "如果配置文件从未包含 replicas 字段，三方合并会保留手动修改的值（因为它不在 last-applied-configuration 中）。"
-        },
-        {
-            id: "w3-3-q13",
-            question: "apiVersion: apps/v1 中的 apps 代表什么？",
-            options: [
-                "应用程序名称",
-                "API Group（API 组）",
-                "命名空间",
-                "资源版本号"
-            ],
-            answer: 1,
-            rationale: "apps 是 API Group，v1 是版本号。Kubernetes 将 API 按功能组织到不同的 Group（如 apps、batch、networking.k8s.io）。"
-        },
-        {
-            id: "w3-3-q14",
-            question: "生产环境推荐使用声明式配置的主要原因是什么？",
-            options: [
-                "执行速度更快",
-                "可以追溯变更历史、支持版本控制和 GitOps 工作流",
-                "消耗更少的集群资源",
-                "不需要 YAML 知识"
-            ],
-            answer: 1,
-            rationale: "声明式配置以文件为真相来源，可以存储在 Git 中追溯历史、进行代码审查、实现 GitOps 自动化。"
-        },
-        {
-            id: "w3-3-q15",
-            question: "以下哪个命令可以查看对象的完整 YAML 定义（包括 status）？",
+            question: "以下哪个命令可以查看对象的完整 YAML 定义（包括 status 和 annotations）？",
             options: [
                 "kubectl describe deployment nginx",
                 "kubectl get deployment nginx -o yaml",
