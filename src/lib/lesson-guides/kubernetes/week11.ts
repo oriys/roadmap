@@ -91,16 +91,19 @@ export const week11Guides: Record<string, LessonGuide> = {
     "w11-3": {
         lessonId: "w11-3",
         background: [
-            "Grafana 是云原生可视化的标准工具，支持 150+ 数据源插件，能够将 Prometheus、Loki、Elasticsearch 等多种数据源的数据统一展示。Dashboard 由多个 Panel 组成，每个 Panel 展示一种可视化效果。",
-            "变量（Variables/Templates）是 Grafana 的核心特性，允许在 Dashboard 中创建动态参数。用户可以通过下拉框选择集群、命名空间、实例等维度，同一个 Dashboard 可以复用于不同的数据范围，大幅提高效率。",
-            "Grafana 支持多种可视化类型：Time Series（时序图）适合趋势分析；Stat/Gauge 适合关键指标展示；Table 适合详细数据列表；Heatmap 适合分布分析；Bar Chart 适合对比分析。选择合适的可视化类型是 Dashboard 设计的关键。",
-            "Provisioning 是 Grafana 的基础设施即代码能力，通过 YAML 文件声明式管理数据源、Dashboard 和告警规则。这使得 Grafana 配置可以版本控制、自动化部署，与 GitOps 流程集成。"
+            "【Dashboard 定义】官方文档：Dashboard 是'a set of one or more panels, organized and arranged into one or more rows, that provide an at-a-glance view of related information'——由一个或多个 Panel 组成的视图，支持行级布局组织。",
+            "【Panel 构建块】官方文档：Panel 是'the fundamental building blocks that display visualizations and offer controls for manipulation'——展示可视化并提供交互控制的基础构建块。每种可视化类型有不同的 Panel 配置选项。",
+            "【数据源生态】官方文档：Grafana 支持'150+ data source plugins'连接 SQL 数据库、Prometheus、Loki、Mimir 等多种后端。每种数据源有专属的 Query Editor 适配其查询语言。",
+            "【Variables 核心】官方文档：'A variable is a placeholder for a value. When you change the value, the element using the variable will change to reflect the new value'——变量是值的占位符，改变变量会动态更新引用它的元素。",
+            "【URL 参数同步】官方文档：变量值自动同步到 Dashboard URL，格式为'var-<varname>=value'——如 var-Server=CCC。这使得 Dashboard 状态可以通过 URL 共享。",
+            "【Provisioning 机制】官方文档：'When Grafana starts, it updates or creates all dashboards found in the configured path'——Grafana 启动时自动同步配置目录中的数据源和 Dashboard，支持 GitOps 工作流。"
         ],
         keyDifficulties: [
-            "变量的查询语法：使用 label_values(metric, label) 获取标签的所有值；使用 query_result(expr) 执行任意 PromQL 并提取结果；支持链式变量（一个变量依赖另一个变量的值）。变量可以是多选的，需要在查询中使用正则匹配语法 =~。",
-            "时间范围和分辨率：Grafana 的时间选择器决定查询的 start/end 时间，$__interval 和 $__rate_interval 是动态计算的步长变量，应在 rate() 的范围窗口中使用 $__rate_interval 而非固定值，以适应不同的时间范围。",
-            "Panel 的数据转换（Transform）：支持对查询结果进行二次处理，如合并多个查询、过滤行/列、计算新字段、重命名字段。这在数据源无法直接产生所需格式时非常有用。",
-            "Library Panel 和 Dashboard 复用：Library Panel 可以在多个 Dashboard 中共享，修改会同步到所有引用处；Dashboard 链接和钻取（Drill-down）允许从高层概览跳转到详细视图，构建层次化的监控体系。"
+            "【模板查询语法】官方文档：'Any query containing variables (text starting with $) becomes a template query'——使用 $ 前缀引用变量。label_values(metric, label) 获取标签所有值；query_result() 执行任意查询。链式变量通过依赖关系动态更新选项。",
+            "【$__interval 与 $__rate_interval】$__interval 是根据时间范围和面板宽度计算的动态步长；$__rate_interval 至少是 4 倍采集间隔，确保 rate() 窗口内有足够数据点，避免'No data'问题。推荐在 rate() 中使用 $__rate_interval。",
+            "【Transformation 数据转换】官方文档：'Applied when data format doesn't match requirements'——当数据源返回格式不符合可视化需求时，使用 Transform 进行二次处理。支持 Merge、Filter、Calculate field、Rename 等操作。",
+            "【Provisioning 文件结构】官方文档：数据源配置在 provisioning/datasources/，Dashboard 在 provisioning/dashboards/。支持 deleteDatasources 删除源、'prune: true' 自动清理移除的配置。环境变量使用 $ENV_VAR_NAME 或 ${ENV_VAR_NAME} 语法。",
+            "【Library Panel 复用】官方文档：Library Panel 可在多个 Dashboard 中共享复用，修改会同步到所有引用处。Dashboard links 支持导航跳转，Annotations 在图表上标记事件（部署、故障）提供上下文关联。"
         ],
         handsOnPath: [
             "创建第一个 Dashboard：添加 Prometheus 数据源；创建 Time Series Panel 展示 CPU 使用率；使用 Legend 配置显示实例名称；添加阈值线标记告警水位。",
@@ -466,183 +469,147 @@ export const week11Quizzes: Record<string, QuizQuestion[]> = {
     "w11-3": [
         {
             id: "w11-3-q1",
-            question: "Grafana 变量（Variables）的主要作用是什么？",
+            question: "官方文档对 Dashboard 的定义是什么？",
             options: [
-                "创建动态参数让用户切换数据范围，复用同一个 Dashboard",
-                "存储数据源密码",
-                "定义告警阈值",
-                "配置用户权限"
+                "单个可视化图表",
+                "数据源的集合",
+                "'a set of one or more panels, organized and arranged into one or more rows'",
+                "告警规则的配置界面"
             ],
-            answer: 0,
-            rationale: "变量允许在 Dashboard 中创建下拉框，用户可以选择集群、命名空间等维度，实现一个 Dashboard 查看多个数据范围。"
+            answer: 2,
+            rationale: "官方文档定义 Dashboard 为'a set of one or more panels, organized and arranged into one or more rows, that provide an at-a-glance view of related information'。"
         },
         {
             id: "w11-3-q2",
-            question: "label_values(kube_pod_info, namespace) 变量查询的作用是什么？",
+            question: "官方文档对 Panel 的定义是什么？",
             options: [
-                "获取 kube_pod_info 指标中 namespace 标签的所有唯一值",
-                "获取所有指标名称",
-                "获取 Pod 数量",
-                "获取 namespace 的 CPU 使用率"
+                "'the fundamental building blocks that display visualizations and offer controls for manipulation'",
+                "数据源的连接配置",
+                "变量的容器",
+                "告警规则的定义"
             ],
             answer: 0,
-            rationale: "label_values() 是 Grafana 变量查询语法，用于提取指定指标中某个标签的所有值作为下拉选项。"
+            rationale: "官方文档：Panel 是'the fundamental building blocks that display visualizations and offer controls for manipulation'。"
         },
         {
             id: "w11-3-q3",
-            question: "为什么推荐在 rate() 中使用 $__rate_interval 而非固定值？",
+            question: "官方文档对 Variables 的定义是什么？",
             options: [
-                "它会根据时间范围和采集间隔自动调整，避免数据间隙导致 No data",
-                "固定值性能更差",
-                "固定值会导致告警",
-                "$__rate_interval 是必须的"
+                "固定的配置参数",
+                "数据库连接字符串",
+                "日志过滤规则",
+                "'A variable is a placeholder for a value. When you change the value, the element using the variable will change'"
             ],
-            answer: 0,
-            rationale: "$__rate_interval 至少是 4 倍采集间隔和 Dashboard 分辨率的较大值，确保范围窗口内有足够数据点。"
+            answer: 3,
+            rationale: "官方文档：'A variable is a placeholder for a value. When you change the value, the element using the variable will change to reflect the new value'。"
         },
         {
             id: "w11-3-q4",
-            question: "Grafana Provisioning 的主要用途是什么？",
+            question: "Grafana 变量值在 URL 中的格式是什么？",
             options: [
-                "通过 YAML 文件声明式管理数据源、Dashboard 和告警规则",
-                "提供 Web 界面",
-                "存储时序数据",
-                "配置网络策略"
+                "variable=value",
+                "var-<varname>=value——如 var-Server=CCC",
+                "param:<varname>=value",
+                "query:<varname>=value"
             ],
-            answer: 0,
-            rationale: "Provisioning 将 Grafana 配置代码化，可以版本控制并自动化部署，与 GitOps 工作流集成。"
+            answer: 1,
+            rationale: "官方文档：变量值自动同步到 Dashboard URL，格式为'var-<varname>=value'，如 var-Server=CCC。"
         },
         {
             id: "w11-3-q5",
-            question: "Library Panel 解决什么问题？",
+            question: "官方文档对模板查询的描述是什么？",
             options: [
-                "在多个 Dashboard 中共享可复用的 Panel，修改会同步到所有引用处",
-                "存储 Panel 的历史版本",
-                "导出 Panel 为图片",
-                "限制 Panel 的访问权限"
+                "只能使用预定义的查询模板",
+                "'Any query containing variables (text starting with $) becomes a template query'",
+                "模板查询必须以 # 开头",
+                "模板查询只支持 Prometheus"
             ],
-            answer: 0,
-            rationale: "Library Panel 是可复用组件，避免在多个 Dashboard 中重复创建相同的 Panel，修改时只需更新一处。"
+            answer: 1,
+            rationale: "官方文档：'Any query containing variables (text starting with $) becomes a template query'——使用 $ 前缀的变量查询。"
         },
         {
             id: "w11-3-q6",
-            question: "Grafana 支持哪些类型的可视化？",
+            question: "官方文档描述 Grafana 支持多少种数据源插件？",
             options: [
-                "Time Series、Stat、Gauge、Table、Heatmap、Bar Chart 等多种类型",
-                "只支持折线图",
-                "只支持表格",
-                "只支持饼图"
+                "50+",
+                "100+",
+                "150+",
+                "200+"
             ],
-            answer: 0,
-            rationale: "Grafana 提供丰富的可视化类型，应根据数据特点和展示目的选择合适的类型。"
+            answer: 2,
+            rationale: "官方文档：Grafana 支持'150+ data source plugins'连接各种后端系统。"
         },
         {
             id: "w11-3-q7",
-            question: "Grafana Explore 模式的用途是什么？",
+            question: "为什么推荐在 rate() 中使用 $__rate_interval 而非固定值？",
             options: [
-                "临时 ad-hoc 查询和调试，快速探索数据源返回的数据",
-                "导出 Dashboard",
-                "管理用户账户",
-                "配置告警规则"
+                "$__rate_interval 至少是 4 倍采集间隔，确保窗口内有足够数据点避免 No data",
+                "$__rate_interval 性能更好",
+                "$__rate_interval 是必须的语法",
+                "$__rate_interval 只用于告警"
             ],
             answer: 0,
-            rationale: "Explore 是无需创建 Dashboard 就能查询数据的模式，适合排查问题时快速验证指标或日志。"
+            rationale: "$__rate_interval 至少是 4 倍采集间隔和 Dashboard 分辨率的较大值，确保 rate() 范围窗口内有足够数据点。"
         },
         {
             id: "w11-3-q8",
-            question: "如何在 Grafana 中导入社区 Dashboard？",
+            question: "官方文档对 Transformation 功能的描述是什么？",
             options: [
-                "在 Dashboard -> Import 中输入 Dashboard ID 或上传 JSON 文件",
-                "只能手工重建",
-                "通过 kubectl apply",
-                "必须购买商业版"
+                "用于创建新的数据源",
+                "'Applied when data format doesn't match requirements'——当数据格式不符需求时应用",
+                "用于配置告警阈值",
+                "用于管理用户权限"
             ],
-            answer: 0,
-            rationale: "Grafana.com 有大量社区贡献的 Dashboard，可以通过 ID（如 1860）或 JSON 快速导入使用。"
+            answer: 1,
+            rationale: "官方文档：Transformation 'Applied when data format doesn't match requirements'，允许在可视化前处理数据。"
         },
         {
             id: "w11-3-q9",
-            question: "Panel 的 Transform 功能用于什么？",
+            question: "官方文档对 Provisioning 机制的描述是什么？",
             options: [
-                "对查询结果进行二次处理，如合并查询、过滤、计算新字段",
-                "变换图表类型",
-                "传输数据到其他系统",
-                "转换时区"
+                "需要手动重启才能生效",
+                "只支持数据源配置",
+                "'When Grafana starts, it updates or creates all dashboards found in the configured path'",
+                "必须使用 API 配置"
             ],
-            answer: 0,
-            rationale: "Transform 允许在可视化前对数据进行处理，如 Merge、Filter、Calculate field 等，适用于数据源无法直接产生所需格式的情况。"
+            answer: 2,
+            rationale: "官方文档：'When Grafana starts, it updates or creates all dashboards found in the configured path'——启动时自动同步配置。"
         },
         {
             id: "w11-3-q10",
-            question: "Grafana 中如何实现多选变量的查询？",
+            question: "Provisioning 配置中如何引用环境变量？",
             options: [
-                "在变量配置中开启 Multi-value，查询中使用正则匹配 =~ 语法",
-                "不支持多选",
-                "只能选择一个值",
-                "使用 AND 连接多个变量"
+                "使用 %ENV_VAR% 语法",
+                "使用 {{ENV_VAR}} 语法",
+                "使用 $ENV_VAR_NAME 或 ${ENV_VAR_NAME} 语法",
+                "不支持环境变量"
             ],
-            answer: 0,
-            rationale: "多选变量生成类似 value1|value2|value3 的值，在 PromQL 中需要使用 =~ 正则匹配。"
+            answer: 2,
+            rationale: "官方文档：环境变量使用 $ENV_VAR_NAME 或 ${ENV_VAR_NAME} 语法，转义 $ 使用 $$。"
         },
         {
             id: "w11-3-q11",
-            question: "Grafana 的 Data Link 功能用于什么？",
+            question: "Provisioning 配置中 prune: true 的作用是什么？",
             options: [
-                "从 Panel 跳转到其他 Dashboard、外部链接或 Explore，实现钻取分析",
-                "连接到数据库",
-                "同步数据到云端",
-                "链接多个数据源"
+                "删除所有数据源",
+                "自动清理从配置文件中移除的数据源",
+                "压缩配置文件",
+                "启用调试模式"
             ],
-            answer: 0,
-            rationale: "Data Link 可以将 Panel 中的数据点关联到其他页面，如从概览 Dashboard 钻取到详细 Dashboard 或日志。"
+            answer: 1,
+            rationale: "官方文档：设置 'prune: true' 会自动删除从配置文件中移除的数据源。"
         },
         {
             id: "w11-3-q12",
-            question: "Grafana Alerting（8.0+）的特点是什么？",
+            question: "Library Panel 的主要优势是什么？",
             options: [
-                "统一告警平台，支持跨多个数据源配置告警规则",
-                "只能基于 Prometheus 告警",
-                "必须使用 Alertmanager",
-                "不支持通知渠道"
+                "性能更好",
+                "支持更多可视化类型",
+                "可在多个 Dashboard 中共享，修改会同步到所有引用处",
+                "只能用于管理员"
             ],
-            answer: 0,
-            rationale: "Grafana 8.0+ 引入了新的统一告警系统，可以直接在 Grafana 中为任何数据源创建告警规则。"
-        },
-        {
-            id: "w11-3-q13",
-            question: "Dashboard 的 Annotation 功能用于什么？",
-            options: [
-                "在图表上标记重要事件，如部署、故障发生时间",
-                "添加代码注释",
-                "注释配置文件",
-                "标注数据源"
-            ],
-            answer: 0,
-            rationale: "Annotation 可以从数据源查询事件或手动添加标记，帮助关联指标变化与系统事件。"
-        },
-        {
-            id: "w11-3-q14",
-            question: "Grafana 的 Organization 和 Team 用于什么？",
-            options: [
-                "实现多租户隔离和基于角色的访问控制",
-                "存储数据",
-                "发送通知",
-                "配置数据源"
-            ],
-            answer: 0,
-            rationale: "Organization 实现完全隔离的多租户环境，Team 在组织内部实现团队级别的权限管理。"
-        },
-        {
-            id: "w11-3-q15",
-            question: "分享 Dashboard 时应注意什么？",
-            options: [
-                "可以导出 JSON 或创建 Snapshot，注意是否包含敏感数据源信息",
-                "Dashboard 无法分享",
-                "必须公开密码",
-                "只能截图"
-            ],
-            answer: 0,
-            rationale: "导出 JSON 时可以选择是否包含数据源；Snapshot 只包含渲染后的数据，不包含实时查询能力。"
+            answer: 2,
+            rationale: "Library Panel 可在多个 Dashboard 中共享复用，修改一处会自动同步到所有引用该 Panel 的 Dashboard。"
         }
     ],
     "w11-4": [
