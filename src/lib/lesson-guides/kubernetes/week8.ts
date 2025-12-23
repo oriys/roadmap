@@ -87,16 +87,18 @@ export const week8Guides: Record<string, LessonGuide> = {
     "w8-3": {
         lessonId: "w8-3",
         background: [
-            "Ansible 是 Red Hat 开发的开源自动化平台，用于配置管理、应用部署和任务编排。其核心特点是无代理（Agentless）架构，通过 SSH（Linux）或 WinRM（Windows）连接目标主机，无需在被管理节点安装任何软件。",
-            "Ansible 使用 YAML 格式的 Playbook 定义自动化任务。Playbook 包含一个或多个 Play，每个 Play 针对一组主机执行一系列 Task。Task 调用 Module 完成具体操作，如安装软件包、复制文件、启动服务等。",
-            "Inventory（清单）定义 Ansible 管理的主机和分组。可以是静态文件（INI 或 YAML 格式）列出主机 IP/域名，也可以是动态清单脚本从云 API（如 AWS、Azure）自动发现主机。",
-            "Ansible 内置 3000+ 模块覆盖系统管理、云服务、容器、网络设备等场景。模块设计遵循幂等性原则——重复执行 Playbook 不会改变已达成期望状态的系统，安全可靠。"
+            "【无代理架构】官方文档：Ansible 是'agentless automation tool'——不需要在被管理节点安装任何软件。通过 SSH（Linux）或 WinRM（Windows）连接目标主机，'eliminates the need for deploying and managing agent software on every target system'。",
+            "【Playbook 定义】官方文档：Playbook 是'repeatable, reusable, simple configuration management and multimachine deployment system'——可重复、可复用的配置管理系统，使用 YAML 格式编写。",
+            "【模块执行机制】官方文档：Ansible 将'scripts called Ansible modules'推送到节点执行，'accept parameters describing desired state and execute via SSH by default'——接受描述期望状态的参数，执行后自动清理。",
+            "【Inventory 清单】官方文档：Inventory 是'a list or group of lists that defines the managed nodes you automate'——定义自动化目标的主机列表，支持 INI 和 YAML 格式，可以是静态文件或动态生成。",
+            "【幂等性原则】官方文档：'Most Ansible modules check whether desired state exists before acting...modules are idempotent'——大多数模块先检查期望状态是否已存在，重复执行 Playbook 产生相同结果。"
         ],
         keyDifficulties: [
-            "Playbook 结构：Playbook 包含 hosts（目标主机模式）、vars（变量）、tasks（任务列表）、handlers（处理器）。Task 按顺序执行，某主机失败后会被排除出后续任务。handlers 用于响应变更（如配置修改后重启服务）。",
-            "变量优先级：Ansible 有复杂的变量优先级，从低到高：role defaults → inventory → playbook vars → extra vars（-e）。理解优先级对调试变量覆盖问题很重要。group_vars 和 host_vars 目录组织主机/组级别变量。",
-            "幂等性实践：模块应检查当前状态并仅在需要时执行变更。使用 changed_when 和 failed_when 控制任务状态；register 捕获任务输出供后续条件判断；使用 when 实现条件执行。",
-            "Role 组织：Role 是组织 Playbook 的标准方式，包含 tasks、handlers、files、templates、vars、defaults、meta 等目录。使用 Ansible Galaxy 分享和重用社区 Role。"
+            "【Handler 触发机制】官方文档：Handler 是'tasks that only run when notified'——仅在被通知时执行。使用 notify 关键字触发，'Notifying the same handler multiple times will result in executing the handler only once'——多次通知只执行一次。",
+            "【Handler 执行顺序】官方文档：Handler'run after all tasks in a play complete'并'execute in the order defined in the handlers section, not the order listed in notify'——按定义顺序执行，非通知顺序。可用 meta: flush_handlers 强制提前执行。",
+            "【变量优先级层次】官方文档：变量按层次覆盖'all group → parent groups → child groups → individual hosts'——从通用到具体逐级覆盖。group_vars 和 host_vars 目录比 inventory 内联变量更易维护。",
+            "【任务失败处理】官方文档：'If a task fails on a host, that system is removed from remaining playbook execution'——任务失败的主机会被排除出后续执行。可用 ignore_errors、block/rescue 控制错误处理行为。",
+            "【Windows 连接选项】官方文档：Windows 历史上使用 WinRM，'newer Windows versions come with a built-in OpenSSH Server'——新版 Windows 10/Server 2019+ 支持 SSH 连接。WinRM 认证推荐域环境用 Kerberos，本地账户用 HTTPS+Basic/NTLM。"
         ],
         handsOnPath: [
             "安装 Ansible（pip install ansible），创建 inventory 文件定义本地主机（localhost），编写第一个 Playbook 使用 debug 模块输出 Hello World。",
@@ -350,183 +352,147 @@ export const week8Quizzes: Record<string, QuizQuestion[]> = {
     "w8-3": [
         {
             id: "w8-3-q1",
-            question: "Ansible 的核心架构特点是什么？",
+            question: "官方文档对 Ansible 无代理架构的描述是什么？",
             options: [
-                "需要在所有节点安装 Agent",
-                "无代理（Agentless），通过 SSH/WinRM 连接",
-                "使用专用网络协议",
-                "需要中央数据库"
+                "'agentless automation tool'——不需要在被管理节点安装任何软件",
+                "需要在每个节点安装轻量级 Agent",
+                "只支持 Linux 系统",
+                "必须使用专用网络协议"
             ],
-            answer: 1,
-            rationale: "Ansible 是无代理架构，通过 SSH（Linux）或 WinRM（Windows）连接目标主机，无需在被管理节点安装软件。"
+            answer: 0,
+            rationale: "官方文档：Ansible 是'agentless automation tool'，通过 SSH/WinRM 连接目标主机，'eliminates the need for deploying and managing agent software'。"
         },
         {
             id: "w8-3-q2",
-            question: "Ansible Playbook 使用什么格式编写？",
+            question: "官方文档对 Playbook 的定义是什么？",
             options: [
-                "JSON",
-                "XML",
-                "YAML",
-                "HCL"
+                "一种容器编排格式",
+                "Ansible 的配置文件格式",
+                "'repeatable, reusable, simple configuration management and multimachine deployment system'",
+                "只用于网络设备配置"
             ],
             answer: 2,
-            rationale: "Ansible Playbook 使用 YAML 格式编写，易于阅读和编写，支持丰富的数据结构。"
+            rationale: "官方文档定义 Playbook 为'repeatable, reusable, simple configuration management and multimachine deployment system'——可重复、可复用的配置管理系统。"
         },
         {
             id: "w8-3-q3",
-            question: "Playbook、Play、Task 之间的关系是什么？",
+            question: "Ansible 模块执行后会发生什么？",
             options: [
-                "Playbook 包含 Task，Task 包含 Play",
-                "Playbook 包含 Play，Play 包含 Task",
-                "三者是平级关系",
-                "Play 包含 Playbook"
+                "模块永久保留在目标节点",
+                "模块需要手动清理",
+                "模块执行后自动从目标节点清理",
+                "模块存储在中央数据库"
             ],
-            answer: 1,
-            rationale: "Playbook 包含一个或多个 Play，每个 Play 针对一组主机执行一系列 Task，Task 调用 Module 完成操作。"
+            answer: 2,
+            rationale: "官方文档：Ansible 将模块推送到节点执行，'execute via SSH by default'——执行后自动清理，不留驻任何软件。"
         },
         {
             id: "w8-3-q4",
-            question: "Inventory 文件的作用是什么？",
+            question: "官方文档对 Handler 的定义是什么？",
             options: [
-                "存储 Playbook 代码",
-                "定义 Ansible 管理的主机和分组",
-                "存储密码和密钥",
-                "定义 Module 参数"
+                "每次运行都执行的任务",
+                "'tasks that only run when notified'——仅在被通知时执行",
+                "用于错误处理的任务",
+                "只能在 Role 中使用的任务"
             ],
             answer: 1,
-            rationale: "Inventory 定义 Ansible 管理的目标主机及其分组，可以是静态文件或从云 API 动态生成。"
+            rationale: "官方文档：Handler 是'tasks that only run when notified'——使用 notify 关键字触发，常用于配置变更后重启服务。"
         },
         {
             id: "w8-3-q5",
-            question: "什么是幂等性（Idempotency）？",
+            question: "多次 notify 同一个 Handler 会发生什么？",
             options: [
-                "每次执行结果不同",
-                "重复执行不会改变已达成期望状态的系统",
-                "只能执行一次",
-                "必须按顺序执行"
+                "Handler 执行多次",
+                "报错，不允许多次通知",
+                "只执行第一次通知",
+                "'result in executing the handler only once'——只执行一次"
             ],
-            answer: 1,
-            rationale: "幂等性意味着重复执行 Playbook 不会改变已达成期望状态的系统，模块会检查当前状态并仅在需要时执行变更。"
+            answer: 3,
+            rationale: "官方文档：'Notifying the same handler multiple times will result in executing the handler only once regardless of how many tasks notify it'。"
         },
         {
             id: "w8-3-q6",
-            question: "Handler 和普通 Task 的区别是什么？",
+            question: "Handler 的执行顺序取决于什么？",
             options: [
-                "Handler 总是执行",
-                "Handler 只在被通知（notify）且有变更时执行，在 Play 末尾运行",
-                "Handler 比 Task 执行更快",
-                "Handler 不支持条件判断"
+                "notify 语句中列出的顺序",
+                "handlers 部分中定义的顺序",
+                "任务失败的顺序",
+                "随机顺序"
             ],
             answer: 1,
-            rationale: "Handler 是特殊的 Task，只在被 notify 触发且实际发生变更时执行，常用于配置修改后重启服务。"
+            rationale: "官方文档：Handler'execute in the order defined in the handlers section, not the order listed in notify statements'——按定义顺序执行。"
         },
         {
             id: "w8-3-q7",
-            question: "Ansible 内置大约多少个模块？",
+            question: "官方文档描述的变量优先级层次是什么？",
             options: [
-                "约 100 个",
-                "约 500 个",
-                "约 3000+ 个",
-                "约 10 个"
+                "host → group → all",
+                "all group → parent groups → child groups → individual hosts",
+                "环境变量 → 命令行 → 文件",
+                "没有优先级，随机覆盖"
             ],
-            answer: 2,
-            rationale: "Ansible 内置 3000+ 模块覆盖系统管理、云服务、容器、网络设备等各种场景。"
+            answer: 1,
+            rationale: "官方文档：变量按层次覆盖'all group → parent groups → child groups → individual hosts'——从通用到具体逐级覆盖。"
         },
         {
             id: "w8-3-q8",
-            question: "ansible-playbook --check 参数的作用是什么？",
+            question: "官方文档对任务失败后的行为描述是什么？",
             options: [
-                "检查语法错误",
-                "dry-run 模式，预览变更但不实际执行",
-                "检查主机连通性",
-                "检查模块是否存在"
+                "继续执行所有剩余任务",
+                "整个 Playbook 立即终止",
+                "'that system is removed from remaining playbook execution'——该主机被排除出后续执行",
+                "自动重试三次"
             ],
-            answer: 1,
-            rationale: "--check 是 dry-run 模式，模拟执行 Playbook 并显示将要进行的变更，但不实际修改系统。"
+            answer: 2,
+            rationale: "官方文档：'If a task fails on a host, that system is removed from remaining playbook execution'——失败的主机被排除。"
         },
         {
             id: "w8-3-q9",
-            question: "Role 的作用是什么？",
+            question: "新版 Windows 10/Server 2019+ 支持什么连接方式？",
             options: [
-                "定义用户权限",
-                "组织和重用 Playbook 内容的标准方式",
-                "管理 Ansible 配置文件",
-                "定义主机分组"
+                "只支持 WinRM",
+                "只支持 PowerShell Remoting",
+                "'built-in OpenSSH Server'——内置 SSH 服务器",
+                "只支持 RDP"
             ],
-            answer: 1,
-            rationale: "Role 是组织 Playbook 的标准方式，包含 tasks、handlers、templates、vars 等目录，便于复用和分享。"
+            answer: 2,
+            rationale: "官方文档：'newer Windows versions come with a built-in OpenSSH Server'——新版 Windows 支持 SSH 连接。"
         },
         {
             id: "w8-3-q10",
-            question: "register 关键字的作用是什么？",
+            question: "官方文档对幂等性的描述是什么？",
             options: [
-                "注册新模块",
-                "捕获 Task 执行结果供后续使用",
-                "注册主机到 Inventory",
-                "注册 Ansible 许可证"
+                "每次执行结果都不同",
+                "只能执行一次",
+                "'modules check whether desired state exists before acting...are idempotent'——先检查状态，重复执行产生相同结果",
+                "需要手动确保幂等性"
             ],
-            answer: 1,
-            rationale: "register 将 Task 的执行结果（stdout、stderr、rc 等）保存到变量中，供后续条件判断或输出使用。"
+            answer: 2,
+            rationale: "官方文档：'Most Ansible modules check whether desired state exists before acting...modules are idempotent'——模块设计遵循幂等性原则。"
         },
         {
             id: "w8-3-q11",
-            question: "when 关键字的作用是什么？",
+            question: "如何强制 Handler 在 Play 中间执行？",
             options: [
-                "定义执行时间",
-                "条件执行，只在条件为真时运行 Task",
-                "设置超时时间",
-                "定义变量生效时机"
+                "使用 force_handlers: true",
+                "使用 meta: flush_handlers",
+                "在 Handler 中设置 immediate: true",
+                "Handler 只能在 Play 结束时执行"
             ],
             answer: 1,
-            rationale: "when 实现条件执行，只有当指定条件为真时才运行该 Task，支持 Jinja2 表达式。"
+            rationale: "官方文档：可用'meta: flush_handlers'强制 Handler 在 Play 中间执行，而不是等到所有任务完成。"
         },
         {
             id: "w8-3-q12",
-            question: "Ansible Galaxy 是什么？",
+            question: "Inventory 文件的默认分组有哪些？",
             options: [
-                "Ansible 的图形界面",
-                "分享和下载社区 Role 的平台",
-                "Ansible 的云服务",
-                "Ansible 的测试框架"
+                "default 和 custom",
+                "all 和 ungrouped",
+                "hosts 和 groups",
+                "没有默认分组"
             ],
             answer: 1,
-            rationale: "Ansible Galaxy 是社区 Role 分享平台，可以使用 ansible-galaxy 命令下载和管理社区贡献的 Role。"
-        },
-        {
-            id: "w8-3-q13",
-            question: "group_vars 目录的作用是什么？",
-            options: [
-                "存储主机组定义",
-                "存储特定主机组的变量",
-                "存储全局变量",
-                "存储 Role 变量"
-            ],
-            answer: 1,
-            rationale: "group_vars 目录存储按主机组组织的变量文件，文件名与组名对应，变量自动应用到该组所有主机。"
-        },
-        {
-            id: "w8-3-q14",
-            question: "ansible-lint 工具的作用是什么？",
-            options: [
-                "加密敏感数据",
-                "检查 Playbook 最佳实践和常见错误",
-                "测试主机连通性",
-                "生成文档"
-            ],
-            answer: 1,
-            rationale: "ansible-lint 是 Playbook 静态分析工具，检查语法、最佳实践、潜在问题，帮助提高代码质量。"
-        },
-        {
-            id: "w8-3-q15",
-            question: "Ansible Vault 的作用是什么？",
-            options: [
-                "备份 Playbook",
-                "加密敏感数据（密码、密钥等）",
-                "管理 SSH 密钥",
-                "存储执行日志"
-            ],
-            answer: 1,
-            rationale: "Ansible Vault 用于加密敏感数据，如密码、API 密钥等，加密后的文件可以安全存储在版本控制系统中。"
+            rationale: "官方文档：每个 Inventory 自动包含 'all'（所有主机）和 'ungrouped'（没有显式分组的主机）两个默认组。"
         }
     ],
     "w8-2": [
