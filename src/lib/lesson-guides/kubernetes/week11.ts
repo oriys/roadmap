@@ -48,16 +48,19 @@ export const week11Guides: Record<string, LessonGuide> = {
     "w11-2": {
         lessonId: "w11-2",
         background: [
-            "PromQL（Prometheus Query Language）是 Prometheus 的查询语言，用于选择、聚合和计算时序数据。它支持两种查询类型：瞬时查询（instant query）返回单个时间点的数据，范围查询（range query）返回时间区间内的数据序列。",
-            "PromQL 的四种数据类型：瞬时向量（instant vector）包含同一时间点的多条时序；范围向量（range vector）包含时间区间内的样本集合；标量（scalar）是单个数值；字符串（string）目前很少使用。理解这些类型对编写正确的查询至关重要。",
-            "rate() 是处理 Counter 类型指标的核心函数，计算范围向量的每秒平均增长率，自动处理 Counter 重置。irate() 只使用最后两个数据点计算瞬时速率，更敏感但也更不稳定。increase() 返回时间段内的总增量。",
-            "histogram_quantile() 函数从直方图数据计算分位数（如 P95、P99）。直方图使用 _bucket 后缀的多个时序存储落入各个区间的计数，通过线性插值估算分位值。这是监控延迟分布的标准方法。"
+            "【四种数据类型】官方文档：Instant Vector 是'a set of time series containing a single sample for each time series, all sharing the same timestamp'；Range Vector 是指定时间窗口内的数据点集合；Scalar 是简单浮点数值；String 是文本值（目前较少使用）。",
+            "【标签匹配操作符】官方文档：支持四种匹配策略——'=' 精确相等、'!=' 不等于、'=~' 正则匹配、'!~' 正则非匹配。正则匹配是'fully anchored'，即 foo 隐式变为 ^foo$。",
+            "【时间修饰符】官方文档：offset 修饰符将评估点向后偏移，用于历史对比；@ 修饰符设置绝对 Unix 时间戳作为评估点。时序数据在 5 分钟无活动后从结果中消失（staleness period）。",
+            "【rate 与 irate】官方文档：rate()'Calculates per-second average rate of increase, automatically handling counter resets'——最适合告警和慢速计数器；irate()'computes instantaneous per-second rate based on the last two data points'——适合快速变化的计数器。",
+            "【increase 函数】官方文档：increase() 是'syntactic sugar for rate(v) multiplied by the number of seconds under the specified time range'——返回指定时间范围内的总增量，会外推到完整窗口。",
+            "【聚合操作符】官方文档：sum'calculate sum over dimensions'、avg'calculate the arithmetic average over dimensions'、topk/bottomk'retrieve the k largest or smallest elements'、count'count number of elements'。使用 by/without 子句控制标签保留。"
         ],
         keyDifficulties: [
-            "理解 rate() 和 irate() 的差异：rate() 使用线性回归计算平均速率，平滑但滞后；irate() 使用最后两点计算瞬时速率，敏感但波动大。告警通常用 rate()，即时图表可用 irate()。注意范围窗口应至少是采集间隔的 4 倍。",
-            "掌握聚合操作符：sum/avg/max/min/count 按维度聚合，topk/bottomk 取排名，quantile 计算聚合分位数。by() 保留指定标签，without() 排除指定标签。聚合顺序影响结果：先 rate() 再 sum()，而非相反。",
-            "直方图分位数的正确写法：histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))。必须保留 le 标签进行 sum 聚合，因为 le 是桶边界。分位数是估算值，桶边界的设计影响精度。",
-            "向量匹配规则：二元运算符（+、-、*、/、比较）在两个向量间进行时，默认要求标签完全匹配。on() 指定匹配标签，ignoring() 排除匹配标签。group_left/group_right 处理多对一匹配，保留指定侧的额外标签。"
+            "【rate vs irate 选择】rate() 计算整个区间平均速率，平滑但有滞后，适合告警规则；irate() 只用最后两点计算瞬时速率，敏感但波动大，'should not be combined with aggregation operators without taking it first'——先聚合再 irate 会导致错误结果。",
+            "【histogram_quantile 用法】官方文档：histogram_quantile()'Calculates φ-quantiles from classic or native histograms'。必须对 _bucket 指标先 rate() 再 sum by (le)，保留 le（桶边界）标签。支持线性或指数插值，结果是估算值。",
+            "【向量匹配关键字】官方文档：on()'reduce the set of considered labels to a provided list'——只在指定标签上匹配；ignoring() 排除指定标签。group_left/group_right 实现多对一/一对多匹配，'retain labels from the one-side'。",
+            "【absent 缺失检测】官方文档：absent()'Returns a 1-element vector if the input vector is empty'——用于告警指标消失场景；absent_over_time() 检测范围向量中的缺失数据。这是检测 Exporter 宕机的标准方法。",
+            "【聚合顺序陷阱】Counter 重置检测必须在单个时序上进行。正确顺序是'先 rate() 再 sum()'——如果先 sum 聚合不同实例的 Counter，重置时间不同会导致计算错误。操作符优先级：^ 最高，然后 */%，然后 +-，然后比较，最后 and/unless/or。"
         ],
         handsOnPath: [
             "在 Prometheus UI 的 Graph 页面练习基础查询：选择指标（如 node_cpu_seconds_total）；添加标签过滤 {mode='idle'}；使用 [5m] 创建范围向量；应用 rate() 计算 CPU 使用率。",
@@ -317,183 +320,147 @@ export const week11Quizzes: Record<string, QuizQuestion[]> = {
     "w11-2": [
         {
             id: "w11-2-q1",
-            question: "rate() 和 irate() 的主要区别是什么？",
+            question: "官方文档对 Instant Vector 的定义是什么？",
             options: [
-                "rate 计算整个区间的平均速率，irate 只用最后两个点计算瞬时速率",
-                "两者计算方式相同",
-                "irate 只能用于 Gauge 类型",
-                "rate 只能用于 5 分钟窗口"
+                "包含时间范围内所有数据点的集合",
+                "'a set of time series containing a single sample for each time series, all sharing the same timestamp'",
+                "单个浮点数值",
+                "文本字符串值"
             ],
-            answer: 0,
-            rationale: "rate() 使用线性回归计算平均速率，更平滑但有滞后；irate() 只使用最后两个数据点，更敏感但波动大。"
+            answer: 1,
+            rationale: "官方文档定义 Instant Vector 为'a set of time series containing a single sample for each time series, all sharing the same timestamp'。"
         },
         {
             id: "w11-2-q2",
-            question: "sum by (job) (rate(http_requests_total[5m])) 的含义是什么？",
+            question: "官方文档对 PromQL 正则匹配的描述是什么？",
             options: [
-                "按 job 维度汇总 5 分钟窗口内的每秒请求速率",
-                "计算过去 5 分钟的请求总数",
-                "只保留 job 标签",
-                "计算最大请求速率"
+                "正则匹配是'fully anchored'，即 foo 隐式变为 ^foo$",
+                "正则匹配默认为部分匹配",
+                "正则匹配不区分大小写",
+                "正则匹配只支持简单通配符"
             ],
             answer: 0,
-            rationale: "rate() 计算每秒增长率，sum by (job) 按 job 维度聚合，结果是每个 job 的总请求速率。"
+            rationale: "官方文档：Pattern matches are 'fully anchored,' meaning foo implicitly becomes ^foo$。"
         },
         {
             id: "w11-2-q3",
-            question: "计算直方图 P95 延迟的正确写法是什么？",
+            question: "官方文档对 rate() 函数的描述是什么？",
             options: [
-                "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
-                "quantile(0.95, http_request_duration_seconds)",
-                "avg(http_request_duration_seconds_bucket)",
-                "max(http_request_duration_seconds)"
+                "只计算最后两个数据点",
+                "返回时间范围内的总增量",
+                "计算标量值的平均数",
+                "'Calculates per-second average rate of increase, automatically handling counter resets'"
             ],
-            answer: 0,
-            rationale: "必须对 _bucket 指标先 rate() 再 sum by (le)，保留 le（桶边界）标签，然后用 histogram_quantile() 计算分位数。"
+            answer: 3,
+            rationale: "官方文档：rate() 'Calculates per-second average rate of increase in a range vector, automatically handling counter resets'。"
         },
         {
             id: "w11-2-q4",
-            question: "向量匹配中 on() 关键字的作用是什么？",
+            question: "官方文档对 irate() 与聚合操作符结合的警告是什么？",
             options: [
-                "指定二元运算时只在这些标签上进行匹配",
-                "增加新标签",
-                "删除指定标签",
-                "设置时间范围"
+                "irate() 只能用于 Gauge 类型",
+                "irate() 必须在 5 分钟窗口内使用",
+                "'should not be combined with aggregation operators without taking it first'",
+                "irate() 不支持 Counter 重置处理"
             ],
-            answer: 0,
-            rationale: "on() 限定向量匹配只考虑指定的标签，忽略其他标签的差异。与 ignoring() 作用相反。"
+            answer: 2,
+            rationale: "官方文档警告：irate() 'should not be combined with aggregation operators without taking it first'——需要先计算 irate 再聚合。"
         },
         {
             id: "w11-2-q5",
-            question: "increase(counter[1h]) 返回什么？",
+            question: "官方文档对 increase() 函数的描述是什么？",
             options: [
-                "过去 1 小时内 Counter 的增长总量",
-                "当前值",
-                "每秒增长率",
-                "最大值"
+                "计算瞬时增长速率",
+                "'syntactic sugar for rate(v) multiplied by the number of seconds under the specified time range'",
+                "返回计数器的绝对值",
+                "计算直方图的分位数"
             ],
-            answer: 0,
-            rationale: "increase() 返回 Counter 在指定时间范围内的总增量，相当于 rate() * 时间范围秒数。"
+            answer: 1,
+            rationale: "官方文档：increase() 是'syntactic sugar for rate(v) multiplied by the number of seconds under the specified time range'。"
         },
         {
             id: "w11-2-q6",
-            question: "offset 关键字的作用是什么？",
+            question: "官方文档对 sum 聚合操作符的描述是什么？",
             options: [
-                "查询过去某个时间偏移的数据，用于同比/环比分析",
-                "设置时间精度",
-                "偏移标签值",
-                "延迟告警触发"
+                "'calculate the arithmetic average over dimensions'",
+                "'count number of elements in the vector'",
+                "'retrieve the k largest elements'",
+                "'calculate sum over dimensions'"
             ],
-            answer: 0,
-            rationale: "offset 允许查询历史时间点的数据，如 rate(http_requests_total[5m] offset 1h) 查询 1 小时前的速率。"
+            answer: 3,
+            rationale: "官方文档：sum(v) 'calculate sum over dimensions'。avg 计算平均值，count 计算元素数量。"
         },
         {
             id: "w11-2-q7",
-            question: "group_left 修饰符解决什么问题？",
+            question: "官方文档对 on() 向量匹配关键字的描述是什么？",
             options: [
-                "在多对一向量匹配中，保留左侧向量的额外标签",
-                "将左侧向量移到右边",
-                "只保留左侧的指标",
-                "按左侧标签分组"
+                "'reduce the set of considered labels to a provided list'",
+                "排除指定标签进行匹配",
+                "保留左侧向量的所有标签",
+                "实现多对多匹配"
             ],
             answer: 0,
-            rationale: "group_left 用于一对多（右侧）或多对一（左侧）匹配场景，允许保留较高基数一侧的额外标签。"
+            rationale: "官方文档：on() 'reduce the set of considered labels to a provided list'——只在指定标签上匹配。"
         },
         {
             id: "w11-2-q8",
-            question: "absent() 函数的用途是什么？",
+            question: "官方文档对 absent() 函数的描述是什么？",
             options: [
-                "当没有匹配的时间序列时返回 1，用于检测指标缺失或目标掉线",
-                "计算绝对值",
-                "返回空结果",
-                "删除时间序列"
+                "计算缺失数据点的数量",
+                "删除空的时间序列",
+                "'Returns a 1-element vector if the input vector is empty'",
+                "填充缺失的数据点"
             ],
-            answer: 0,
-            rationale: "absent() 用于告警场景，当指标不存在时返回 1，可以检测 Exporter 宕机或指标停止上报。"
+            answer: 2,
+            rationale: "官方文档：absent() 'Returns a 1-element vector if the input vector is empty, useful for alerting when metrics disappear'。"
         },
         {
             id: "w11-2-q9",
-            question: "Gauge 和 Counter 指标类型的区别是什么？",
+            question: "为什么要「先 rate() 再 sum()」而不是相反顺序？",
             options: [
-                "Gauge 可上升下降，Counter 只能单调递增（重启时归零）",
-                "两者完全相同",
-                "Counter 用于内存，Gauge 用于 CPU",
-                "Gauge 必须手动重置"
+                "sum() 不支持 Counter 类型",
+                "Counter 重置检测必须在单个时序上进行，先聚合会导致重置时间不同引发计算错误",
+                "rate() 只能处理聚合后的数据",
+                "两者顺序没有区别"
             ],
-            answer: 0,
-            rationale: "Counter 用于累计值（如请求总数），只增不减；Gauge 用于可变值（如温度、内存使用），可增可减。"
+            answer: 1,
+            rationale: "Counter 重置检测必须在单个时序上进行。如果先 sum 聚合不同实例的 Counter，各实例重置时间不同会导致计算错误。"
         },
         {
             id: "w11-2-q10",
-            question: "为什么要「先 rate 再 sum」而不是「先 sum 再 rate」？",
+            question: "官方文档描述的时序数据 staleness period 是多长？",
             options: [
-                "rate() 需要在单个时序上计算才能正确处理 Counter 重置",
-                "顺序无所谓",
-                "sum 不能用于 Counter",
-                "rate 只能在最后使用"
+                "1 分钟",
+                "10 分钟",
+                "15 分钟",
+                "5 分钟——无活动后从结果中消失"
             ],
-            answer: 0,
-            rationale: "Counter 重置检测必须在单个时序上进行。如果先 sum 聚合，不同实例的重置时间不同，会导致计算错误。"
+            answer: 3,
+            rationale: "官方文档：Time series disappear from results after 5 minutes of inactivity (the staleness period)。"
         },
         {
             id: "w11-2-q11",
-            question: "label_replace() 函数的用途是什么？",
+            question: "histogram_quantile() 函数计算分位数需要保留哪个标签？",
             options: [
-                "基于正则表达式添加或修改标签值",
-                "删除所有标签",
-                "计算速率",
-                "设置告警阈值"
+                "instance 标签",
+                "job 标签",
+                "le（桶边界）标签",
+                "quantile 标签"
             ],
-            answer: 0,
-            rationale: "label_replace() 可以从现有标签提取内容创建新标签，常用于调整标签以满足向量匹配需求。"
+            answer: 2,
+            rationale: "必须对 _bucket 指标先 rate() 再 sum by (le)，保留 le 标签，因为 le 是桶边界，histogram_quantile 需要它来计算分位数。"
         },
         {
             id: "w11-2-q12",
-            question: "topk(5, sum by (instance) (rate(http_requests_total[5m]))) 的含义是什么？",
+            question: "PromQL 操作符优先级从高到低的正确顺序是什么？",
             options: [
-                "返回请求速率最高的 5 个实例",
-                "返回所有实例的前 5 分钟数据",
-                "只保留 5 个标签",
-                "计算前 5 分钟的平均值"
+                "比较 → 算术 → 逻辑",
+                "^ → */% → +- → 比较 → and/unless → or",
+                "and/or → 比较 → 算术",
+                "所有操作符优先级相同"
             ],
-            answer: 0,
-            rationale: "topk() 按值排序返回前 N 个时序，常用于找出资源消耗最高的实例或服务。"
-        },
-        {
-            id: "w11-2-q13",
-            question: "范围向量选择器的时间单位 [5m] 中 m 代表什么？",
-            options: [
-                "分钟（minute）",
-                "毫秒（millisecond）",
-                "月（month）",
-                "兆字节（megabyte）"
-            ],
-            answer: 0,
-            rationale: "PromQL 时间单位：ms（毫秒）、s（秒）、m（分钟）、h（小时）、d（天）、w（周）、y（年）。"
-        },
-        {
-            id: "w11-2-q14",
-            question: "Recording Rules 的主要用途是什么？",
-            options: [
-                "预计算常用的复杂查询，将结果存储为新指标，减少查询时的计算开销",
-                "记录查询日志",
-                "录制用户操作",
-                "存储告警历史"
-            ],
-            answer: 0,
-            rationale: "Recording Rules 定期执行 PromQL 并将结果存储为新时序，适用于 Dashboard 反复查询的复杂表达式。"
-        },
-        {
-            id: "w11-2-q15",
-            question: "histogram_quantile() 返回的是精确值还是估算值？",
-            options: [
-                "估算值，通过桶边界之间的线性插值计算",
-                "精确值",
-                "取决于数据量",
-                "只有 P50 是精确的"
-            ],
-            answer: 0,
-            rationale: "直方图只记录落入各桶的计数，分位数通过线性插值估算。桶边界的设计影响精度。"
+            answer: 1,
+            rationale: "官方文档：Operator precedence: ^ (highest) → *,/,%,atan2 → +,- → comparisons → and,unless → or (lowest)。"
         }
     ],
     "w11-3": [
