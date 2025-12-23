@@ -33,7 +33,7 @@ export const systemDesignStages: Stage[] = [
                         title: "性能 vs 可扩展性：理解增长的代价",
                         detail: "区分性能优化（单请求更快）与可扩展性设计（处理更多请求），理解 Amdahl 定律与扩展瓶颈。",
                         resources: [
-                            { title: "Scalability for Dummies", url: "https://www.lecloud.net/tagged/scalability" },
+                            { title: "Scalable Web Applications: Best Practices", url: "https://42works.net/scalable-web-applications-from-basics-to-best-practices/" },
                             { title: "High Scalability Blog", url: "http://highscalability.com/" },
                             { title: "Amdahl's Law（维基百科）", url: "https://en.wikipedia.org/wiki/Amdahl%27s_law" },
                         ],
