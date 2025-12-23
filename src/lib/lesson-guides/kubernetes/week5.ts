@@ -83,16 +83,18 @@ export const week5Guides: Record<string, LessonGuide> = {
     "w5-2": {
         lessonId: "w5-2",
         background: [
-            "PersistentVolume（PV）是集群级别的存储资源，由管理员静态创建或通过 StorageClass 动态供给。PV 的生命周期独立于 Pod，数据持久化不受 Pod 重建影响。",
-            "PersistentVolumeClaim（PVC）是用户对存储的请求声明，类似于 Pod 对 CPU/内存的 requests。PVC 指定所需容量、访问模式和 StorageClass，由控制平面自动匹配并绑定合适的 PV。",
-            "PV 和 PVC 的绑定是一对一关系（1:1 mapping）。一旦绑定，PVC 独占该 PV，直到 PVC 被删除。绑定过程考虑容量、访问模式、StorageClass 和标签选择器。",
-            "Kubernetes 提供存储对象使用保护（Storage Object in Use Protection）：正在被 Pod 使用的 PVC 无法被删除，绑定了 PVC 的 PV 也受保护。删除请求会进入 Terminating 状态等待解除占用。"
+            "【PV 定义】官方文档：'A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes'——PV 是集群级存储资源，'have a lifecycle independent of any individual Pod'——生命周期独立于 Pod。",
+            "【PVC 定义】官方文档：'A PersistentVolumeClaim (PVC) is a request for storage by a user. It is similar to a Pod'——PVC 是用户对存储的请求声明，类似 Pod 消费节点资源，PVC 消费 PV 资源。",
+            "【一对一绑定】官方文档：'PVC to PV binding is a one-to-one mapping, using a ClaimRef which is a bi-directional binding'——PV 和 PVC 是一对一双向绑定关系，一旦绑定 PVC 独占该 PV。",
+            "【存储对象保护】官方文档：'If a user deletes a PVC in active use by a Pod, the PVC is not removed immediately'——正在被 Pod 使用的 PVC 受保护无法立即删除，会进入 Terminating 状态等待解除占用。",
+            "【供给方式】静态供给（管理员预创建 PV）和动态供给（通过 StorageClass 按需自动创建）。动态供给更灵活，是生产环境推荐方式。"
         ],
         keyDifficulties: [
-            "访问模式理解：ReadWriteOnce（RWO，单节点读写）、ReadOnlyMany（ROX，多节点只读）、ReadWriteMany（RWX，多节点读写）、ReadWriteOncePod（RWOP，单 Pod 读写）。不同存储后端支持的模式不同，如 hostPath 只支持 RWO。",
-            "回收策略选择：Retain（保留数据，需手动清理后才能重新绑定）、Delete（自动删除 PV 和底层存储，动态供给的默认策略）、Recycle（已废弃，执行 rm -rf 清理数据）。生产环境重要数据建议使用 Retain。",
-            "静态供给 vs 动态供给：静态供给由管理员预先创建 PV；动态供给通过 StorageClass 按需自动创建 PV。动态供给更灵活，减少管理负担，是生产环境推荐方式。",
-            "容量匹配规则：PVC 请求的容量不能超过 PV 容量。如果 PVC 请求 5Gi 而只有 10Gi 的 PV 可用，PVC 会绑定到 10Gi PV，但只能使用请求的 5Gi（具体行为取决于存储后端）。"
+            "【四种访问模式】官方文档定义：ReadWriteOnce (RWO，单节点读写)、ReadOnlyMany (ROX，多节点只读)、ReadWriteMany (RWX，多节点读写)、ReadWriteOncePod (RWOP，单 Pod 读写)。不同存储后端支持的模式不同。",
+            "【Retain 策略】官方文档：'allows for manual reclamation...not yet available for another claim because the previous claimant's data remains on the volume'——PVC 删除后 PV 变 Released，需手动清理数据和 claimRef 后才能重新绑定。",
+            "【Delete 策略】官方文档：'dynamically provisioned inherit the reclaim policy of their StorageClass, which defaults to Delete'——动态供给默认 Delete，删除 PVC 时自动删除 PV 和底层存储。",
+            "【Recycle 已废弃】官方文档：'Recycle reclaim policy is deprecated. Instead, the recommended approach is to use dynamic provisioning'——Recycle 只做简单 rm -rf 清理，推荐用动态供给替代。",
+            "【容量匹配规则】PVC 请求的容量不能超过可用 PV。官方示例：'A cluster with many 50Gi PVs won't match a 100Gi PVC request until a 100Gi PV is added'。"
         ],
         handsOnPath: [
             "创建 hostPath 类型的 PV（storageClassName: manual），然后创建请求该类的 PVC，使用 kubectl get pv,pvc 观察绑定状态变化（Available → Bound）。",
@@ -529,183 +531,147 @@ export const week5Quizzes: Record<string, QuizQuestion[]> = {
     "w5-2": [
         {
             id: "w5-2-q1",
-            question: "PersistentVolume（PV）和 PersistentVolumeClaim（PVC）的关系是什么？",
+            question: "官方文档对 PersistentVolume (PV) 的核心特性描述是什么？",
             options: [
-                "一个 PV 可以绑定多个 PVC",
-                "一个 PVC 可以绑定多个 PV",
-                "PV 和 PVC 是一对一绑定关系",
-                "PV 和 PVC 可以多对多绑定"
+                "'have a lifecycle independent of any individual Pod'——生命周期独立于任何 Pod",
+                "PV 生命周期与 Pod 绑定",
+                "PV 只能静态创建",
+                "PV 不支持动态供给"
             ],
-            answer: 2,
-            rationale: "PV 和 PVC 是一对一绑定关系。一个 PV 只能绑定一个 PVC，一个 PVC 也只能绑定一个 PV。"
+            answer: 0,
+            rationale: "官方文档明确指出 PV'have a lifecycle independent of any individual Pod that uses the PV'——生命周期独立于 Pod。"
         },
         {
             id: "w5-2-q2",
-            question: "ReadWriteOnce（RWO）访问模式的含义是什么？",
+            question: "官方文档对 PV 和 PVC 绑定关系的描述是什么？",
             options: [
-                "可以被多个节点同时读写",
-                "可以被多个节点只读访问",
-                "只能被单个节点以读写方式挂载",
-                "只能被单个 Pod 以读写方式挂载"
+                "多个 PVC 可以绑定同一个 PV",
+                "'PVC to PV binding is a one-to-one mapping'——一对一双向绑定",
+                "PV 可以同时绑定多个 PVC",
+                "绑定是临时的，可随时解除"
             ],
-            answer: 2,
-            rationale: "ReadWriteOnce（RWO）表示卷只能被单个节点以读写方式挂载。注意是节点级别，同一节点上的多个 Pod 可以同时访问。"
+            answer: 1,
+            rationale: "官方文档明确：'PVC to PV binding is a one-to-one mapping, using a ClaimRef which is a bi-directional binding'。"
         },
         {
             id: "w5-2-q3",
-            question: "PV 的 Retain 回收策略意味着什么？",
+            question: "ReadWriteOnce (RWO) 访问模式的含义是什么？",
             options: [
-                "PVC 删除后 PV 和数据自动删除",
-                "PVC 删除后 PV 保留，数据需手动清理后才能重新绑定",
-                "PVC 删除后执行 rm -rf 清理数据",
-                "PVC 删除后 PV 自动重新变为 Available"
+                "可以被多个节点同时读写",
+                "只能被单个 Pod 读写",
+                "只能被单个节点以读写方式挂载",
+                "只读不能写"
             ],
-            answer: 1,
-            rationale: "Retain 策略下，PVC 删除后 PV 变为 Released 状态，数据保留但不能被新 PVC 绑定，需要管理员手动清理 claimRef 和数据。"
+            answer: 2,
+            rationale: "官方文档：RWO 表示'Volume can be mounted as read-write by a single node'——单节点读写，同一节点上的多个 Pod 可以同时访问。"
         },
         {
             id: "w5-2-q4",
-            question: "动态供给（Dynamic Provisioning）需要什么资源？",
+            question: "官方文档对 Retain 回收策略的描述是什么？",
             options: [
-                "只需要 PVC",
-                "需要预先创建的 PV",
-                "需要 StorageClass 配合 PVC",
-                "需要手动创建存储后端"
+                "自动删除 PV 和底层存储",
+                "执行 rm -rf 清理数据后重新可用",
+                "立即变为 Available 状态",
+                "'not yet available for another claim because the previous claimant's data remains on the volume'"
             ],
-            answer: 2,
-            rationale: "动态供给通过 StorageClass 定义存储配置，当 PVC 引用该 StorageClass 时自动创建 PV，无需管理员预先创建。"
+            answer: 3,
+            rationale: "官方文档：Retain 策略下'not yet available for another claim because the previous claimant's data remains on the volume'——需手动清理。"
         },
         {
             id: "w5-2-q5",
-            question: "PVC 的状态 Pending 表示什么？",
+            question: "官方文档对动态供给的 PV 默认回收策略的说明是什么？",
             options: [
-                "PVC 正在被 Pod 使用",
-                "PVC 已绑定到 PV",
-                "PVC 等待绑定，没有找到匹配的 PV",
-                "PVC 被标记删除"
+                "'dynamically provisioned inherit the reclaim policy of their StorageClass, which defaults to Delete'",
+                "默认使用 Retain 策略",
+                "默认使用 Recycle 策略",
+                "没有默认策略，必须手动指定"
             ],
-            answer: 2,
-            rationale: "Pending 表示 PVC 正在等待绑定，可能是没有满足条件的 PV，或者 StorageClass 的动态供给失败。"
+            answer: 0,
+            rationale: "官方文档明确：'dynamically provisioned inherit the reclaim policy of their StorageClass, which defaults to Delete'。"
         },
         {
             id: "w5-2-q6",
-            question: "ReadWriteOncePod（RWOP）访问模式的特点是什么？",
+            question: "官方文档对 Recycle 回收策略的建议是什么？",
             options: [
-                "多个 Pod 可以同时读写",
-                "只有单个 Pod 可以挂载该卷",
-                "只支持只读访问",
-                "只在 Pod 创建时可写"
+                "推荐在生产环境使用",
+                "比 Delete 更安全",
+                "'deprecated. Instead, the recommended approach is to use dynamic provisioning'——已废弃",
+                "适合重要数据"
             ],
-            answer: 1,
-            rationale: "ReadWriteOncePod（RWOP）是最严格的访问模式，确保整个集群中只有一个 Pod 可以挂载该卷，提供最强的独占保证。"
+            answer: 2,
+            rationale: "官方文档明确：'Recycle reclaim policy is deprecated. Instead, the recommended approach is to use dynamic provisioning'。"
         },
         {
             id: "w5-2-q7",
-            question: "PV 的 Delete 回收策略在什么场景下是默认值？",
+            question: "存储对象使用保护的行为是什么？",
             options: [
-                "静态供给的 PV",
-                "动态供给（通过 StorageClass）创建的 PV",
-                "所有 PV",
-                "hostPath 类型的 PV"
+                "立即删除 PVC 和数据",
+                "自动备份后删除",
+                "'If a user deletes a PVC in active use by a Pod, the PVC is not removed immediately'",
+                "阻止任何删除操作"
             ],
-            answer: 1,
-            rationale: "动态供给创建的 PV 默认使用 Delete 回收策略（除非 StorageClass 指定其他策略），PVC 删除时自动清理 PV 和底层存储。"
+            answer: 2,
+            rationale: "官方文档：'If a user deletes a PVC in active use by a Pod, the PVC is not removed immediately'——进入 Terminating 等待解除占用。"
         },
         {
             id: "w5-2-q8",
-            question: "存储对象使用保护（Storage Object in Use Protection）的作用是什么？",
+            question: "ReadWriteOncePod (RWOP) 与 ReadWriteOnce (RWO) 的区别是什么？",
             options: [
-                "加密存储数据",
-                "防止正在使用的 PVC 和绑定的 PV 被删除",
-                "限制存储的访问权限",
-                "自动备份存储数据"
+                "RWOP 允许多个 Pod 同时读写",
+                "RWOP 只保证单个 Pod 独占，RWO 是单节点级别",
+                "两者完全相同",
+                "RWOP 只支持只读"
             ],
             answer: 1,
-            rationale: "存储对象使用保护防止正在被 Pod 使用的 PVC 被删除，也防止绑定了 PVC 的 PV 被删除，避免数据丢失。"
+            rationale: "官方文档：RWOP 是'Volume can be mounted as read-write by a single Pod'——单 Pod 级别的独占，比 RWO（单节点）更严格。"
         },
         {
             id: "w5-2-q9",
-            question: "PV 从 Released 状态如何变回 Available 状态？",
+            question: "官方文档关于容量匹配的示例说明是什么？",
             options: [
-                "自动变回 Available",
-                "删除 PV 重新创建",
-                "手动清理 spec.claimRef 字段",
-                "重启 kube-controller-manager"
+                "'A cluster with many 50Gi PVs won't match a 100Gi PVC request until a 100Gi PV is added'",
+                "PVC 会自动扩展到最大可用 PV",
+                "容量不匹配时自动创建新 PV",
+                "PVC 可以跨多个 PV 绑定"
             ],
-            answer: 2,
-            rationale: "Released 状态的 PV 因为还保留着之前 PVC 的绑定信息（claimRef），需要手动清理该字段后才能重新变为 Available。"
+            answer: 0,
+            rationale: "官方示例：'A cluster with many 50Gi PVs won't match a 100Gi PVC request until a 100Gi PV is added'——必须满足容量需求。"
         },
         {
             id: "w5-2-q10",
-            question: "hostPath 类型的 PV 有什么限制？",
+            question: "PV 从 Released 状态如何变回 Available 状态？",
             options: [
-                "不支持持久化存储",
-                "只能在单节点集群使用，数据不跨节点共享",
-                "不支持读写操作",
-                "必须使用 StorageClass"
+                "自动变回 Available",
+                "重启 kube-controller-manager",
+                "手动清理 spec.claimRef 字段",
+                "删除并重建 PV"
             ],
-            answer: 1,
-            rationale: "hostPath 将节点上的目录挂载到 Pod，数据存储在特定节点上。Pod 调度到其他节点时无法访问数据，仅适合单节点测试环境。"
+            answer: 2,
+            rationale: "Released 状态的 PV 保留着之前 PVC 的绑定信息（claimRef），需要手动清理该字段后才能重新变为 Available。"
         },
         {
             id: "w5-2-q11",
-            question: "PVC 如何选择要绑定的 PV？",
-            options: [
-                "随机选择任意 PV",
-                "按 PV 创建时间选择最新的",
-                "根据 StorageClass、容量、访问模式和标签选择器匹配",
-                "由管理员手动指定"
-            ],
-            answer: 2,
-            rationale: "PVC 绑定时考虑多个因素：StorageClass 必须匹配、PV 容量必须满足请求、访问模式必须兼容、标签选择器必须匹配。"
-        },
-        {
-            id: "w5-2-q12",
-            question: "ReadWriteMany（RWX）访问模式适合什么场景？",
+            question: "ReadWriteMany (RWX) 访问模式适合什么场景？",
             options: [
                 "单节点数据库",
                 "多个 Pod 需要同时读写共享数据（如 NFS）",
-                "需要最高安全性的场景",
+                "最高安全性要求的场景",
                 "临时存储"
             ],
             answer: 1,
-            rationale: "ReadWriteMany（RWX）允许多个节点同时以读写方式挂载，适合需要共享存储的场景，如多副本应用共享上传文件。"
+            rationale: "RWX 表示'Volume can be mounted as read-write by many nodes'——适合需要多节点共享读写的场景，如共享文件存储。"
         },
         {
-            id: "w5-2-q13",
+            id: "w5-2-q12",
             question: "PV 的 volumeMode 字段可以设置为哪两种值？",
             options: [
                 "ReadOnly 和 ReadWrite",
-                "Filesystem 和 Block",
+                "Static 和 Dynamic",
                 "Persistent 和 Ephemeral",
-                "Static 和 Dynamic"
+                "Filesystem 和 Block"
             ],
-            answer: 1,
-            rationale: "volumeMode 可以是 Filesystem（默认，格式化为文件系统）或 Block（块设备直通，用于需要原始块访问的场景如数据库）。"
-        },
-        {
-            id: "w5-2-q14",
-            question: "使用 subPath 挂载 PVC 有什么特点？",
-            options: [
-                "可以自动更新内容",
-                "可以将 PVC 中的特定子目录挂载到容器，但不支持自动更新",
-                "只支持 ConfigMap",
-                "性能比直接挂载更好"
-            ],
-            answer: 1,
-            rationale: "subPath 允许将 PVC 中的特定文件或子目录挂载到容器的指定路径，但与 ConfigMap 的 subPath 类似，不支持内容自动更新。"
-        },
-        {
-            id: "w5-2-q15",
-            question: "Recycle 回收策略为什么被废弃？",
-            options: [
-                "性能太差",
-                "不够安全，只执行简单的 rm -rf，推荐使用动态供给的 Delete 策略",
-                "不支持所有存储类型",
-                "与 StorageClass 不兼容"
-            ],
-            answer: 1,
-            rationale: "Recycle 只执行基本的 rm -rf 清理，安全性和可靠性不足。推荐使用动态供给（每次创建新 PV）或手动管理（Retain）。"
+            answer: 3,
+            rationale: "官方文档：volumeMode 可以是 Filesystem（默认，格式化为文件系统）或 Block（块设备直通，用于原始块访问场景）。"
         }
     ],
     "w5-1": [
