@@ -5,16 +5,19 @@ export const week11Guides: Record<string, LessonGuide> = {
     "w11-1": {
         lessonId: "w11-1",
         background: [
-            "Prometheus 是云原生监控的事实标准，采用拉取（Pull）模式从目标端点定期抓取 /metrics 暴露的指标。这种模式让 Prometheus 能主动控制采集频率和目标列表，无需目标主动推送，降低了系统耦合度。",
-            "服务发现（Service Discovery）是 Prometheus 的核心能力。在 Kubernetes 环境中，通过 kubernetes_sd_config 可以自动发现 Pod、Service、Node、Endpoints 等资源，无需手动维护目标列表。发现的元数据会作为 __meta_* 标签供后续处理。",
-            "Relabel 是 Prometheus 的配置重写机制，发生在采集前（relabel_configs）和采集后（metric_relabel_configs）。通过正则匹配和标签操作，可以过滤目标、重写标签、提取元数据，实现灵活的采集控制。",
-            "Prometheus 的本地存储使用时序数据库（TSDB），以 2 小时为一个 block 存储数据，包含 chunks（压缩数据）、index（索引）和 tombstones（删除标记）。WAL（Write-Ahead Log）确保写入持久性。对于长期存储，可通过 Remote Write 将数据发送到 Cortex、Mimir、VictoriaMetrics 等远程存储。"
+            "【Prometheus 定义】官方文档：Prometheus 是'an open-source systems monitoring and alerting toolkit'——开源系统监控和告警工具包。2016 年成为 CNCF 第二个托管项目，采用多维数据模型，通过 PromQL 查询语言实现灵活的时序数据分析。",
+            "【Pull 模式架构】官方文档：'Prometheus actively retrieves metrics from instrumented jobs using HTTP'——主动通过 HTTP 从目标拉取指标。这种模式让 Prometheus 控制采集频率和目标，无需依赖客户端推送，配合 Pushgateway 支持短生命周期任务。",
+            "【服务发现与 Relabel】官方配置文档：kubernetes_sd_config 支持自动发现 K8s 资源；relabel_configs 实现'advanced modifications to any target and its labels before scraping'——采集前的高级标签处理，是过滤和修改目标的'preferred and more powerful way'。",
+            "【TSDB 存储架构】官方文档：Prometheus 将数据组织为'two-hour blocks'，每个 block 包含 chunks、index 和 tombstones。WAL 使用'128MB segments'保护写入，默认保留'a minimum of three write-ahead log files'。Remote Write 支持将数据发送到外部长期存储。",
+            "【K8s 指标管道】K8s 文档：资源指标流经 cAdvisor（嵌入 kubelet 的容器指标守护进程）→ kubelet（/metrics/resource 端点）→ metrics-server（聚合节点指标）→ Metrics API，为 HPA/VPA 和 kubectl top 提供数据。",
+            "【Exporter 机制】官方文档：Exporter 是'libraries and servers which help in exporting existing metrics from third-party systems as Prometheus metrics'——将第三方系统指标转换为 Prometheus 格式，解决无法直接修改源码添加埋点的场景。"
         ],
         keyDifficulties: [
-            "理解 Kubernetes 服务发现的角色类型：endpoints（发现 Service 后端的 Pod）、pod（直接发现所有 Pod）、service（发现 Service VIP）、node（发现集群节点）。不同角色产生不同的 __meta_kubernetes_* 标签，选择合适的角色是配置的关键。",
-            "掌握 relabel_configs 的核心动作：keep/drop（过滤目标）、replace（重写标签值）、labelmap（批量重命名标签）、labeldrop/labelkeep（删除/保留标签）。理解 source_labels、regex、target_label、replacement 的组合使用。",
-            "区分 scrape_configs 中的 relabel_configs 和 metric_relabel_configs：前者在采集前处理目标元数据（如过滤不需要采集的 Pod），后者在采集后处理指标（如删除高基数标签）。两者执行时机不同，用途也不同。",
-            "理解 honor_labels 参数：当目标暴露的标签与 Prometheus 附加的标签冲突时，honor_labels: true 保留目标标签，false 则添加 exported_ 前缀保留两者。这在联邦或 Pushgateway 场景尤为重要。"
+            "【服务发现角色选择】kubernetes_sd_config 的 role 类型：endpoints（发现 Service 后端 Pod IP:Port）、pod（直接发现所有 Pod）、service（发现 Service ClusterIP）、node（发现集群节点）。不同角色产生不同的 __meta_kubernetes_* 标签，endpoints 最常用于应用监控。",
+            "【Relabel 动作语义】核心动作：keep/drop（根据 regex 过滤目标）、replace（重写 target_label 值）、labelmap（批量重命名匹配的标签）、labeldrop/labelkeep（删除/保留匹配的标签）。source_labels + regex + target_label + replacement 组合实现复杂转换。",
+            "【两阶段 Relabel 区分】relabel_configs 在采集前处理目标元数据（过滤不需要采集的 Pod、从 annotation 提取端口）；metric_relabel_configs 在采集后处理指标（删除高基数标签、过滤运行时指标）。执行时机和用途完全不同。",
+            "【honor_labels 冲突处理】当目标暴露的标签与 Prometheus 附加的标签冲突时：honor_labels: true 保留目标标签；false（默认）给目标标签添加 exported_ 前缀。Federation 和 Pushgateway 场景通常需要设为 true。",
+            "【存储容量规划】官方公式：needed_disk_space = retention_time_seconds * ingested_samples_per_second * bytes_per_sample。默认保留 15 天（--storage.tsdb.retention.time），可同时设置 size 限制。"
         ],
         handsOnPath: [
             "在 Kubernetes 集群中部署 kube-prometheus-stack（通过 Helm），观察自动创建的 ServiceMonitor/PodMonitor CRD。访问 Prometheus UI 的 /targets 页面，理解服务发现如何工作。",
@@ -168,183 +171,147 @@ export const week11Quizzes: Record<string, QuizQuestion[]> = {
     "w11-1": [
         {
             id: "w11-1-q1",
-            question: "Prometheus 默认的采集模型是什么？",
+            question: "官方文档对 Prometheus 的定义是什么？",
             options: [
-                "Pull 模式：定期从目标端点抓取 /metrics 暴露的指标",
-                "Push 模式：目标主动推送指标到 Prometheus",
-                "通过日志收集器被动接收",
-                "通过消息队列异步传输"
+                "容器编排平台",
+                "'an open-source systems monitoring and alerting toolkit'——开源系统监控和告警工具包",
+                "日志收集系统",
+                "服务网格代理"
             ],
-            answer: 0,
-            rationale: "Prometheus 采用拉取（Pull）模式，主动从配置的目标端点定期抓取 /metrics 路径暴露的指标。"
+            answer: 1,
+            rationale: "Prometheus 官方文档定义其为'an open-source systems monitoring and alerting toolkit originally built at SoundCloud'。"
         },
         {
             id: "w11-1-q2",
-            question: "kubernetes_sd_config 中 role: endpoints 发现的是什么？",
+            question: "官方文档描述 Prometheus 的数据采集模式是什么？",
             options: [
-                "Service 的后端 Pod IP 和端口",
-                "所有 Pod 的 IP",
-                "Node 的 IP",
-                "Service 的 ClusterIP"
+                "'actively retrieves metrics from instrumented jobs using HTTP'——主动通过 HTTP 拉取指标",
+                "被动等待目标推送数据",
+                "通过消息队列接收",
+                "读取本地文件"
             ],
             answer: 0,
-            rationale: "role: endpoints 发现 Service 背后的 Endpoints，即实际处理请求的 Pod IP 和端口，是最常用的服务发现模式。"
+            rationale: "官方文档：'Rather than waiting for systems to push data, Prometheus actively retrieves metrics from instrumented jobs using HTTP'——主动拉取模式。"
         },
         {
             id: "w11-1-q3",
-            question: "relabel_configs 中 action: keep 的作用是什么？",
+            question: "官方配置文档对 relabel_configs 功能的描述是什么？",
             options: [
-                "只保留匹配 regex 的目标，丢弃其他目标",
-                "保留所有目标",
-                "删除匹配的标签",
-                "重写标签值"
+                "只用于删除标签",
+                "只用于添加新指标",
+                "存储配置参数",
+                "'advanced modifications to any target and its labels before scraping'——采集前的高级标签处理"
             ],
-            answer: 0,
-            rationale: "action: keep 根据 source_labels 和 regex 过滤目标，只保留匹配的目标，不匹配的会被丢弃。"
+            answer: 3,
+            rationale: "官方配置文档：relabel_configs 实现'advanced modifications to any target and its labels before scraping'。"
         },
         {
             id: "w11-1-q4",
-            question: "scrape_configs 中的 relabel_configs 和 metric_relabel_configs 的区别是什么？",
+            question: "官方文档描述 Prometheus 本地存储的 block 时间跨度是多少？",
             options: [
-                "relabel_configs 在采集前处理目标，metric_relabel_configs 在采集后处理指标",
-                "两者功能相同",
-                "relabel_configs 只能用于 Kubernetes",
-                "metric_relabel_configs 只能删除指标"
+                "一小时",
+                "一天",
+                "'two-hour blocks'——两小时的数据块",
+                "一周"
             ],
-            answer: 0,
-            rationale: "relabel_configs 在采集前决定是否采集目标以及如何修改目标标签；metric_relabel_configs 在采集后处理已收集的指标。"
+            answer: 2,
+            rationale: "官方存储文档：Prometheus organizes data into'two-hour blocks'containing chunks, metadata, and index files。"
         },
         {
             id: "w11-1-q5",
-            question: "Prometheus 本地存储的基本单位是什么？",
+            question: "K8s 文档描述的资源指标管道中，cAdvisor 的角色是什么？",
             options: [
-                "以 2 小时为一个 block，包含 chunks、index 和 tombstones",
-                "单个大文件存储所有数据",
-                "每个指标一个文件",
-                "使用 MySQL 存储"
+                "API 服务器组件",
+                "网络代理",
+                "存储驱动",
+                "嵌入 kubelet 的容器指标收集守护进程"
             ],
-            answer: 0,
-            rationale: "Prometheus TSDB 将数据按时间切分为 2 小时的 block，每个 block 包含压缩的 chunks、索引文件和删除标记。"
+            answer: 3,
+            rationale: "K8s 文档：cAdvisor 是'Daemon embedded in the kubelet'，'Collects, aggregates, and exposes container metrics'。"
         },
         {
             id: "w11-1-q6",
-            question: "Remote Write 的主要用途是什么？",
+            question: "官方文档对 Exporter 的定义是什么？",
             options: [
-                "将采集的数据实时发送到远程长期存储系统",
-                "从远程系统读取数据",
-                "同步配置文件",
-                "发送告警通知"
+                "数据压缩工具",
+                "'libraries and servers which help in exporting existing metrics from third-party systems'——导出第三方系统指标的库和服务",
+                "告警发送组件",
+                "配置管理工具"
             ],
-            answer: 0,
-            rationale: "Remote Write 允许 Prometheus 将数据流式发送到 Cortex、Mimir、VictoriaMetrics 等远程存储，实现长期保存和全局查询。"
+            answer: 1,
+            rationale: "官方文档：Exporter 是'libraries and servers which help in exporting existing metrics from third-party systems as Prometheus metrics'。"
         },
         {
             id: "w11-1-q7",
-            question: "Pushgateway 适用于什么场景？",
+            question: "官方文档描述的 WAL 段大小是多少？",
             options: [
-                "短生命周期或批处理任务无法被定期拉取时临时上报指标",
-                "所有长期运行的服务",
-                "替代 Alertmanager",
-                "存储日志数据"
+                "'128MB segments'——128MB 的段文件",
+                "64MB 段",
+                "256MB 段",
+                "512MB 段"
             ],
             answer: 0,
-            rationale: "Pushgateway 用于缓存短生命周期任务（如批处理作业）的指标，让 Prometheus 能够采集到这些瞬时任务的数据。"
+            rationale: "官方存储文档：The system maintains a WAL using'128MB segments'to protect against crashes。"
         },
         {
             id: "w11-1-q8",
-            question: "honor_labels: true 配置的作用是什么？",
+            question: "kubernetes_sd_config 的 role: endpoints 发现的是什么？",
             options: [
-                "当目标标签与 Prometheus 附加标签冲突时，保留目标的标签",
-                "删除所有标签",
-                "总是使用 Prometheus 附加的标签",
-                "禁用标签处理"
+                "所有 Pod 的 IP",
+                "Node 的 IP",
+                "Service 的后端 Pod IP 和端口",
+                "Ingress 规则"
             ],
-            answer: 0,
-            rationale: "honor_labels: true 表示当标签冲突时优先保留目标暴露的标签，这在 Federation 或 Pushgateway 场景很重要。"
+            answer: 2,
+            rationale: "role: endpoints 发现 Service 背后的 Endpoints，即实际处理请求的 Pod IP 和端口，是最常用的服务发现模式。"
         },
         {
             id: "w11-1-q9",
-            question: "ServiceMonitor CRD 的作用是什么？",
+            question: "relabel_configs 和 metric_relabel_configs 的关键区别是什么？",
             options: [
-                "声明式定义 Prometheus 应该采集哪些 Service 的指标",
-                "监控 Service 的健康状态",
-                "配置 Service 的负载均衡",
-                "管理 Service 的网络策略"
+                "两者功能完全相同",
+                "前者在采集前处理目标元数据，后者在采集后处理指标",
+                "前者只能添加标签，后者只能删除标签",
+                "前者用于 K8s，后者用于其他系统"
             ],
-            answer: 0,
-            rationale: "ServiceMonitor 是 Prometheus Operator 定义的 CRD，通过声明式配置指定 Prometheus 采集目标，Operator 会将其转换为 scrape_config。"
+            answer: 1,
+            rationale: "relabel_configs 在采集前决定是否采集目标以及如何修改目标标签；metric_relabel_configs 在采集后处理已收集的指标。"
         },
         {
             id: "w11-1-q10",
-            question: "Prometheus 的数据保留时长如何配置？",
+            question: "官方文档描述的默认数据保留时间是多少？",
             options: [
-                "通过 --storage.tsdb.retention.time 或 --storage.tsdb.retention.size 参数",
-                "无法配置，固定 15 天",
-                "只能通过删除数据目录",
-                "必须修改源代码"
+                "7 天",
+                "30 天",
+                "90 天",
+                "'15d'——15 天"
             ],
-            answer: 0,
-            rationale: "retention.time 按时间限制保留（如 15d），retention.size 按存储大小限制。两者可以同时设置，满足任一条件就会清理旧数据。"
+            answer: 3,
+            rationale: "官方存储文档：--storage.tsdb.retention.time defaults to'15d'。"
         },
         {
             id: "w11-1-q11",
-            question: "labelmap 动作的作用是什么？",
+            question: "metrics-server 在 K8s 指标管道中的作用是什么？",
             options: [
-                "根据正则表达式批量重命名匹配的标签",
-                "删除所有标签",
-                "只保留一个标签",
-                "将标签值转为大写"
+                "收集容器日志",
+                "管理 Pod 网络",
+                "聚合各节点 kubelet 的指标，暴露 Metrics API",
+                "调度 Pod 到节点"
             ],
-            answer: 0,
-            rationale: "labelmap 用于批量重命名标签，常用于将 __meta_kubernetes_* 标签转换为普通标签保留下来。"
+            answer: 2,
+            rationale: "K8s 文档：metrics-server'Queries each kubelet over HTTP for metrics'，'Aggregates metrics from all nodes'并通过 Metrics API 暴露。"
         },
         {
             id: "w11-1-q12",
-            question: "Prometheus 的 WAL（Write-Ahead Log）的作用是什么？",
+            question: "honor_labels: true 配置的作用是什么？",
             options: [
-                "确保写入数据的持久性，崩溃后可以恢复未持久化的数据",
-                "存储查询日志",
-                "记录告警历史",
-                "存储配置变更"
+                "删除所有标签",
+                "总是使用 Prometheus 附加的标签",
+                "禁用标签处理",
+                "当标签冲突时保留目标暴露的标签"
             ],
-            answer: 0,
-            rationale: "WAL 是预写日志，新采集的数据先写入 WAL，再异步写入 block。崩溃重启时可以从 WAL 恢复内存中的数据。"
-        },
-        {
-            id: "w11-1-q13",
-            question: "scrape_interval 参数的含义是什么？",
-            options: [
-                "Prometheus 采集目标指标的时间间隔",
-                "告警检查的间隔",
-                "数据保留时间",
-                "Block 压缩间隔"
-            ],
-            answer: 0,
-            rationale: "scrape_interval 定义 Prometheus 多久采集一次目标，默认 1 分钟。可以在全局或每个 job 级别配置。"
-        },
-        {
-            id: "w11-1-q14",
-            question: "Exporter 的作用是什么？",
-            options: [
-                "将系统或应用的指标转换为 Prometheus 可以采集的格式",
-                "存储时序数据",
-                "发送告警通知",
-                "提供 Web UI"
-            ],
-            answer: 0,
-            rationale: "Exporter 负责从各种系统（如 MySQL、Redis、Node）收集指标，并以 Prometheus exposition 格式通过 HTTP 暴露。"
-        },
-        {
-            id: "w11-1-q15",
-            question: "metric_relabel_configs 中 action: drop 的典型用途是什么？",
-            options: [
-                "删除不需要的高基数指标以减少存储压力",
-                "删除所有指标",
-                "删除采集目标",
-                "删除告警规则"
-            ],
-            answer: 0,
-            rationale: "action: drop 在 metric_relabel_configs 中用于过滤掉不需要的指标，如删除 go_* 运行时指标或高基数的 histogram bucket。"
+            answer: 3,
+            rationale: "honor_labels: true 表示当标签冲突时优先保留目标暴露的标签，这在 Federation 或 Pushgateway 场景很重要。"
         }
     ],
     "w11-2": [
