@@ -5,16 +5,17 @@ export const week1Guides: Record<string, LessonGuide> = {
     "w1-4": {
         lessonId: "w1-4",
         background: [
-            "容器网络的基础是 Linux 的虚拟网络设备：veth pair（虚拟以太网对）连接不同的网络命名空间，bridge（网桥）在同一宿主机上连接多个容器，iptables/nftables 实现 NAT 和防火墙规则。",
-            "Docker 默认使用 bridge 网络模式：每个容器获得一个 veth pair，一端在容器的 Network Namespace 中（通常叫 eth0），另一端连接到宿主机的 docker0 网桥。容器间通过网桥二层转发通信。",
-            "veth pair 总是成对创建，像一根虚拟网线——一端发送的数据立即在另一端接收。任一端断开，整个链路状态变为 down。这是容器与宿主机网络连接的基础设施。",
-            "iptables 是 Linux 的包过滤和 NAT 工具。Docker 用它实现容器的端口映射（-p 参数，DNAT）、源地址伪装（MASQUERADE，让容器访问外网）和网络隔离规则。"
+            "【veth pair 本质】man7 文档：'Packets transmitted on one device in the pair are immediately received on the other device'——veth 设备总是成对创建，形成双向虚拟网线，是容器网络的基础设施。",
+            "【命名空间隧道】veth 的核心用途是'tunnels between network namespaces to create a bridge to a physical network device in another namespace'——将 pair 两端放入不同 namespace 实现跨 namespace 通信。",
+            "【Bridge 网络隔离】Docker 文档：同一 bridge 上的容器可自由通信，不同 bridge 的容器相互隔离。这是 Docker 默认的网络模式，每个容器通过 veth pair 连接到 docker0 网桥。",
+            "【默认 vs 自定义 Bridge】Docker 文档强调'User-defined bridges are superior'：自定义 bridge 提供自动 DNS 解析（'automatic DNS resolution between containers'），默认 bridge 只能用 IP 或废弃的 --link。",
+            "【防火墙集成】Docker 默认使用 iptables 创建规则，'routes container traffic in the nat table'实现端口发布和网络隔离。Docker 自动配置 masquerading 规则让容器访问外网。"
         ],
         keyDifficulties: [
-            "用户自定义 bridge vs 默认 docker0：默认 bridge 不支持容器名 DNS 解析（需用 IP 或废弃的 --link），用户自定义 bridge 自带 DNS 服务，容器可通过名称互相访问，推荐使用。",
-            "端口映射原理：-p 8080:80 在 iptables NAT 表的 PREROUTING 链添加 DNAT 规则，将宿主机 8080 端口流量转发到容器 80 端口。POSTROUTING 链的 MASQUERADE 规则让容器回包能正确返回。",
-            "网络命名空间抓包位置：在容器内 eth0 抓包只能看到该容器的流量；在宿主机的 veth 端或 docker0 网桥抓包可以看到多个容器的流量，便于排查网络问题。",
-            "IP 转发与路由：Docker 需要启用 net.ipv4.ip_forward。容器访问外网依赖 IP 转发和 iptables FORWARD 链允许流量通过。容器无法访问外网时应首先检查这两项。"
+            "【链路状态耦合】veth man7：'When either device is down, the link state of the pair is down'——任一端故障导致整个链路中断。排查容器网络问题时需检查 veth pair 两端状态。",
+            "【DNS 解析差异】默认 bridge 不提供 DNS，容器只能通过 IP 互访。用户自定义 bridge 提供'automatic DNS resolution'，容器可通过名称或别名互相访问——生产环境必须使用自定义 bridge。",
+            "【ufw 兼容性问题】Docker 文档警告：'packets are diverted before the firewall rules can be applied'——Docker 在 nat 表路由流量，可能绕过 ufw 的过滤链，导致防火墙规则被忽略。",
+            "【规则不可修改】Docker 文档强调：'You should not modify the rules created by Docker'——这些规则对网络功能至关重要，禁用 Docker 防火墙功能会破坏容器连接和 masquerading。"
         ],
         handsOnPath: [
             "运行一个容器，使用 ip link show 和 bridge link（或 brctl show）查看 veth pair 和 docker0 网桥的对应关系，确认容器 eth0 的 peer 在宿主机上。",
@@ -173,183 +174,147 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
     "w1-4": [
         {
             id: "w1-4-q1",
-            question: "veth pair 的工作原理是什么？",
+            question: "veth(4) man7 对 veth pair 数据传输的描述是什么？",
             options: [
-                "单向数据传输管道",
-                "成对创建的虚拟网卡，数据从一端发送立即在另一端接收",
-                "共享内存通信机制",
-                "无线网络模拟设备"
+                "Packets transmitted on one device in the pair are immediately received on the other device",
+                "数据包通过内核缓冲区异步传递",
+                "数据包需要经过路由表转发",
+                "数据包会被复制到两端设备"
             ],
-            answer: 1,
-            rationale: "veth 总是成对创建，像一根虚拟网线。一端发送的数据立即在另一端接收，任一端断开整个链路状态变为 down。"
+            answer: 0,
+            rationale: "man7 文档明确：'Packets transmitted on one device in the pair are immediately received on the other device'——veth pair 形成即时双向通道。"
         },
         {
             id: "w1-4-q2",
-            question: "Docker 默认的网络模式是什么？",
+            question: "veth 设备的核心用途是什么？",
             options: [
-                "host",
-                "none",
-                "bridge",
-                "overlay"
+                "加密容器间的网络通信",
+                "tunnels between network namespaces——在网络命名空间之间创建隧道",
+                "实现容器的负载均衡",
+                "提供网络带宽限制"
             ],
-            answer: 2,
-            rationale: "Docker 默认使用 bridge 网络模式，创建 docker0 网桥，每个容器通过 veth pair 连接到该网桥。"
+            answer: 1,
+            rationale: "man7 文档：veth 用于'tunnels between network namespaces to create a bridge to a physical network device in another namespace'。"
         },
         {
             id: "w1-4-q3",
-            question: "为什么官方推荐使用用户自定义 bridge 网络？",
+            question: "创建 veth pair 的正确命令格式是什么？",
             options: [
-                "性能更好",
-                "提供自动 DNS 解析，容器可通过名称互相访问",
-                "占用更少的 IP 地址",
-                "自动分配公网 IP"
+                "ip veth add <name1> <name2>",
+                "ip link create veth <name1> <name2>",
+                "ip link add <p1-name> type veth peer name <p2-name>",
+                "veth create <name1> peer <name2>"
             ],
-            answer: 1,
-            rationale: "用户自定义 bridge 网络内置 DNS 服务，容器可通过名称或别名互相访问。默认 docker0 不支持 DNS 解析，只能用 IP 或废弃的 --link。"
+            answer: 2,
+            rationale: "man7 文档：标准创建命令为'ip link add <p1-name> type veth peer name <p2-name>'，产生一对互联的设备端点。"
         },
         {
             id: "w1-4-q4",
-            question: "docker run -p 8080:80 在 iptables 中做了什么？",
+            question: "veth pair 链路状态的行为是什么？",
             options: [
-                "创建防火墙规则阻止 80 端口",
-                "添加 DNAT 规则将宿主机 8080 端口流量转发到容器 80 端口",
-                "直接绑定宿主机物理网卡端口",
-                "创建端口别名映射"
+                "两端可独立运行，互不影响",
+                "When either device is down, the link state of the pair is down",
+                "一端 down 时另一端自动接管",
+                "链路状态由内核自动恢复"
             ],
             answer: 1,
-            rationale: "Docker 通过 iptables NAT 表的 PREROUTING 链添加 DNAT 规则实现端口映射，将目标地址改写为容器 IP:80。"
+            rationale: "man7 文档：'When either device is down, the link state of the pair is down'——任一端故障导致整个链路中断。"
         },
         {
             id: "w1-4-q5",
-            question: "在哪里抓包可以看到多个容器的网络流量？",
+            question: "Docker 文档对用户自定义 bridge 网络的评价是什么？",
             options: [
-                "容器内的 eth0 接口",
-                "宿主机的 docker0 网桥或 veth 端",
-                "宿主机的物理网卡",
-                "无法同时看到多个容器的流量"
+                "与默认 bridge 功能相同",
+                "仅用于多主机网络场景",
+                "User-defined bridges are superior——用户自定义 bridge 更优越",
+                "不推荐在生产环境使用"
             ],
-            answer: 1,
-            rationale: "在 docker0 网桥或 veth 的宿主机端抓包可以看到连接到该网桥的所有容器流量，便于排查容器间通信问题。"
+            answer: 2,
+            rationale: "Docker 文档明确强调'User-defined bridges are superior'，列出多项优势包括 DNS 解析、隔离性、灵活性。"
         },
         {
             id: "w1-4-q6",
-            question: "如果 veth pair 的一端断开（down）会发生什么？",
+            question: "用户自定义 bridge 相比默认 bridge 的关键优势是什么？",
             options: [
-                "另一端继续正常工作",
-                "整个链路状态变为 down，无法通信",
-                "自动创建新的配对",
-                "数据暂存等待重连"
+                "更高的网络带宽",
+                "更低的网络延迟",
+                "automatic DNS resolution between containers——自动 DNS 解析",
+                "自动负载均衡"
             ],
-            answer: 1,
-            rationale: "veth pair 是强耦合的，任一端停止工作会导致整个链路失效，这是其设计特性。"
+            answer: 2,
+            rationale: "Docker 文档：用户自定义 bridge 提供'automatic DNS resolution between containers'，容器可通过名称互访；默认 bridge 只能用 IP 或废弃的 --link。"
         },
         {
             id: "w1-4-q7",
-            question: "默认 bridge 网络中容器如何互相访问？",
+            question: "Docker 如何处理容器网络流量？",
             options: [
-                "通过容器名直接访问",
-                "只能通过 IP 地址访问（或使用废弃的 --link）",
-                "通过 DNS 服务自动解析",
-                "容器间无法直接通信"
+                "直接通过物理网卡转发",
+                "routes container traffic in the nat table——在 nat 表路由容器流量",
+                "通过用户空间代理转发",
+                "使用 overlay 网络封装"
             ],
             answer: 1,
-            rationale: "默认 bridge 网络（docker0）不提供 DNS 解析，容器只能通过 IP 地址或废弃的 --link 方式互相访问。推荐使用用户自定义 bridge。"
+            rationale: "Docker 文档：Docker'routes container traffic in the nat table'实现端口发布和网络隔离，自动配置 masquerading 规则。"
         },
         {
             id: "w1-4-q8",
-            question: "以下哪个命令可以查看 Docker 创建的 NAT 规则？",
+            question: "Docker 与 ufw 防火墙的兼容性问题是什么？",
             options: [
-                "docker network ls",
-                "iptables -t nat -L -n",
-                "netstat -an",
-                "ip route show"
+                "两者完美兼容",
+                "packets are diverted before the firewall rules can be applied——数据包在防火墙规则应用前被转发",
+                "ufw 会完全阻止 Docker 网络",
+                "Docker 自动禁用 ufw"
             ],
             answer: 1,
-            rationale: "Docker 的端口映射规则存储在 iptables 的 nat 表中，可通过 iptables -t nat -L -n 查看 DNAT 和 MASQUERADE 规则。"
+            rationale: "Docker 文档警告：'packets are diverted before the firewall rules can be applied'——Docker 在 nat 表路由流量可能绕过 ufw 过滤链。"
         },
         {
             id: "w1-4-q9",
-            question: "容器无法访问外网时，首先应该检查什么？",
+            question: "关于 Docker 创建的防火墙规则，官方建议是什么？",
             options: [
-                "DNS 配置是否正确",
-                "IP 转发是否启用（ip_forward）和 iptables FORWARD 链是否允许",
-                "容器内存是否不足",
-                "Docker 版本是否最新"
+                "可以根据需要自由修改",
+                "建议定期清理旧规则",
+                "You should not modify the rules created by Docker",
+                "应该禁用以提高性能"
             ],
-            answer: 1,
-            rationale: "外网访问依赖 IP 转发（net.ipv4.ip_forward=1）和 iptables FORWARD 链允许流量通过。这是最常见的容器网络问题根因。"
+            answer: 2,
+            rationale: "Docker 文档强调：'You should not modify the rules created by Docker'——这些规则对网络功能至关重要，修改会破坏容器连接。"
         },
         {
             id: "w1-4-q10",
-            question: "以下哪个不是 Docker 支持的网络驱动？",
+            question: "Docker bridge 网络的规模限制是什么？",
             options: [
-                "bridge",
-                "host",
-                "tunnel",
-                "macvlan"
+                "单个网络最多 100 个容器",
+                "单个网络连接 1000+ 容器时会不稳定",
+                "没有容器数量限制",
+                "单个网络最多 500 个容器"
             ],
-            answer: 2,
-            rationale: "Docker 支持 bridge、host、none、overlay、macvlan、ipvlan 等网络驱动，但没有 tunnel 驱动。"
+            answer: 1,
+            rationale: "Docker 文档指出：bridge 网络在'1000+ containers connecting to a single network'时会因 Linux 内核限制变得不稳定。"
         },
         {
             id: "w1-4-q11",
-            question: "Docker 使用 MASQUERADE 规则的作用是什么？",
+            question: "默认 bridge 网络中容器如何互相访问？",
             options: [
-                "隐藏容器的真实 IP 地址，防止被攻击",
-                "让容器使用宿主机 IP 访问外网，实现源地址转换",
-                "加速网络数据包传输",
-                "为容器分配公网 IP 地址"
+                "通过容器名自动 DNS 解析",
+                "通过 IP 地址或废弃的 --link 方式",
+                "通过服务发现自动路由",
+                "容器间无法直接通信"
             ],
             answer: 1,
-            rationale: "MASQUERADE 是动态 SNAT，将容器的源 IP 替换为宿主机出口 IP，使容器能够访问外部网络并正确接收返回数据包。"
+            rationale: "Docker 文档：默认 bridge 不提供 DNS 解析，'requires IP addresses or legacy --link flags'——必须用 IP 或废弃的 --link。"
         },
         {
             id: "w1-4-q12",
-            question: "K8s CNI 插件的作用是什么？",
+            question: "Docker 默认使用什么防火墙后端？",
             options: [
-                "管理容器镜像的构建和分发",
-                "为 Pod 配置网络，实现容器间通信和网络策略",
-                "监控容器资源使用情况",
-                "调度 Pod 到合适的节点"
+                "nftables 作为默认后端",
+                "firewalld 作为默认后端",
+                "iptables by default——默认使用 iptables",
+                "不使用任何防火墙"
             ],
-            answer: 1,
-            rationale: "CNI（Container Network Interface）插件负责 K8s 中 Pod 的网络配置、IP 分配和容器间通信，是 K8s 网络的核心组件。"
-        },
-        {
-            id: "w1-4-q13",
-            question: "使用 ip link add 创建 veth pair 时，正确的命令格式是？",
-            options: [
-                "ip link add veth0 type veth",
-                "ip link add veth0 type veth peer name veth1",
-                "ip link create veth0 veth1",
-                "ip veth add veth0 veth1"
-            ],
-            answer: 1,
-            rationale: "veth 必须成对创建，正确格式是 ip link add <name1> type veth peer name <name2>，创建互联的两个虚拟网卡。"
-        },
-        {
-            id: "w1-4-q14",
-            question: "Docker bridge 网络中的 com.docker.network.bridge.enable_icc 选项控制什么？",
-            options: [
-                "是否启用 IP 伪装（masquerade）",
-                "是否允许容器间通信（Inter-Container Connectivity）",
-                "是否启用 IPv6 支持",
-                "是否允许外部访问容器"
-            ],
-            answer: 1,
-            rationale: "enable_icc 控制同一 bridge 网络上的容器间是否可以直接通信。默认为 true，设为 false 可实现更严格的隔离。"
-        },
-        {
-            id: "w1-4-q15",
-            question: "关于 Docker 与 ufw 防火墙的兼容性，以下说法正确的是？",
-            options: [
-                "两者完美兼容，可以同时使用",
-                "Docker 的 NAT 规则可能绕过 ufw 的 INPUT/OUTPUT 链，导致规则被忽略",
-                "ufw 优先级高于 Docker 规则",
-                "需要先禁用 ufw 才能使用 Docker"
-            ],
-            answer: 1,
-            rationale: "Docker 在 NAT 表中路由容器流量，可能绕过 ufw 的 INPUT 和 OUTPUT 链，导致防火墙配置被忽略。这是一个已知的兼容性问题。"
+            answer: 2,
+            rationale: "Docker 文档：'Docker uses iptables by default to create firewall rules'，可通过 firewall-backend 选项配置使用 nftables。"
         }
     ],
     "w1-3": [
