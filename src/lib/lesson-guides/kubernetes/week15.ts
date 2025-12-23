@@ -89,17 +89,18 @@ export const week15Guides: Record<string, LessonGuide> = {
     "w15-3": {
         lessonId: "w15-3",
         background: [
-            "Knative Eventing 提供事件驱动架构的基础设施，实现生产者和消费者的松耦合。核心理念是「发布-订阅」模式：事件源产生事件，通过 Broker 路由，Trigger 过滤后投递给服务。组件可以独立开发和部署。",
-            "CloudEvents 是 CNCF 的事件规范标准，定义了事件的通用格式（包含 type、source、id、time 等元数据）。Knative Eventing 完全遵循 CloudEvents 规范，使用 HTTP POST 传输事件，实现跨语言、跨平台的事件互操作。",
-            "Knative Eventing 的核心组件：Source（事件源，如 PingSource、ApiServerSource、Kafka）、Broker（事件枢纽，接收和分发事件）、Trigger（订阅规则，基于属性过滤事件）、Sink（事件消费者，通常是 Knative Service）。",
-            "Channel 和 Subscription 是另一种事件传递模式，更接近传统消息队列。Channel 负责事件持久化和传递，Subscription 定义消费关系。Broker/Trigger 更适合复杂路由，Channel/Subscription 更适合简单点对点。",
-            "事件驱动架构的优势：松耦合（生产者不需要知道消费者）、可扩展（新增消费者不影响生产者）、异步处理（削峰填谷）、可追溯（事件日志）。挑战包括：调试困难、最终一致性、事件顺序保证。"
+            "【Eventing 定义】官方文档：Knative Eventing 是'a collection of APIs that enable you to use an event-driven architecture with your applications'——支持事件驱动架构的 API 集合。使用标准 HTTP POST 请求和 CloudEvents 规范在生产者（Sources）和消费者（Sinks）之间路由事件。",
+            "【四大构建块】官方文档：核心组件包括——Event Sources（从各种系统生成事件）；Brokers（'event mesh for collecting a pool of events'接收和分发事件的中心枢纽）；Triggers（基于事件属性过滤并路由到目标）；Sinks（接收 HTTP POST 请求的消费者，可以是 Knative Service 或标准 K8s Service）。",
+            "【CloudEvents 规范】CNCF 官方：CloudEvents 是'a specification for describing event data in a common way'——用通用方式描述事件数据的规范（CNCF 毕业项目，当前版本 1.0.2）。提供 9 种语言 SDK，解决事件格式一致性、可访问性和可移植性问题。",
+            "【松耦合哲学】官方文档：组件'independently developed and deployed'——独立开发和部署。事件生产者无需活跃消费者即可运行，消费者可在生产者存在前表达订阅意向。生产者发布到 Broker 无需知道消费者。",
+            "【Broker 实现类型】官方文档：支持多种 Broker 实现——Channel-based Broker、Apache Kafka Broker、RabbitMQ Broker。每种实现处理事件投递机制不同，可通过 ConfigMap 配置默认值或单独定义 Broker 资源。"
         ],
         keyDifficulties: [
-            "Broker 的实现选择：Knative 提供多种 Broker 实现：内存 Broker（开发测试）、Kafka Broker（生产推荐，持久化）、RabbitMQ Broker 等。选择影响事件持久性、顺序保证和性能。生产环境必须使用持久化 Broker。",
-            "Trigger 过滤语法：Trigger 可以基于 CloudEvents 属性过滤（type、source 等）。支持精确匹配和前缀匹配。复杂过滤逻辑需要多个 Trigger 或应用层处理。理解过滤机制避免事件丢失或重复消费。",
-            "事件投递保证：Knative 提供至少一次投递（at-least-once），消费者需要处理重复事件（幂等性）。死信队列（Dead Letter Sink）处理投递失败的事件。理解重试策略和失败处理是生产落地的关键。",
-            "事件追踪和调试：事件的异步特性使调试困难。CloudEvents 的 traceparent 扩展支持分布式追踪。使用 Knative 的事件日志和 Jaeger 追踪定位问题。事件 ID 的唯一性是关联上下游的关键。"
+            "【Trigger 过滤机制】官方文档：Trigger 基于 CloudEvents 属性和扩展过滤事件。'If multiple filters are provided, all of them must evaluate to true'——多个过滤器必须全部为真才投递。支持 Exact（精确匹配）、Prefix/Suffix（前后缀）、CESQL 表达式。",
+            "【过滤器类型】官方文档：exact 使用区分大小写的字符串匹配；逻辑操作符包括'all'（全部为真）、'any'（至少一个为真）、'not'（取反）。CESQL 支持复杂表达式如'source LIKE %commerce% AND type IN (order.created)'。",
+            "【高级过滤限制】官方文档：'Data field filtering is unsupported'——不支持数据字段过滤。'Advanced filters work only with Apache Kafka Broker and MTChannelBasedBroker'——高级过滤仅支持 Kafka 和 MTChannel Broker，其他 Broker 使用传统属性过滤。",
+            "【多 Broker 场景】官方文档：虽然单个 Broker 足以应对大多数场景，但多 Broker 可简化架构——'such as separating PII and non-PII events for streamlined audit and access control'——分离 PII 和非 PII 事件便于审计和访问控制。",
+            "【Broker 抽象价值】官方文档：Broker 提供可发现端点供生产者 POST 事件，'abstracting routing details through Triggers'——通过 Trigger 抽象路由细节。生产者和消费者分离，路由实现细节对用户透明。"
         ],
         handsOnPath: [
             "部署最小事件闭环：安装 Knative Eventing，创建 Broker。部署一个 Knative Service 作为 Sink。创建 PingSource 定时发送事件，创建 Trigger 订阅。验证事件从 Source → Broker → Trigger → Sink 的完整链路。",
@@ -466,183 +467,147 @@ export const week15Quizzes: Record<string, QuizQuestion[]> = {
     "w15-3": [
         {
             id: "w15-3-q1",
-            question: "Knative Eventing 的核心组件有哪些？",
+            question: "官方文档对 Knative Eventing 的定义是什么？",
             options: [
-                "Producer、Consumer、Queue、Topic",
-                "Source、Broker、Trigger、Sink",
-                "Publisher、Subscriber、Channel、Message",
-                "Event、Handler、Router、Filter"
+                "容器编排平台",
+                "服务网格代理",
+                "'a collection of APIs that enable you to use an event-driven architecture'——支持事件驱动架构的 API 集合",
+                "日志收集系统"
             ],
-            answer: 1,
-            rationale: "Knative Eventing 核心组件：Source（事件源）、Broker（事件枢纽）、Trigger（订阅过滤）、Sink（事件消费者）。"
+            answer: 2,
+            rationale: "官方文档：Knative Eventing 是'a collection of APIs that enable you to use an event-driven architecture with your applications'。"
         },
         {
             id: "w15-3-q2",
-            question: "CloudEvents 规范的主要目的是什么？",
+            question: "官方文档描述的 Broker 核心功能是什么？",
             options: [
-                "加密事件数据",
-                "定义事件通用格式，实现跨平台互操作",
-                "压缩事件大小",
-                "验证事件有效性"
+                "'event mesh for collecting a pool of events'——收集事件池的事件网格",
+                "存储容器镜像",
+                "管理 Pod 生命周期",
+                "配置网络策略"
             ],
-            answer: 1,
-            rationale: "CloudEvents 是 CNCF 标准，定义事件通用格式（type、source、id 等），使不同系统产生的事件格式统一，实现跨语言、跨平台互操作。"
+            answer: 0,
+            rationale: "官方文档：Brokers 是'event mesh for collecting a pool of events'，提供可发现端点供生产者 POST 事件。"
         },
         {
             id: "w15-3-q3",
-            question: "Trigger 的作用是什么？",
+            question: "官方文档对 CloudEvents 的定义是什么？",
             options: [
-                "产生事件",
-                "存储事件",
-                "基于属性过滤事件并路由到 Sink",
-                "加密事件"
+                "Knative 专有协议",
+                "'a specification for describing event data in a common way'——用通用方式描述事件数据的规范",
+                "日志格式标准",
+                "网络传输协议"
             ],
-            answer: 2,
-            rationale: "Trigger 从 Broker 订阅事件，基于 CloudEvents 属性（如 type、source）过滤，将匹配的事件路由到指定的 Sink。"
+            answer: 1,
+            rationale: "CNCF 官方：CloudEvents 是'a specification for describing event data in a common way'（CNCF 毕业项目，当前版本 1.0.2）。"
         },
         {
             id: "w15-3-q4",
-            question: "Knative Eventing 的事件投递保证是什么？",
+            question: "CloudEvents 规范提供多少种语言的 SDK？",
             options: [
-                "最多一次（at-most-once）",
-                "至少一次（at-least-once）",
-                "恰好一次（exactly-once）",
-                "无保证"
+                "3 种",
+                "5 种",
+                "9 种（Go、JavaScript、Java、C#、Ruby、PHP、Python、Rust、PowerShell）",
+                "12 种"
             ],
-            answer: 1,
-            rationale: "Knative Eventing 提供至少一次（at-least-once）投递保证，事件可能重复投递。消费者需要实现幂等处理。"
+            answer: 2,
+            rationale: "CNCF 官方文档：CloudEvents 提供 9 种语言 SDK。"
         },
         {
             id: "w15-3-q5",
-            question: "死信队列（Dead Letter Sink）的用途是什么？",
+            question: "官方文档对 Trigger 多过滤器的处理规则是什么？",
             options: [
-                "存储成功处理的事件",
-                "存储投递失败的事件用于后续分析",
-                "加速事件处理",
-                "过滤重复事件"
+                "任意一个为真即投递",
+                "'all of them must evaluate to true'——全部为真才投递",
+                "按顺序评估第一个匹配即停止",
+                "随机选择一个过滤器"
             ],
             answer: 1,
-            rationale: "死信队列存储投递失败（重试次数用尽后仍失败）的事件，便于后续分析问题原因和手动重处理。"
+            rationale: "官方文档：'If multiple filters are provided, all of them must evaluate to true in order for the event to be passed to the subscriber'。"
         },
         {
             id: "w15-3-q6",
-            question: "PingSource 的功能是什么？",
+            question: "官方文档描述的 Trigger 过滤器类型不包括哪个？",
             options: [
-                "接收 HTTP 请求",
-                "定时发送事件",
-                "监控网络延迟",
-                "检查服务健康"
+                "Exact（精确匹配）",
+                "Prefix（前缀匹配）",
+                "Regex（正则表达式）",
+                "CESQL（CloudEvents SQL）"
             ],
-            answer: 1,
-            rationale: "PingSource 按照 cron 表达式定时生成事件，常用于触发定时任务或测试事件流转。"
+            answer: 2,
+            rationale: "官方文档：支持 Exact、Prefix/Suffix、逻辑操作符（all/any/not）和 CESQL，不包括 Regex。"
         },
         {
             id: "w15-3-q7",
-            question: "Broker 和 Channel 的主要区别是什么？",
+            question: "官方文档对高级过滤器支持范围的说明是什么？",
             options: [
-                "Broker 更快",
-                "Broker 支持基于属性的过滤路由，Channel 是简单的点对点传递",
-                "Channel 更可靠",
-                "两者功能相同"
+                "所有 Broker 类型都支持",
+                "只有内存 Broker 支持",
+                "'Advanced filters work only with Apache Kafka Broker and MTChannelBasedBroker'",
+                "需要额外安装插件"
             ],
-            answer: 1,
-            rationale: "Broker 配合 Trigger 支持基于 CloudEvents 属性的复杂过滤路由。Channel 配合 Subscription 是简单的点对点传递模式。"
+            answer: 2,
+            rationale: "官方文档：'Advanced filters work only with Apache Kafka Broker and MTChannelBasedBroker'，其他 Broker 使用传统属性过滤。"
         },
         {
             id: "w15-3-q8",
-            question: "CloudEvents 的核心属性包括哪些？",
+            question: "官方文档对数据字段过滤的说明是什么？",
             options: [
-                "id、name、value、timestamp",
-                "type、source、id、time、specversion",
-                "key、value、topic、partition",
-                "header、body、footer、checksum"
+                "完全支持",
+                "'Data field filtering is unsupported'——不支持数据字段过滤",
+                "需要特殊配置",
+                "只支持 JSON 格式"
             ],
             answer: 1,
-            rationale: "CloudEvents 核心属性：type（事件类型）、source（事件源）、id（唯一标识）、time（时间戳）、specversion（规范版本）等。"
+            rationale: "官方文档明确说明：'Data field filtering is unsupported'——只能过滤 CloudEvents 属性，不能过滤数据内容。"
         },
         {
             id: "w15-3-q9",
-            question: "Knative Eventing 如何实现松耦合？",
+            question: "官方文档描述的松耦合特性是什么？",
             options: [
-                "使用强类型接口",
-                "生产者和消费者通过 Broker 解耦，不需要知道对方",
-                "使用共享数据库",
-                "使用同步调用"
+                "组件'independently developed and deployed'——独立开发和部署",
+                "所有组件必须同时部署",
+                "生产者必须等待消费者就绪",
+                "事件必须同步处理"
             ],
-            answer: 1,
-            rationale: "生产者只需发送事件到 Broker，不需要知道消费者。消费者通过 Trigger 订阅，不需要知道生产者。双方通过 Broker 解耦。"
+            answer: 0,
+            rationale: "官方文档：组件'independently developed and deployed'，生产者无需活跃消费者即可运行。"
         },
         {
             id: "w15-3-q10",
-            question: "生产环境应该使用哪种 Broker 实现？",
+            question: "官方文档描述多 Broker 的典型场景是什么？",
             options: [
-                "内存 Broker（In-Memory）",
-                "Kafka Broker 或其他持久化 Broker",
-                "任何 Broker 都可以",
-                "自定义 Broker"
+                "提高性能",
+                "负载均衡",
+                "'separating PII and non-PII events for streamlined audit and access control'——分离 PII 事件便于审计",
+                "降低成本"
             ],
-            answer: 1,
-            rationale: "内存 Broker 不持久化事件，节点故障会丢失数据，只适合开发测试。生产环境应使用 Kafka Broker 等持久化实现。"
+            answer: 2,
+            rationale: "官方文档：多 Broker 可简化架构，'such as separating PII and non-PII events for streamlined audit and access control'。"
         },
         {
             id: "w15-3-q11",
-            question: "如何处理 Knative Eventing 中的重复事件？",
+            question: "官方文档描述的支持 Broker 实现类型有哪些？",
             options: [
-                "Knative 自动去重",
-                "消费者实现幂等处理",
-                "增加重试次数",
-                "使用 HTTPS"
+                "只有内存 Broker",
+                "Channel-based、Apache Kafka、RabbitMQ Broker",
+                "只有 Kafka Broker",
+                "只有 RabbitMQ Broker"
             ],
             answer: 1,
-            rationale: "Knative 提供至少一次投递，可能有重复事件。消费者需要根据事件 ID 实现幂等处理，确保重复处理不产生副作用。"
+            rationale: "官方文档：支持多种 Broker 实现——Channel-based Broker、Apache Kafka Broker、RabbitMQ Broker。"
         },
         {
             id: "w15-3-q12",
-            question: "Trigger 的过滤条件支持什么类型的匹配？",
+            question: "CESQL 过滤器支持的查询语法示例是什么？",
             options: [
-                "只支持正则表达式",
-                "精确匹配和前缀匹配",
-                "只支持精确匹配",
-                "支持 SQL 查询"
+                "只支持等于比较",
+                "只支持数值运算",
+                "'source LIKE %commerce% AND type IN (order.created)'",
+                "只支持布尔表达式"
             ],
-            answer: 1,
-            rationale: "Trigger 过滤支持精确匹配和前缀匹配 CloudEvents 属性。复杂过滤逻辑需要在消费者应用层处理。"
-        },
-        {
-            id: "w15-3-q13",
-            question: "Knative Eventing 使用什么传输协议？",
-            options: [
-                "gRPC",
-                "HTTP POST（遵循 CloudEvents 规范）",
-                "AMQP",
-                "WebSocket"
-            ],
-            answer: 1,
-            rationale: "Knative Eventing 使用标准 HTTP POST 传输事件，符合 CloudEvents HTTP 协议绑定规范，便于跨语言集成。"
-        },
-        {
-            id: "w15-3-q14",
-            question: "ApiServerSource 的用途是什么？",
-            options: [
-                "发送 HTTP 请求",
-                "将 Kubernetes API 事件（资源变化）转为 CloudEvents",
-                "访问外部 API",
-                "验证 API 调用"
-            ],
-            answer: 1,
-            rationale: "ApiServerSource 监听 Kubernetes API Server 的资源变化事件（如 Pod 创建/删除），转换为 CloudEvents 发送到 Sink。"
-        },
-        {
-            id: "w15-3-q15",
-            question: "事件驱动架构的主要挑战是什么？",
-            options: [
-                "性能太低",
-                "调试困难、最终一致性、事件顺序保证",
-                "不支持扩展",
-                "只能用于 Kubernetes"
-            ],
-            answer: 1,
-            rationale: "事件驱动架构的挑战包括：异步特性使调试困难、分布式系统是最终一致性而非强一致性、某些场景需要保证事件顺序处理。"
+            answer: 2,
+            rationale: "官方文档：CESQL 支持复杂表达式如'source LIKE %commerce% AND type IN (order.created)'。"
         }
     ],
     "w15-4": [
