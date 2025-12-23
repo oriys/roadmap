@@ -47,17 +47,18 @@ export const week14Guides: Record<string, LessonGuide> = {
     "w14-2": {
         lessonId: "w14-2",
         background: [
-            "软件供应链安全是云原生安全的关键环节。攻击者可以通过污染基础镜像、注入恶意依赖、篡改 CI/CD 产物等方式入侵。Sigstore 项目提供了开源的供应链安全工具链，包括 Cosign（签名）、Rekor（透明日志）、Fulcio（证书颁发）。",
-            "Cosign 是容器镜像签名和验证工具。支持传统密钥对签名（自管理密钥）和 Keyless 签名（基于 OIDC 身份，通过 Fulcio 获取短期证书）。Keyless 模式更易于采用，避免了密钥管理的复杂性。",
-            "签名验证可以在多个阶段进行：CI/CD 流水线（构建后签名）、镜像仓库（推送时验证）、Kubernetes 准入控制（部署时验证）。使用 Policy Controller 或 Kyverno 可以在 Kubernetes 中强制执行签名验证策略。",
-            "SBOM（Software Bill of Materials）是软件物料清单，列出软件包含的所有组件和依赖。Cosign 可以将 SBOM 附加到镜像上，便于后续漏洞分析和合规审计。供应链安全不仅是签名，还包括漏洞管理、依赖追踪等。",
-            "透明日志（Transparency Log，如 Rekor）记录所有签名活动，提供不可篡改的审计记录。任何人都可以验证签名是否存在于日志中，增加了攻击者的难度（需要同时篡改镜像和日志）。"
+            "【Cosign 定义】Sigstore 官方文档：Cosign 是'a command line utility that is used to sign software artifacts and verify signatures using Sigstore'——用于签名软件制品和验证签名的命令行工具。支持对容器镜像和 Blob 文件进行签名验证。",
+            "【Keyless 签名架构】官方文档：Keyless 模式利用 Fulcio（证书颁发机构）和 Rekor（透明日志）实现无密钥签名。流程：Fulcio 在 OIDC 身份验证后颁发短期证书 → 证书绑定到公钥，证明身份 → Rekor 不可篡改地记录签名活动。消除传统密钥存储漏洞。",
+            "【准入控制器机制】K8s 官方文档：Admission controllers 是'pieces of code that intercept requests to the Kubernetes API server after authentication and authorization, but before persistence'——在认证授权之后、持久化之前拦截请求。分两阶段：Mutating（修改请求）→ Validating（验证数据）。任一阶段拒绝则整个请求被拒绝。",
+            "【Policy Controller 功能】Sigstore 官方文档：Policy Controller 是'Kubernetes admission controller that enforces supply-chain security by validating container image signatures and attestations before deployment'——在部署前验证镜像签名和证明。通过 ClusterImagePolicy 定义镜像模式、信任机构和验证规则。",
+            "【策略执行逻辑】官方文档：策略执行遵循 AND/OR 原则——多个匹配策略必须全部满足（AND），每个策略内至少一个 authority 验证通过（OR）。未通过所有适用策略的镜像将被拒绝，管理员可配置 warn 模式允许不合规镜像但发出警告。"
         ],
         keyDifficulties: [
-            "Keyless 签名的工作原理：开发者通过 OIDC 认证（如 GitHub、Google）→ Fulcio 颁发短期证书（有效期 10 分钟）→ 使用证书签名 → 签名和证书元数据记录到 Rekor。验证时检查签名和透明日志。密钥从未持久化存储。",
-            "准入控制集成：Sigstore Policy Controller 或 Kyverno 作为 ValidatingAdmissionWebhook 运行。当 Pod 创建时，webhook 验证镜像签名。验证失败则拒绝 Pod 创建。需要配置信任根（公钥或 Keyless 身份）。",
-            "签名策略设计：按命名空间或镜像仓库配置不同策略；允许某些系统镜像豁免；区分 warn/enforce 模式便于渐进式推广；处理签名验证失败的回退方案。",
-            "SBOM 与漏洞管理：生成 SBOM（如 syft、trivy）→ 附加到镜像（cosign attach sbom）→ 存储漏洞扫描结果作为 attestation → 基于漏洞严重程度实施准入策略（如阻止高危漏洞镜像）。"
+            "【Keyless 签名流程】官方文档：开发者通过 OIDC 认证（Google、GitHub、Microsoft）→ Fulcio 颁发短期时间戳证书（验证身份后）→ 证书绑定公钥证明身份 → Rekor 不可篡改记录签名活动。验证时需验证时间戳、证书临时公钥和透明日志包含性。密钥从未持久化存储。",
+            "【准入控制两阶段】官方文档：准入控制分两阶段执行——Phase 1 Mutating Controllers（修改请求数据）→ Phase 2 Validating Controllers（验证修改后数据，不可再修改）。任一阶段任一控制器拒绝，整个请求立即被拒绝。ValidatingAdmissionWebhook 在验证阶段执行外部 HTTP 调用。",
+            "【Authority 类型】官方文档：Policy Controller 支持三种 Authority 类型——Key-based（使用公钥验证，可内联、存 Secret 或 KMS）；Keyless（使用 OIDC token 和 Fulcio 证书建立签名者身份）；Static（基于简单规则允许/拒绝，用于未签名镜像）。",
+            "【镜像验证流程】官方文档：Policy Controller 自动解析镜像 tag 到 SHA digest，确保部署镜像与验证版本匹配。验证包括签名、证书透明日志验证、时间戳机构支持。支持基于资源类型和标签的策略匹配。",
+            "【渐进式推广策略】官方文档：可配置 warn 模式允许不合规镜像但发出警告，便于渐进式推广。生产策略应包括：定义镜像模式（glob 匹配）、指定信任机构、配置必需的 attestation 及其验证规则、处理验证失败的回退方案。"
         ],
         handsOnPath: [
             "安装 Cosign 并生成密钥对：下载 cosign 二进制；生成密钥对 cosign generate-key-pair；理解公钥和私钥的用途。或者体验 Keyless 签名（需要 OIDC 账户）。",
@@ -319,183 +320,147 @@ export const week14Quizzes: Record<string, QuizQuestion[]> = {
     "w14-2": [
         {
             id: "w14-2-q1",
-            question: "Cosign 的主要用途是什么？",
+            question: "官方文档对 Cosign 的定义是什么？",
             options: [
-                "容器编排",
-                "容器镜像签名和验证",
-                "网络代理",
-                "日志收集"
+                "容器编排工具",
+                "网络代理组件",
+                "'a command line utility that is used to sign software artifacts and verify signatures using Sigstore'",
+                "日志收集代理"
             ],
-            answer: 1,
-            rationale: "Cosign 是 Sigstore 项目的容器镜像签名和验证工具，用于确保镜像的完整性和来源。"
+            answer: 2,
+            rationale: "Sigstore 官方文档定义 Cosign 为'a command line utility that is used to sign software artifacts and verify signatures using Sigstore'——用于签名和验证软件制品。"
         },
         {
             id: "w14-2-q2",
-            question: "Keyless 签名的核心优势是什么？",
+            question: "官方文档对 Kubernetes Admission Controllers 执行位置的描述是什么？",
             options: [
-                "签名速度更快",
-                "无需管理长期密钥，基于 OIDC 身份获取短期证书",
-                "签名更安全",
-                "不需要网络"
+                "'intercept requests after authentication and authorization, but before persistence'——在认证授权之后、持久化之前",
+                "在认证之前执行",
+                "在持久化之后执行",
+                "只在 Pod 创建时执行"
             ],
-            answer: 1,
-            rationale: "Keyless 签名避免了密钥管理的复杂性，通过 OIDC 认证获取短期证书进行签名。"
+            answer: 0,
+            rationale: "K8s 官方文档：Admission controllers 'intercept requests to the Kubernetes API server after authentication and authorization, but before persistence of the resource'。"
         },
         {
             id: "w14-2-q3",
-            question: "Rekor 透明日志的作用是什么？",
+            question: "Keyless 签名架构中 Fulcio 的角色是什么？",
             options: [
-                "存储容器镜像",
-                "记录所有签名活动，提供不可篡改的审计记录",
-                "替代镜像仓库",
-                "压缩日志"
+                "存储签名记录",
+                "提供 OIDC 认证服务",
+                "管理容器镜像",
+                "在 OIDC 身份验证后颁发短期时间戳证书"
             ],
-            answer: 1,
-            rationale: "Rekor 记录签名活动到不可篡改的透明日志，任何人都可以验证签名是否存在于日志中。"
+            answer: 3,
+            rationale: "官方文档：Fulcio 在 OIDC 身份验证后颁发短期时间戳证书（short-lived, time-stamped certificates），证书绑定到公钥证明身份。"
         },
         {
             id: "w14-2-q4",
-            question: "在 Kubernetes 中如何强制执行镜像签名验证？",
+            question: "官方文档描述的准入控制两阶段顺序是什么？",
             options: [
-                "修改 kubelet 配置",
-                "使用 Sigstore Policy Controller 或 Kyverno 作为准入控制器",
-                "修改镜像仓库配置",
-                "在 Pod 中添加注解"
+                "Validating → Mutating",
+                "都是并行执行",
+                "Mutating Controllers（修改请求）→ Validating Controllers（验证数据）",
+                "只有一个阶段"
             ],
-            answer: 1,
-            rationale: "Policy Controller 或 Kyverno 作为 ValidatingAdmissionWebhook，在 Pod 创建时验证镜像签名。"
+            answer: 2,
+            rationale: "官方文档：准入控制分两阶段——Phase 1: Mutating Controllers（可修改资源）→ Phase 2: Validating Controllers（验证修改后数据，不可再修改）。"
         },
         {
             id: "w14-2-q5",
-            question: "SBOM 的全称和用途是什么？",
+            question: "官方文档对 Policy Controller 的定义是什么？",
             options: [
-                "System Boot Operation Mode，系统启动模式",
-                "Software Bill of Materials，软件物料清单",
-                "Secure Binary Object Management，安全二进制对象管理",
-                "Storage Backup Operation Manager，存储备份操作管理"
+                "容器运行时安全工具",
+                "'Kubernetes admission controller that enforces supply-chain security by validating container image signatures'",
+                "日志聚合组件",
+                "网络策略控制器"
             ],
             answer: 1,
-            rationale: "SBOM（Software Bill of Materials）是软件物料清单，列出软件包含的所有组件和依赖，用于漏洞分析和合规审计。"
+            rationale: "Sigstore 官方文档：Policy Controller 是'Kubernetes admission controller that enforces supply-chain security by validating container image signatures and attestations before deployment'。"
         },
         {
             id: "w14-2-q6",
-            question: "Fulcio 在 Sigstore 中的角色是什么？",
+            question: "官方文档描述的策略执行 AND/OR 逻辑是什么？",
             options: [
-                "日志存储",
-                "证书颁发机构，为 Keyless 签名颁发短期证书",
-                "镜像仓库",
-                "策略引擎"
+                "所有策略使用 OR 逻辑",
+                "所有策略使用 AND 逻辑",
+                "多个匹配策略全部满足（AND），每个策略内至少一个 authority 验证通过（OR）",
+                "由管理员自定义逻辑"
             ],
-            answer: 1,
-            rationale: "Fulcio 是 Sigstore 的证书颁发机构，根据 OIDC 身份验证为 Keyless 签名颁发短期证书。"
+            answer: 2,
+            rationale: "官方文档：多个匹配策略必须全部满足（AND），每个策略内至少一个 authority 验证通过（OR）。"
         },
         {
             id: "w14-2-q7",
-            question: "Keyless 签名的证书有效期通常是多长？",
+            question: "Rekor 透明日志在 Keyless 签名中的作用是什么？",
             options: [
-                "1 小时",
-                "10 分钟左右",
-                "24 小时",
-                "7 天"
+                "不可篡改地记录签名活动，验证时检查透明日志包含性",
+                "存储容器镜像",
+                "提供 OIDC 认证",
+                "管理密钥轮转"
             ],
-            answer: 1,
-            rationale: "Keyless 签名使用的短期证书有效期约 10 分钟，签名完成后证书即过期，密钥从未持久化存储。"
+            answer: 0,
+            rationale: "官方文档：Rekor 不可篡改地记录签名活动（records this activity immutably）。验证时需验证透明日志包含性（confirms transparency log inclusion）。"
         },
         {
             id: "w14-2-q8",
-            question: "如何将 SBOM 附加到容器镜像？",
+            question: "官方文档列出的 Policy Controller Authority 类型不包括哪个？",
             options: [
-                "修改 Dockerfile",
-                "使用 cosign attach sbom 命令",
-                "在 Pod YAML 中指定",
-                "修改镜像标签"
+                "Key-based（公钥验证）",
+                "Keyless（OIDC 身份）",
+                "Static（简单规则）",
+                "Dynamic（动态生成）"
             ],
-            answer: 1,
-            rationale: "使用 cosign attach sbom 命令可以将 SBOM 附加到镜像，存储为镜像的 artifact。"
+            answer: 3,
+            rationale: "官方文档列出三种 Authority 类型：Key-based（公钥验证）、Keyless（OIDC token 和 Fulcio 证书）、Static（简单规则允许/拒绝）。不包括 Dynamic。"
         },
         {
             id: "w14-2-q9",
-            question: "SLSA 框架的主要目标是什么？",
+            question: "当准入控制任一阶段任一控制器拒绝请求时会发生什么？",
             options: [
-                "加速 CI/CD",
-                "提供供应链安全的分级要求",
-                "替代 Kubernetes",
-                "管理容器网络"
+                "继续执行其他控制器",
+                "记录警告但允许请求",
+                "整个请求立即被拒绝",
+                "自动重试请求"
             ],
-            answer: 1,
-            rationale: "SLSA（Supply-chain Levels for Software Artifacts）框架定义了不同级别的供应链安全要求，帮助组织逐步提升安全水平。"
+            answer: 2,
+            rationale: "官方文档：'If any controller in either phase rejects the request, the entire request is rejected immediately'——任一控制器拒绝则整个请求立即被拒绝。"
         },
         {
             id: "w14-2-q10",
-            question: "签名验证失败时应该如何处理？",
+            question: "Policy Controller 如何确保部署镜像与验证版本匹配？",
             options: [
-                "总是允许部署",
-                "根据策略配置拒绝或警告，并建立回退方案",
-                "删除镜像",
-                "重新构建镜像"
+                "比较镜像名称",
+                "比较镜像大小",
+                "自动解析镜像 tag 到 SHA digest",
+                "检查镜像创建时间"
             ],
-            answer: 1,
-            rationale: "应根据策略配置处理验证失败：强制模式拒绝部署，警告模式允许但记录。需要有明确的回退方案和例外机制。"
+            answer: 2,
+            rationale: "官方文档：Policy Controller 自动解析镜像 tag 到 SHA digest（resolves image tags to SHA digests），确保部署镜像与验证版本匹配。"
         },
         {
             id: "w14-2-q11",
-            question: "cosign verify 命令需要什么参数？",
+            question: "官方文档对 warn 模式的描述是什么？",
             options: [
-                "只需要镜像名称",
-                "镜像名称和用于验证的公钥（或 Keyless 身份配置）",
-                "只需要私钥",
-                "只需要证书"
+                "完全阻止不合规镜像",
+                "允许不合规镜像但发出警告，便于渐进式推广",
+                "只记录日志不做任何操作",
+                "只用于开发环境"
             ],
             answer: 1,
-            rationale: "cosign verify 需要镜像名称和验证信任根：传统模式需要公钥，Keyless 模式需要指定信任的 OIDC 身份。"
+            rationale: "官方文档：管理员可配置 warn 模式'allowing non-compliant images while alerting users'——允许不合规镜像但发出警告，便于渐进式推广。"
         },
         {
             id: "w14-2-q12",
-            question: "供应链攻击的常见方式不包括哪个？",
+            question: "Keyless 签名相比传统密钥签名的核心优势是什么？",
             options: [
-                "污染基础镜像",
-                "注入恶意依赖",
-                "篡改 CI/CD 产物",
-                "增加 Pod 副本数"
+                "签名速度更快",
+                "不需要网络连接",
+                "消除传统密钥存储漏洞，通过 OIDC 身份和短期证书实现",
+                "支持更多镜像格式"
             ],
-            answer: 3,
-            rationale: "增加 Pod 副本数是正常运维操作，不是供应链攻击。供应链攻击包括污染镜像、注入依赖、篡改产物等。"
-        },
-        {
-            id: "w14-2-q13",
-            question: "哪个工具可以生成容器镜像的 SBOM？",
-            options: [
-                "kubectl",
-                "syft 或 trivy",
-                "docker build",
-                "helm"
-            ],
-            answer: 1,
-            rationale: "syft 和 trivy 都可以分析容器镜像并生成 SBOM，列出镜像中的软件组件和版本。"
-        },
-        {
-            id: "w14-2-q14",
-            question: "Sigstore 项目包含哪些核心组件？",
-            options: [
-                "Cosign、Rekor、Fulcio",
-                "Prometheus、Grafana、Loki",
-                "Istio、Envoy、Kiali",
-                "ArgoCD、Flux、Jenkins"
-            ],
-            answer: 0,
-            rationale: "Sigstore 项目包含 Cosign（签名工具）、Rekor（透明日志）、Fulcio（证书颁发）三个核心组件。"
-        },
-        {
-            id: "w14-2-q15",
-            question: "渐进式推广签名验证的建议策略是什么？",
-            options: [
-                "直接在所有环境启用强制模式",
-                "先在测试环境用警告模式，逐步过渡到生产环境的强制模式",
-                "只在开发环境使用",
-                "只验证第三方镜像"
-            ],
-            answer: 1,
-            rationale: "建议先用警告模式收集数据，确保所有镜像都已签名后再切换到强制模式，并从测试环境开始逐步推广到生产环境。"
+            answer: 2,
+            rationale: "官方文档：Keyless 模式'eliminates traditional key storage vulnerabilities while maintaining cryptographic integrity through temporal validity windows'——消除传统密钥存储漏洞。"
         }
     ],
     "w14-3": [
