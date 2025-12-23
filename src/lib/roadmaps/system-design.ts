@@ -98,7 +98,7 @@ export const systemDesignStages: Stage[] = [
                         resources: [
                             { title: "Jepsen Consistency Models", url: "https://jepsen.io/consistency" },
                             { title: "Consistency Models（分布式系统概念）", url: "https://www.allthingsdistributed.com/2008/12/eventually_consistent.html" },
-                            { title: "Linearizability vs Serializability", url: "https://www.baeldung.com/cs/linearizability-vs-serializability" },
+                            { title: "Consistency Models in Distributed System", url: "https://xzhu0027.gitbook.io/blog/misc/index/consistency-models-in-distributed-system" },
                         ],
                     },
                     {
