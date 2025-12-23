@@ -5,17 +5,18 @@ export const week16Guides: Record<string, LessonGuide> = {
     "w16-1": {
         lessonId: "w16-1",
         background: [
-            "etcd 是 Kubernetes 的核心数据存储，保存了集群的所有状态信息（Pods、Services、Secrets、ConfigMaps 等）。etcd 的数据丢失意味着整个集群的配置丢失，因此灾备是生产环境的必备能力。",
-            "etcd 备份有两种方式：快照备份（snapshot）和数据目录备份。快照备份使用 etcdctl snapshot save 命令，生成压缩的快照文件；数据目录备份直接复制 member/snap/db 文件，但需要 etcd 停止运行。",
-            "恢复流程需要谨慎操作：停止 kube-apiserver → 停止 etcd → 使用 etcdutl 恢复快照 → 启动 etcd → 启动 kube-apiserver。恢复会创建新的集群 ID，旧的成员信息会被覆盖。",
-            "生产环境 etcd 最佳实践：使用奇数个成员（3 或 5 个）形成集群；运行在专用机器或隔离环境防止资源争抢；定期备份（如每小时）并加密存储；使用 3.4.22+ 或 3.5.6+ 版本。",
-            "除了 etcd 备份，完整的集群灾备还包括：证书备份（CA、API Server 证书）、配置备份（kubeadm-config、静态 Pod 清单）、PersistentVolume 数据备份。Velero 是常用的完整集群备份工具。"
+            "【etcdctl 快照备份】官方文档：使用'ETCDCTL_API=3 etcdctl --endpoints=127.0.0.1:2379 snapshot save backup.db'创建快照。快照可从运行中的成员创建'without affecting performance'——不影响性能。也可直接复制 member/snap/db 文件但需要停止 etcd。",
+            "【etcdutl 恢复流程】官方文档：恢复使用 etcdutl——'etcdutl snapshot restore backup.db --data-dir=/var/lib/etcd'。恢复时需指定'--name'、'--initial-cluster'、'--initial-cluster-token'、'--initial-advertise-peer-urls'参数。恢复会创建新集群 ID，覆盖旧成员信息。",
+            "【版本与集群规模】官方文档：生产环境推荐'3.4.22+ and 3.5.6+'版本。集群应使用奇数成员（3, 5, 7），可容忍'(N-1)/2 permanent member failures'——N 成员集群可承受 (N-1)/2 个永久故障。",
+            "【维护操作】官方文档：Compaction'drops all information about keys superseded prior to a given keyspace revision'——压缩删除旧版本数据。Defragmentation'blocks the system from reading and writing data while rebuilding'——碎片整理会阻塞读写。Space quota 超出时集群进入'maintenance mode which only accepts key reads and deletes'。",
+            "【工具分工】官方文档：etcdctl 用于'network operations and day-to-day management'——网络操作和日常管理；etcdutl 用于'data file operations (migration, defragmentation, restoration, validation)'——数据文件操作。恢复快照必须使用 etcdutl。"
         ],
         keyDifficulties: [
-            "理解 etcd 快照的一致性：快照是某个时间点的一致性视图，但恢复后 Kubernetes 对象可能与实际运行状态不一致（如 Pod 已不存在但 etcd 中还有记录）。控制器会逐步调和。",
-            "etcdctl vs etcdutl：etcdctl 用于日常操作（get/put/snapshot save），需要连接运行中的 etcd。etcdutl 用于离线操作（snapshot restore/defrag），直接操作数据文件。恢复使用 etcdutl。",
-            "多成员集群恢复：每个成员需要用相同的快照恢复，但使用不同的 --name 和 --initial-cluster 参数。恢复后形成新集群，需要更新其他组件的 etcd 连接配置。",
-            "备份策略设计：考虑 RPO（可容忍的数据丢失量）和 RTO（恢复时间目标）。高频备份减少 RPO 但增加存储成本；自动化备份和测试减少 RTO。备份要定期验证可恢复性。"
+            "【恢复前置步骤】官方文档：恢复前必须'Stop the kube-apiserver'停止 API Server。完整流程：停止 kube-apiserver → 恢复快照 → 启动 etcd → 重启 kube-apiserver'to reconnect to etcd'重新连接 etcd。",
+            "【Revision Bump 机制】官方恢复文档：针对 Kubernetes 场景使用'--bump-revision 1000000000 --mark-compacted'参数。这解决'controllers using informers require revision bumping to avoid inconsistent behavior'——控制器使用 informer 需要 revision 跳跃避免不一致。",
+            "【快照完整性验证】官方文档：使用'etcdutl snapshot status snapshot.db -w table'验证快照状态。从 etcdctl 创建的快照包含'hash checks'；直接复制的 db 文件需要恢复时添加'--skip-hash-check'跳过哈希检查。",
+            "【Space Quota 告警】官方维护文档：etcd 默认限制存储空间，超出 quota 时'raises a cluster-wide alarm that puts the cluster into a maintenance mode'——触发集群范围告警进入维护模式，只接受读取和删除操作。通过'--quota-backend-bytes'配置限制。",
+            "【多成员恢复要点】官方文档：多成员集群恢复时每个成员使用相同快照但'different --name and --initial-cluster parameters'——不同的 name 和 initial-cluster 参数。恢复后形成新集群，需更新其他组件的 etcd 连接配置。"
         ],
         handsOnPath: [
             "执行 etcd 快照备份：使用 etcdctl snapshot save backup.db --endpoints --cacert --cert --key。验证快照：etcdctl snapshot status backup.db。理解各参数的含义。",
@@ -40,7 +41,7 @@ export const week16Guides: Record<string, LessonGuide> = {
         sourceUrls: [
             "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/",
             "https://etcd.io/docs/v3.5/op-guide/recovery/",
-            "https://velero.io/docs/"
+            "https://etcd.io/docs/v3.5/op-guide/maintenance/"
         ]
     },
     "w16-2": {
@@ -172,183 +173,147 @@ export const week16Quizzes: Record<string, QuizQuestion[]> = {
     "w16-1": [
         {
             id: "w16-1-q1",
-            question: "etcd 在 Kubernetes 中存储什么？",
+            question: "官方文档描述的 etcd 快照备份命令是什么？",
             options: [
-                "容器镜像",
-                "所有集群状态数据（Pods、Services、Secrets 等）",
-                "容器日志",
-                "节点文件系统"
+                "etcdctl backup save",
+                "etcdutl snapshot save",
+                "kubectl backup etcd",
+                "'ETCDCTL_API=3 etcdctl snapshot save backup.db'——使用 etcdctl 创建快照"
             ],
-            answer: 1,
-            rationale: "etcd 是 Kubernetes 的核心数据存储，保存所有集群状态信息，包括所有 API 对象（Pods、Services、ConfigMaps、Secrets 等）。"
+            answer: 3,
+            rationale: "官方文档：使用'ETCDCTL_API=3 etcdctl --endpoints=127.0.0.1:2379 snapshot save backup.db'创建快照。"
         },
         {
             id: "w16-1-q2",
-            question: "执行 etcd 快照备份的命令是什么？",
+            question: "官方文档对 etcdctl 和 etcdutl 分工的描述是什么？",
             options: [
-                "etcdctl backup save",
-                "etcdctl snapshot save",
-                "etcdutl backup",
-                "kubectl backup etcd"
-            ],
-            answer: 1,
-            rationale: "使用 etcdctl snapshot save backup.db 命令创建 etcd 快照备份，需要指定 endpoints、cacert、cert、key 参数。"
-        },
-        {
-            id: "w16-1-q3",
-            question: "恢复 etcd 快照应该使用什么工具？",
-            options: [
-                "etcdctl",
-                "etcdutl",
-                "kubectl",
-                "kubeadm"
-            ],
-            answer: 1,
-            rationale: "etcdutl 用于离线操作，包括快照恢复（snapshot restore）。etcdctl 用于日常操作需要连接运行中的 etcd。"
-        },
-        {
-            id: "w16-1-q4",
-            question: "生产环境 etcd 集群推荐使用多少个成员？",
-            options: [
-                "1 个",
-                "2 个",
-                "奇数个（3 或 5）",
-                "偶数个（4 或 6）"
-            ],
-            answer: 2,
-            rationale: "etcd 使用 Raft 共识算法，需要奇数个成员（3 或 5）来正确处理故障。偶数个成员在脑裂时无法达成共识。"
-        },
-        {
-            id: "w16-1-q5",
-            question: "恢复 etcd 快照后，为什么 Kubernetes 对象可能与实际状态不一致？",
-            options: [
-                "快照数据损坏",
-                "快照是某个时间点的状态，之后的变化（如 Pod 已停止）未包含",
-                "Kubernetes 版本不匹配",
-                "网络问题"
-            ],
-            answer: 1,
-            rationale: "快照是某个时间点的一致性视图，恢复后集群状态回到该时间点。之后的变化（如 Pod 被删除）不在快照中，控制器会逐步调和。"
-        },
-        {
-            id: "w16-1-q6",
-            question: "etcd 快照文件包含什么敏感信息？",
-            options: [
-                "只有 Pod 名称",
-                "Secrets、ConfigMaps 等所有集群数据",
-                "只有日志",
-                "只有 IP 地址"
-            ],
-            answer: 1,
-            rationale: "etcd 快照包含所有 Kubernetes 数据，包括 Secrets（密码、Token、证书）。备份文件必须加密存储。"
-        },
-        {
-            id: "w16-1-q7",
-            question: "Velero 与 etcd 快照备份的区别是什么？",
-            options: [
-                "Velero 更快",
-                "Velero 可以备份 PV 数据和应用级别恢复，etcd 只备份集群状态",
-                "etcd 快照更完整",
-                "两者功能相同"
-            ],
-            answer: 1,
-            rationale: "etcd 快照只备份 Kubernetes API 对象。Velero 可以同时备份 PersistentVolume 数据，支持应用级别的选择性备份和恢复。"
-        },
-        {
-            id: "w16-1-q8",
-            question: "恢复 etcd 之前需要做什么？",
-            options: [
-                "直接恢复即可",
-                "停止 kube-apiserver 和 etcd",
-                "重启所有节点",
-                "删除所有 Pod"
-            ],
-            answer: 1,
-            rationale: "恢复流程：停止 kube-apiserver → 停止 etcd → 恢复快照 → 启动 etcd → 启动 kube-apiserver。避免数据冲突。"
-        },
-        {
-            id: "w16-1-q9",
-            question: "etcdctl 和 etcdutl 的区别是什么？",
-            options: [
-                "功能完全相同",
-                "etcdctl 用于网络操作，etcdutl 用于直接操作数据文件",
+                "etcdctl 用于'network operations'网络操作，etcdutl 用于'data file operations'数据文件操作",
+                "两者功能完全相同",
                 "etcdutl 已弃用",
                 "etcdctl 只能读取数据"
             ],
+            answer: 0,
+            rationale: "官方文档：etcdctl 用于'network operations and day-to-day management'；etcdutl 用于'data file operations (migration, defragmentation, restoration, validation)'。"
+        },
+        {
+            id: "w16-1-q3",
+            question: "官方文档描述的 etcd 恢复工具是什么？",
+            options: [
+                "etcdctl",
+                "kubectl",
+                "etcdutl——用于'data file operations'包括恢复",
+                "kubeadm"
+            ],
+            answer: 2,
+            rationale: "官方文档：恢复使用 etcdutl——'etcdutl snapshot restore backup.db --data-dir=/var/lib/etcd'。etcdutl 处理数据文件操作。"
+        },
+        {
+            id: "w16-1-q4",
+            question: "官方文档对 etcd 恢复前置步骤的描述是什么？",
+            options: [
+                "直接恢复即可",
+                "只需重启 kubelet",
+                "必须'Stop the kube-apiserver'——停止 API Server",
+                "删除所有 Pod"
+            ],
+            answer: 2,
+            rationale: "官方文档：恢复前必须'Stop the kube-apiserver'。完整流程是停止 API Server → 恢复快照 → 启动 etcd → 重启 API Server。"
+        },
+        {
+            id: "w16-1-q5",
+            question: "官方文档推荐的 etcd 生产版本是什么？",
+            options: [
+                "任何版本都可以",
+                "'3.4.22+ and 3.5.6+'——这些版本修复了重要问题",
+                "只能使用 2.x 版本",
+                "必须使用最新开发版"
+            ],
             answer: 1,
-            rationale: "etcdctl 通过网络连接运行中的 etcd 进行日常操作。etcdutl 直接操作数据文件，用于离线任务如快照恢复和碎片整理。"
+            rationale: "官方文档：Minimum recommended production versions: '3.4.22+ and 3.5.6+'。"
+        },
+        {
+            id: "w16-1-q6",
+            question: "官方文档描述 etcd 集群可以容忍多少永久成员故障？",
+            options: [
+                "N/2 个故障",
+                "所有成员都可以故障",
+                "'(N-1)/2 permanent member failures'——N 成员集群可承受 (N-1)/2 个故障",
+                "不能容忍任何故障"
+            ],
+            answer: 2,
+            rationale: "官方文档：集群可容忍'(N-1)/2 permanent member failures'。3 成员集群可承受 1 个故障，5 成员可承受 2 个故障。"
+        },
+        {
+            id: "w16-1-q7",
+            question: "官方文档对 Compaction 操作的描述是什么？",
+            options: [
+                "增加存储空间",
+                "'drops all information about keys superseded prior to a given keyspace revision'——删除旧版本数据",
+                "备份数据",
+                "加密数据"
+            ],
+            answer: 1,
+            rationale: "官方文档：Compaction 'drops all information about keys superseded prior to a given keyspace revision'——压缩删除指定修订版之前被替代的键信息。"
+        },
+        {
+            id: "w16-1-q8",
+            question: "官方文档对 Defragmentation 操作的警告是什么？",
+            options: [
+                "完全无影响",
+                "只影响写入",
+                "'blocks the system from reading and writing data while rebuilding'——阻塞读写",
+                "只影响网络"
+            ],
+            answer: 2,
+            rationale: "官方文档警告：Defragmentation 'blocks the system from reading and writing data while rebuilding its states'——碎片整理时会阻塞读写。"
+        },
+        {
+            id: "w16-1-q9",
+            question: "官方文档描述 Space Quota 超出时 etcd 进入什么状态？",
+            options: [
+                "正常运行",
+                "完全关闭",
+                "'maintenance mode which only accepts key reads and deletes'——只接受读取和删除",
+                "自动扩容"
+            ],
+            answer: 2,
+            rationale: "官方文档：超出 quota 时'raises a cluster-wide alarm that puts the cluster into a maintenance mode which only accepts key reads and deletes'。"
         },
         {
             id: "w16-1-q10",
-            question: "多成员 etcd 集群恢复时需要注意什么？",
+            question: "官方文档描述验证快照状态的命令是什么？",
             options: [
-                "只恢复一个成员即可",
-                "每个成员用相同快照但不同的 --name 和 --initial-cluster 参数",
-                "成员可以使用不同的快照",
-                "不需要任何特殊处理"
+                "'etcdutl snapshot status snapshot.db -w table'——显示快照元数据",
+                "etcdctl check",
+                "kubectl describe",
+                "无法验证"
             ],
-            answer: 1,
-            rationale: "多成员集群恢复时，每个成员使用相同的快照但指定自己的 --name 和正确的 --initial-cluster 配置，形成新集群。"
+            answer: 0,
+            rationale: "官方文档：使用'etcdutl snapshot status snapshot.db -w table'验证快照状态，显示修订版、键数量等元数据。"
         },
         {
             id: "w16-1-q11",
-            question: "推荐使用什么版本的 etcd？",
+            question: "官方文档对 Kubernetes 场景 revision bump 的描述是什么？",
             options: [
-                "任何版本都可以",
-                "3.4.22+ 或 3.5.6+",
-                "只能使用 2.x 版本",
-                "必须使用最新版本"
+                "不需要任何特殊处理",
+                "使用'--bump-revision --mark-compacted'避免控制器 informer 不一致行为",
+                "只用于开发环境",
+                "会导致数据丢失"
             ],
             answer: 1,
-            rationale: "生产环境推荐使用 etcd 3.4.22+ 或 3.5.6+，这些版本修复了已知的重要问题，提供更好的稳定性。"
+            rationale: "官方文档：针对 Kubernetes 使用'--bump-revision 1000000000 --mark-compacted'，因为'controllers using informers require revision bumping to avoid inconsistent behavior'。"
         },
         {
             id: "w16-1-q12",
-            question: "如何验证 etcd 快照的完整性？",
+            question: "官方文档对直接复制 db 文件恢复的说明是什么？",
             options: [
-                "无法验证",
-                "使用 etcdctl snapshot status",
-                "直接恢复测试",
-                "检查文件大小"
+                "与 etcdctl 快照完全相同",
+                "需要添加'--skip-hash-check'跳过哈希检查",
+                "更推荐使用",
+                "不支持此方式"
             ],
             answer: 1,
-            rationale: "etcdctl snapshot status backup.db 可以显示快照的元数据（版本、大小、键数量等），验证快照是否有效。"
-        },
-        {
-            id: "w16-1-q13",
-            question: "除了 etcd 数据，完整的集群灾备还需要备份什么？",
-            options: [
-                "只需要 etcd 就够了",
-                "证书、kubeadm-config、静态 Pod 清单",
-                "只需要 Pod 日志",
-                "只需要镜像"
-            ],
-            answer: 1,
-            rationale: "完整灾备还需要：CA 证书和密钥、kubeadm-config ConfigMap、/etc/kubernetes/manifests 下的静态 Pod 清单、PV 数据等。"
-        },
-        {
-            id: "w16-1-q14",
-            question: "RPO 和 RTO 分别代表什么？",
-            options: [
-                "恢复点目标和恢复时间目标",
-                "回滚点和重试次数",
-                "读取性能和写入性能",
-                "资源和存储"
-            ],
-            answer: 0,
-            rationale: "RPO（Recovery Point Objective）是可容忍的数据丢失量，RTO（Recovery Time Objective）是恢复时间目标。用于设计备份策略。"
-        },
-        {
-            id: "w16-1-q15",
-            question: "自动化 etcd 备份通常使用什么 Kubernetes 资源？",
-            options: [
-                "Deployment",
-                "CronJob",
-                "DaemonSet",
-                "StatefulSet"
-            ],
-            answer: 1,
-            rationale: "CronJob 可以按计划定期执行备份任务。配置合适的调度表（如每小时）和备份保留策略。"
+            rationale: "官方文档：从 etcdctl 创建的快照包含 hash checks；直接复制的 db 文件需要恢复时添加'--skip-hash-check'跳过哈希检查。"
         }
     ],
     "w16-2": [
