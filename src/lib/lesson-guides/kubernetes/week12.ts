@@ -131,16 +131,18 @@ export const week12Guides: Record<string, LessonGuide> = {
     "w12-4": {
         lessonId: "w12-4",
         background: [
-            "OpenTelemetry（OTel）是 CNCF 的可观测性标准项目，提供统一的 API、SDK 和工具来收集和导出追踪、指标和日志数据。它合并了 OpenTracing 和 OpenCensus 两个项目，成为云原生可观测性的事实标准。",
-            "OpenTelemetry Collector 是可观测性数据的处理管道，包含 Receivers（接收数据）、Processors（处理数据）、Exporters（导出数据）三个阶段。Collector 可以部署为 Agent（DaemonSet/Sidecar）或 Gateway（集中式）模式。",
-            "Jaeger 是 Uber 开源的分布式追踪系统，现为 CNCF 毕业项目。核心组件包括：jaeger-collector（接收追踪数据）、jaeger-query（提供 UI 和 API）、存储后端（Cassandra、Elasticsearch、Kafka、Badger）。Jaeger 原生支持 OpenTelemetry 协议。",
-            "OTel + Jaeger 的典型架构：应用集成 OTel SDK → 数据发送到 OTel Collector → Collector 处理后导出到 Jaeger Collector → Jaeger 存储到后端 → 通过 Jaeger UI 或 Grafana 可视化。这种架构实现了采集和存储的解耦。"
+            "【Collector 四组件架构】官方文档：Collector 基于管道模型运作，包含四个核心组件——Receivers'accept telemetry data in various formats (OTLP, Jaeger, Prometheus)'接收数据；Processors'transform, filter, batch, or enrich incoming data'处理数据；Exporters'send processed telemetry to backends'导出数据；Connectors'enable data flow between pipelines for advanced routing'跨管道路由。",
+            "【配置启用机制】官方文档关键语义：'Configuring a receiver does not enable it. Receivers are enabled by adding them to the appropriate pipelines within the service section'——仅配置不生效，必须在 service.pipelines 中引用组件才能启用。Processors'execute in the order they are listed'——执行顺序与配置顺序一致。",
+            "【Jaeger 角色分工】官方架构文档：Jaeger v2 单一二进制可部署为不同角色——Collector'receives incoming trace data and writes it into storage backend'；Query'serves the APIs and user interface for querying and visualizing traces'；Ingester'processes spans from Kafka queues into storage'；Agent'forwards trace data'作为 sidecar 运行。",
+            "【两种部署架构】官方文档：Direct-to-Storage 模式 Collector 直接写入后端，'risks data loss during sustained traffic spikes'；Kafka-Based 模式'Kafka can be used as an intermediary, persistent queue between collectors and storage'，多个 Ingester 分担负载，防止数据丢失。",
+            "【OTel Demo 价值】官方文档：Demo 包含 15+ 微服务覆盖多种语言——.NET（Accounting/Cart）、Go（Checkout/Product Catalog）、Java（Ad）、Python（Recommendation）、Rust（Shipping）等。'Feature flag enabled scenarios walk you through pre-configured problems and show how to interpret OpenTelemetry data to solve them'——演示真实故障排查场景。"
         ],
         keyDifficulties: [
-            "OpenTelemetry SDK 集成：自动 instrumentation（如 Java Agent、Python auto-instrumentation）零代码修改；手动 instrumentation 提供更细粒度控制。需要配置 OTLP Exporter 指向 Collector 或直接发送到 Jaeger。环境变量（OTEL_EXPORTER_OTLP_ENDPOINT）是常用配置方式。",
-            "Collector Pipeline 设计：Receivers 定义数据入口（otlp、jaeger、zipkin）；Processors 处理数据（batch 批量发送、filter 过滤、attributes 修改属性）；Exporters 定义数据出口（otlp、jaeger、prometheus）。Pipeline 将三者组合，可以配置多条独立管线。",
-            "Collector 部署模式选择：Agent 模式（DaemonSet/Sidecar）靠近数据源，减少网络延迟和丢失风险；Gateway 模式（Deployment）集中处理，便于管理和扩展。混合模式：Agent 做初步处理，Gateway 做聚合和导出。",
-            "Jaeger 存储后端选择：Elasticsearch 功能丰富但资源消耗大；Cassandra 适合大规模分布式部署；Badger 适合单节点测试环境；Kafka 可作为缓冲层解耦收集和存储。生产环境需要考虑数据量、查询性能和运维复杂度。"
+            "【部署模式选择】官方文档：Agent Mode'runs alongside services to offload data quickly, handle retries, batching, and encryption locally'——靠近数据源处理；Gateway Mode'centralized collector receiving data from multiple agents for aggregation and processing'——集中处理便于管理。'Default OTLP exporters assume a local collector endpoint'——SDK 默认指向本地 Collector。",
+            "【Pipeline 配置语法】官方文档：三种管道类型'traces, metrics, logs'；每个 Pipeline 指定'receivers, processors (optional), and exporters'。同类型多实例使用'type/name'格式区分（如 otlp, otlp/2）。环境变量语法：'${env:DB_KEY}' 或带默认值 '${env:DB_KEY:-default}'。",
+            "【Jaeger 存储后端选型】官方文档：支持 Badger（'single-instance, production-limited'开发用）、Cassandra、Elasticsearch、Kafka、Memory（'development only'）、OpenSearch。生产环境需根据数据量、查询需求和运维能力选择。Kafka 作为缓冲层可解耦收集与存储。",
+            "【Collector 配置验证】官方文档：默认配置路径'/etc/<otel-directory>/config.yaml'；覆盖配置'otelcol --config=customconfig.yaml'；多文件组合'--config=file:/path/1 --config=file:/path/2'；验证配置'otelcol validate --config=customconfig.yaml'——部署前验证防止运行时错误。",
+            "【Jaeger UI 功能】官方文档：Web 界面'discover architecture via data-driven dependency diagram'——可视化服务拓扑；'view request timelines, identify latency sources'——追踪时间线和延迟源。SPM（Service Performance Monitoring）模块提供性能洞察。推荐使用'OpenTelemetry instrumentation and SDKs'作为供应商中立的埋点方案。"
         ],
         handsOnPath: [
             "部署 OpenTelemetry Collector：使用 Helm 安装 opentelemetry-collector。配置 OTLP receiver（gRPC 4317、HTTP 4318）。添加 logging exporter 验证数据接收。检查 Collector 的 /metrics 端点了解处理统计。",
@@ -612,183 +614,147 @@ export const week12Quizzes: Record<string, QuizQuestion[]> = {
     "w12-4": [
         {
             id: "w12-4-q1",
-            question: "OpenTelemetry 项目的来源是什么？",
+            question: "官方文档对 Collector 四个核心组件的描述是什么？",
             options: [
-                "从零开始的新项目",
-                "OpenTracing 和 OpenCensus 的合并",
-                "Jaeger 的分支",
-                "Prometheus 的扩展"
+                "Input、Process、Output、Connect",
+                "Collect、Transform、Send、Route",
+                "Receivers、Processors、Exporters、Connectors",
+                "Ingest、Filter、Export、Bridge"
             ],
-            answer: 1,
-            rationale: "OpenTelemetry 是 OpenTracing（追踪 API 标准）和 OpenCensus（Google 的追踪+指标库）合并的结果，成为 CNCF 的统一可观测性标准。"
+            answer: 2,
+            rationale: "官方文档：Collector 包含四个核心组件——Receivers 接收数据、Processors 处理数据、Exporters 导出数据、Connectors 跨管道路由。"
         },
         {
             id: "w12-4-q2",
-            question: "OpenTelemetry Collector 的三个处理阶段是什么？",
+            question: "官方文档对 Receiver 配置与启用的关键说明是什么？",
             options: [
-                "Input、Process、Output",
-                "Receivers、Processors、Exporters",
-                "Collect、Transform、Send",
-                "Ingest、Filter、Export"
+                "'Configuring a receiver does not enable it...must add to pipelines in the service section'——仅配置不生效",
+                "配置即启用，无需额外操作",
+                "必须在 extensions 中声明才能启用",
+                "只需重启 Collector 即可生效"
             ],
-            answer: 1,
-            rationale: "Collector 包含 Receivers（接收数据）、Processors（处理数据如批量、过滤）、Exporters（导出到后端），三者组成 Pipeline。"
+            answer: 0,
+            rationale: "官方文档：'Configuring a receiver does not enable it. Receivers are enabled by adding them to the appropriate pipelines within the service section'。"
         },
         {
             id: "w12-4-q3",
-            question: "OTLP 协议的默认端口是什么？",
+            question: "官方文档对 Agent Mode 的描述是什么？",
             options: [
-                "gRPC: 4317, HTTP: 4318",
-                "gRPC: 9411, HTTP: 14268",
-                "gRPC: 6831, HTTP: 6832",
-                "gRPC: 8080, HTTP: 8081"
+                "集中处理所有数据的模式",
+                "只用于测试环境的简化模式",
+                "不支持重试和批处理的轻量模式",
+                "'runs alongside services to offload data quickly, handle retries, batching, and encryption locally'"
             ],
-            answer: 0,
-            rationale: "OTLP（OpenTelemetry Protocol）的标准端口是 gRPC 4317 和 HTTP 4318，这是 OpenTelemetry 的原生协议。"
+            answer: 3,
+            rationale: "官方文档：Agent Mode 'runs alongside services to offload data quickly, handle retries, batching, and encryption locally'——靠近数据源处理。"
         },
         {
             id: "w12-4-q4",
-            question: "Collector 的 Agent 模式和 Gateway 模式有什么区别？",
+            question: "官方文档对 Jaeger Collector 角色的描述是什么？",
             options: [
-                "Agent 只支持追踪，Gateway 支持所有信号",
-                "Agent 部署在每个节点/Pod，Gateway 集中部署",
-                "Agent 性能更高",
-                "Gateway 不支持 Processors"
+                "提供查询 UI 和 API",
+                "'receives incoming trace data from applications and writes it into a storage backend'",
+                "从 Kafka 读取数据",
+                "生成测试追踪数据"
             ],
             answer: 1,
-            rationale: "Agent 模式（DaemonSet/Sidecar）部署在数据源附近，减少延迟和丢失风险；Gateway 模式集中部署，便于管理和扩展，常用于聚合和导出。"
+            rationale: "官方架构文档：Collector 'receives incoming trace data from applications and writes it into a storage backend'——接收数据并写入存储。"
         },
         {
             id: "w12-4-q5",
-            question: "Jaeger 的核心组件不包括哪个？",
+            question: "官方文档对 Direct-to-Storage 部署模式的风险警告是什么？",
             options: [
-                "jaeger-collector",
-                "jaeger-query",
-                "jaeger-distributor",
-                "jaeger-ingester"
+                "不支持高可用部署",
+                "无法使用 Processors",
+                "'risks data loss during sustained traffic spikes'——持续流量高峰时有数据丢失风险",
+                "只能使用内存存储"
             ],
             answer: 2,
-            rationale: "Jaeger 核心组件包括 collector（接收数据）、query（UI 和 API）、ingester（Kafka 到存储）、agent（已弃用）。distributor 是 Loki 的组件。"
+            rationale: "官方文档：Direct-to-Storage 模式 'risks data loss during sustained traffic spikes'——在持续流量高峰时存在数据丢失风险。"
         },
         {
             id: "w12-4-q6",
-            question: "配置 OTel SDK 发送数据的常用环境变量是什么？",
+            question: "官方文档对 Kafka-Based 部署架构的描述是什么？",
             options: [
-                "JAEGER_ENDPOINT",
-                "OTEL_EXPORTER_OTLP_ENDPOINT",
-                "TRACE_COLLECTOR_URL",
-                "OPENTELEMETRY_URL"
+                "'Kafka can be used as an intermediary, persistent queue between collectors and storage'——Kafka 作为持久化缓冲层",
+                "Kafka 只用于日志收集",
+                "Kafka 替代 Collector 直接接收数据",
+                "Kafka 只能与 Elasticsearch 配合使用"
             ],
-            answer: 1,
-            rationale: "OTEL_EXPORTER_OTLP_ENDPOINT 是 OpenTelemetry SDK 的标准环境变量，指定 OTLP Exporter 的目标地址（Collector 或后端）。"
+            answer: 0,
+            rationale: "官方文档：'Kafka can be used as an intermediary, persistent queue between collectors and storage'——多个 Ingester 分担负载，防止数据丢失。"
         },
         {
             id: "w12-4-q7",
-            question: "Collector 的 batch processor 的作用是什么？",
+            question: "官方文档对 Jaeger 存储后端 Badger 的限制描述是什么？",
             options: [
-                "过滤无效数据",
-                "将多个小请求合并为批量请求，优化网络效率",
-                "修改 Span 属性",
-                "采样追踪数据"
+                "不支持追踪数据",
+                "'single-instance, production-limited'——单实例，生产环境受限",
+                "只能存储 24 小时数据",
+                "需要额外付费授权"
             ],
             answer: 1,
-            rationale: "batch processor 将多个 Span 合并为批量请求发送，减少网络连接次数，提高效率。可以配置批次大小和超时时间。"
+            rationale: "官方文档：Badger 是 'single-instance, production-limited'——适合开发测试，生产环境能力受限。"
         },
         {
             id: "w12-4-q8",
-            question: "Jaeger 支持哪些存储后端？",
+            question: "官方文档对 Collector 配置验证命令的说明是什么？",
             options: [
-                "只支持 Elasticsearch",
-                "只支持 Cassandra",
-                "Elasticsearch、Cassandra、Kafka、Badger 等",
-                "只支持内存存储"
+                "使用 otelcol check 命令",
+                "配置文件无法预先验证",
+                "必须启动 Collector 才能验证",
+                "'otelcol validate --config=customconfig.yaml'——部署前验证配置"
             ],
-            answer: 2,
-            rationale: "Jaeger 支持多种存储后端：Elasticsearch（功能丰富）、Cassandra（大规模）、Kafka（缓冲层）、Badger（单节点）、内存（测试）。"
+            answer: 3,
+            rationale: "官方文档：使用 'otelcol validate --config=customconfig.yaml' 命令在部署前验证配置文件，防止运行时错误。"
         },
         {
             id: "w12-4-q9",
-            question: "如何在 Grafana 中实现从日志跳转到追踪？",
+            question: "官方文档对 Pipeline 类型的说明是什么？",
             options: [
-                "自动关联，无需配置",
-                "通过 TraceID 字段配置 Data Link",
-                "只能手动复制 TraceID 搜索",
-                "Grafana 不支持此功能"
+                "只支持 traces 一种类型",
+                "支持 data、meta、control 三种类型",
+                "支持 traces、metrics、logs 三种类型",
+                "Pipeline 类型由 Exporter 决定"
             ],
-            answer: 1,
-            rationale: "在 Loki 数据源配置 Derived Fields，设置 TraceID 字段的正则匹配，配置跳转链接到 Jaeger 或 Tempo，实现一键跳转。"
+            answer: 2,
+            rationale: "官方文档：Pipeline 有三种类型'traces, metrics, logs'，每种可以独立配置 Receivers、Processors、Exporters。"
         },
         {
             id: "w12-4-q10",
-            question: "Collector 的 filter processor 用于什么？",
+            question: "官方文档对 Jaeger UI 核心功能的描述是什么？",
             options: [
-                "压缩数据",
-                "根据条件过滤掉不需要的 Span 或指标",
-                "格式转换",
-                "加密数据"
+                "'discover architecture via data-driven dependency diagram' 和 'view request timelines, identify latency sources'",
+                "只提供原始 JSON 数据查看",
+                "只支持搜索功能",
+                "需要额外安装可视化插件"
             ],
-            answer: 1,
-            rationale: "filter processor 根据配置的条件（如 Span 名称、属性值）过滤数据，例如排除健康检查的追踪，减少噪音和存储成本。"
+            answer: 0,
+            rationale: "官方文档：Jaeger UI 可以 'discover architecture via data-driven dependency diagram' 和 'view request timelines, identify latency sources'。"
         },
         {
             id: "w12-4-q11",
-            question: "OpenTelemetry 的 Semantic Conventions 是什么？",
+            question: "官方文档推荐使用什么方案进行应用埋点？",
             options: [
-                "数据传输协议",
-                "标准化的属性命名规范（如 http.method）",
-                "采样策略定义",
-                "Collector 配置格式"
+                "Jaeger 原生 SDK",
+                "'OpenTelemetry instrumentation and SDKs'——供应商中立的 OTel 方案",
+                "自研埋点代码",
+                "Zipkin SDK"
             ],
             answer: 1,
-            rationale: "Semantic Conventions 定义了标准化的属性名称（如 http.method、db.system），确保不同语言、框架产生的追踪数据具有一致的命名，便于分析。"
+            rationale: "Jaeger 官方文档推荐使用 'OpenTelemetry instrumentation and SDKs' 作为供应商中立的埋点方案。"
         },
         {
             id: "w12-4-q12",
-            question: "OTel Collector 的 Pipeline 如何组织？",
+            question: "官方文档对 OTel Demo 的价值描述是什么？",
             options: [
-                "每种信号（追踪、指标、日志）只能有一条管线",
-                "可以配置多条独立管线，每条有自己的 Receivers、Processors、Exporters",
-                "所有信号必须共享同一条管线",
-                "管线数量等于 Exporter 数量"
+                "只是简单的 Hello World 示例",
+                "只演示 traces 信号",
+                "需要购买商业许可",
+                "'Feature flag enabled scenarios walk you through pre-configured problems and show how to interpret OpenTelemetry data'"
             ],
-            answer: 1,
-            rationale: "Collector 支持配置多条 Pipeline，每条管线定义自己的 Receivers、Processors、Exporters 组合，不同信号类型可以有不同的处理流程。"
-        },
-        {
-            id: "w12-4-q13",
-            question: "Jaeger 的 jaeger-ingester 组件用于什么场景？",
-            options: [
-                "直接接收追踪数据",
-                "从 Kafka 读取数据并写入存储",
-                "提供查询 API",
-                "生成测试数据"
-            ],
-            answer: 1,
-            rationale: "jaeger-ingester 从 Kafka 消费追踪数据并写入存储后端。在高流量场景，Kafka 作为缓冲层解耦收集和存储，提高可靠性。"
-        },
-        {
-            id: "w12-4-q14",
-            question: "OpenTelemetry Operator for Kubernetes 的作用是什么？",
-            options: [
-                "替代 Kubernetes Operator 模式",
-                "自动注入 instrumentation 和管理 Collector",
-                "只用于监控 Kubernetes 组件",
-                "提供 Kubernetes Dashboard"
-            ],
-            answer: 1,
-            rationale: "OTel Operator 通过 CRD 管理 Collector 的部署和配置，并可以自动注入 instrumentation（通过 annotation）到应用 Pod，简化接入。"
-        },
-        {
-            id: "w12-4-q15",
-            question: "Grafana Tempo 相比 Jaeger 的主要优势是什么？",
-            options: [
-                "更好的 UI",
-                "基于对象存储，成本更低，与 Grafana 生态深度集成",
-                "支持更多语言",
-                "查询速度更快"
-            ],
-            answer: 1,
-            rationale: "Tempo 基于对象存储（如 S3），无需专门的数据库，成本更低。与 Grafana、Loki、Prometheus 深度集成，是 Grafana 栈的原生选择。"
+            answer: 3,
+            rationale: "官方文档：Demo 的核心价值是 'Feature flag enabled scenarios walk you through pre-configured problems and show how to interpret OpenTelemetry data to solve them'——演示真实故障排查。"
         }
     ]
 }
