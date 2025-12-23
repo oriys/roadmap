@@ -255,7 +255,7 @@ export const systemDesignStages: Stage[] = [
                         resources: [
                             { title: "Route 53 Routing Policies", url: "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" },
                             { title: "Cloudflare Load Balancing", url: "https://developers.cloudflare.com/load-balancing/" },
-                            { title: "GeoDNS 原理", url: "https://ns1.com/resources/what-is-geodns" },
+                            { title: "GeoDNS 原理", url: "https://gcore.com/learning/what-is-geo-dns" },
                         ],
                     },
                     {

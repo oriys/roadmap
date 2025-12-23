@@ -8,7 +8,7 @@ export type LessonQuizState = { answers: Record<string, number | undefined>; att
 export type DocQuizProgress = Record<string, number[]>
 export type ResourceContext = { resource: Resource; lesson: Lesson; week: Week; stage: Stage }
 
-export type RoadmapId = "kubernetes" | "technical-writer" | "system-design" | "engineering-manager"
+export type RoadmapId = "kubernetes" | "technical-writer" | "system-design"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
