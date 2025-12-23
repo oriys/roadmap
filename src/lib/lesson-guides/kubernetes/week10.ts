@@ -128,10 +128,11 @@ export const week10Guides: Record<string, LessonGuide> = {
     "w10-4": {
         lessonId: "w10-4",
         background: [
-            "App of Apps 是 ArgoCD 推荐的集群引导模式。通过创建一个「父 Application」来管理多个「子 Application」，实现一键部署整个集群的应用栈。父 Application 的 Git 仓库包含所有子 Application 的 YAML 定义。",
-            "ApplicationSet 是 ArgoCD 的另一个强大功能，使用 Generator（List、Cluster、Git、Matrix 等）自动生成多个 Application。适合多集群部署、多租户场景，比手写多个 Application YAML 更高效。",
-            "多集群管理是 ArgoCD 的核心能力。通过 argocd cluster add 命令将远程集群添加到 ArgoCD，然后在 Application 的 destination 中指定目标集群。ArgoCD 可以从单一控制平面管理数十上百个集群。",
-            "渐进式交付（Progressive Delivery）通过 Argo Rollouts 实现。它提供金丝雀发布（Canary）和蓝绿部署（Blue-Green）策略，可以与 ArgoCD 配合使用，在 GitOps 模式下实现安全的渐进式发布。"
+            "【App of Apps 定义】官方文档：'Declaratively specify one Argo CD app that consists only of other apps'——声明式定义一个只包含其他应用的父 Application，实现集群应用栈的一键引导部署。父 Application 的源仓库包含所有子 Application 的 YAML 定义。",
+            "【集群添加机制】官方文档：'argocd cluster add context-name' 命令会'connect to the cluster and install the necessary resources for ArgoCD to connect to it'——安装必要资源。执行前需用 kubectl config get-contexts 验证可用上下文，且需要目标集群的特权访问。",
+            "【in-cluster 特殊性】官方文档：'The in-cluster cluster cannot be removed with this'——in-cluster 是特殊集群，不能通过 argocd cluster rm 删除。如需禁用，必须在 argocd-cm ConfigMap 中设置 'cluster.inClusterEnabled' 为 'false'。",
+            "【安全警告】官方文档强调：'Only admins should have push access to the parent Application's source repository'——父应用仓库推送权限等同于集群管理权限。部署到 ArgoCD 命名空间的项目会获得管理员级别访问权限。",
+            "【Argo Rollouts 定义】官方文档：'a Kubernetes controller and set of CRDs which provide advanced deployment capabilities'——提供 Blue-Green、Canary、渐进式交付等高级部署能力。与 ArgoCD 配合使用，ArgoCD 像管理 Deployment 一样管理 Rollout CRD。"
         ],
         keyDifficulties: [
             "App of Apps 的目录结构设计：父 Application 指向一个包含多个 Application YAML 的目录。可以使用 Helm 或 Kustomize 模板化子 Application，实现参数化配置。注意 finalizer 配置确保级联删除。",
@@ -609,15 +610,15 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
     "w10-4": [
         {
             id: "w10-4-q1",
-            question: "App of Apps 模式的核心概念是什么？",
+            question: "官方文档对 App of Apps 模式的定义是什么？",
             options: [
-                "一个 Pod 运行多个容器",
-                "一个父 Application 管理多个子 Application",
                 "多个集群共享一个 Application",
-                "一个 Git 仓库包含多个 Chart"
+                "一个 Git 仓库包含多个 Chart",
+                "'Declaratively specify one Argo CD app that consists only of other apps'——声明式定义只包含其他应用的父 Application",
+                "一个 Pod 运行多个容器"
             ],
-            answer: 1,
-            rationale: "App of Apps 通过创建一个父 Application（指向包含多个 Application YAML 的目录），实现一键部署整个应用栈。"
+            answer: 2,
+            rationale: "官方文档：App of Apps 是'Declaratively specify one Argo CD app that consists only of other apps'——一个父 Application 只包含其他 Application。"
         },
         {
             id: "w10-4-q2",
@@ -636,24 +637,24 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
             question: "ApplicationSet 的 Cluster Generator 的作用是什么？",
             options: [
                 "创建新的 Kubernetes 集群",
-                "自动为 ArgoCD 注册的每个集群生成 Application",
                 "管理集群凭证",
-                "同步集群配置"
+                "同步集群配置",
+                "自动为 ArgoCD 注册的每个集群生成 Application"
             ],
-            answer: 1,
+            answer: 3,
             rationale: "Cluster Generator 自动匹配 ArgoCD 管理的集群，为每个集群生成 Application，适合多集群统一部署场景。"
         },
         {
             id: "w10-4-q4",
-            question: "向 ArgoCD 添加远程集群的命令是什么？",
+            question: "官方文档中添加远程集群的命令是什么？",
             options: [
-                "argocd cluster create",
-                "argocd cluster add <context-name>",
+                "'argocd cluster add context-name'——将 kubeconfig 中的集群添加到 ArgoCD 管理",
                 "kubectl add cluster",
-                "argocd register cluster"
+                "argocd register cluster",
+                "argocd cluster create"
             ],
-            answer: 1,
-            rationale: "argocd cluster add <context-name> 将 kubeconfig 中的集群添加到 ArgoCD 管理，需要有目标集群的管理权限。"
+            answer: 0,
+            rationale: "官方文档：使用 'argocd cluster add context-name' 命令，会连接到集群并安装必要资源。需要目标集群的特权访问。"
         },
         {
             id: "w10-4-q5",
@@ -669,123 +670,87 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
         },
         {
             id: "w10-4-q6",
-            question: "Argo Rollouts 的 Canary 策略如何工作？",
+            question: "官方文档对 Argo Rollouts Canary 策略的描述是什么？",
             options: [
                 "一次性切换所有流量",
-                "逐步增加新版本的流量比例（如 20%→40%→100%）",
-                "同时运行两个完整的环境",
-                "随机分配流量"
+                "随机分配流量",
+                "'gradually shift traffic to a new version'——逐步将流量切换到新版本",
+                "同时运行两个完整的环境"
             ],
-            answer: 1,
-            rationale: "Canary 策略逐步将流量从旧版本切换到新版本，可以在每个阶段进行验证，发现问题时快速回滚。"
+            answer: 2,
+            rationale: "官方文档：Canary 策略'gradually shift traffic to a new version'，可以在每个阶段进行验证，发现问题时快速回滚。"
         },
         {
             id: "w10-4-q7",
-            question: "App of Apps 模式需要特别注意什么安全问题？",
+            question: "官方文档对 App of Apps 安全的警告是什么？",
             options: [
+                "'Only admins should have push access to the parent Application's source repository'——父应用仓库推送权限需严格控制",
                 "子 Application 无法访问 Git",
-                "父 Application 仓库的推送权限等同于集群管理权限",
                 "无法配置 RBAC",
                 "子 Application 不支持自动同步"
             ],
-            answer: 1,
-            rationale: "能向父 Application 仓库推送的人可以创建任意 Application，需要严格控制仓库访问权限。"
+            answer: 0,
+            rationale: "官方文档警告：'Only admins should have push access to the parent Application's source repository'——能推送到父应用仓库相当于拥有集群管理权限。"
         },
         {
             id: "w10-4-q8",
-            question: "Argo Rollouts 如何实现自动回滚？",
+            question: "官方文档对 Argo Rollouts Analysis 功能的描述是什么？",
             options: [
                 "监控 Pod 重启次数",
-                "通过 Analysis 查询指标，不满足条件时自动回滚",
                 "依赖 Kubernetes 原生能力",
-                "需要手动触发"
+                "需要手动触发",
+                "'query and interpret metrics from various providers to verify key KPIs and drive automated promotion or rollback'"
             ],
-            answer: 1,
-            rationale: "Rollouts 的 Analysis 功能可以查询 Prometheus 等指标源，如果指标不满足预设条件（如成功率 < 99%），自动触发回滚。"
+            answer: 3,
+            rationale: "官方文档：Analysis 可以'query and interpret metrics from various providers to verify key KPIs and drive automated promotion or rollback'。"
         },
         {
             id: "w10-4-q9",
             question: "ApplicationSet 的 Git Generator 的用途是什么？",
             options: [
                 "从 Git 历史生成应用",
+                "管理 Git 凭证",
                 "根据 Git 仓库目录结构自动生成 Application",
-                "同步 Git 仓库",
-                "管理 Git 凭证"
+                "同步 Git 仓库"
             ],
-            answer: 1,
+            answer: 2,
             rationale: "Git Generator 扫描 Git 仓库的目录结构，为每个匹配的目录生成 Application，适合目录组织的多环境/多应用场景。"
         },
         {
             id: "w10-4-q10",
-            question: "Blue-Green 部署策略与 Canary 的主要区别是什么？",
+            question: "官方文档对 Blue-Green 部署的描述是什么？",
             options: [
-                "Blue-Green 更慢",
-                "Blue-Green 同时运行两个完整环境，一次性切换流量",
+                "'run the new version through a preview service while the active service handles production traffic'——新版本通过预览服务运行",
+                "逐步增加新版本的流量比例",
                 "Canary 不支持回滚",
                 "Blue-Green 不需要额外资源"
             ],
-            answer: 1,
-            rationale: "Blue-Green 同时运行新旧两个完整环境，通过切换 Service 一次性切换流量。Canary 逐步切换流量比例。"
+            answer: 0,
+            rationale: "官方文档：Blue-Green 部署'run the new version through a preview service while the active service handles production traffic'，验证后一次性切换。"
         },
         {
             id: "w10-4-q11",
-            question: "在 App of Apps 模式中，如何确保子 Application 被级联删除？",
+            question: "官方文档对级联删除的说明是什么？",
             options: [
                 "手动删除每个子 Application",
-                "为子 Application 添加 resources-finalizer.argocd.argoproj.io finalizer",
                 "使用 kubectl delete",
-                "禁用 Auto-Sync"
+                "禁用 Auto-Sync",
+                "添加 'resources-finalizer.argocd.argoproj.io' finalizer 确保子应用和资源被级联删除"
             ],
-            answer: 1,
-            rationale: "添加 finalizer 后，删除父 Application 会触发删除所有子 Application 及其管理的资源。"
+            answer: 3,
+            rationale: "官方文档：添加 'resources-finalizer.argocd.argoproj.io' finalizer 后，删除父 Application 会触发删除所有子 Application 及其管理的资源。"
         },
         {
             id: "w10-4-q12",
-            question: "ArgoCD 添加集群时在目标集群创建了什么资源？",
-            options: [
-                "完整的 ArgoCD 组件",
-                "ServiceAccount 和相关 RBAC 资源",
-                "Prometheus 监控组件",
-                "Ingress 资源"
-            ],
-            answer: 1,
-            rationale: "argocd cluster add 在目标集群创建 ServiceAccount 和 ClusterRoleBinding，让 ArgoCD 能够管理该集群资源。"
-        },
-        {
-            id: "w10-4-q13",
-            question: "ApplicationSet 的 Matrix Generator 的作用是什么？",
-            options: [
-                "生成矩阵形式的报表",
-                "组合多个 Generator 的结果，生成笛卡尔积",
-                "按矩阵排列 Pod",
-                "矩阵式部署策略"
-            ],
-            answer: 1,
-            rationale: "Matrix Generator 组合多个 Generator（如 Cluster + List），生成所有组合的 Application，适合多维度部署场景。"
-        },
-        {
-            id: "w10-4-q14",
-            question: "Argo Rollouts 的流量切分需要什么支持？",
-            options: [
-                "只需要 Kubernetes Service",
-                "需要 Ingress Controller 或 Service Mesh 的流量切分能力",
-                "需要修改应用代码",
-                "只支持 HTTP 流量"
-            ],
-            answer: 1,
-            rationale: "精细的流量切分需要 Ingress Controller（NGINX、ALB）或 Service Mesh（Istio、Linkerd）提供流量权重控制能力。"
-        },
-        {
-            id: "w10-4-q15",
-            question: "如何禁用 ArgoCD 的 in-cluster 集群？",
+            question: "官方文档对禁用 in-cluster 集群的说明是什么？",
             options: [
                 "删除 argocd 命名空间",
-                "在 argocd-cm ConfigMap 中设置 cluster.inClusterEnabled 为 false",
+                "'The in-cluster cluster cannot be removed with this'——需在 argocd-cm ConfigMap 中设置 cluster.inClusterEnabled 为 false",
                 "使用 argocd cluster rm",
                 "删除 ServiceAccount"
             ],
             answer: 1,
-            rationale: "in-cluster 是特殊集群，不能通过 argocd cluster rm 删除。需要在 argocd-cm ConfigMap 中设置配置项禁用。"
+            rationale: "官方文档：'The in-cluster cluster cannot be removed with this'——in-cluster 是特殊集群，不能用 argocd cluster rm 删除，需要在 ConfigMap 中禁用。"
         }
     ]
 }
