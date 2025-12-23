@@ -131,17 +131,18 @@ export const week14Guides: Record<string, LessonGuide> = {
     "w14-4": {
         lessonId: "w14-4",
         background: [
-            "运行时安全是容器安全的最后一道防线。即使有准入控制，攻击者仍可能通过应用漏洞进入容器。运行时安全监控容器内的行为，检测异常活动（如反向 Shell、敏感文件访问、特权提升尝试）并告警。",
-            "Falco 是 CNCF 的运行时安全项目。它通过 eBPF 探针（或内核模块）监控系统调用，使用规则引擎分析事件并生成告警。Falco 可以检测容器逃逸、加密矿工、Webshell 等常见攻击模式。",
-            "Falco 规则使用 YAML 编写，包含条件（condition）和输出（output）。条件使用 Falco 的过滤语法，可以匹配进程、文件、网络等事件。规则可以通过 list 和 macro 复用。",
-            "Falco 告警可以输出到多个渠道：stdout、文件、syslog、HTTP webhook、gRPC。生产环境通常集成 Falcosidekick 将告警发送到 Slack、PagerDuty、Elasticsearch、Prometheus 等。",
-            "运行时安全的挑战包括：性能影响（eBPF 探针开销）、告警疲劳（规则太宽泛导致误报）、规则维护（需要根据应用行为定制）。需要在检测能力和运维成本之间平衡。"
+            "【Falco 定义】官方文档：Falco 是'a cloud native security tool that provides runtime security across hosts, containers, Kubernetes, and cloud environments'——跨主机、容器、K8s 和云环境的运行时安全工具。设计用于'detect and alert on abnormal behavior and potential security threats in real-time'实时检测异常行为。",
+            "【核心架构】官方文档：Falco 作为监控代理捕获系统事件（主要是 Linux 内核系统调用），通过规则引擎评估生成实时安全告警。关键组件包括：用户空间 CLI 工具、配置系统、驱动层（支持 eBPF 探针和内核模块）、插件系统扩展功能、falcoctl 管理工具。",
+            "【规则文件结构】官方文档：Falco 规则文件是'a YAML file containing mainly three types of elements'——Rules（'Conditions under which an alert should be generated'触发告警的条件）；Macros（'provide a way to name common patterns and factor out redundancies'复用通用模式）；Lists（可包含在规则和宏中的命名集合）。",
+            "【规则必需字段】官方文档：Falco 规则必须包含——condition（'A filtering expression applied against events to check whether they match'事件过滤表达式）；desc（规则描述）；output（匹配事件时输出的消息）；priority（事件严重级别如 critical、error、warning）。",
+            "【Falcosidekick 功能】官方文档：Falcosidekick 是'a simple daemon for connecting Falco to your ecosystem'——将 Falco 事件以 fan-out 方式转发到多个输出。支持 Slack、Teams、AlertManager、PagerDuty、Elasticsearch、Loki、Kafka、AWS CloudWatch 等 60+ 集成通道。"
         ],
         keyDifficulties: [
-            "Falco 规则语法：rule 定义检测逻辑；condition 是过滤表达式（如 spawned_process and container）；output 定义告警内容（可使用字段变量如 %proc.name）。priority 设置告警级别（emergency/alert/critical/error/warning/notice/info/debug）。",
-            "规则调优和降噪：使用 enabled: false 禁用不需要的规则；通过 exceptions 定义例外条件（如允许某些进程访问敏感文件）；调整 priority 控制告警级别；使用 falcoctl 管理规则集。",
-            "与 Kubernetes 集成：Falco 通过 K8s Audit 插件接收 API Server 审计事件（补充系统调用监控）；使用 K8s 元数据丰富告警（Pod 名称、命名空间、标签）；支持 DaemonSet 部署模式。",
-            "告警响应流程：告警分级和路由（按 priority/namespace）；告警去重和聚合；与 SIEM/SOAR 集成；建立响应 Runbook；定期审计和规则更新。"
+            "【规则语法详解】官方文档：规则字段顺序建议为 rule、desc、condition、output、priority、tags。condition 是'Boolean predicate expressed using the condition syntax'——可对所有支持的事件和字段进行条件判断。括号定义优先级，每个比较使用字段（左侧，从事件提取）和静态/计算值（右侧）。",
+            "【Priority 语义】官方文档：priority 不影响规则触发顺序（顺序由定义顺序决定），仅表示违规严重性。级别指导：写状态操作用 ERROR；未授权读状态用 WARNING；意外行为（如容器内 Shell）用 NOTICE；违反最佳实践（如特权容器）用 INFO。",
+            "【Macros 复用机制】官方文档：Macros 是'reusable rule condition snippets'——可复用的规则条件片段，用于'name common patterns and factor out redundancies'命名通用模式消除冗余。允许在多个规则中引用相同的条件逻辑，提高可维护性。",
+            "【Falcosidekick 架构】官方文档：Falcosidekick 作为无状态 HTTP 服务运行在端口 2801，接收 Falco 实例的 JSON 事件并路由到配置的输出。支持 Docker、systemd、Kubernetes/Helm 部署，可选 TLS/mTLS 安全和自定义字段丰富功能。",
+            "【检测能力范围】官方文档：Falco 监控安全异常包括——特权提升尝试（privilege escalation）、命名空间操作（namespace manipulation）、关键目录未授权文件修改、意外网络连接、可疑进程执行（shells、SSH binaries）、系统工具篡改。"
         ],
         handsOnPath: [
             "部署 Falco：使用 Helm 安装 Falco（eBPF 驱动）；验证 Falco Pod 运行正常；查看 Falco 日志确认规则加载成功。",
@@ -613,183 +614,147 @@ export const week14Quizzes: Record<string, QuizQuestion[]> = {
     "w14-4": [
         {
             id: "w14-4-q1",
-            question: "Falco 的主要用途是什么？",
+            question: "官方文档对 Falco 的定义是什么？",
             options: [
-                "容器编排",
-                "运行时安全监控，检测容器内异常行为",
-                "网络代理",
-                "日志聚合"
+                "容器编排平台",
+                "日志聚合工具",
+                "'a cloud native security tool that provides runtime security across hosts, containers, Kubernetes, and cloud environments'",
+                "网络代理服务"
             ],
-            answer: 1,
-            rationale: "Falco 是运行时安全工具，通过监控系统调用检测容器内的异常行为，如反向 Shell、敏感文件访问等。"
+            answer: 2,
+            rationale: "官方文档定义 Falco 为'a cloud native security tool that provides runtime security across hosts, containers, Kubernetes, and cloud environments'——跨平台运行时安全工具。"
         },
         {
             id: "w14-4-q2",
-            question: "Falco 如何监控容器行为？",
+            question: "官方文档对 Falco 规则文件结构的描述是什么？",
             options: [
-                "通过网络代理",
-                "通过 eBPF 探针或内核模块监控系统调用",
-                "通过日志分析",
-                "通过镜像扫描"
+                "'a YAML file containing mainly three types of elements': Rules、Macros、Lists",
+                "只包含 Rules 一种元素",
+                "使用 JSON 格式定义",
+                "使用 Rego 语言编写"
             ],
-            answer: 1,
-            rationale: "Falco 使用 eBPF 探针（推荐）或内核模块捕获系统调用，然后通过规则引擎分析并生成告警。"
+            answer: 0,
+            rationale: "官方文档：Falco 规则文件是'a YAML file containing mainly three types of elements'——Rules、Macros、Lists 三种元素。"
         },
         {
             id: "w14-4-q3",
-            question: "Falco 规则的核心组成部分是什么？",
+            question: "官方文档对 Falco Rules 的定义是什么？",
             options: [
-                "只有规则名称",
-                "rule、condition、output、priority 等",
-                "只有输出格式",
-                "只有优先级"
+                "可复用的代码片段",
+                "命名的数据集合",
+                "'Conditions under which an alert should be generated'——触发告警的条件",
+                "输出格式定义"
             ],
-            answer: 1,
-            rationale: "Falco 规则包含 rule（名称）、condition（过滤条件）、output（告警输出）、priority（告警级别）等字段。"
+            answer: 2,
+            rationale: "官方文档：Rules 是'Conditions under which an alert should be generated'——定义何时应该生成告警的条件。"
         },
         {
             id: "w14-4-q4",
-            question: "以下哪个不是 Falco 可以检测的行为？",
+            question: "官方文档对 Macros 功能的描述是什么？",
             options: [
-                "容器内打开反向 Shell",
-                "访问 /etc/shadow 文件",
-                "Pod 副本数变化",
-                "特权容器启动"
+                "定义告警输出格式",
+                "设置告警优先级",
+                "管理规则版本",
+                "'provide a way to name common patterns and factor out redundancies'——命名通用模式消除冗余"
             ],
-            answer: 2,
-            rationale: "Pod 副本数变化是 Kubernetes 资源层面的变化，不是系统调用层面的行为。Falco 监控的是系统调用级别的活动。"
+            answer: 3,
+            rationale: "官方文档：Macros 'provide a way to name common patterns and factor out redundancies'——可复用的规则条件片段。"
         },
         {
             id: "w14-4-q5",
-            question: "Falcosidekick 的作用是什么？",
+            question: "官方文档列出的 Falco 规则必需字段有哪些？",
             options: [
-                "替代 Falco",
-                "将 Falco 告警转发到多种输出渠道（Slack、PagerDuty 等）",
-                "生成 Falco 规则",
-                "管理 Falco 部署"
+                "只需要 rule 和 output",
+                "只需要 condition",
+                "condition、desc、output、priority",
+                "rule、tags、enabled"
             ],
-            answer: 1,
-            rationale: "Falcosidekick 是 Falco 的告警路由器，可以将告警发送到 Slack、PagerDuty、Elasticsearch、Prometheus 等多种渠道。"
+            answer: 2,
+            rationale: "官方文档：Falco 规则必须包含 condition（过滤表达式）、desc（描述）、output（输出消息）、priority（严重级别）。"
         },
         {
             id: "w14-4-q6",
-            question: "如何降低 Falco 告警噪音？",
+            question: "官方文档对 priority 字段作用的说明是什么？",
             options: [
-                "禁用 Falco",
-                "使用 exceptions 定义例外、禁用不需要的规则、调整 priority",
-                "只看高优先级告警",
-                "减少监控的容器数量"
+                "控制规则触发顺序",
+                "表示违规严重性，不影响规则触发顺序（由定义顺序决定）",
+                "定义输出格式",
+                "设置采样率"
             ],
             answer: 1,
-            rationale: "可以通过 exceptions 定义例外条件、禁用不适用的规则、调整告警 priority 来降低误报和噪音。"
+            rationale: "官方文档：priority 不影响规则触发顺序（顺序由定义顺序决定），仅表示违规严重性级别。"
         },
         {
             id: "w14-4-q7",
-            question: "Falco 支持哪些事件源？",
+            question: "官方文档对 priority 级别的指导是什么？",
             options: [
-                "只支持系统调用",
-                "系统调用、Kubernetes Audit 日志、CloudTrail 等（通过插件）",
-                "只支持网络事件",
-                "只支持文件事件"
+                "所有规则都使用 CRITICAL",
+                "写状态操作用 ERROR、未授权读用 WARNING、意外行为用 NOTICE、违反最佳实践用 INFO",
+                "按字母顺序选择级别",
+                "只使用 WARNING 和 ERROR"
             ],
             answer: 1,
-            rationale: "Falco 除了监控系统调用，还可以通过插件接收 Kubernetes Audit 日志、CloudTrail 等事件源。"
+            rationale: "官方文档指导：写状态操作用 ERROR；未授权读状态用 WARNING；意外行为（如容器内 Shell）用 NOTICE；违反最佳实践用 INFO。"
         },
         {
             id: "w14-4-q8",
-            question: "Falco 规则中 priority 字段的作用是什么？",
+            question: "官方文档对 Falcosidekick 的定义是什么？",
             options: [
-                "定义规则执行顺序",
-                "定义告警严重级别（emergency、alert、critical 等）",
-                "定义输出格式",
-                "定义过滤条件"
+                "Falco 的替代品",
+                "规则生成工具",
+                "'a simple daemon for connecting Falco to your ecosystem'——将 Falco 事件转发到多个输出",
+                "镜像扫描工具"
             ],
-            answer: 1,
-            rationale: "priority 定义告警严重级别，从 emergency（最高）到 debug（最低），用于告警分级和路由。"
+            answer: 2,
+            rationale: "官方文档：Falcosidekick 是'a simple daemon for connecting Falco to your ecosystem'——以 fan-out 方式转发 Falco 事件。"
         },
         {
             id: "w14-4-q9",
-            question: "运行时安全在整体安全策略中的位置是什么？",
+            question: "官方文档描述 Falco 可以检测哪些安全异常？",
             options: [
-                "可以替代所有其他安全措施",
-                "是最后一道防线，监控已经进入容器的攻击行为",
-                "只在开发环境需要",
-                "与其他安全措施无关"
+                "privilege escalation、namespace manipulation、unauthorized filesystem modifications、unexpected network connections、suspicious process execution",
+                "只检测网络攻击",
+                "只检测文件变化",
+                "只检测登录行为"
             ],
-            answer: 1,
-            rationale: "运行时安全是纵深防御的最后一道防线，即使有准入控制，攻击者仍可能通过应用漏洞进入容器，此时需要运行时监控。"
+            answer: 0,
+            rationale: "官方文档：Falco 监控 privilege escalation、namespace manipulation、关键目录未授权修改、意外网络连接、可疑进程执行等。"
         },
         {
             id: "w14-4-q10",
-            question: "Falco 如何与 Kubernetes 集成？",
+            question: "官方文档描述 Falcosidekick 支持多少种集成通道？",
             options: [
-                "替代 kubelet",
-                "以 DaemonSet 部署，使用 K8s 元数据丰富告警",
-                "作为 Service 运行",
-                "修改 API Server"
+                "只支持 Slack",
+                "只支持 10 种左右",
+                "60+ 集成通道（Slack、Teams、AlertManager、PagerDuty、Elasticsearch、Loki、Kafka 等）",
+                "不支持任何外部集成"
             ],
-            answer: 1,
-            rationale: "Falco 通常以 DaemonSet 部署在每个节点，并使用 Kubernetes 元数据（Pod 名称、命名空间等）丰富告警信息。"
+            answer: 2,
+            rationale: "官方文档：Falcosidekick 支持 60+ 集成通道，包括 Slack、Teams、AlertManager、PagerDuty、Elasticsearch、Loki、Kafka、AWS CloudWatch 等。"
         },
         {
             id: "w14-4-q11",
-            question: "eBPF 相比内核模块有什么优势？",
+            question: "官方文档描述 Falcosidekick 的运行端口是多少？",
             options: [
-                "功能更多",
-                "更安全稳定，不会导致内核崩溃，无需重新编译",
-                "性能更差",
-                "更难使用"
+                "端口 80",
+                "端口 2801——作为无状态 HTTP 服务运行",
+                "端口 443",
+                "端口 8080"
             ],
             answer: 1,
-            rationale: "eBPF 在内核沙箱中运行，更安全稳定，不会导致内核崩溃，且无需为每个内核版本重新编译。"
+            rationale: "官方文档：Falcosidekick 作为无状态 HTTP 服务运行在端口 2801，接收 Falco 实例的 JSON 事件。"
         },
         {
             id: "w14-4-q12",
-            question: "Falco 规则中 macro 的作用是什么？",
+            question: "官方文档对 condition 字段的描述是什么？",
             options: [
-                "定义输出格式",
-                "定义可复用的条件片段",
-                "定义告警级别",
-                "定义事件源"
+                "输出消息模板",
+                "规则描述文本",
+                "告警严重级别",
+                "'A filtering expression applied against events to check whether they match'——事件过滤表达式"
             ],
-            answer: 1,
-            rationale: "macro 定义可复用的条件片段，可以在多个规则中引用，减少重复代码并提高可维护性。"
-        },
-        {
-            id: "w14-4-q13",
-            question: "Falco K8s Audit 插件的作用是什么？",
-            options: [
-                "替代 API Server",
-                "接收 API Server 审计日志，检测敏感 API 操作",
-                "管理 Pod",
-                "网络代理"
-            ],
-            answer: 1,
-            rationale: "K8s Audit 插件让 Falco 接收 API Server 审计日志，可以检测敏感 API 操作如 exec 进入 Pod、创建特权容器等。"
-        },
-        {
-            id: "w14-4-q14",
-            question: "Falco 默认规则集可以检测什么？",
-            options: [
-                "只能检测网络攻击",
-                "特权提升、敏感目录修改、反向 Shell、可疑进程执行等",
-                "只能检测文件变化",
-                "只能检测登录行为"
-            ],
-            answer: 1,
-            rationale: "Falco 默认规则集覆盖常见攻击模式，包括特权提升、敏感目录（/etc、/usr/bin）修改、Shell 执行等。"
-        },
-        {
-            id: "w14-4-q15",
-            question: "如何测试 Falco 规则是否生效？",
-            options: [
-                "只能等待真实攻击",
-                "在容器中执行触发规则的操作（如 cat /etc/shadow），观察告警",
-                "修改 Falco 代码",
-                "重启集群"
-            ],
-            answer: 1,
-            rationale: "可以故意触发规则条件（如读取敏感文件、运行 Shell）来测试规则是否正确生成告警。"
+            answer: 3,
+            rationale: "官方文档：condition 是'A filtering expression applied against events to check whether they match the rule'——用于检查事件是否匹配规则。"
         }
     ]
 }
