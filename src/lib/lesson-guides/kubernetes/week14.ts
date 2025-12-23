@@ -89,17 +89,18 @@ export const week14Guides: Record<string, LessonGuide> = {
     "w14-3": {
         lessonId: "w14-3",
         background: [
-            "策略即代码（Policy as Code）将安全和合规策略编码化，使其可版本控制、可测试、可自动执行。在 Kubernetes 中，这通过准入控制实现。主流工具包括 OPA Gatekeeper（基于 Rego 语言）和 Kyverno（使用 YAML）。",
-            "OPA Gatekeeper 基于 Open Policy Agent，使用 Rego 语言编写策略。架构包括：ConstraintTemplate（定义策略模板和 Rego 逻辑）、Constraint（实例化模板，指定参数和作用范围）。策略通过 ValidatingAdmissionWebhook 执行。",
-            "Kyverno 是 Kubernetes 原生策略引擎，使用 YAML 编写策略，无需学习新语言。支持验证（validate）、变更（mutate）、生成（generate）、清理（cleanup）四种策略类型。更易上手但表达能力略弱于 Rego。",
-            "策略管理最佳实践包括：策略代码化并版本控制；建立策略测试（干运行、单元测试）；区分 warn/audit/enforce 模式；定义例外机制（exclusions）；监控策略违规情况。",
-            "常见策略场景：强制使用指定镜像仓库、禁止特权容器、要求资源限制、强制标签/注解、要求 Pod 安全上下文、限制 hostPath 等。策略应根据组织安全需求定制。"
+            "【Gatekeeper 定义】官方文档：Gatekeeper 是'a validating and mutating webhook that enforces CRD-based policies executed by Open Policy Agent'——通过 CRD 执行 OPA 策略的验证和变更 webhook。OPA 是 CNCF 毕业项目，Rego 语言驱动策略评估引擎。",
+            "【ConstraintTemplate 与 Constraint】官方文档：ConstraintTemplate 是'extensible policy definitions'（可扩展策略定义，原生 K8s CRD）；Constraint 是'instantiations of those templates, parameterized for specific use cases'——模板实例化。分离设计允许复用策略模式，团队可适配而无需修改核心定义。",
+            "【Kyverno 定义】官方文档：Kyverno 是 Kubernetes 策略引擎，支持六种策略机制——Validate（验证合规）、Mutate（自动修改）、Generate（自动创建）、Verify Images（镜像验证）、Cleanup Policy（资源清理）、Deleting Policy（删除管理）。通过 ClusterPolicy 资源配置。",
+            "【策略执行机制】官方文档：Gatekeeper 通过准入控制 webhook 拦截资源操作，在创建、更新、删除时执行策略。除准入执行外，其 audit 功能可揭示现有资源的策略违规情况。Kyverno 支持后台扫描和合规报告。",
+            "【策略库与测试】Gatekeeper Library 官方文档：提供验证和变更策略示例，使用 suite.yaml 定义测试用例，通过 gator CLI 工具验证。Kyverno 提供 CLI 工具用于集群外策略测试和应用。"
         ],
         keyDifficulties: [
-            "Gatekeeper 的 ConstraintTemplate 和 Constraint 关系：Template 定义策略逻辑（Rego 代码）和参数 schema；Constraint 实例化 Template，指定具体参数值和作用范围（namespaces、kinds）。分离设计便于策略复用和参数化。",
-            "Kyverno 策略结构：match（选择器，指定策略作用的资源）；exclude（排除条件）；validate/mutate/generate（策略逻辑）。支持 JMESPath 和 CEL 表达式进行复杂匹配。",
-            "Rego 语言入门：Rego 是声明式查询语言。基本模式：violation[{\\\"msg\\\": msg}] { ... } 表示违规条件。input 是被验证的资源。理解基本语法后可以编写常见策略。复杂策略需要深入学习。",
-            "例外处理机制：Gatekeeper 使用 Config 资源定义全局 exemptNamespaces；Constraint 可以指定 excludedNamespaces。Kyverno 使用 exclude 块或 PolicyException 资源。例外需要审慎管理，避免成为安全漏洞。"
+            "【Template/Constraint 分离设计】官方文档：ConstraintTemplate 定义策略逻辑和参数 schema（可扩展策略定义）；Constraint 实例化模板，指定具体参数值和作用范围。这种分离允许'reusable policy patterns that teams can adapt without modifying core definitions'——复用策略模式无需修改核心定义。",
+            "【Kyverno 策略配置】官方文档：策略通过 ClusterPolicy 资源配置，支持 resource selection via matching and exclusion rules（资源选择）、variables and external data source integration（变量和外部数据）、JMESPath expressions for complex logic、preconditions for conditional policy application。",
+            "【Gatekeeper 相比 OPA 的优势】官方文档：提供'an extensible, parameterized policy library'（可扩展参数化策略库）、native Kubernetes CRD support（原生 CRD 支持）、built-in mutation capabilities（内置变更能力）、audit and external data integration（审计和外部数据集成）。",
+            "【策略测试机制】官方文档：Gatekeeper Library 使用 suite.yaml 定义测试用例，包含 sample allowed and disallowed resource examples。gator CLI 工具验证策略。Kyverno 提供 CLI tooling for policy testing and application outside clusters——集群外测试应用。",
+            "【策略例外管理】官方文档：Kyverno 支持 policy exceptions for targeted exemptions（针对性豁免）。策略应区分模式：Gatekeeper 的 audit 功能揭示现有违规，Kyverno 支持 background scanning and compliance reporting——后台扫描和合规报告。"
         ],
         handsOnPath: [
             "部署 Gatekeeper：使用 Helm 或 manifests 安装 Gatekeeper；验证 controller-manager 和 audit 组件运行；理解 CRD（ConstraintTemplate、Constraint、Config）。",
@@ -466,183 +467,147 @@ export const week14Quizzes: Record<string, QuizQuestion[]> = {
     "w14-3": [
         {
             id: "w14-3-q1",
-            question: "Gatekeeper 和 Kyverno 的主要区别是什么？",
+            question: "官方文档对 Gatekeeper 的定义是什么？",
             options: [
-                "Gatekeeper 使用 Rego 语言，Kyverno 使用 YAML",
-                "Gatekeeper 只支持验证，Kyverno 只支持变更",
-                "两者功能完全相同",
-                "Gatekeeper 是商业产品"
+                "Kubernetes 原生策略机制",
+                "日志收集代理",
+                "'a validating and mutating webhook that enforces CRD-based policies executed by Open Policy Agent'——执行 OPA 策略的 webhook",
+                "容器运行时安全工具"
             ],
-            answer: 0,
-            rationale: "Gatekeeper 使用 Rego 语言编写策略，学习曲线较陡；Kyverno 使用 YAML，更易上手。两者都支持验证和变更。"
+            answer: 2,
+            rationale: "官方文档定义 Gatekeeper 为'a validating and mutating webhook that enforces CRD-based policies executed by Open Policy Agent'——通过 CRD 执行 OPA 策略。"
         },
         {
             id: "w14-3-q2",
-            question: "ConstraintTemplate 和 Constraint 的关系是什么？",
+            question: "官方文档对 ConstraintTemplate 的定义是什么？",
             options: [
-                "两者完全相同",
-                "Template 定义策略模板和逻辑，Constraint 实例化并指定参数",
-                "Constraint 定义模板，Template 实例化",
-                "只有 Template 会执行"
+                "'extensible policy definitions'——可扩展的策略定义，原生 K8s CRD",
+                "策略实例化配置",
+                "审计日志模板",
+                "变更操作定义"
             ],
-            answer: 1,
-            rationale: "ConstraintTemplate 定义策略逻辑（Rego 代码）和参数 schema；Constraint 实例化 Template，指定具体参数和作用范围。"
+            answer: 0,
+            rationale: "官方文档：ConstraintTemplate 是'extensible policy definitions'（可扩展策略定义），是原生 Kubernetes CRD。"
         },
         {
             id: "w14-3-q3",
-            question: "Kyverno 支持哪些策略类型？",
+            question: "官方文档对 Constraint 的定义是什么？",
             options: [
-                "只支持验证",
-                "验证、变更、生成、清理",
-                "只支持变更",
-                "只支持生成"
+                "策略逻辑的定义",
+                "审计功能配置",
+                "'instantiations of those templates, parameterized for specific use cases'——模板实例化",
+                "全局策略配置"
             ],
-            answer: 1,
-            rationale: "Kyverno 支持四种策略类型：validate（验证）、mutate（变更）、generate（生成）、cleanup（清理）。"
+            answer: 2,
+            rationale: "官方文档：Constraint 是'instantiations of those templates, parameterized for specific use cases'——ConstraintTemplate 的实例化。"
         },
         {
             id: "w14-3-q4",
-            question: "Rego 语言中 violation 规则的作用是什么？",
+            question: "官方文档描述 Kyverno 支持哪些策略机制？",
             options: [
-                "定义允许的行为",
-                "定义违规条件，匹配时表示策略违反",
-                "定义变更操作",
-                "定义日志输出"
+                "只支持 Validate 和 Mutate",
+                "只支持验证功能",
+                "只支持 Generate 和 Cleanup",
+                "Validate、Mutate、Generate、Verify Images、Cleanup Policy、Deleting Policy——六种机制"
             ],
-            answer: 1,
-            rationale: "在 Gatekeeper 中，violation 规则定义违规条件，当条件匹配时表示资源违反了策略。"
+            answer: 3,
+            rationale: "官方文档：Kyverno 支持六种策略机制——Validate、Mutate、Generate、Verify Images、Cleanup Policy、Deleting Policy。"
         },
         {
             id: "w14-3-q5",
-            question: "如何在 Gatekeeper 中定义策略例外？",
+            question: "官方文档对 Template/Constraint 分离设计优势的描述是什么？",
             options: [
-                "无法定义例外",
-                "在 Config 资源中定义 exemptNamespaces 或在 Constraint 中使用 excludedNamespaces",
-                "修改 Rego 代码",
-                "删除 Constraint"
+                "'reusable policy patterns that teams can adapt without modifying core definitions'——复用策略模式无需修改核心定义",
+                "提高执行性能",
+                "减少存储空间",
+                "简化 Rego 语法"
             ],
-            answer: 1,
-            rationale: "可以在 Config 资源中定义全局 exemptNamespaces，或在具体 Constraint 中使用 excludedNamespaces 定义例外。"
+            answer: 0,
+            rationale: "官方文档：分离设计允许'reusable policy patterns that teams can adapt without modifying core definitions'——团队可适配而无需修改核心定义。"
         },
         {
             id: "w14-3-q6",
-            question: "Gatekeeper 的审计功能用于什么？",
+            question: "官方文档描述 Gatekeeper 相比 OPA 的优势不包括哪个？",
             options: [
-                "只审计新创建的资源",
-                "定期扫描已存在的资源，发现违规情况",
-                "审计用户登录",
-                "审计网络流量"
+                "'an extensible, parameterized policy library'（可扩展参数化策略库）",
+                "'native Kubernetes CRD support'（原生 CRD 支持）",
+                "自动生成 Rego 代码",
+                "'built-in mutation capabilities'（内置变更能力）"
             ],
-            answer: 1,
-            rationale: "Gatekeeper 审计功能定期扫描集群中已存在的资源，发现那些在策略创建前就存在的违规资源。"
+            answer: 2,
+            rationale: "官方文档列出优势：可扩展参数化策略库、原生 CRD 支持、内置变更能力、审计和外部数据集成。不包括自动生成 Rego 代码。"
         },
         {
             id: "w14-3-q7",
-            question: "Kyverno 中 match 块的作用是什么？",
+            question: "官方文档描述 Gatekeeper 的 audit 功能作用是什么？",
             options: [
-                "定义策略逻辑",
-                "选择策略作用的资源（命名空间、资源类型等）",
-                "定义输出格式",
-                "配置日志级别"
+                "只审计新创建的资源",
+                "记录用户登录行为",
+                "监控网络流量",
+                "揭示现有资源的策略违规情况"
             ],
-            answer: 1,
-            rationale: "match 块定义策略作用的资源范围，可以指定命名空间、资源类型、标签等选择条件。"
+            answer: 3,
+            rationale: "官方文档：Gatekeeper 的 audit 功能可'揭示现有资源的策略违规情况'——除准入执行外的重要补充。"
         },
         {
             id: "w14-3-q8",
-            question: "策略即代码的主要优势不包括哪个？",
+            question: "官方文档描述 Kyverno 策略配置支持哪些功能？",
             options: [
-                "可版本控制",
-                "可测试",
-                "可自动执行",
-                "无需审批即可生效"
+                "只支持简单标签匹配",
+                "'resource selection via matching and exclusion rules'、'variables and external data source integration'、JMESPath expressions、preconditions",
+                "只支持命名空间过滤",
+                "不支持外部数据源"
             ],
-            answer: 3,
-            rationale: "策略即代码的优势是可版本控制、可测试、可自动执行。但策略变更仍需要审批流程，不是「无需审批」。"
+            answer: 1,
+            rationale: "官方文档：Kyverno 策略支持 resource selection、variables、external data integration、JMESPath expressions、preconditions 等。"
         },
         {
             id: "w14-3-q9",
-            question: "gator 工具的作用是什么？",
+            question: "官方文档描述 Gatekeeper Library 使用什么定义测试用例？",
             options: [
-                "部署 Gatekeeper",
-                "测试 Gatekeeper 策略",
-                "监控集群",
-                "管理镜像"
+                "使用 suite.yaml 定义测试用例，包含 sample allowed and disallowed resource examples",
+                "使用 JSON Schema 文件",
+                "使用 Go 测试代码",
+                "不支持测试功能"
             ],
-            answer: 1,
-            rationale: "gator 是 Gatekeeper 的 CLI 工具，可以在本地测试策略，验证策略语法和逻辑。"
+            answer: 0,
+            rationale: "官方文档：Gatekeeper Library 使用 suite.yaml 定义测试用例，包含'sample allowed and disallowed resource examples'。"
         },
         {
             id: "w14-3-q10",
-            question: "常见的策略场景不包括哪个？",
+            question: "官方文档对 gator CLI 工具的描述是什么？",
             options: [
-                "强制使用指定镜像仓库",
-                "禁止特权容器",
-                "自动增加 Pod 副本数",
-                "要求资源限制"
+                "用于部署 Gatekeeper",
+                "用于监控集群健康",
+                "用于验证策略——'gator CLI 工具验证策略'",
+                "用于管理 Git 仓库"
             ],
             answer: 2,
-            rationale: "自动增加副本数是 HPA 的功能，不是策略管控场景。常见策略包括镜像来源、安全上下文、资源限制等。"
+            rationale: "官方文档：gator CLI 工具用于验证策略，Gatekeeper Library 使用它进行策略测试。"
         },
         {
             id: "w14-3-q11",
-            question: "Kyverno 的 PolicyException 资源用于什么？",
+            question: "官方文档对 Kyverno 后台扫描功能的描述是什么？",
             options: [
-                "定义新策略",
-                "为特定资源定义策略例外",
-                "删除策略",
-                "测试策略"
+                "不支持后台扫描",
+                "'background scanning and compliance reporting'——后台扫描和合规报告",
+                "只在启动时扫描一次",
+                "需要额外购买许可"
             ],
             answer: 1,
-            rationale: "PolicyException 允许为特定资源（如特定 Pod）定义策略例外，使其不受某些策略的约束。"
+            rationale: "官方文档：Kyverno 支持'background scanning and compliance reporting'——后台扫描和合规报告功能。"
         },
         {
             id: "w14-3-q12",
-            question: "ValidatingAdmissionPolicy 是什么？",
+            question: "官方文档对 Kyverno 策略例外功能的描述是什么？",
             options: [
-                "第三方策略引擎",
-                "Kubernetes 原生的策略机制，使用 CEL 表达式",
-                "Gatekeeper 的组件",
-                "Kyverno 的功能"
+                "不支持策略例外",
+                "只能通过修改策略实现",
+                "必须重新部署 Kyverno",
+                "'policy exceptions for targeted exemptions'——针对性豁免"
             ],
-            answer: 1,
-            rationale: "ValidatingAdmissionPolicy 是 Kubernetes 1.26+ 引入的原生策略机制，使用 CEL 表达式，无需第三方工具。"
-        },
-        {
-            id: "w14-3-q13",
-            question: "策略的 warn 模式和 enforce 模式有什么区别？",
-            options: [
-                "没有区别",
-                "warn 只记录违规但不阻止，enforce 会阻止违规资源",
-                "warn 更严格",
-                "enforce 只用于测试"
-            ],
-            answer: 1,
-            rationale: "warn 模式只记录和警告违规但允许资源创建，便于渐进式推广。enforce 模式会拒绝违规资源的创建。"
-        },
-        {
-            id: "w14-3-q14",
-            question: "Gatekeeper Library 是什么？",
-            options: [
-                "Gatekeeper 的核心代码",
-                "预定义的常用策略模板集合",
-                "日志存储",
-                "监控系统"
-            ],
-            answer: 1,
-            rationale: "Gatekeeper Library 是社区维护的常用策略模板集合，包括禁止特权容器、要求资源限制等常见场景。"
-        },
-        {
-            id: "w14-3-q15",
-            question: "策略变更应该遵循什么流程？",
-            options: [
-                "直接应用到生产环境",
-                "存储在 Git、通过 PR 审批、在测试环境验证后再应用到生产",
-                "口头通知后应用",
-                "只在本地测试"
-            ],
-            answer: 1,
-            rationale: "策略即代码应遵循 GitOps 流程：代码化存储、PR 审批、CI 测试、逐步推广到各环境。"
+            answer: 3,
+            rationale: "官方文档：Kyverno 支持'policy exceptions for targeted exemptions'（针对性豁免），允许为特定资源定义例外。"
         }
     ],
     "w14-4": [
