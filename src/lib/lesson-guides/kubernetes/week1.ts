@@ -83,35 +83,39 @@ export const week1Guides: Record<string, LessonGuide> = {
     "w1-2": {
         lessonId: "w1-2",
         background: [
-            "Cgroups（Control Groups）是 Linux 内核提供的资源限制与监控机制，用于将进程组织成层级结构，并沿层级分配和限制 CPU、内存、I/O 等物理资源。",
-            "如果说 Namespace 决定了进程'能看到什么'，那么 Cgroups 决定了'能用多少'——两者配合构成容器隔离的完整基础。K8s 的 requests/limits、Docker 的 --memory/--cpus 参数底层都是 Cgroups。",
-            "Cgroups v2 采用统一层级（single unified hierarchy），所有控制器共享同一棵树；v1 每个控制器独立层级，更灵活但也更复杂。现代容器运行时和 K8s 默认使用 v2。",
-            "核心控制器包括：cpu（CPU 时间分配）、memory（内存限制与 OOM 控制）、io（块设备 I/O 限速）、pids（限制进程数量防止 fork bomb）。"
+            "【资源治理核心】Cgroups（Control Groups）是 Linux 内核的资源限制与监控机制。如果说 Namespace 决定进程'能看到什么'，Cgroups 决定'能用多少'——两者配合构成容器隔离的完整基础。",
+            "【v2 统一层级】cgroups v2 采用 single unified hierarchy，所有控制器在同一棵树上管理。cgroup-v2.html 指出这解决了 v1 多层级的协调问题，简化了配置和管理复杂度。",
+            "【控制器启用】通过向父 cgroup 的 cgroup.subtree_control 写入 '+cpu +memory' 启用子 cgroup 的控制器。这体现了 Top-down constraint：资源从父向下分配，子 cgroup 不能突破父级限制。",
+            "【核心控制器】cpu（CPU 时间分配）、memory（内存限制与 OOM 控制）、io（块设备 I/O 限速）、pids（限制进程数量防止 fork bomb）。K8s 的 requests/limits、Docker 的 --memory/--cpus 底层都是 Cgroups。",
+            "【K8s 映射】Pod 的 resources.requests 对应 cpu.weight/shares（软限制，竞争时按比例分配），resources.limits 对应 cpu.max/quota（硬限制，绝对上限）。"
         ],
         keyDifficulties: [
-            "Cgroups v1 vs v2 核心区别：v2 强制单一层级，所有控制器在同一棵树上；v2 有'no internal process'规则——非根 cgroup 如果有子 cgroup，就不能直接包含进程。",
-            "CPU 限制的两种模式：cpu.weight（权重/软限制，资源空闲时可超用）vs cpu.max（配额/硬限制，绝对上限）。K8s 的 requests 对应 shares/weight，limits 对应 quota/max。",
-            "内存限制层级：memory.min（硬保证）→ memory.low（软保护）→ memory.high（触发回收但不 OOM）→ memory.max（硬限制，超出触发 OOM Killer）。理解这个层级对排查 OOMKilled 至关重要。",
-            "Top-Down 约束：资源从父 cgroup 向下流动，子 cgroup 不能突破父级限制。在父 cgroup 的 cgroup.subtree_control 中启用控制器后，子 cgroup 才能使用。"
+            "【v1 vs v2 核心区别】v2 强制单一层级且有'no internal process'规则——非根 cgroup 如果有子 cgroup 就不能直接包含进程，必须把进程放到叶子节点。这避免了父子 cgroup 之间的资源竞争混乱。",
+            "【CPU 限制双模式】cpu.weight（范围 1-10000，默认 100）是权重/软限制，资源空闲时可超用；cpu.max（$MAX $PERIOD 微秒）是配额/硬限制，绝对上限。理解两者区别对 K8s 资源配置至关重要。",
+            "【内存四层阈值】memory.min（硬保证）→ memory.low（软保护，best-effort 回收）→ memory.high（触发节流但不 OOM）→ memory.max（硬限制，超出触发 OOM Killer）。排查 OOMKilled 必须理解这个层级。",
+            "【swap 与 OOM 风险】Docker 文档警告：--oom-kill-disable 必须配合 --memory 使用，否则'the host can run out of memory'。设置 --memory-swap 等于 --memory 可禁用容器 swap。"
         ],
         handsOnPath: [
-            "查看系统 cgroup 版本：cat /proc/filesystems | grep cgroup，检查 /sys/fs/cgroup 目录结构（v2 是统一目录，v1 有多个子目录如 cpu、memory）。",
-            "运行 docker run -m 100m --memory-swap 100m stress --vm 1 --vm-bytes 150M，观察容器因内存超限被 OOM Kill 的过程，使用 dmesg | tail 查看 OOM 日志。",
-            "使用 docker stats 实时监控容器 CPU/内存使用，对比 cgroup 文件中的原始数据：cat /sys/fs/cgroup/docker/<container-id>/memory.current。",
-            "实验 --cpus=0.5 和 --cpu-shares=512 的区别：前者是硬限制（最多用 50% CPU），后者是软限制（资源竞争时按比例分配，空闲时可超用）。"
+            "查看系统 cgroup 版本：cat /proc/filesystems | grep cgroup，检查 /sys/fs/cgroup 目录结构（v2 是统一目录，v1 有多个子目录）。",
+            "运行 docker run -m 100m --memory-swap 100m stress --vm 1 --vm-bytes 150M，观察 OOM Kill 过程，使用 dmesg | tail 查看日志。",
+            "使用 docker stats 实时监控资源，对比 cgroup 文件原始数据：cat /sys/fs/cgroup/docker/<container-id>/memory.current。",
+            "实验 --cpus=0.5 和 --cpu-shares=512 的区别：前者是硬限制（最多 50% CPU），后者是软限制（竞争时按比例分配）。",
+            "在 cgroup v2 系统上手动创建子 cgroup：mkdir /sys/fs/cgroup/test，向 cgroup.subtree_control 写入 '+cpu +memory' 启用控制器。",
+            "观察 K8s Pod 的 cgroup 位置：在节点上 find /sys/fs/cgroup -name '*<pod-uid>*' 找到对应 cgroup 目录。"
         ],
         selfCheck: [
-            "Cgroups v1 和 v2 的主要架构区别是什么？你的系统使用的是哪个版本？如何确认？",
-            "K8s Pod 的 resources.requests.cpu 和 resources.limits.cpu 分别对应 cgroup 的什么机制？它们在调度和运行时的作用有何不同？",
-            "解释 memory.min、memory.low、memory.high、memory.max 四个参数的区别，容器内存使用逼近各阈值时分别会发生什么？",
-            "为什么设置 --memory-swap 等于 --memory 可以禁用容器的 swap？如果不设置会怎样？",
-            "如果一个容器的 CPU limit 是 2，它能同时使用 4 个 CPU 核心各 50% 吗？为什么？"
+            "Cgroups v1 和 v2 的主要架构区别是什么？如何确认系统使用的版本？'no internal process' 规则是什么意思？",
+            "K8s Pod 的 resources.requests.cpu 和 resources.limits.cpu 分别对应 cgroup 的什么机制？在调度和运行时的作用有何不同？",
+            "解释 memory.min/low/high/max 四个参数的区别，容器内存使用逼近各阈值时分别会发生什么？",
+            "为什么设置 --memory-swap 等于 --memory 可以禁用容器 swap？如果不设置 --memory-swap 会怎样？",
+            "如果一个容器 CPU limit 是 2，它能同时使用 4 个核心各 50% 吗？为什么？",
+            "为什么 Docker 文档警告 --oom-kill-disable 必须配合 --memory 使用？"
         ],
         extensions: [
-            "阅读 Linux 内核文档 cgroup-v2.html，深入理解各控制器的参数和行为，特别是 cpu.max.burst 和 io.latency。",
-            "研究 K8s 的三种 QoS 类（Guaranteed、Burstable、BestEffort）如何基于 cgroup 配置实现不同的服务质量保证和驱逐优先级。",
-            "了解 CPU Manager 和 Memory Manager（Kubelet 组件）如何在节点级别优化资源分配，实现 CPU 绑核等高级调度。",
-            "探索 systemd-cgtop、cadvisor、cAdvisor 等工具如何读取 cgroup 文件系统来监控容器资源使用。"
+            "【内核文档深入】阅读 cgroup-v2.html 完整文档，特别关注 cpu.max.burst、io.latency 等高级参数。",
+            "【K8s QoS 类】研究 Guaranteed、Burstable、BestEffort 三种 QoS 类如何基于 cgroup 配置实现不同的服务质量和驱逐优先级。",
+            "【CPU Manager】了解 Kubelet 的 CPU Manager 和 Memory Manager 如何在节点级别优化资源分配，实现 CPU 绑核等高级调度。",
+            "【监控工具】探索 systemd-cgtop、cadvisor 等工具如何读取 cgroup 文件系统监控容器资源使用。"
         ],
         sourceUrls: [
             "https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
@@ -532,19 +536,7 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
     "w1-2": [
         {
             id: "w1-2-q1",
-            question: "Cgroups 的核心作用是什么？",
-            options: [
-                "隔离进程可见的系统资源视图",
-                "将进程组织成层级结构，并限制、监控其物理资源使用",
-                "管理容器的网络配置和路由",
-                "存储和管理容器镜像的文件系统层"
-            ],
-            answer: 1,
-            rationale: "Cgroups 用于限制和监控进程组的 CPU、内存、I/O 等物理资源使用。资源视图隔离是 Namespace 的功能，两者配合构成容器基础。"
-        },
-        {
-            id: "w1-2-q2",
-            question: "Cgroups v1 和 v2 的主要架构区别是什么？",
+            question: "cgroup v2 相比 v1 的核心架构变化是什么？",
             options: [
                 "v1 支持更多控制器类型",
                 "v2 使用统一层级（所有控制器共享一棵树），v1 每个控制器有独立层级",
@@ -552,58 +544,82 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
                 "v2 不支持容器化场景"
             ],
             answer: 1,
-            rationale: "Cgroups v2 最大的变化是采用 single unified hierarchy，所有控制器在同一棵树上管理，简化了配置和管理复杂度。"
+            rationale: "cgroup-v2.html 指出 v2 最大变化是 single unified hierarchy，解决了 v1 多层级的协调问题。所有控制器在同一棵树上管理。"
+        },
+        {
+            id: "w1-2-q2",
+            question: "在 cgroup v2 中启用子 cgroup 控制器的方式是？",
+            options: [
+                "向子 cgroup 的 cgroup.controllers 写入控制器名",
+                "向父 cgroup 的 cgroup.subtree_control 写入 +controller 名称",
+                "运行 cgroupctl enable controller",
+                "在挂载 cgroup2 文件系统时指定控制器"
+            ],
+            answer: 1,
+            rationale: "cgroup-v2.html 说明：通过向父 cgroup 的 cgroup.subtree_control 写入如 '+cpu +memory' 来启用子 cgroup 的控制器，体现 top-down 约束原则。"
         },
         {
             id: "w1-2-q3",
-            question: "K8s Pod 的 resources.limits.cpu 对应 cgroup 的什么机制？",
+            question: "cgroup v2 的 'no internal process' 规则是什么意思？",
             options: [
-                "cpu.shares / cpu.weight（权重）",
-                "cpu.max / cpu.quota（配额硬限制）",
-                "cpuset.cpus（CPU 绑核）",
-                "cpu.pressure（CPU 压力指标）"
+                "cgroup 不能包含内核进程",
+                "非根 cgroup 如果有子 cgroup，就不能直接包含进程",
+                "每个 cgroup 最多只能包含一个进程",
+                "cgroup 层级不能超过 5 层嵌套"
             ],
             answer: 1,
-            rationale: "limits 是硬限制，通过 cpu.max（v2）或 cpu.quota/period（v1）实现绝对上限；requests 对应 shares/weight，是软限制。"
+            rationale: "cgroup-v2.html 的 No Internal Process Constraint：非根 cgroup 要么包含进程，要么管理子 cgroup，不能同时做两件事，避免父子间资源竞争混乱。"
         },
         {
             id: "w1-2-q4",
-            question: "当容器内存使用超过 memory.max 时会发生什么？",
+            question: "cpu.weight 和 cpu.max 的核心区别是什么？",
             options: [
-                "容器内存使用被暂停，等待释放",
-                "内核触发回收压力，但不会 OOM",
-                "触发 OOM Killer，可能杀死容器内进程",
-                "系统自动扩展容器的内存限制"
+                "两者完全等价，只是语法不同",
+                "weight 是软限制（CPU 空闲时可超用），max 是硬限制（绝对上限）",
+                "weight 用于 cgroups v2，max 用于 v1",
+                "weight 限制单核使用率，max 限制所有核心总和"
             ],
-            answer: 2,
-            rationale: "memory.max 是硬限制，超过时触发 OOM Killer。memory.high 是软限制，超过会触发回收但不会立即 OOM。"
+            answer: 1,
+            rationale: "cgroup-v2.html：cpu.weight（范围 1-10000）是比例权重，CPU 竞争时按权重分配；cpu.max（$MAX $PERIOD）是带宽硬上限。"
         },
         {
             id: "w1-2-q5",
-            question: "--cpu-shares=512 和 --cpus=0.5 的核心区别是什么？",
+            question: "K8s Pod 的 resources.limits.cpu 对应 cgroup 的什么机制？",
             options: [
-                "两者完全等价，只是语法不同",
-                "shares 是软限制（CPU 空闲时可超用），cpus 是硬限制（绝对上限）",
-                "shares 用于 cgroups v2，cpus 用于 v1",
-                "shares 限制单核使用率，cpus 限制所有核心总和"
+                "cpu.shares / cpu.weight（权重软限制）",
+                "cpuset.cpus（CPU 绑核）",
+                "cpu.max / cpu.quota（配额硬限制）",
+                "cpu.pressure（CPU 压力指标）"
             ],
-            answer: 1,
-            rationale: "cpu-shares 是权重，在 CPU 竞争时按比例分配资源，空闲时可超用；cpus 通过 quota 实现绝对上限。"
+            answer: 2,
+            rationale: "limits 是硬限制，通过 cpu.max（v2）或 cpu.quota/period（v1）实现绝对上限；requests 对应 weight/shares，是软限制。"
         },
         {
             id: "w1-2-q6",
-            question: "如何查看一个进程所属的 cgroup？",
+            question: "memory.high 和 memory.max 的区别是什么？",
             options: [
-                "ps aux | grep cgroup",
-                "cat /proc/[PID]/cgroup",
-                "cgroup --list [PID]",
-                "docker inspect --cgroup [PID]"
+                "memory.high 是绝对上限，memory.max 是软限制",
+                "memory.high 触发节流/回收但不 OOM，memory.max 超过会触发 OOM Killer",
+                "两者功能相同，只是命名不同",
+                "memory.high 用于 v1，memory.max 用于 v2"
             ],
             answer: 1,
-            rationale: "/proc/[PID]/cgroup 文件包含该进程所属的 cgroup 路径信息，格式为 hierarchy-ID:controller-list:cgroup-path。"
+            rationale: "cgroup-v2.html：memory.high 是节流阈值，超出后内核积极回收但不杀进程；memory.max 是硬上限，无法回收时触发 OOM Killer。"
         },
         {
             id: "w1-2-q7",
+            question: "Docker 文档对 --oom-kill-disable 的警告是什么？",
+            options: [
+                "会自动提升容器 CPU 配额",
+                "必须配合 --memory 使用，否则可能导致宿主机内存耗尽",
+                "会关闭容器网络",
+                "会让容器变成只读文件系统"
+            ],
+            answer: 1,
+            rationale: "Docker 文档警告：'if the -m flag isn't set, the host can run out of memory'。禁用 OOM killer 必须配合内存硬限制。"
+        },
+        {
+            id: "w1-2-q8",
             question: "设置 --memory-swap 等于 --memory 的效果是什么？",
             options: [
                 "容器可以使用双倍内存（内存+swap）",
@@ -612,10 +628,46 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
                 "启用透明大页优化"
             ],
             answer: 1,
-            rationale: "--memory-swap 是内存+swap 的总量上限。设为与 --memory 相等意味着 swap 配额为 0，容器不能使用 swap。"
+            rationale: "Docker 文档：--memory-swap 是内存+swap 的总量上限。设为与 --memory 相等意味着 swap 配额为 0，'the container doesn't have access to swap'。"
         },
         {
-            id: "w1-2-q8",
+            id: "w1-2-q9",
+            question: "容器 CPU limit 是 2，能否同时使用 4 个核心各 50%？",
+            options: [
+                "不能，只能使用指定的 2 个物理核心",
+                "不能，每个核心使用率不能超过 50%",
+                "可以，只要总使用量不超过 200%（相当于 2 核）",
+                "取决于是否配置了 cpuset"
+            ],
+            answer: 2,
+            rationale: "CPU quota 限制的是总量（时间片配额）而非特定核心。容器可以跨多核运行，只要总使用量不超过 limit 值（2 核 = 200%）。"
+        },
+        {
+            id: "w1-2-q10",
+            question: "cgroup v2 中 cpu.weight 的默认值和范围是什么？",
+            options: [
+                "默认 100，范围 1-10000",
+                "默认 1024，范围 2-65535",
+                "默认 1，范围 1-100",
+                "默认 0，范围 0-1"
+            ],
+            answer: 0,
+            rationale: "cgroup-v2.html：cpu.weight 默认值为 100，非 idle groups 的范围是 [1, 10000]。"
+        },
+        {
+            id: "w1-2-q11",
+            question: "向 cgroup.procs 写入 PID 时，以下哪个说法正确？",
+            options: [
+                "一次 write 可以写多个 PID 批量迁移",
+                "zombie 进程可以被迁移",
+                "一次 write 只能迁移一个进程，且写入任一线程 PID 会迁移整个进程",
+                "只能在 root cgroup 执行写入操作"
+            ],
+            answer: 2,
+            rationale: "cgroup-v2.html：'Only one process can be migrated on a single write(2) call'，且写入任一线程 PID 会迁移整个进程的所有线程。"
+        },
+        {
+            id: "w1-2-q12",
             question: "K8s 的 Guaranteed QoS 类需要满足什么条件？",
             options: [
                 "只设置 requests",
@@ -624,91 +676,7 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
                 "不设置任何资源限制"
             ],
             answer: 2,
-            rationale: "Guaranteed QoS 要求 Pod 内所有容器的 CPU 和内存 requests 都等于 limits，确保资源完全预留。"
-        },
-        {
-            id: "w1-2-q9",
-            question: "Cgroups v2 的 'no internal process' 规则是什么意思？",
-            options: [
-                "cgroup 不能包含内核进程",
-                "非根 cgroup 如果有子 cgroup，就不能直接包含进程",
-                "每个 cgroup 最多只能包含一个进程",
-                "cgroup 层级不能超过 5 层嵌套"
-            ],
-            answer: 1,
-            rationale: "这是 v2 的设计约束：非根 cgroup 要么包含进程，要么管理子 cgroup，不能同时做两件事，避免父子 cgroup 之间的资源竞争混乱。"
-        },
-        {
-            id: "w1-2-q10",
-            question: "以下哪个不是 cgroup 的标准控制器？",
-            options: [
-                "cpu",
-                "memory",
-                "network",
-                "io"
-            ],
-            answer: 2,
-            rationale: "Cgroups 标准控制器包括 cpu、memory、io、pids、cpuset 等，但不包括 network。网络限制通过 tc（流量控制）或 NetworkPolicy 实现。"
-        },
-        {
-            id: "w1-2-q11",
-            question: "如何在 cgroup v2 中为子 cgroup 启用控制器？",
-            options: [
-                "编辑 /etc/cgroup.conf 配置文件",
-                "向父 cgroup 的 cgroup.subtree_control 文件写入 +controller 名称",
-                "运行 cgroupctl enable controller",
-                "在挂载 cgroup2 文件系统时指定控制器"
-            ],
-            answer: 1,
-            rationale: "通过向父 cgroup 的 cgroup.subtree_control 写入如 '+cpu +memory' 来启用子 cgroup 的控制器，体现 top-down 约束原则。"
-        },
-        {
-            id: "w1-2-q12",
-            question: "容器的 CPU limit 设为 2，它能否同时使用 4 个核心各 50%？",
-            options: [
-                "不能，只能使用指定的 2 个物理核心",
-                "可以，只要总使用量不超过 200%（相当于 2 核）",
-                "不能，每个核心的使用率不能超过 50%",
-                "取决于是否配置了 cpuset"
-            ],
-            answer: 1,
-            rationale: "CPU quota 限制的是总量（时间片配额）而非特定核心。容器可以跨多核运行，只要总使用量不超过 limit 值（2 核 = 200%）。"
-        },
-        {
-            id: "w1-2-q13",
-            question: "memory.high 和 memory.max 的区别是什么？",
-            options: [
-                "memory.high 是绝对上限，memory.max 是软限制",
-                "memory.high 触发回收压力但不 OOM，memory.max 超过会触发 OOM Killer",
-                "两者功能相同，只是命名不同",
-                "memory.high 用于 v1，memory.max 用于 v2"
-            ],
-            answer: 1,
-            rationale: "memory.high 是节流阈值，超过后内核积极回收内存但不会杀进程；memory.max 是硬上限，超过触发 OOM Killer。"
-        },
-        {
-            id: "w1-2-q14",
-            question: "pids 控制器的主要作用是什么？",
-            options: [
-                "限制容器可以使用的物理 CPU 核心数",
-                "限制 cgroup 内可创建的最大进程数量，防止 fork bomb",
-                "追踪容器内进程的 PID 映射关系",
-                "管理容器进程的优先级调度"
-            ],
-            answer: 1,
-            rationale: "pids 控制器通过 pids.max 限制 cgroup 内可创建的进程总数，防止恶意或错误代码通过无限 fork 耗尽系统资源。"
-        },
-        {
-            id: "w1-2-q15",
-            question: "关于 cgroup 资源约束的继承关系，以下说法正确的是？",
-            options: [
-                "子 cgroup 可以突破父 cgroup 的资源限制",
-                "资源从父 cgroup 向下流动，子 cgroup 不能突破父级限制（Top-Down 约束）",
-                "所有 cgroup 共享同一份资源配额，没有层级关系",
-                "只有根 cgroup 可以设置资源限制"
-            ],
-            answer: 1,
-            rationale: "Cgroups 采用 Top-Down 约束模型：资源从父向子流动，子 cgroup 的资源使用不能超过父级分配的上限。"
+            rationale: "Guaranteed QoS 要求 Pod 内所有容器的 CPU 和内存 requests 都等于 limits，确保资源完全预留，不会被驱逐。"
         }
     ],
     "w1-1": [
