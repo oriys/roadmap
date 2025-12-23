@@ -46,16 +46,18 @@ export const week4Guides: Record<string, LessonGuide> = {
     "w4-2": {
         lessonId: "w4-2",
         background: [
-            "Service 是 Kubernetes 中暴露网络应用的抽象层，解决 Pod IP 地址动态变化的问题。Service 通过标签选择器（selector）关联一组 Pod，为它们提供稳定的访问入口和负载均衡。",
-            "Service 有三种主要类型：ClusterIP（默认，仅集群内访问）、NodePort（在每个节点上暴露固定端口）、LoadBalancer（通过云提供商负载均衡器暴露外部访问）。选择哪种类型取决于访问场景。",
-            "kube-proxy 是每个节点上运行的网络代理组件，负责实现 Service 的虚拟 IP 机制。主要支持 iptables 模式（默认）和 IPVS 模式，通过内核网络规则将流量转发到后端 Pod。",
-            "Kubernetes DNS（CoreDNS）为每个 Service 自动创建 DNS 记录，格式为 <service-name>.<namespace>.svc.cluster.local。应用可以通过服务名直接访问，无需关心具体 IP 地址。"
+            "【Service 核心价值】官方文档：Service'解决了 Pod 动态变化导致的服务发现问题'，提供'稳定的网络端点来访问 Pod 集合'。通过 selector 或 EndpointSlices 定义目标 Pod。",
+            "【四种 Service 类型】ClusterIP（默认，'仅在集群内部可访问'）、NodePort（'在每个 Node 上开放端口'，30000-32767 范围）、LoadBalancer（'集成云厂商负载均衡器'）、ExternalName（'映射到外部服务 DNS CNAME'）。",
+            "【DNS 服务发现】官方格式：'<service-name>.<namespace>.svc.cluster.local'。支持简写：同 namespace 内可用 my-service，跨 namespace 用 my-service.default。",
+            "【kube-proxy 机制】官方文档：'kube-proxy 实现虚拟 IP 机制，在每个节点运行，监视 Service 和 EndpointSlice 变化，配置数据包转发规则将流量重定向到后端 Pod'。",
+            "【为何用代理而非 DNS】官方解释：'DNS 实现常忽略 TTL 并无限期缓存结果，应用频繁缓存 DNS 查询不重新解析，低/零 TTL 会给 DNS 服务器带来高负载'——因此 K8s 选择代理机制。"
         ],
         keyDifficulties: [
-            "Service 类型选择：ClusterIP 适合内部微服务通信；NodePort 适合开发测试或简单外部访问（端口范围 30000-32767）；LoadBalancer 适合生产环境，依赖云提供商支持。",
-            "Endpoints 与 EndpointSlice：Service 控制器自动维护与选择器匹配的 Pod 列表。EndpointSlice 是新 API，支持大规模集群（数万 Pod）的高效端点跟踪，替代旧的 Endpoints API。",
-            "无头服务（Headless Service）：设置 clusterIP: None 不分配虚拟 IP，DNS 查询直接返回所有 Pod IP。适合 StatefulSet、客户端负载均衡或需要直接访问 Pod 的场景。",
-            "会话亲和性（sessionAffinity: ClientIP）：确保来自同一客户端 IP 的请求路由到同一 Pod，默认超时 3 小时。注意：基于 IP 的亲和性在经过 NAT 或代理时可能失效。"
+            "【Headless Service 本质】官方文档：设置'clusterIP: None'，特点是'无虚拟 IP，直接返回 Pod IP'，DNS 返回所有 Pod 的 A 记录。常与 StatefulSet 配合，用于需要直接 Pod-to-Pod 通信的场景。",
+            "【iptables vs IPVS vs nftables】iptables 是默认模式，基于内核 netfilter；IPVS 使用哈希表，'在大规模集群中性能更好'但 v1.35 已弃用；nftables 是官方推荐的新模式，性能优于两者。",
+            "【Session Affinity 配置】官方文档：sessionAffinity: ClientIP 确保'同一客户端 IP 总是路由到同一 Pod'，默认超时'10800 秒（3 小时）'。注意：经过 NAT 或代理时可能失效。",
+            "【无 Selector Service】官方用途：'外部数据库集群、跨 Namespace/集群 Service、工作负载迁移期间'——手动创建 EndpointSlice 指向外部服务地址。",
+            "【端口字段区分】port 是 Service 监听端口，targetPort 是 Pod 容器端口（可用端口名引用），nodePort 是 NodePort 类型在节点上开放的端口（30000-32767）。"
         ],
         handsOnPath: [
             "创建一个 Deployment 和 ClusterIP Service，使用 kubectl get endpoints 查看自动创建的端点列表，在 Pod 内通过服务名访问验证 DNS 解析。",
@@ -312,27 +314,27 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
     "w4-2": [
         {
             id: "w4-2-q1",
-            question: "Service 在 Kubernetes 中的核心作用是什么？",
+            question: "Service 在 Kubernetes 中解决什么核心问题？",
             options: [
-                "运行容器化应用",
-                "为一组 Pod 提供稳定的访问入口和负载均衡",
-                "存储应用配置",
-                "调度 Pod 到节点"
+                "管理容器镜像版本",
+                "解决 Pod 动态变化导致的服务发现问题，提供稳定的网络端点",
+                "调度 Pod 到特定节点",
+                "管理持久化存储"
             ],
             answer: 1,
-            rationale: "Service 解决 Pod IP 动态变化的问题，通过 selector 关联 Pod，提供稳定的虚拟 IP 和 DNS 名称作为访问入口。"
+            rationale: "官方文档：Service'解决了 Pod 动态变化导致的服务发现问题'，提供'稳定的网络端点来访问 Pod 集合'。"
         },
         {
             id: "w4-2-q2",
-            question: "以下哪种 Service 类型是默认的？",
+            question: "以下哪种是默认的 Service 类型？",
             options: [
-                "NodePort",
-                "ClusterIP",
-                "LoadBalancer",
-                "ExternalName"
+                "ClusterIP——仅在集群内部可访问",
+                "NodePort——在每个节点上开放端口",
+                "LoadBalancer——集成云厂商负载均衡器",
+                "ExternalName——映射到外部 DNS"
             ],
-            answer: 1,
-            rationale: "ClusterIP 是默认的 Service 类型，它分配一个集群内部 IP，只能在集群内访问。"
+            answer: 0,
+            rationale: "官方文档：ClusterIP 是默认类型，'仅在集群内部可访问'，分配虚拟 IP。"
         },
         {
             id: "w4-2-q3",
@@ -340,155 +342,119 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
             options: [
                 "1-1024",
                 "1024-65535",
-                "30000-32767",
-                "8000-9000"
+                "8000-9000",
+                "30000-32767"
             ],
-            answer: 2,
-            rationale: "NodePort 的默认端口范围是 30000-32767，由 kube-apiserver 的 --service-node-port-range 参数控制。"
+            answer: 3,
+            rationale: "官方文档：NodePort'在每个 Node 上开放端口'，范围是 30000-32767。"
         },
         {
             id: "w4-2-q4",
-            question: "Service 如何发现和关联后端 Pod？",
-            options: [
-                "通过 Pod 名称匹配",
-                "通过 Pod IP 地址",
-                "通过标签选择器（selector）匹配 Pod 的 labels",
-                "通过 Namespace 自动关联"
-            ],
-            answer: 2,
-            rationale: "Service 使用 spec.selector 中定义的标签选择器匹配具有相应 labels 的 Pod，自动维护 Endpoints 列表。"
-        },
-        {
-            id: "w4-2-q5",
-            question: "kube-proxy 在每个节点上的作用是什么？",
-            options: [
-                "运行容器进程",
-                "实现 Service 的虚拟 IP 机制，配置网络转发规则",
-                "调度 Pod",
-                "存储 etcd 数据"
-            ],
-            answer: 1,
-            rationale: "kube-proxy 负责在每个节点上实现 Service 的网络转发，通过 iptables 或 IPVS 规则将流量路由到后端 Pod。"
-        },
-        {
-            id: "w4-2-q6",
             question: "Kubernetes Service 的 DNS 记录格式是什么？",
             options: [
-                "<namespace>.<service-name>.k8s.local",
                 "<service-name>.<namespace>.svc.cluster.local",
+                "<namespace>.<service-name>.k8s.local",
                 "<pod-name>.<service-name>.cluster.local",
                 "<service-name>.default.local"
             ],
-            answer: 1,
-            rationale: "Kubernetes DNS 为 Service 创建的完整 DNS 名称格式是 <service-name>.<namespace>.svc.cluster.local。"
+            answer: 0,
+            rationale: "官方文档：DNS 格式为'<service-name>.<namespace>.svc.cluster.local'，支持同 namespace 内简写。"
+        },
+        {
+            id: "w4-2-q5",
+            question: "官方文档解释 Kubernetes 为什么使用代理而非 DNS 负载均衡？",
+            options: [
+                "代理更安全",
+                "DNS 太复杂难以实现",
+                "'DNS 实现常忽略 TTL 并无限期缓存结果，应用频繁缓存 DNS 查询不重新解析'",
+                "DNS 不支持多端口"
+            ],
+            answer: 2,
+            rationale: "官方解释：'DNS 实现常忽略 TTL 并无限期缓存结果，应用频繁缓存 DNS 查询不重新解析，低/零 TTL 会给 DNS 服务器带来高负载'。"
+        },
+        {
+            id: "w4-2-q6",
+            question: "Headless Service 的关键配置是什么？",
+            options: [
+                "type: Headless",
+                "headless: true",
+                "clusterIP: None",
+                "selector: none"
+            ],
+            answer: 2,
+            rationale: "官方文档：Headless Service 通过设置'clusterIP: None'实现，'无虚拟 IP，直接返回 Pod IP'。"
         },
         {
             id: "w4-2-q7",
-            question: "什么是 Headless Service？",
+            question: "kube-proxy 在每个节点上的作用是什么？",
             options: [
-                "没有 selector 的 Service",
-                "设置 clusterIP: None，不分配虚拟 IP 的 Service",
-                "没有端口的 Service",
-                "只有一个 Pod 的 Service"
+                "运行容器进程",
+                "调度 Pod 到节点",
+                "实现虚拟 IP 机制，配置数据包转发规则将流量重定向到后端 Pod",
+                "存储 etcd 数据"
             ],
-            answer: 1,
-            rationale: "Headless Service 通过设置 clusterIP: None 不分配集群 IP，DNS 查询直接返回所有后端 Pod 的 IP 地址。"
+            answer: 2,
+            rationale: "官方文档：'kube-proxy 实现虚拟 IP 机制，监视 Service 和 EndpointSlice 变化，配置数据包转发规则'。"
         },
         {
             id: "w4-2-q8",
-            question: "Headless Service 适合什么场景？",
+            question: "kube-proxy 的哪个模式在 v1.35 已被弃用？",
             options: [
-                "需要负载均衡的 Web 应用",
-                "StatefulSet、客户端负载均衡或需要直接访问 Pod 的场景",
-                "外部流量入口",
-                "需要会话亲和性的场景"
+                "iptables 模式",
+                "IPVS 模式",
+                "nftables 模式",
+                "userspace 模式"
             ],
             answer: 1,
-            rationale: "Headless Service 常用于 StatefulSet（需要稳定网络标识）、客户端侧负载均衡或需要知道所有 Pod IP 的场景。"
+            rationale: "官方文档：IPVS 模式'v1.35 已弃用'，因为'IPVS 内核 API 不完全匹配 Kubernetes Services API'，推荐使用 nftables 模式。"
         },
         {
             id: "w4-2-q9",
-            question: "Service 的 port 和 targetPort 字段分别代表什么？",
+            question: "sessionAffinity: ClientIP 的默认超时时间是多少？",
             options: [
-                "port 是 Pod 端口，targetPort 是 Service 端口",
-                "port 是 Service 暴露的端口，targetPort 是 Pod 容器的端口",
-                "两者完全相同",
-                "port 是节点端口，targetPort 是集群端口"
+                "10800 秒（3 小时）",
+                "3600 秒（1 小时）",
+                "300 秒（5 分钟）",
+                "86400 秒（1 天）"
             ],
-            answer: 1,
-            rationale: "port 是 Service 对外暴露的端口，targetPort 是流量转发到 Pod 容器的目标端口，两者可以不同。"
+            answer: 0,
+            rationale: "官方文档：sessionAffinity: ClientIP 确保'同一客户端 IP 总是路由到同一 Pod'，默认超时'10800 秒（3 小时）'。"
         },
         {
             id: "w4-2-q10",
-            question: "sessionAffinity: ClientIP 的作用是什么？",
+            question: "无 Selector 的 Service 适合什么场景？",
             options: [
-                "限制客户端 IP 访问",
-                "确保来自同一客户端 IP 的请求路由到同一 Pod",
-                "记录客户端 IP 日志",
-                "加密客户端 IP"
+                "'外部数据库集群、跨 Namespace/集群 Service、工作负载迁移期间'",
+                "只用于内部微服务通信",
+                "仅用于 StatefulSet",
+                "仅用于 LoadBalancer 类型"
             ],
-            answer: 1,
-            rationale: "sessionAffinity: ClientIP 实现会话亲和性，将同一客户端 IP 的请求固定路由到同一后端 Pod，默认超时 3 小时。"
+            answer: 0,
+            rationale: "官方用途：无 Selector Service 适合'外部数据库集群、跨 Namespace/集群 Service、工作负载迁移期间'，需手动创建 EndpointSlice。"
         },
         {
             id: "w4-2-q11",
-            question: "kube-proxy 的 iptables 模式和 IPVS 模式的主要区别是什么？",
+            question: "Service 的 port、targetPort、nodePort 三个字段分别代表什么？",
             options: [
-                "iptables 更快",
-                "IPVS 使用哈希表，在大规模集群中性能更好，支持更多负载均衡算法",
-                "两者完全相同",
-                "IPVS 只能在云环境使用"
+                "都指向同一个端口",
+                "port 是 Service 监听端口，targetPort 是 Pod 容器端口，nodePort 是节点端口",
+                "port 是节点端口，targetPort 是 Service 端口",
+                "三者可以互换使用"
             ],
             answer: 1,
-            rationale: "IPVS 使用内核哈希表存储规则，查找效率高于 iptables 的线性扫描，且支持 rr、wrr、lc 等多种负载均衡算法。"
+            rationale: "port 是 Service 监听端口，targetPort 是 Pod 容器端口（可用端口名引用），nodePort 是 NodePort 类型在节点上开放的端口。"
         },
         {
             id: "w4-2-q12",
-            question: "EndpointSlice 相比传统 Endpoints API 的优势是什么？",
-            options: [
-                "支持更少的端点",
-                "在大规模集群中更高效地跟踪 Pod 端点",
-                "只支持 IPv6",
-                "不需要 selector"
-            ],
-            answer: 1,
-            rationale: "EndpointSlice 将端点分片存储，避免单一 Endpoints 对象过大，在数万 Pod 的大规模集群中效率更高。"
-        },
-        {
-            id: "w4-2-q13",
-            question: "LoadBalancer 类型 Service 的特点是什么？",
-            options: [
-                "只能在集群内访问",
-                "通过云提供商的负载均衡器暴露外部访问",
-                "不需要云环境支持",
-                "使用固定的节点端口"
-            ],
-            answer: 1,
-            rationale: "LoadBalancer 类型依赖云提供商支持，自动创建外部负载均衡器并分配外部 IP，适合生产环境暴露服务。"
-        },
-        {
-            id: "w4-2-q14",
             question: "ExternalName 类型 Service 的用途是什么？",
             options: [
                 "暴露外部访问入口",
-                "将服务名映射到外部 DNS 名称（CNAME）",
-                "限制外部访问",
-                "创建多个 IP 地址"
+                "创建多个 IP 地址",
+                "映射到外部服务（DNS CNAME），不创建 Endpoints",
+                "限制外部访问"
             ],
-            answer: 1,
-            rationale: "ExternalName Service 不代理流量，而是返回 CNAME 记录，用于将集群内服务名映射到外部服务（如外部数据库）。"
-        },
-        {
-            id: "w4-2-q15",
-            question: "如何查看 Service 关联的所有后端 Pod 端点？",
-            options: [
-                "kubectl get pods",
-                "kubectl get endpoints <service-name>",
-                "kubectl describe node",
-                "kubectl logs service/<name>"
-            ],
-            answer: 1,
-            rationale: "kubectl get endpoints 或 kubectl get endpointslices 可以查看 Service 关联的所有后端 Pod IP 和端口。"
+            answer: 2,
+            rationale: "官方文档：ExternalName'映射到外部服务（DNS CNAME）'，'不创建 Endpoints'，用于访问集群外的资源如外部数据库。"
         }
     ],
     "w4-3": [
