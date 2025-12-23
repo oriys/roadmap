@@ -131,17 +131,18 @@ export const week16Guides: Record<string, LessonGuide> = {
     "w16-4": {
         lessonId: "w16-4",
         background: [
-            "16 周的 Kubernetes 学习路线涵盖了从基础到进阶的核心知识：容器基础 → 核心资源 → 网络存储 → 部署策略 → GitOps → 可观测性 → 服务网格 → 安全 → Serverless → 故障排查。这是成为 Kubernetes 专家的系统路径。",
-            "技能树可分为三个层次：基础能力（kubectl 操作、YAML 编写、核心资源理解）、进阶能力（网络深入、存储方案、安全加固）、专家能力（架构设计、性能调优、多集群管理）。持续学习是云原生领域的常态。",
-            "Kubernetes 生态持续演进：Gateway API 替代 Ingress、Sidecar-less 服务网格、eBPF 网络、Wasm 扩展等新技术不断涌现。保持对新技术的关注和学习是长期发展的关键。",
-            "职业路线多样：DevOps 工程师（CI/CD、自动化）、SRE（可靠性、可观测性）、平台工程师（内部开发平台）、云原生架构师（技术选型、架构设计）。根据兴趣和优势选择发展方向。",
-            "社区参与是成长加速器：贡献开源项目（Kubernetes、CNCF 项目）、参加 KubeCon 等技术会议、撰写技术博客、在本地 Meetup 分享。社区活动既能学习也能建立人脉。"
+            "【Kubernetes 文档学习路径】官方文档：学习路径分为五个阶段——Understand Kubernetes（理解核心概念）→ Try Kubernetes（动手实践教程）→ Set Up a K8s Cluster（搭建集群环境）→ Using Kubernetes（日常运维任务）→ Reference（API 和工具参考）。这是官方推荐的系统学习顺序。",
+            "【五级认证体系】Linux Foundation 官方：Kubernetes 认证分五个级别——KCNA（Cloud Native Associate 基础）、KCSA（Security Associate 安全基础）、CKAD（Application Developer 应用开发）、CKA（Administrator 集群管理）、CKS（Security Specialist 安全专家，需要 CKA 前置）。",
+            "【Kubestronaut 荣誉】Linux Foundation 官方：获得全部五项认证的专业人士可获得'Kubestronaut'称号，这是 Kubernetes 专业人士的最高荣誉，表明在云原生各领域的全面专业能力。",
+            "【CNCF 社区活动类型】CNCF 官方：核心活动包括——KubeCon + CloudNativeCon（'gathering adopters and technologists from leading open source and cloud native communities'旗舰会议）、KCD（Kubernetes Community Days 社区日）、Co-Located Events（项目深度研讨）、Virtual Events（线上活动）。",
+            "【社区参与价值】CNCF 官方：参与活动可获得——Access & Learning（深度学习云原生技术）、Community Building（与维护者和贡献者交流）、Career Development（招聘机会、演讲经验）、Influence（参与塑造云原生技术的未来）。"
         ],
         keyDifficulties: [
-            "从「会用」到「精通」的鸿沟：能部署应用只是起点，理解底层原理（如调度算法、网络实现、存储驱动）才能处理复杂问题。需要持续深入学习和实践。",
-            "技术债务与新技术的平衡：生产环境需要稳定，不能盲目追新。评估新技术时考虑：成熟度、社区活跃度、迁移成本、团队学习曲线。渐进式采用是常见策略。",
-            "软技能的重要性：技术能力之外，沟通协作、项目管理、成本意识也是高级工程师的必备能力。能够向非技术人员解释技术决策的价值。",
-            "持续学习的方法论：订阅技术博客/Newsletter、关注 CNCF 项目动态、定期参加技术会议、在工作中实践新知识。建立自己的知识管理系统。"
+            "【学习路径选择】官方文档：Kubernetes 文档涵盖'current and previous 4 versions'——当前和前四个版本。学习时应选择与工作环境匹配的版本，避免版本差异导致的困惑。建议先完成 Tutorials 再深入 Concepts 和 Tasks。",
+            "【认证路线规划】Linux Foundation 官方：CKS 需要'持有有效的 CKA 认证'作为前置条件。建议路径：KCNA（入门验证）→ CKA/CKAD（根据角色选择）→ CKS（安全专业方向）。每项认证有效期限不同，需要规划续证。",
+            "【社区参与门槛】CNCF 官方：KCD Events 是'community-hosted, CNCF-supported local events'——本地社区活动，适合初次参与者。'Lower financial commitment for local events'降低参与门槛，可从本地活动开始，逐步参加 KubeCon。",
+            "【技能到职业的转化】职业发展：Kubernetes 技能适用于多种角色——DevOps Engineer（CI/CD、自动化）、SRE（可靠性、可观测性）、Platform Engineer（内部开发者平台）、Cloud Native Architect（技术选型、架构设计）。需要根据兴趣和市场需求选择方向。",
+            "【持续学习方法论】实践建议：建立个人知识管理系统——订阅 CNCF 官方博客和 Newsletter、关注 Kubernetes Enhancement Proposals (KEP)、定期参加线上/线下技术活动、在工作中实践新学到的知识。保持学习节奏是长期发展的关键。"
         ],
         handsOnPath: [
             "复习核心知识：回顾 16 周的学习内容，整理笔记和速查清单。识别掌握不够扎实的领域，针对性补强。",
@@ -164,9 +165,9 @@ export const week16Guides: Record<string, LessonGuide> = {
             "关注 CNCF Landscape，了解云原生生态的全貌和技术选型思路。"
         ],
         sourceUrls: [
-            "https://www.cncf.io/",
-            "https://landscape.cncf.io/",
-            "https://kubernetes.io/docs/home/"
+            "https://kubernetes.io/docs/home/",
+            "https://kubernetes.io/training/",
+            "https://www.cncf.io/events/"
         ]
     }
 }
@@ -613,183 +614,147 @@ export const week16Quizzes: Record<string, QuizQuestion[]> = {
     "w16-4": [
         {
             id: "w16-4-q1",
-            question: "16 周学习路线从哪里开始，到哪里结束？",
+            question: "Kubernetes 官方文档推荐的学习路径顺序是什么？",
             options: [
-                "直接学习服务网格",
-                "从容器基础开始，到故障排查和认证冲刺结束",
-                "从安全开始",
-                "只学习 kubectl"
+                "Reference → Tasks → Concepts → Tutorials",
+                "Tasks → Reference → Tutorials → Concepts",
+                "Understand → Try → Set Up → Using → Reference",
+                "Random 随机学习"
             ],
-            answer: 1,
-            rationale: "系统学习路径：容器基础 → 核心资源 → 网络存储 → 部署策略 → GitOps → 可观测性 → 服务网格 → 安全 → Serverless → 故障排查。"
+            answer: 2,
+            rationale: "官方文档：学习路径分为五个阶段——Understand Kubernetes → Try Kubernetes → Set Up a K8s Cluster → Using Kubernetes → Reference。"
         },
         {
             id: "w16-4-q2",
-            question: "Kubernetes 技能可以分为哪几个层次？",
+            question: "Linux Foundation 提供的 Kubernetes 认证共有几个级别？",
             options: [
-                "只有基础层",
-                "基础能力、进阶能力、专家能力",
-                "入门和高级",
-                "理论和实践"
+                "3 个级别",
+                "5 个级别（KCNA、KCSA、CKAD、CKA、CKS）",
+                "7 个级别",
+                "10 个级别"
             ],
             answer: 1,
-            rationale: "技能分三层：基础能力（kubectl、YAML、核心资源）、进阶能力（网络深入、存储、安全）、专家能力（架构设计、性能调优、多集群）。"
+            rationale: "Linux Foundation 官方：五级认证——KCNA（基础）、KCSA（安全基础）、CKAD（应用开发）、CKA（集群管理）、CKS（安全专家）。"
         },
         {
             id: "w16-4-q3",
-            question: "云原生领域的常见职业路线有哪些？",
+            question: "参加 CKS 认证考试的前置条件是什么？",
             options: [
-                "只有一种路线",
-                "DevOps、SRE、平台工程师、云原生架构师",
-                "只能做开发",
-                "只能做运维"
+                "无前置条件",
+                "需要 KCNA 认证",
+                "需要 CKAD 认证",
+                "需要持有有效的 CKA 认证"
             ],
-            answer: 1,
-            rationale: "常见职业路线：DevOps（CI/CD、自动化）、SRE（可靠性、可观测性）、平台工程师（内部平台）、云原生架构师（技术选型、架构设计）。"
+            answer: 3,
+            rationale: "Linux Foundation 官方：CKS（Security Specialist）需要'持有有效的 CKA 认证'作为前置条件。"
         },
         {
             id: "w16-4-q4",
-            question: "如何持续跟进云原生技术的发展？",
+            question: "获得全部五项 Kubernetes 认证的专业人士可获得什么称号？",
             options: [
-                "不需要学习新技术",
-                "订阅技术博客、关注 CNCF 项目、参加技术会议、实践新知识",
-                "只看书",
-                "只等公司培训"
+                "Kubestronaut",
+                "Kubernetes Master",
+                "Cloud Native Expert",
+                "CNCF Ambassador"
             ],
-            answer: 1,
-            rationale: "持续学习方法：订阅技术博客/Newsletter、关注 CNCF 项目动态、参加 KubeCon 等会议、在工作中实践、建立知识管理系统。"
+            answer: 0,
+            rationale: "Linux Foundation 官方：获得全部五项认证可获得'Kubestronaut'称号，是 Kubernetes 专业人士的最高荣誉。"
         },
         {
             id: "w16-4-q5",
-            question: "CNCF Landscape 的作用是什么？",
+            question: "CNCF 官方对 KubeCon + CloudNativeCon 的定义是什么？",
             options: [
-                "安装 Kubernetes",
-                "展示云原生生态全貌，帮助技术选型",
-                "监控集群",
-                "备份数据"
+                "仅限开发者的小型 meetup",
+                "在线培训课程",
+                "'gathering adopters and technologists from leading open source and cloud native communities'——旗舰会议",
+                "认证考试场所"
             ],
-            answer: 1,
-            rationale: "CNCF Landscape（landscape.cncf.io）展示云原生生态系统全貌，包括各类项目、产品和服务，是了解生态和技术选型的参考。"
+            answer: 2,
+            rationale: "CNCF 官方：KubeCon + CloudNativeCon 是'gathering adopters and technologists from leading open source and cloud native communities on a global level'。"
         },
         {
             id: "w16-4-q6",
-            question: "参与开源社区有什么好处？",
+            question: "KCD（Kubernetes Community Days）的特点是什么？",
             options: [
-                "浪费时间",
-                "学习技术、建立人脉、提升影响力",
-                "只能提交代码",
-                "需要付费"
+                "只在美国举办",
+                "'community-hosted, CNCF-supported local events'——社区主办的本地活动",
+                "需要高额费用",
+                "仅限认证持有者参加"
             ],
             answer: 1,
-            rationale: "社区参与的好处：学习前沿技术、与专家交流、建立专业人脉、提升技术影响力、为职业发展积累资本。"
+            rationale: "CNCF 官方：KCD Events 是'community-hosted, CNCF-supported local events for growing regional cloud native communities'。"
         },
         {
             id: "w16-4-q7",
-            question: "平台工程（Platform Engineering）关注什么？",
+            question: "CNCF 社区活动为参与者提供哪些价值？",
             options: [
-                "只关注代码编写",
-                "构建内部开发者平台，提升开发者体验和效率",
-                "只关注网络",
-                "只关注安全"
+                "只提供食物和饮料",
+                "仅提供休息和娱乐",
+                "Access & Learning、Community Building、Career Development、Influence",
+                "只提供认证考试优惠"
             ],
-            answer: 1,
-            rationale: "平台工程专注于构建内部开发者平台（IDP），提供自助服务能力，让开发者能够高效地部署和运维应用，减少对运维团队的依赖。"
+            answer: 2,
+            rationale: "CNCF 官方：参与活动可获得——Access & Learning、Community Building、Career Development、Influence（参与塑造云原生技术的未来）。"
         },
         {
             id: "w16-4-q8",
-            question: "评估新技术时应该考虑什么因素？",
+            question: "Kubernetes 文档覆盖哪些版本？",
             options: [
-                "只看是否流行",
-                "成熟度、社区活跃度、迁移成本、团队学习曲线",
-                "只看性能",
-                "只看价格"
+                "只有最新版本",
+                "当前和前四个版本（current and previous 4 versions）",
+                "所有历史版本",
+                "只有 LTS 版本"
             ],
             answer: 1,
-            rationale: "评估新技术考虑：成熟度和稳定性、社区活跃度和支持、迁移成本和兼容性、团队学习曲线、与现有技术栈的集成。"
+            rationale: "官方文档：Kubernetes 文档涵盖'current and previous 4 versions'——当前和前四个版本。"
         },
         {
             id: "w16-4-q9",
-            question: "高级工程师除了技术能力还需要什么？",
+            question: "Kubernetes 技能适用于哪些职业角色？",
             options: [
-                "只需要技术",
-                "沟通协作、项目管理、成本意识等软技能",
-                "只需要证书",
-                "只需要经验"
+                "只适用于开发者",
+                "只适用于运维人员",
+                "只适用于安全专家",
+                "DevOps Engineer、SRE、Platform Engineer、Cloud Native Architect"
             ],
-            answer: 1,
-            rationale: "高级工程师需要软技能：与团队和利益相关者沟通、项目规划和进度管理、成本意识、技术决策的表达能力。"
+            answer: 3,
+            rationale: "Kubernetes 技能适用于多种角色——DevOps Engineer（CI/CD）、SRE（可靠性）、Platform Engineer（内部平台）、Cloud Native Architect（架构设计）。"
         },
         {
             id: "w16-4-q10",
-            question: "FinOps 在 Kubernetes 环境中关注什么？",
+            question: "建议的认证学习路径是什么？",
             options: [
-                "代码质量",
-                "云成本管理和优化",
-                "网络安全",
-                "应用性能"
+                "直接考 CKS",
+                "随机选择认证",
+                "KCNA → CKA/CKAD → CKS",
+                "只考一个认证即可"
             ],
-            answer: 1,
-            rationale: "FinOps（Financial Operations）关注云成本管理：资源使用可视化、成本分配、优化建议、预算控制。在 Kubernetes 中包括资源请求优化、Spot 实例使用等。"
+            answer: 2,
+            rationale: "建议路径：KCNA（入门验证）→ CKA/CKAD（根据角色选择）→ CKS（安全专业方向）。CKS 需要 CKA 前置。"
         },
         {
             id: "w16-4-q11",
-            question: "Kubernetes 生态中正在演进的技术趋势包括什么？",
+            question: "初次参与 CNCF 社区活动的建议是什么？",
             options: [
-                "没有任何变化",
-                "Gateway API、Sidecar-less 服务网格、eBPF、Wasm 扩展",
-                "只有容器",
-                "只有虚拟机"
+                "从 KCD 本地活动开始，逐步参加 KubeCon",
+                "直接参加海外 KubeCon",
+                "等待公司组织",
+                "只参加线上活动"
             ],
-            answer: 1,
-            rationale: "技术趋势：Gateway API 替代 Ingress、Ambient Mesh（Sidecar-less）、eBPF 网络和安全、WebAssembly 扩展、GitOps 普及等。"
+            answer: 0,
+            rationale: "CNCF 官方：KCD 是本地社区活动，'Lower financial commitment for local events'降低参与门槛，适合初次参与者。"
         },
         {
             id: "w16-4-q12",
-            question: "从「会用」到「精通」的关键是什么？",
+            question: "持续学习云原生技术的方法包括哪些？",
             options: [
-                "只需要更多时间",
-                "理解底层原理，处理复杂问题",
-                "只需要更多证书",
-                "只需要更多工具"
+                "等待公司培训",
+                "只看视频教程",
+                "订阅 CNCF 博客、关注 KEP、参加技术活动、在工作中实践",
+                "只读一本书"
             ],
-            answer: 1,
-            rationale: "精通需要理解原理：调度算法如何工作、网络实现细节、存储驱动机制等。只有理解原理才能在复杂问题面前游刃有余。"
-        },
-        {
-            id: "w16-4-q13",
-            question: "建立技术影响力的方式有哪些？",
-            options: [
-                "只在公司内工作",
-                "撰写博客、技术分享、开源贡献、社区活动",
-                "只需要更高职位",
-                "不需要建立影响力"
-            ],
-            answer: 1,
-            rationale: "建立影响力：撰写技术博客记录学习和实践、在公司/社区做技术分享、参与开源项目贡献、加入技术 Meetup 和会议。"
-        },
-        {
-            id: "w16-4-q14",
-            question: "制定学习计划应该考虑什么？",
-            options: [
-                "学习所有技术",
-                "根据职业目标选择 1-2 个深入方向，设定可衡量目标",
-                "只跟随热点",
-                "不需要计划"
-            ],
-            answer: 1,
-            rationale: "学习计划应该：明确职业目标、选择 1-2 个深入方向（如安全、可观测性）、设定可衡量的目标（认证、项目）、3-6 个月周期。"
-        },
-        {
-            id: "w16-4-q15",
-            question: "学完 16 周课程后的下一步应该是什么？",
-            options: [
-                "停止学习",
-                "复习巩固、构建项目、获取认证、持续学习",
-                "换一个领域",
-                "等待新课程"
-            ],
-            answer: 1,
-            rationale: "下一步行动：复习核心知识巩固基础、构建个人项目实践、考取 CKA/CKAD 认证验证能力、持续学习跟进新技术、建立技术影响力。"
+            answer: 2,
+            rationale: "持续学习方法：订阅 CNCF 官方博客和 Newsletter、关注 Kubernetes Enhancement Proposals (KEP)、定期参加技术活动、在工作中实践。"
         }
     ]
 }
