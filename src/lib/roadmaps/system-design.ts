@@ -214,7 +214,7 @@ export const systemDesignStages: Stage[] = [
                         resources: [
                             { title: "etcd Raft 实现", url: "https://etcd.io/docs/v3.5/learning/design-learner/" },
                             { title: "ZooKeeper Internals", url: "https://zookeeper.apache.org/doc/current/zookeeperInternals.html" },
-                            { title: "ZAB vs Raft 对比", url: "https://cwiki.apache.org/confluence/display/ZOOKEEPER/Zab+vs.+Paxos" },
+                            { title: "Raft vs Paxos vs ZAB 对比", url: "https://www.designgurus.io/answers/detail/explain-raft-vs-paxos-vs-zab" },
                         ],
                     },
                 ],
