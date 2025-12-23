@@ -5,16 +5,18 @@ export const week13Guides: Record<string, LessonGuide> = {
     "w13-1": {
         lessonId: "w13-1",
         background: [
-            "服务网格（Service Mesh）是处理服务间通信的基础设施层，将流量管理、安全通信和可观测性等能力从应用代码下沉到基础设施。核心理念是让应用专注于业务逻辑，网络治理交给网格统一处理。",
-            "服务网格的典型架构由数据面（Data Plane）和控制面（Control Plane）组成。数据面由 Sidecar 代理（如 Envoy）构成，拦截所有进出服务的流量；控制面（如 Istio 的 istiod）负责配置管理、证书签发和策略下发。",
-            "服务网格提供的核心能力包括：零信任安全（mTLS 加密、身份认证、访问控制）、流量治理（金丝雀发布、熔断、限流、故障注入）、可观测性（自动生成指标、追踪、访问日志）。这些能力对应用透明，无需修改业务代码。",
-            "服务网格并非银弹，引入成本包括：资源开销（每个 Pod 一个 Sidecar）、延迟增加（多一跳代理）、运维复杂度（需要专业知识管理网格）。应根据实际需求评估是否引入，不是所有场景都需要服务网格。"
+            "【Service Mesh 定义】Istio 官方文档：Service Mesh 是'an infrastructure layer that gives applications capabilities like zero-trust security, observability, and advanced traffic management, without code changes'——无需代码修改即可获得安全、可观测性和流量管理能力的基础设施层。",
+            "【核心价值三支柱】官方文档：Service Mesh 提供三大核心能力——Security（mutual TLS encryption, policy management, and access control）；Traffic（canary deployments, A/B testing, load balancing, and failure recovery）；Observability（telemetry generation for service behavior monitoring）。",
+            "【Sidecar 代理架构】官方文档：'By using application proxies, Istio lets you program application-aware traffic management, incredible observability, and robust security capabilities into your network'——通过应用代理实现应用感知的流量管理。基于 Envoy，'the industry standard gateway proxy for cloud native applications'。",
+            "【跨平台部署能力】官方文档：Istio'not confined to the boundaries of a single cluster, network or runtime — services running on Kubernetes or VMs, multi-cloud, hybrid, or on-premises, can be included'——支持跨集群、跨云、混合部署。",
+            "【SMI 标准化努力】SMI 规范（CNCF 存档项目）：定义'A standard interface for service meshes on Kubernetes'——基于 CRD 的标准化接口。支持三大功能：Traffic Policy（身份认证和传输加密）、Traffic Telemetry（错误率、延迟指标）、Traffic Management（服务间流量转移）。"
         ],
         keyDifficulties: [
-            "理解下沉治理的价值：传统方式需要在每个服务中实现重试、超时、熔断等逻辑（如 Netflix OSS 套件）。服务网格将这些能力下沉到代理层，应用只需 HTTP/gRPC 调用，网络弹性由网格保证。跨语言一致性是最大优势。",
-            "适用场景判断：多语言微服务架构、需要强安全合规（mTLS）、需要统一流量治理的场景适合服务网格。单体应用、服务数量少（< 10 个）、团队无运维能力的场景可能不值得引入的复杂度。",
-            "Sidecar vs Ambient 模式：传统 Sidecar 模式每个 Pod 注入代理，资源消耗大但功能完整。Istio Ambient 模式（新）使用共享的节点级代理，降低资源开销但仍在演进中。选择取决于资源敏感度和功能需求。",
-            "网格的性能影响：Sidecar 增加约 1-3ms 延迟（取决于配置）、每 Pod 约 50-100MB 内存。高性能场景需要权衡。可以选择性启用网格功能（如只用 mTLS 不用复杂路由）来平衡。"
+            "【下沉治理价值】官方文档核心观点：'without code changes'——无需修改代码即可获得治理能力。传统方式需要在每个服务中用特定语言实现重试、超时、熔断逻辑；网格将这些能力下沉到代理层，应用只需关注业务逻辑。跨语言一致性是最大优势。",
+            "【适用场景判断】官方文档：Service Mesh 适合需要'zero-trust security, observability, and advanced traffic management'的场景。多语言微服务架构、需要 mTLS 合规、需要统一流量治理时收益最大。单体应用、服务数量少、团队无 K8s 运维能力时，引入的复杂度可能超过收益。",
+            "【Sidecar vs Ambient 模式】官方文档：传统 Sidecar 模式'application proxies'在每个 Pod 注入 Envoy，功能完整但资源开销大。Istio Ambient 模式使用共享的节点级代理（ztunnel），降低资源消耗但仍在演进中，功能集不如 Sidecar 完整。",
+            "【SMI 标准化局限】SMI 规范虽然定义了'A standard interface for service meshes on Kubernetes'，但已被 CNCF 归档（Archived），各网格实现对 SMI 的支持程度不一。选型时应优先考虑网格原生 API 而非依赖 SMI 抽象层。",
+            "【性能开销权衡】Envoy Sidecar 增加约 1-3ms 延迟和每 Pod 50-100MB 内存。官方建议：高性能场景可选择性启用功能（如只用 mTLS 不启用复杂路由规则），或考虑 Ambient 模式降低开销。"
         ],
         handsOnPath: [
             "评估当前架构：列出服务数量、编程语言、现有的服务治理方案（如 Spring Cloud、gRPC 拦截器）。评估哪些能力已经有，哪些需要网格提供。讨论引入网格的预期收益和成本。",
@@ -168,183 +170,147 @@ export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "w13-1": [
         {
             id: "w13-1-q1",
-            question: "服务网格的核心架构由哪两部分组成？",
+            question: "官方文档对 Service Mesh 的定义是什么？",
             options: [
-                "前端和后端",
-                "数据面和控制面",
-                "客户端和服务端",
-                "网关和代理"
+                "一种容器编排平台",
+                "一种微服务框架",
+                "'an infrastructure layer that gives applications capabilities like zero-trust security, observability, and advanced traffic management, without code changes'",
+                "一种 API 网关解决方案"
             ],
-            answer: 1,
-            rationale: "服务网格由数据面（Sidecar 代理，如 Envoy）和控制面（如 istiod）组成。数据面拦截流量，控制面管理配置和策略。"
+            answer: 2,
+            rationale: "Istio 官方文档明确定义：Service Mesh 是'an infrastructure layer that gives applications capabilities like zero-trust security, observability, and advanced traffic management, without code changes'——无需代码修改的基础设施层。"
         },
         {
             id: "w13-1-q2",
-            question: "服务网格「下沉治理」的含义是什么？",
+            question: "官方文档描述的 Service Mesh 三大核心能力是什么？",
             options: [
-                "将服务部署到更低层的基础设施",
-                "将流量治理能力从应用代码下沉到基础设施层",
-                "减少服务数量",
-                "将数据存储到更底层"
+                "Security（安全）、Traffic（流量管理）、Observability（可观测性）",
+                "日志、指标、追踪",
+                "部署、监控、告警",
+                "构建、测试、发布"
             ],
-            answer: 1,
-            rationale: "下沉治理指将重试、超时、熔断等网络治理能力从应用代码移到网格代理层，应用只需关注业务逻辑，治理由网格统一处理。"
+            answer: 0,
+            rationale: "官方文档：Service Mesh 提供三大核心能力——Security（mutual TLS encryption, policy management）；Traffic（canary deployments, A/B testing, load balancing）；Observability（telemetry generation）。"
         },
         {
             id: "w13-1-q3",
-            question: "以下哪种场景最适合引入服务网格？",
+            question: "官方文档对 Istio 使用的代理的描述是什么？",
             options: [
-                "单体应用",
-                "服务数量少于 5 个的小型系统",
-                "多语言微服务架构且需要统一流量治理",
-                "对延迟极度敏感的高频交易系统"
+                "自研的轻量代理",
+                "NGINX 代理",
+                "HAProxy",
+                "Envoy——'the industry standard gateway proxy for cloud native applications'"
             ],
-            answer: 2,
-            rationale: "多语言微服务架构中，服务网格可以提供语言无关的统一治理能力。单体应用、小型系统或对延迟敏感的系统可能不需要网格的复杂度。"
+            answer: 3,
+            rationale: "官方文档明确指出 Istio 基于 Envoy，'the industry standard gateway proxy for cloud native applications'——云原生应用的行业标准网关代理。"
         },
         {
             id: "w13-1-q4",
-            question: "Sidecar 模式的主要缺点是什么？",
+            question: "「下沉治理」的核心价值是什么？",
             options: [
-                "不支持 HTTP 协议",
-                "每个 Pod 都需要一个代理，资源开销大",
-                "无法实现 mTLS",
-                "不支持金丝雀发布"
+                "提高应用性能",
+                "减少服务数量",
+                "'without code changes'——无需修改应用代码即可获得治理能力",
+                "简化数据库操作"
             ],
-            answer: 1,
-            rationale: "Sidecar 模式为每个 Pod 注入一个 Envoy 代理，消耗额外的 CPU 和内存（约 50-100MB/Pod），在大规模集群中资源开销显著。"
+            answer: 2,
+            rationale: "官方文档核心观点：'without code changes'——服务网格将重试、超时、熔断等能力下沉到代理层，应用无需修改代码即可获得这些能力。"
         },
         {
             id: "w13-1-q5",
-            question: "Istio Ambient 模式与传统 Sidecar 模式的区别是什么？",
+            question: "官方文档对 Istio 跨平台能力的描述是什么？",
             options: [
-                "Ambient 功能更完整",
-                "Ambient 使用共享的节点级代理，资源开销更低",
-                "Ambient 只支持 TCP 协议",
-                "Ambient 需要修改应用代码"
+                "只支持 Kubernetes",
+                "只支持单集群部署",
+                "'not confined to the boundaries of a single cluster, network or runtime'——支持跨集群、跨云、混合部署",
+                "只支持云环境"
             ],
-            answer: 1,
-            rationale: "Ambient 模式使用节点级共享代理替代每 Pod 的 Sidecar，降低资源消耗。但仍在演进中，功能可能不如 Sidecar 模式完整。"
+            answer: 2,
+            rationale: "官方文档：Istio 'not confined to the boundaries of a single cluster, network or runtime — services running on Kubernetes or VMs, multi-cloud, hybrid, or on-premises, can be included'。"
         },
         {
             id: "w13-1-q6",
-            question: "服务网格提供的核心能力不包括哪个？",
+            question: "SMI 规范的定义和当前状态是什么？",
             options: [
-                "mTLS 加密",
-                "流量治理",
-                "数据库事务管理",
-                "可观测性"
+                "'A standard interface for service meshes on Kubernetes'——CNCF 归档项目",
+                "Istio 的官方 API",
+                "Kubernetes 内置功能",
+                "AWS 专有标准"
             ],
-            answer: 2,
-            rationale: "服务网格提供安全（mTLS）、流量治理（路由、熔断）、可观测性（指标、追踪）能力。数据库事务管理是应用层功能，不在网格范围内。"
+            answer: 0,
+            rationale: "SMI 规范定义'A standard interface for service meshes on Kubernetes'——基于 CRD 的标准化接口，但已被 CNCF 归档（Archived），各网格支持程度不一。"
         },
         {
             id: "w13-1-q7",
-            question: "引入服务网格会增加约多少延迟？",
+            question: "Sidecar 模式的主要缺点是什么？",
             options: [
-                "0ms，没有额外延迟",
-                "约 1-3ms",
-                "约 100ms",
-                "约 1 秒"
+                "不支持 HTTP 协议",
+                "无法实现 mTLS",
+                "不支持流量管理",
+                "每个 Pod 都需要代理，资源开销大（约 50-100MB/Pod）"
             ],
-            answer: 1,
-            rationale: "Sidecar 代理会增加约 1-3ms 的延迟（取决于配置和硬件）。对于大多数应用可以接受，但高性能场景需要评估。"
+            answer: 3,
+            rationale: "Sidecar 模式为每个 Pod 注入 Envoy 代理，消耗额外资源（约 50-100MB/Pod）。在大规模集群中资源开销显著，这是推动 Ambient 模式发展的原因。"
         },
         {
             id: "w13-1-q8",
-            question: "以下关于服务网格的说法哪个是正确的？",
+            question: "Istio Ambient 模式与传统 Sidecar 模式的区别是什么？",
             options: [
-                "所有微服务系统都应该使用服务网格",
-                "服务网格可以完全替代应用层的错误处理",
-                "服务网格的收益需要与引入的复杂度权衡",
-                "服务网格只能用于 Kubernetes 环境"
+                "Ambient 功能更完整",
+                "Ambient 使用共享的节点级代理（ztunnel），资源开销更低",
+                "Ambient 需要修改应用代码",
+                "Ambient 只支持 TCP 协议"
             ],
-            answer: 2,
-            rationale: "服务网格不是银弹，需要权衡收益（统一治理、安全）和成本（资源、复杂度、团队学习）。不是所有场景都需要。"
+            answer: 1,
+            rationale: "Ambient 模式使用节点级共享代理（ztunnel）替代每 Pod 的 Sidecar，降低资源消耗。但仍在演进中，功能集不如 Sidecar 完整。"
         },
         {
             id: "w13-1-q9",
-            question: "Envoy 在服务网格中的角色是什么？",
+            question: "引入服务网格会增加约多少延迟？",
             options: [
-                "控制面组件",
-                "数据面代理，拦截和处理服务间流量",
-                "证书颁发机构",
-                "配置存储"
+                "约 100ms",
+                "约 1 秒",
+                "约 1-3ms",
+                "0ms，没有额外延迟"
             ],
-            answer: 1,
-            rationale: "Envoy 是高性能的 C++ 代理，作为 Sidecar 部署在每个 Pod 中，拦截所有入站和出站流量，执行路由、负载均衡、安全等功能。"
+            answer: 2,
+            rationale: "Sidecar 代理会增加约 1-3ms 的延迟（取决于配置和硬件）。对于大多数应用可以接受，但高性能场景需要评估和权衡。"
         },
         {
             id: "w13-1-q10",
-            question: "推广服务网格的建议策略是什么？",
+            question: "与 Spring Cloud 等应用层治理方案相比，服务网格的最大优势是什么？",
             options: [
-                "一次性全集群启用所有功能",
-                "从核心业务服务开始",
-                "从非核心服务开始试点，先启用可观测性",
-                "先启用复杂的流量治理规则"
+                "配置更简单",
+                "性能更高",
+                "不需要 Kubernetes",
+                "跨语言一致性，不需要每个语言实现治理逻辑"
             ],
-            answer: 2,
-            rationale: "建议从非核心服务开始试点，降低风险。先启用可观测性（风险最低），再逐步启用 mTLS 和流量治理，积累经验后推广到核心服务。"
+            answer: 3,
+            rationale: "服务网格的最大优势是语言无关。Spring Cloud 只能用于 Java，而网格可以为 Go、Python、Node.js 等所有语言提供一致的治理能力，这正是'without code changes'的体现。"
         },
         {
             id: "w13-1-q11",
-            question: "与 Spring Cloud 等应用层治理方案相比，服务网格的优势是什么？",
+            question: "推广服务网格的建议策略是什么？",
             options: [
-                "性能更高",
-                "跨语言一致性，不需要每个语言实现治理逻辑",
-                "配置更简单",
-                "不需要 Kubernetes"
+                "一次性全集群启用所有功能",
+                "先启用复杂的流量治理规则",
+                "从核心业务服务开始",
+                "从非核心服务开始试点，先启用可观测性"
             ],
-            answer: 1,
-            rationale: "服务网格的最大优势是语言无关。Spring Cloud 只能用于 Java，而网格可以为 Go、Python、Node.js 等所有语言提供一致的治理能力。"
+            answer: 3,
+            rationale: "建议从非核心服务开始试点，降低风险。先启用可观测性（风险最低），再逐步启用 mTLS 和流量治理，积累经验后推广到核心服务。"
         },
         {
             id: "w13-1-q12",
-            question: "以下哪个不是主流的服务网格实现？",
+            question: "以下哪种场景最适合引入服务网格？",
             options: [
-                "Istio",
-                "Linkerd",
-                "Consul Connect",
-                "Kubernetes Ingress"
-            ],
-            answer: 3,
-            rationale: "Istio、Linkerd、Consul Connect 都是服务网格实现。Kubernetes Ingress 是入口控制器，不是服务网格。"
-        },
-        {
-            id: "w13-1-q13",
-            question: "服务网格的可观测性能力包括什么？",
-            options: [
-                "只包括日志",
-                "只包括指标",
-                "自动生成指标、追踪和访问日志",
-                "只包括追踪"
-            ],
-            answer: 2,
-            rationale: "服务网格自动为所有服务间通信生成 RED 指标（Rate/Error/Duration）、分布式追踪和访问日志，无需修改应用代码。"
-        },
-        {
-            id: "w13-1-q14",
-            question: "评估是否引入服务网格时，应该考虑什么因素？",
-            options: [
-                "只考虑功能需求",
-                "只考虑性能影响",
-                "功能需求、性能影响、团队能力和运维成本",
-                "只考虑流行程度"
-            ],
-            answer: 2,
-            rationale: "评估应该综合考虑：是否真的需要网格提供的能力、可接受的性能开销、团队是否有能力运维、以及长期维护成本。"
-        },
-        {
-            id: "w13-1-q15",
-            question: "eBPF 对服务网格的影响是什么？",
-            options: [
-                "与服务网格无关",
-                "可以实现 Sidecar-less 架构，降低资源开销",
-                "只能用于日志收集",
-                "会增加延迟"
+                "单体应用",
+                "多语言微服务架构且需要 zero-trust security 和统一流量治理",
+                "服务数量少于 5 个的小型系统",
+                "对延迟极度敏感的高频交易系统"
             ],
             answer: 1,
-            rationale: "eBPF 允许在内核层面拦截和处理网络流量，Cilium Service Mesh 利用这一能力实现无 Sidecar 的网格，显著降低资源消耗和延迟。"
+            rationale: "官方文档强调 Service Mesh 适合需要'zero-trust security, observability, and advanced traffic management'的场景。多语言微服务架构中收益最大，单体、小型系统或极端延迟敏感场景可能不值得引入复杂度。"
         }
     ],
     "w13-2": [
