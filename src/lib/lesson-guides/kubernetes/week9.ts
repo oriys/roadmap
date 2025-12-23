@@ -134,11 +134,11 @@ export const week9Guides: Record<string, LessonGuide> = {
     "w9-4": {
         lessonId: "w9-4",
         background: [
-            "【来源: OpenGitOps】GitOps 由四个核心原则定义：1) 声明式 - 系统必须以声明式形式表达期望状态；2) 版本化和不可变 - 期望状态存储必须具有版本控制和完整历史记录；3) 自动拉取 - 软件代理自动从源获取期望状态声明；4) 持续调和 - 代理持续监控实际状态并努力实现期望状态。",
-            "【来源: ArgoCD Application 规范】Application CRD 的核心字段包括：source（配置来源，支持 Git/Helm/Kustomize/Jsonnet/Directory）、destination（目标集群和命名空间）、syncPolicy（同步策略）。syncPolicy 支持 automated（自动同步）、prune（清理多余资源）、selfHeal（自愈漂移）等选项。",
-            "【来源: Flux 文档】Flux 是「保持 Kubernetes 集群与配置源（如 Git 仓库）同步，并在有新代码部署时自动更新配置」的工具。核心组件包括：Source Controller（管理 Git/Helm/OCI 源）、Kustomize Controller、Helm Controller、Notification Controller 和 Image Automation Controllers。",
-            "【来源: ArgoCD Webhook 文档】ArgoCD 支持 Webhook 通知以消除默认的 3 分钟轮询延迟。配置后 Git push 会立即触发应用同步。支持 GitHub、GitLab、BitBucket、Azure DevOps 等多种 Git 提供商。推荐配置 webhook secret 以防止 DDoS 攻击。",
-            "【来源: Flux 文档】Flux 采用 Pull 模式而非 Push 模式，遵循最小权限原则，与 Kubernetes 安全策略无缝集成。它基于 Kubernetes API 扩展（Custom Resources）构建，与 RBAC、准入控制器和现有生态系统工具兼容。"
+            "【GitOps 四原则】OpenGitOps v1.0.0 标准定义：1) Declarative——系统期望状态以声明式表达；2) Versioned and Immutable——期望状态存储必须版本化和不可变，保留完整历史；3) Pulled Automatically——软件代理自动从源拉取期望状态；4) Continuously Reconciled——代理持续监控实际状态并努力达到期望状态。",
+            "【ArgoCD Application CRD】官方规范核心字段：source（配置来源，支持 repoURL + targetRevision + path，兼容 Git/Helm/Kustomize/Jsonnet/Directory）、destination（目标集群 server/name 和命名空间）、syncPolicy（同步策略，含 automated、prune、selfHeal、retry 等选项）。",
+            "【Flux GitOps Toolkit】官方文档：Flux 由 GitOps Toolkit 构建，核心组件包括 Source Controller（管理 Git/Helm/OCI/S3 源）、Kustomize Controller、Helm Controller、Notification Controller、Image Automation Controllers。采用 Kubernetes-native 架构，通过 CRD 扩展实现。",
+            "【ArgoCD Webhook 机制】官方文档：Webhook 用于消除默认 3 分钟轮询延迟，配置后 Git push 立即触发同步。支持 GitHub、GitLab、Bitbucket、Azure DevOps、Gogs。Webhook URL 格式：https://argocd.example.com/api/webhook。推荐配置 webhook secret 防止 DDoS。",
+            "【Flux Pull 模式安全性】官方文档：Flux 采用 Pull 模式而非 Push 模式，控制器在集群内运行，无需暴露集群 API 给外部 CI 系统。基于 Kubernetes API 扩展构建，与 RBAC 和准入控制器无缝集成，支持多租户通过 impersonation 实现隔离。"
         ],
         keyDifficulties: [
             "【Push vs Pull 模式】传统 CI/CD 采用 Push 模式，由流水线直接向集群推送变更，需要暴露集群 API；GitOps 采用 Pull 模式，由集群内控制器主动从 Git 拉取配置并应用，安全性更高，不需要给 CI 系统集群访问权限。",
@@ -617,30 +617,18 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
     "w9-4": [
         {
             id: "w9-4-q1",
-            question: "根据 OpenGitOps 定义，GitOps 的第一个核心原则是什么？",
-            options: [
-                "声明式 - 系统必须以声明式形式表达期望状态",
-                "使用命令式脚本部署",
-                "手动修改集群配置",
-                "只支持 YAML 格式"
-            ],
-            answer: 0,
-            rationale: "OpenGitOps 明确定义第一个原则是「Declarative」：A system managed by GitOps must have its desired state expressed declaratively."
-        },
-        {
-            id: "w9-4-q2",
             question: "根据 OpenGitOps 定义，GitOps 的四个核心原则是什么？",
             options: [
-                "声明式、版本化和不可变、自动拉取、持续调和",
                 "构建、测试、部署、监控",
+                "声明式、版本化和不可变、自动拉取、持续调和",
                 "开发、预发布、生产、灾备",
                 "设计、编码、测试、发布"
             ],
-            answer: 0,
-            rationale: "OpenGitOps 定义了四个原则：Declarative、Versioned and Immutable、Pulled Automatically、Continuously Reconciled."
+            answer: 1,
+            rationale: "OpenGitOps v1.0.0 定义了四个原则：Declarative、Versioned and Immutable、Pulled Automatically、Continuously Reconciled。"
         },
         {
-            id: "w9-4-q3",
+            id: "w9-4-q2",
             question: "根据 ArgoCD Application 规范，source 字段支持哪些配置来源？",
             options: [
                 "Git、Helm、Kustomize、Jsonnet、Directory",
@@ -649,107 +637,95 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
                 "只支持 YAML 文件"
             ],
             answer: 0,
-            rationale: "ArgoCD 文档说明 source 字段支持多种配置来源：Git/Helm/Kustomize/Jsonnet/Directory."
+            rationale: "ArgoCD 文档说明 source 字段支持多种配置来源：Git/Helm/Kustomize/Jsonnet/Directory，通过 repoURL、targetRevision、path 等字段配置。"
+        },
+        {
+            id: "w9-4-q3",
+            question: "根据 Flux 文档，Flux 的核心组件包括哪些？",
+            options: [
+                "只有 Source Controller",
+                "只有 Helm Controller",
+                "Source Controller、Kustomize Controller、Helm Controller、Notification Controller、Image Automation Controllers",
+                "只有一个控制器"
+            ],
+            answer: 2,
+            rationale: "Flux 文档列出其核心组件包括：Source Controller（管理配置源）、Kustomize Controller、Helm Controller、Notification Controller 和 Image Automation Controllers。"
         },
         {
             id: "w9-4-q4",
-            question: "根据 ArgoCD Application 规范，syncPolicy 支持哪些自动化选项？",
+            question: "根据 ArgoCD Webhook 文档，配置 Webhook 的主要目的是什么？",
             options: [
-                "automated（自动同步）、prune（清理多余资源）、selfHeal（自愈漂移）",
-                "只支持手动同步",
-                "只支持自动同步",
-                "不支持配置同步策略"
+                "增加安全性",
+                "减少 Git 仓库负载",
+                "自动创建 Application",
+                "消除默认的 3 分钟轮询延迟，Git push 后立即触发应用同步"
             ],
-            answer: 0,
-            rationale: "ArgoCD 文档说明 syncPolicy 支持 automated、prune、selfHeal 等选项."
+            answer: 3,
+            rationale: "ArgoCD Webhook 文档说明：Without webhooks, ArgoCD refreshes repositories every three minutes by default。配置 Webhook 可实现推送后立即同步。"
         },
         {
             id: "w9-4-q5",
-            question: "根据 Flux 文档，Flux 的核心组件包括哪些？",
-            options: [
-                "Source Controller、Kustomize Controller、Helm Controller、Notification Controller、Image Automation Controllers",
-                "只有一个控制器",
-                "只有 Source Controller",
-                "只有 Helm Controller"
-            ],
-            answer: 0,
-            rationale: "Flux 文档列出其核心组件包括：Source Controller、Kustomize Controller、Helm Controller、Notification Controller 和 Image Automation Controllers."
-        },
-        {
-            id: "w9-4-q6",
-            question: "根据 Flux 文档，Flux 采用什么部署模式？",
-            options: [
-                "Pull 模式，遵循最小权限原则，与 Kubernetes 安全策略无缝集成",
-                "Push 模式，由 CI 直接部署",
-                "混合模式，同时支持 Push 和 Pull",
-                "手动模式，需要人工触发"
-            ],
-            answer: 0,
-            rationale: "Flux 文档强调采用 Pull 模式，遵循最小权限原则，基于 Kubernetes API 扩展构建."
-        },
-        {
-            id: "w9-4-q7",
-            question: "根据 ArgoCD Webhook 文档，配置 Webhook 的主要目的是什么？",
-            options: [
-                "消除默认的 3 分钟轮询延迟，Git push 后立即触发应用同步",
-                "增加安全性",
-                "减少 Git 仓库负载",
-                "自动创建 Application"
-            ],
-            answer: 0,
-            rationale: "ArgoCD Webhook 文档说明配置 Webhook 可以「消除默认的 3 分钟轮询延迟」，实现推送后立即同步."
-        },
-        {
-            id: "w9-4-q8",
             question: "根据 ArgoCD Webhook 文档，支持哪些 Git 提供商？",
             options: [
-                "GitHub、GitLab、BitBucket、Azure DevOps 等",
+                "GitHub、GitLab、Bitbucket、Bitbucket Server、Azure DevOps、Gogs",
                 "只支持 GitHub",
                 "只支持 GitLab",
                 "不支持任何 Git 提供商"
             ],
             answer: 0,
-            rationale: "ArgoCD Webhook 文档列出支持多种 Git 提供商：GitHub、GitLab、BitBucket、Azure DevOps 等."
+            rationale: "ArgoCD Webhook 文档明确列出支持的 Git 提供商：GitHub, GitLab, Bitbucket, Bitbucket Server, Azure DevOps, and Gogs。"
         },
         {
-            id: "w9-4-q9",
+            id: "w9-4-q6",
             question: "根据 ArgoCD Webhook 文档，为什么推荐配置 webhook secret？",
             options: [
-                "防止 DDoS 攻击",
                 "加速同步速度",
+                "防止 DDoS 攻击和未授权访问",
                 "减少网络流量",
                 "自动生成配置"
             ],
+            answer: 1,
+            rationale: "ArgoCD Webhook 文档推荐：configuring webhook secrets is recommended for publicly accessible instances to prevent attacks。"
+        },
+        {
+            id: "w9-4-q7",
+            question: "根据 OpenGitOps 定义，「持续调和」原则的含义是什么？",
+            options: [
+                "每天执行一次同步",
+                "只在代码提交时同步",
+                "软件代理持续监控实际状态并努力实现期望状态",
+                "手动触发同步"
+            ],
+            answer: 2,
+            rationale: "OpenGitOps 第四原则「Continuously Reconciled」定义为：Software agents continuously observe actual system state and attempt to apply the desired state。"
+        },
+        {
+            id: "w9-4-q8",
+            question: "根据 ArgoCD Application 规范，syncPolicy 支持哪些自动化选项？",
+            options: [
+                "automated（自动同步）、prune（清理多余资源）、selfHeal（自愈漂移）、retry（重试）",
+                "只支持手动同步",
+                "只支持自动同步",
+                "不支持配置同步策略"
+            ],
             answer: 0,
-            rationale: "ArgoCD Webhook 文档推荐配置 webhook secret「以防止 DDoS 攻击」."
+            rationale: "ArgoCD 文档说明 syncPolicy 支持 automated（启用自动同步）、prune（清理孤立资源）、selfHeal（自动修复偏离状态）、retry（失败重试）等选项。"
+        },
+        {
+            id: "w9-4-q9",
+            question: "Push 模式和 Pull 模式的安全性差异是什么？",
+            options: [
+                "两者安全性相同",
+                "Push 模式更安全",
+                "Pull 模式需要更多权限",
+                "Push 模式需要暴露集群 API 给外部 CI 系统，Pull 模式由集群内控制器主动拉取，安全性更高"
+            ],
+            answer: 3,
+            rationale: "GitOps Pull 模式中控制器在集群内运行，不需要给 CI 系统集群访问权限，减少了攻击面。Flux 文档强调这遵循最小权限原则。"
         },
         {
             id: "w9-4-q10",
-            question: "根据 OpenGitOps 定义，「持续调和」原则的含义是什么？",
-            options: [
-                "软件代理持续监控实际状态并努力实现期望状态",
-                "每天执行一次同步",
-                "只在代码提交时同步",
-                "手动触发同步"
-            ],
-            answer: 0,
-            rationale: "OpenGitOps 第四原则「Continuously Reconciled」定义为：Software agents continuously observe actual system state and attempt to apply the desired state."
-        },
-        {
-            id: "w9-4-q11",
-            question: "根据 ArgoCD Application 规范，destination 字段配置什么？",
-            options: [
-                "目标集群和命名空间",
-                "源代码仓库",
-                "镜像标签",
-                "构建参数"
-            ],
-            answer: 0,
-            rationale: "ArgoCD 文档说明 destination 字段定义目标集群（server/name）和命名空间（namespace）."
-        },
-        {
-            id: "w9-4-q12",
-            question: "根据 Flux 文档，Flux 基于什么构建？",
+            question: "根据 Flux 文档，Flux 基于什么架构构建？",
             options: [
                 "Kubernetes API 扩展（Custom Resources），与 RBAC、准入控制器兼容",
                 "独立的数据库",
@@ -757,43 +733,31 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
                 "虚拟机"
             ],
             answer: 0,
-            rationale: "Flux 文档说明它「基于 Kubernetes API 扩展（Custom Resources）构建」，与 RBAC、准入控制器和现有生态系统工具兼容."
+            rationale: "Flux 文档说明：Flux is built from the ground up to use Kubernetes' API extension system through custom resources，与 RBAC 和准入控制器无缝集成。"
         },
         {
-            id: "w9-4-q13",
+            id: "w9-4-q11",
             question: "根据 OpenGitOps 定义，「版本化和不可变」原则要求什么？",
             options: [
-                "期望状态存储必须具有版本控制和完整历史记录",
                 "每次部署创建新分支",
+                "期望状态存储必须具有版本控制和完整历史记录",
                 "禁止修改任何配置",
                 "只使用标签不使用分支"
             ],
-            answer: 0,
-            rationale: "OpenGitOps 第二原则「Versioned and Immutable」要求：Desired state is stored in a way that enforces immutability, versioning and retains a complete version history."
+            answer: 1,
+            rationale: "OpenGitOps 第二原则「Versioned and Immutable」要求：Desired state is stored in a way that enforces immutability, versioning and retains a complete version history。"
         },
         {
-            id: "w9-4-q14",
-            question: "Push 模式和 Pull 模式的安全性差异是什么？",
+            id: "w9-4-q12",
+            question: "根据 ArgoCD Application 规范，destination 字段配置什么？",
             options: [
-                "Push 模式需要暴露集群 API 给外部 CI 系统，Pull 模式由集群内控制器主动拉取，安全性更高",
-                "两者安全性相同",
-                "Push 模式更安全",
-                "Pull 模式需要更多权限"
+                "源代码仓库地址",
+                "镜像标签",
+                "目标集群（server/name）和命名空间（namespace）",
+                "构建参数"
             ],
-            answer: 0,
-            rationale: "GitOps Pull 模式中控制器在集群内运行，不需要给 CI 系统集群访问权限，减少了攻击面."
-        },
-        {
-            id: "w9-4-q15",
-            question: "根据 OpenGitOps 定义，「自动拉取」原则的含义是什么？",
-            options: [
-                "软件代理自动从源获取期望状态声明",
-                "手动触发拉取操作",
-                "定时批量拉取",
-                "只在工作时间拉取"
-            ],
-            answer: 0,
-            rationale: "OpenGitOps 第三原则「Pulled Automatically」定义为：Software agents automatically pull the desired state declarations from the source."
+            answer: 2,
+            rationale: "ArgoCD 文档说明 destination 字段定义部署目标：server（集群 API URL）或 name（集群名称），以及 namespace（目标命名空间）。"
         }
     ]
 }
