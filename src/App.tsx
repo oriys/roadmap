@@ -56,6 +56,8 @@ import {
 } from "@/lib/roadmaps"
 import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
 import { kubernetesGuides } from "@/lib/lesson-guides/kubernetes"
+import { systemDesignGuides } from "@/lib/lesson-guides/system-design"
+import { backendPerformanceGuides } from "@/lib/lesson-guides/backend-performance"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -746,6 +748,10 @@ export default function App() {
                                           ? technicalWriterGuides[lesson.id]
                                           : activeRoadmapId === "kubernetes"
                                           ? kubernetesGuides[lesson.id]
+                                          : activeRoadmapId === "system-design"
+                                          ? systemDesignGuides[lesson.id]
+                                          : activeRoadmapId === "backend-performance-best-practices"
+                                          ? backendPerformanceGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button

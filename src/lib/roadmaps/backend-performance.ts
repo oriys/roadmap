@@ -28,7 +28,7 @@ export const backendPerformanceStages: Stage[] = [
             ],
             resources: [
               { title: "Google SRE Workbook - SLO", url: "https://sre.google/workbook/implementing-slos/" },
-              { title: "Artillery: Performance Budgets", url: "https://www.artillery.io/blog/performance-budgets" },
+              { title: "MDN: Performance Budgets", url: "https://developer.mozilla.org/en-US/docs/Web/Performance/Performance_budgets" },
               { title: "roadmap.sh: Backend Performance", url: "https://roadmap.sh/backend-performance-best-practices" },
             ],
           },
@@ -44,7 +44,7 @@ export const backendPerformanceStages: Stage[] = [
             resources: [
               { title: "OpenTelemetry: Getting Started", url: "https://opentelemetry.io/docs/concepts/what-is-opentelemetry/" },
               { title: "Grafana RED Method", url: "https://grafana.com/blog/2018/08/02/the-red-method-how-to-instrument-your-services/" },
-              { title: "Honeycomb Guide: Sampling", url: "https://www.honeycomb.io/blog/sampling-101/" },
+              { title: "OpenTelemetry: Sampling", url: "https://opentelemetry.io/docs/concepts/sampling/" },
             ],
           },
         ],
@@ -71,8 +71,8 @@ export const backendPerformanceStages: Stage[] = [
             detail: "识别突刺流量和长尾请求，规划水平扩展与队列削峰方案。",
             resources: [
               { title: "AWS Builders' Library: Timeouts", url: "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/" },
-              { title: "Nginx Rate Limiting", url: "https://docs.nginx.com/nginx/admin-guide/security-controls/controlling-access-by-key/" },
-              { title: "Queueing Theory Primer", url: "https://bravenewgeek.com/you-cant-sacrifice-partition-tolerance/" },
+              { title: "Nginx Rate Limiting", url: "https://blog.nginx.org/blog/rate-limiting-nginx" },
+              { title: "Little's Law in Performance Testing", url: "https://www.perfmatrix.com/littles-law-in-performance-testing/" },
             ],
           },
         ],
@@ -100,9 +100,9 @@ export const backendPerformanceStages: Stage[] = [
               "监控缓存命中率、TTL 以及 Key 分布，避免热点 Key。",
             ],
             resources: [
-              { title: "Caching Strategies", url: "https://engineering.fb.com/2010/04/22/uncategorized/scaling-memcache-at-facebook/" },
-              { title: "Redis TTL Patterns", url: "https://redis.io/docs/latest/develop/use/developer-best-practices/expiry/" },
-              { title: "roadmap.sh: Cache Best Practices", url: "https://roadmap.sh/guides/cache-best-practices" },
+              { title: "Facebook Memcache Breakdown", url: "https://newsletter.systemdesigncodex.com/p/facebook-memcache-breakdown" },
+              { title: "AWS ElastiCache Caching Strategies", url: "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html" },
+              { title: "Redis Key Eviction", url: "https://redis.io/docs/latest/develop/reference/eviction/" },
             ],
           },
           {
@@ -111,7 +111,7 @@ export const backendPerformanceStages: Stage[] = [
             detail: "通过索引、分页与批量操作减少查询成本，避免 N+1 与大事务。",
             resources: [
               { title: "Use the Index, Luke!", url: "https://use-the-index-luke.com/" },
-              { title: "Hibernate Batch Fetching", url: "https://docs.jboss.org/hibernate/stable/core.old/reference/en/html/batch.html" },
+              { title: "Hibernate Batch Fetching", url: "https://thorben-janssen.com/hibernate-tips-how-to-fetch-associations-in-batches/" },
               { title: "PostgreSQL VACUUM", url: "https://www.postgresql.org/docs/current/sql-vacuum.html" },
             ],
           },
