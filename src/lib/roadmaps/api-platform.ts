@@ -241,6 +241,50 @@ export const apiPlatformKnowledgeCards: KnowledgeCard[] = [
     ],
     practice: "建立 API 设计评审模板，CI 中接入 OpenAPI/GraphQL lint。",
   },
+  {
+    id: "api-versioning",
+    title: "版本策略选择",
+    summary: "根据 API 受众和演进频率，选择适合的版本管理方案。",
+    points: [
+      "URI 版本（/v1/）简单直观，适合公开 API 和浏览器调用场景。",
+      "Header 版本更 RESTful，但需要 L7 负载均衡器支持。",
+      "Stripe 风格的日期版本支持细粒度演进，适合频繁迭代的 SaaS。",
+    ],
+    practice: "评估团队能力与客户端类型，选择版本策略并在文档中明确规则。",
+  },
+  {
+    id: "api-error-handling",
+    title: "错误处理标准化",
+    summary: "统一错误格式，帮助客户端快速定位问题而不泄露敏感信息。",
+    points: [
+      "使用 RFC 7807 Problem Details 格式：type、title、status、detail、instance。",
+      "区分客户端错误（4xx）与服务端错误（5xx），不用 200 包裹错误。",
+      "错误响应包含 traceId 便于追踪，但不暴露堆栈或内部路径。",
+    ],
+    practice: "实现统一错误处理中间件，测试各种边界情况的错误响应格式。",
+  },
+  {
+    id: "api-idempotency",
+    title: "幂等性设计",
+    summary: "让 API 可以安全重试，避免重复操作导致的数据不一致。",
+    points: [
+      "GET、PUT、DELETE 应天然幂等；POST 需要 Idempotency-Key 机制。",
+      "服务端存储幂等键与响应，重复请求直接返回缓存结果。",
+      "幂等键有过期时间，支持客户端区分「已处理」与「正在处理」。",
+    ],
+    practice: "为支付或订单创建接口实现幂等键机制，测试并发重试场景。",
+  },
+  {
+    id: "api-rate-limiting",
+    title: "多维度限流",
+    summary: "在不同粒度限制请求频率，保护后端资源并提供公平访问。",
+    points: [
+      "全局限流保护整体容量，用户级限流防止单用户滥用。",
+      "敏感操作（登录、支付）需要更严格的独立限流配置。",
+      "返回 429 状态码与 Retry-After 头，指导客户端合理重试。",
+    ],
+    practice: "配置 API 网关的分层限流规则，验证超限响应与重试行为。",
+  },
 ]
 
 export const apiPlatformExamQuestions: QuizQuestion[] = [
@@ -316,6 +360,78 @@ export const apiPlatformExamQuestions: QuizQuestion[] = [
     answer: 1,
     rationale: "统一的 traceId 便于将安全事件关联到具体调用链，支持审计与溯源。",
   },
+  {
+    id: "api-exam-7",
+    question: "RFC 7807 Problem Details 格式应包含哪些核心字段？",
+    options: [
+      "只需要 message 和 code",
+      "type、title、status、detail、instance",
+      "error 和 description",
+      "success 和 data",
+    ],
+    answer: 1,
+    rationale: "RFC 7807 定义的标准错误格式包含 type（错误类型 URI）、title、status、detail、instance。",
+  },
+  {
+    id: "api-exam-8",
+    question: "关于幂等性设计，以下哪项说法正确？",
+    options: [
+      "所有 HTTP 方法都是幂等的",
+      "GET、PUT、DELETE 应幂等，POST 需要 Idempotency-Key 机制",
+      "幂等性只与数据库事务有关",
+      "幂等键不需要过期时间",
+    ],
+    answer: 1,
+    rationale: "GET、PUT、DELETE 天然幂等，POST 创建资源需要幂等键防止重复创建。",
+  },
+  {
+    id: "api-exam-9",
+    question: "请求超过速率限制时应返回什么？",
+    options: [
+      "200 OK 并在 body 说明限流",
+      "429 Too Many Requests 并包含 Retry-After 头",
+      "500 Internal Server Error",
+      "403 Forbidden",
+    ],
+    answer: 1,
+    rationale: "429 是专用的限流状态码，Retry-After 头指导客户端何时可以重试。",
+  },
+  {
+    id: "api-exam-10",
+    question: "OWASP API Security Top 10 的第一大风险是什么？",
+    options: [
+      "SQL 注入",
+      "Broken Object Level Authorization (BOLA)",
+      "跨站脚本 (XSS)",
+      "认证绕过",
+    ],
+    answer: 1,
+    rationale: "BOLA（对象级授权破坏）占 API 攻击的约 40%，是 2019 和 2023 版的第一大风险。",
+  },
+  {
+    id: "api-exam-11",
+    question: "Apollo Federation 中 @key 指令的作用是什么？",
+    options: [
+      "定义数据库主键",
+      "告诉其他子图如何唯一标识实体实例",
+      "加密字段值",
+      "设置缓存策略",
+    ],
+    answer: 1,
+    rationale: "@key 指令定义实体的唯一标识字段，让不同子图可以解析同一实体。",
+  },
+  {
+    id: "api-exam-12",
+    question: "以下哪种版本策略最适合需要频繁迭代的 SaaS 产品？",
+    options: [
+      "永不发布新版本",
+      "Stripe 风格的日期版本，支持细粒度增量升级",
+      "每个功能创建新域名",
+      "只在文档中说明版本差异",
+    ],
+    answer: 1,
+    rationale: "Stripe 的日期版本（如 2024-01-15）支持细粒度演进，用户可以按需升级。",
+  },
 ]
 
 export const apiPlatformRoadmap: RoadmapDefinition = {
@@ -323,39 +439,57 @@ export const apiPlatformRoadmap: RoadmapDefinition = {
   label: "API 设计·安全·GraphQL",
   title: "API 设计 + 安全 + GraphQL 全栈路线",
   durationLabel: "6 周进阶",
-  description: "围绕 API 设计、接口安全与 GraphQL 生产化的完整路线，基于 roadmap.sh 指南串联出契约、治理与观测的实践路径。",
-  heroBadge: "API 设计",
+  description: "围绕 API 设计、接口安全与 GraphQL 生产化的完整路线，涵盖契约驱动开发、版本演进、OAuth2/OIDC 认证、OWASP 安全防护、审计合规、Schema 设计与 Federation 联邦架构。",
+  heroBadge: "API 全栈",
   stages: apiPlatformStages,
   knowledgeCards: apiPlatformKnowledgeCards,
   examQuestions: apiPlatformExamQuestions,
   suggestion: (percent: number) => {
-    if (percent === 0) return "先完成 REST 资源建模与 OpenAPI 描述，再规划版本与弃用策略。"
-    if (percent < 40) return "补齐认证授权、输入校验与限流，把安全基线落在网关与服务层。"
-    if (percent < 70) return "完善审计与监控，针对 GraphQL 加入深度/复杂度限制与 DataLoader。"
-    return "持续治理：为变更做 lint/评审，定期演练安全与兼容性场景。"
+    if (percent === 0) return "先完成 REST 资源建模与 OpenAPI 描述，理解 HTTP 方法语义与错误码规范。"
+    if (percent < 40) return "深入认证授权机制（OAuth2/PKCE），实现输入验证、速率限制与审计日志。"
+    if (percent < 70) return "掌握 GraphQL Schema 设计，配置深度/复杂度限制与 DataLoader 批量加载。"
+    return "持续治理：CI 集成契约 lint、自动检测破坏性变更、定期演练安全与兼容性场景。"
   },
   resourceGuide: {
-    environment: "准备 API 网关/反向代理、OpenAPI/GraphQL 规范校验工具，以及链路追踪+日志的可观测性栈。",
+    environment: "准备 API 网关（Kong/Envoy）、OpenAPI Linter（Spectral）、GraphQL 开发环境（Apollo Server）、链路追踪（Jaeger/Zipkin）与日志系统（ELK/Loki）。",
     fallbackKeyPoints: [
-      "路径/字段命名一致，幂等性清晰，错误码有文档。",
-      "认证授权默认开启，输入校验与速率限制前置。",
-      "GraphQL 需要深度/复杂度限制与 resolver 级观测。",
+      "REST 路径使用名词复数，HTTP 方法语义明确，错误使用 RFC 7807 格式。",
+      "版本策略选择 URI/Header/日期版本，弃用期 6-12 个月。",
+      "OAuth2 必须使用 PKCE，JWT 验证签名/issuer/audience/exp。",
+      "输入验证使用白名单而非黑名单，服务端验证不可跳过。",
+      "审计日志不含敏感数据，与 SIEM 集成实现实时告警。",
+      "GraphQL 字段用 camelCase，类型用 PascalCase，枚举值用 SCREAMING_SNAKE_CASE。",
+      "DataLoader 每请求创建新实例，批量函数结果顺序必须与输入键一致。",
+      "Federation 使用 @key 定义实体标识，__resolveReference 解析跨子图实体。",
     ],
     handsOnSteps: [
-      "为一个核心接口编写 OpenAPI 或 GraphQL Schema，并跑 lint。",
-      "在网关上开启限流、鉴权与审计日志，串联 traceId。",
-      "为 GraphQL 添加 DataLoader 与查询复杂度限制，观察指标。",
+      "为核心接口编写 OpenAPI 3.1 规范，配置 Spectral linter 检查命名规范。",
+      "实现 OAuth2 Authorization Code + PKCE 流程，验证 JWT 的完整声明。",
+      "配置 API 网关的速率限制（全局/用户级/端点级），测试 429 响应。",
+      "为 POST 接口实现 Idempotency-Key 机制，测试并发重试场景。",
+      "设置审计日志中间件，记录用户、操作、资源、结果，集成告警。",
+      "创建 GraphQL Schema 并配置 DataLoader，验证 N+1 查询被批量化。",
+      "配置 GraphQL 深度限制（max_depth: 10）和复杂度限制，测试拒绝过深查询。",
+      "使用 @deprecated 标记待移除字段，在文档中维护弃用时间表。",
     ],
     selfChecks: [
-      "是否所有接口都有契约描述并在 CI 校验？",
-      "安全事件能否通过审计/trace 追踪到调用方？",
-      "GraphQL 是否有 N+1、防滥用与缓存策略？",
+      "所有接口是否有 OpenAPI/GraphQL Schema 描述并在 CI 校验？",
+      "错误响应是否使用 RFC 7807 格式并包含 traceId？",
+      "是否实现了 PKCE 和 JWT 完整验证（签名、issuer、audience、exp）？",
+      "输入验证是否在服务端使用白名单模式？",
+      "敏感操作是否记录审计日志并配置告警？",
+      "GraphQL 是否有深度/复杂度限制和 DataLoader？",
+      "生产环境是否禁用了 GraphQL 内省查询？",
+      "版本弃用是否有 6 个月以上的迁移窗口？",
     ],
     extensions: [
-      "尝试 API Federation 或 BFF 模式，拆分不同消费者的契约。",
-      "引入策略引擎（OPA/ABAC）统一授权与审计。",
-      "在 CI/CD 中运行安全扫描与破坏性变更检测。",
+      "研究 gRPC 与 Protocol Buffers，对比 REST/GraphQL 的适用场景。",
+      "学习 Webhook 签名验证与重试机制，参考 Standard Webhooks 规范。",
+      "探索 AsyncAPI 规范，描述 Kafka/RabbitMQ 等事件驱动接口。",
+      "实践契约测试（Pact/Dredd），在 CI 中自动检测接口破坏。",
+      "引入 OPA/ABAC 策略引擎统一授权，支持复杂的权限规则。",
+      "配置 API 网关的熔断与金丝雀发布，提升服务韧性。",
     ],
-    lessonQuizAdvice: "回顾契约与安全基线，再结合 GraphQL 的特殊风险（N+1、复杂度），逐条排除错误选项。",
+    lessonQuizAdvice: "从 REST 设计原则和 HTTP 语义出发，结合 OWASP API Security Top 10 和 OAuth2 安全最佳实践，排除不符合规范的选项。GraphQL 题目关注 N+1 问题、安全限制和 Federation 机制。",
   },
 }
