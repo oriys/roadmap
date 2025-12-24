@@ -13,6 +13,7 @@ export type RoadmapId =
   | "technical-writer"
   | "system-design"
   | "backend-performance-best-practices"
+  | "api-platform"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
