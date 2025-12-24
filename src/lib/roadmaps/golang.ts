@@ -1318,6 +1318,390 @@ export const golangStages: Stage[] = [
       },
     ],
   },
+  {
+    id: "go-runtime-lowlevel",
+    title: "阶段十：运行时与底层编程",
+    duration: "第 21-22 周",
+    goal: "深入理解 Go 运行时调度器和底层汇编编程。",
+    weeks: [
+      {
+        id: "go-w21",
+        title: "第 21 周：运行时与调度器",
+        summary: "深入理解 GMP 调度模型、调度器实现和运行时机制。",
+        keyPoints: [
+          "理解 G（Goroutine）、M（Machine）、P（Processor）模型。",
+          "掌握调度器的工作窃取和抢占机制。",
+          "了解 sysmon 系统监控线程的作用。",
+        ],
+        lessons: [
+          {
+            id: "go-w21-1",
+            title: "GMP 调度模型",
+            detail: "深入理解 Goroutine、Machine、Processor 三者的关系和调度原理。",
+            keyPoints: [
+              "G 是 Goroutine，包含栈、程序计数器等状态。",
+              "M 是操作系统线程，执行 G 的载体。",
+              "P 是逻辑处理器，管理本地 G 队列。",
+            ],
+            resources: [
+              { title: "Go 调度器设计文档", url: "https://go.dev/src/runtime/HACKING.md" },
+              { title: "GMP 模型详解", url: "https://go.dev/src/runtime/proc.go" },
+              { title: "调度器演进", url: "https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw" },
+            ],
+          },
+          {
+            id: "go-w21-2",
+            title: "调度器源码分析",
+            detail: "阅读 runtime/proc.go 理解调度器核心实现。",
+            keyPoints: [
+              "schedule() 函数是调度核心循环。",
+              "findrunnable() 查找可运行的 G。",
+              "工作窃取从其他 P 偷取 G。",
+            ],
+            resources: [
+              { title: "runtime/proc.go", url: "https://go.dev/src/runtime/proc.go" },
+              { title: "调度器 trace", url: "https://go.dev/doc/diagnostics#execution-tracer" },
+              { title: "GODEBUG=schedtrace", url: "https://pkg.go.dev/runtime#hdr-Environment_Variables" },
+            ],
+          },
+          {
+            id: "go-w21-3",
+            title: "sysmon 与抢占",
+            detail: "理解系统监控线程和 Go 1.14+ 的异步抢占机制。",
+            keyPoints: [
+              "sysmon 是后台监控线程，不绑定 P。",
+              "检测长时间运行的 G 并触发抢占。",
+              "Go 1.14 引入信号抢占，解决紧密循环问题。",
+            ],
+            resources: [
+              { title: "sysmon 实现", url: "https://go.dev/src/runtime/proc.go" },
+              { title: "抢占设计文档", url: "https://go.dev/design/24543-non-cooperative-preemption" },
+              { title: "runtime 包文档", url: "https://pkg.go.dev/runtime" },
+            ],
+          },
+          {
+            id: "go-w21-4",
+            title: "运行时内部结构",
+            detail: "了解 runtime 包的内部数据结构和调试方法。",
+            keyPoints: [
+              "runtime.g 结构体包含 Goroutine 状态。",
+              "runtime.m 结构体包含线程信息。",
+              "使用 GODEBUG 环境变量调试运行时。",
+            ],
+            resources: [
+              { title: "runtime2.go", url: "https://go.dev/src/runtime/runtime2.go" },
+              { title: "GODEBUG 变量", url: "https://pkg.go.dev/runtime#hdr-Environment_Variables" },
+              { title: "运行时调试", url: "https://go.dev/doc/diagnostics" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "go-w22",
+        title: "第 22 周：Go 汇编编程",
+        summary: "学习 Plan9 汇编语法，编写高性能汇编函数。",
+        keyPoints: [
+          "理解 Go 使用的 Plan9 汇编语法。",
+          "掌握函数调用约定和栈布局。",
+          "学习 SIMD 指令优化。",
+        ],
+        lessons: [
+          {
+            id: "go-w22-1",
+            title: "Plan9 汇编基础",
+            detail: "学习 Go 汇编的基本语法和寄存器约定。",
+            keyPoints: [
+              "Go 使用 Plan9 风格汇编，与 AT&T/Intel 不同。",
+              "伪寄存器：FP（帧指针）、SP（栈指针）、SB（静态基址）、PC。",
+              "TEXT 指令定义函数，DATA/GLOBL 定义数据。",
+            ],
+            resources: [
+              { title: "Go 汇编指南", url: "https://go.dev/doc/asm" },
+              { title: "Plan9 汇编手册", url: "https://9p.io/sys/doc/asm.html" },
+              { title: "汇编函数示例", url: "https://go.dev/src/runtime/asm_amd64.s" },
+            ],
+          },
+          {
+            id: "go-w22-2",
+            title: "函数调用约定",
+            detail: "理解 Go 函数的栈布局和参数传递方式。",
+            keyPoints: [
+              "Go 1.17+ 使用寄存器传参（ABI 内部调用约定）。",
+              "栈帧包含返回地址、参数、局部变量。",
+              "NOSPLIT 标志表示函数不需要栈分裂检查。",
+            ],
+            resources: [
+              { title: "Go 内部 ABI", url: "https://go.dev/src/cmd/compile/abi-internal.md" },
+              { title: "栈布局", url: "https://go.dev/src/runtime/stack.go" },
+              { title: "调用约定演进", url: "https://go.dev/doc/go1.17#compiler" },
+            ],
+          },
+          {
+            id: "go-w22-3",
+            title: "SIMD 与向量化",
+            detail: "使用 SIMD 指令实现高性能数值计算。",
+            keyPoints: [
+              "SSE/AVX 指令可以并行处理多个数据。",
+              "使用 MOVOU、PADDQ 等向量指令。",
+              "对齐要求：16 字节（SSE）或 32 字节（AVX）。",
+            ],
+            resources: [
+              { title: "crypto 包汇编", url: "https://go.dev/src/crypto/aes/asm_amd64.s" },
+              { title: "SIMD 优化示例", url: "https://go.dev/src/math/dim_amd64.s" },
+              { title: "Intel 指令参考", url: "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" },
+            ],
+          },
+          {
+            id: "go-w22-4",
+            title: "汇编实战与调试",
+            detail: "编写汇编函数并与 Go 代码集成。",
+            keyPoints: [
+              "在 .s 文件中编写汇编，Go 文件中声明函数签名。",
+              "使用 go tool objdump 反汇编检查。",
+              "使用 go tool compile -S 查看编译器生成的汇编。",
+            ],
+            resources: [
+              { title: "go tool objdump", url: "https://pkg.go.dev/cmd/objdump" },
+              { title: "go tool compile", url: "https://pkg.go.dev/cmd/compile" },
+              { title: "汇编最佳实践", url: "https://go.dev/wiki/AssemblyPolicy" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "go-network-distributed",
+    title: "阶段十一：网络与分布式系统",
+    duration: "第 23-24 周",
+    goal: "深入网络编程原理，掌握分布式系统核心模式。",
+    weeks: [
+      {
+        id: "go-w23",
+        title: "第 23 周：网络编程深度",
+        summary: "深入理解 net 包实现原理和高性能网络编程技术。",
+        keyPoints: [
+          "理解 net 包与操作系统网络 API 的交互。",
+          "掌握 epoll/kqueue 事件驱动模型。",
+          "学习连接池设计和高性能服务器模式。",
+        ],
+        lessons: [
+          {
+            id: "go-w23-1",
+            title: "net 包底层实现",
+            detail: "理解 Go 网络库如何与操作系统交互。",
+            keyPoints: [
+              "net 包封装了 socket、bind、listen、accept 等系统调用。",
+              "使用 netpoll 实现非阻塞 I/O。",
+              "Conn 接口抽象了 TCP、UDP、Unix 等连接。",
+            ],
+            resources: [
+              { title: "net 包源码", url: "https://go.dev/src/net/" },
+              { title: "netpoll 实现", url: "https://go.dev/src/runtime/netpoll.go" },
+              { title: "net 包文档", url: "https://pkg.go.dev/net" },
+            ],
+          },
+          {
+            id: "go-w23-2",
+            title: "epoll/kqueue 集成",
+            detail: "理解 Go 运行时如何集成操作系统事件机制。",
+            keyPoints: [
+              "Linux 使用 epoll，BSD/macOS 使用 kqueue。",
+              "Go 运行时将网络 I/O 与调度器集成。",
+              "网络 Goroutine 在 I/O 阻塞时会被调度出去。",
+            ],
+            resources: [
+              { title: "netpoll_epoll.go", url: "https://go.dev/src/runtime/netpoll_epoll.go" },
+              { title: "netpoll_kqueue.go", url: "https://go.dev/src/runtime/netpoll_kqueue.go" },
+              { title: "epoll 手册", url: "https://man7.org/linux/man-pages/man7/epoll.7.html" },
+            ],
+          },
+          {
+            id: "go-w23-3",
+            title: "连接池设计",
+            detail: "实现高效的连接池管理连接复用。",
+            keyPoints: [
+              "连接池减少连接建立开销。",
+              "需要处理连接健康检查和过期。",
+              "database/sql 的连接池是好的参考。",
+            ],
+            resources: [
+              { title: "sql 连接池", url: "https://go.dev/src/database/sql/sql.go" },
+              { title: "http 连接复用", url: "https://pkg.go.dev/net/http#Transport" },
+              { title: "连接池模式", url: "https://go.dev/doc/database/manage-connections" },
+            ],
+          },
+          {
+            id: "go-w23-4",
+            title: "高性能网络框架",
+            detail: "了解 gnet、netpoll 等高性能网络框架的设计。",
+            keyPoints: [
+              "gnet 使用 Reactor 模式实现高性能。",
+              "字节跳动 netpoll 针对 RPC 场景优化。",
+              "适用于需要处理百万连接的场景。",
+            ],
+            resources: [
+              { title: "gnet 框架", url: "https://github.com/panjf2000/gnet" },
+              { title: "netpoll 框架", url: "https://github.com/cloudwego/netpoll" },
+              { title: "百万连接实践", url: "https://go.dev/blog/io2013-talk-concurrency" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "go-w24",
+        title: "第 24 周：分布式系统",
+        summary: "学习分布式系统核心概念和 Go 实现模式。",
+        keyPoints: [
+          "理解分布式一致性和 Raft 算法。",
+          "掌握分布式锁和服务发现模式。",
+          "学习分布式追踪和可观测性。",
+        ],
+        lessons: [
+          {
+            id: "go-w24-1",
+            title: "Raft 一致性算法",
+            detail: "理解 Raft 算法原理，学习 etcd/raft 实现。",
+            keyPoints: [
+              "Raft 实现领导者选举、日志复制、安全性。",
+              "etcd 使用 Raft 实现分布式键值存储。",
+              "HashiCorp Raft 是独立的 Go Raft 库。",
+            ],
+            resources: [
+              { title: "Raft 论文", url: "https://raft.github.io/raft.pdf" },
+              { title: "etcd/raft", url: "https://github.com/etcd-io/raft" },
+              { title: "HashiCorp Raft", url: "https://github.com/hashicorp/raft" },
+            ],
+          },
+          {
+            id: "go-w24-2",
+            title: "分布式锁",
+            detail: "使用 Redis 或 etcd 实现分布式锁。",
+            keyPoints: [
+              "Redis RedLock 算法实现分布式锁。",
+              "etcd 使用租约（Lease）实现锁。",
+              "需要处理锁续期和故障恢复。",
+            ],
+            resources: [
+              { title: "Redlock 算法", url: "https://redis.io/docs/manual/patterns/distributed-locks/" },
+              { title: "etcd 分布式锁", url: "https://etcd.io/docs/v3.5/dev-guide/api_concurrency_reference_v3/" },
+              { title: "分布式锁分析", url: "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" },
+            ],
+          },
+          {
+            id: "go-w24-3",
+            title: "服务发现",
+            detail: "使用 Consul、etcd 或 Kubernetes 实现服务发现。",
+            keyPoints: [
+              "服务注册：服务启动时注册自己。",
+              "服务发现：客户端查找服务地址。",
+              "健康检查：检测服务是否可用。",
+            ],
+            resources: [
+              { title: "Consul 服务发现", url: "https://developer.hashicorp.com/consul/docs/concepts/service-discovery" },
+              { title: "etcd 服务发现", url: "https://etcd.io/docs/v3.5/dev-guide/grpc_naming/" },
+              { title: "Kubernetes 服务", url: "https://kubernetes.io/docs/concepts/services-networking/service/" },
+            ],
+          },
+          {
+            id: "go-w24-4",
+            title: "分布式追踪",
+            detail: "使用 OpenTelemetry 实现分布式追踪和可观测性。",
+            keyPoints: [
+              "OpenTelemetry 是可观测性标准。",
+              "Trace、Span、Context 是核心概念。",
+              "支持 Jaeger、Zipkin 等后端。",
+            ],
+            resources: [
+              { title: "OpenTelemetry Go", url: "https://opentelemetry.io/docs/languages/go/" },
+              { title: "分布式追踪概念", url: "https://opentelemetry.io/docs/concepts/signals/traces/" },
+              { title: "Jaeger", url: "https://www.jaegertracing.io/docs/getting-started/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "go-wasm",
+    title: "阶段十二：WebAssembly",
+    duration: "第 25 周",
+    goal: "学习使用 Go 编译 WebAssembly，实现浏览器端 Go 程序。",
+    weeks: [
+      {
+        id: "go-w25",
+        title: "第 25 周：Go 与 WebAssembly",
+        summary: "使用 Go 编译 WASM，实现浏览器和 Go 的交互。",
+        keyPoints: [
+          "使用 GOOS=js GOARCH=wasm 编译 WASM。",
+          "使用 syscall/js 与 JavaScript 交互。",
+          "了解 TinyGo 生成更小的 WASM。",
+        ],
+        lessons: [
+          {
+            id: "go-w25-1",
+            title: "WASM 编译与运行",
+            detail: "将 Go 程序编译为 WebAssembly 并在浏览器运行。",
+            keyPoints: [
+              "GOOS=js GOARCH=wasm go build -o main.wasm",
+              "需要 wasm_exec.js 作为 Go 运行时。",
+              "使用 WebAssembly.instantiateStreaming 加载。",
+            ],
+            resources: [
+              { title: "Go WebAssembly Wiki", url: "https://go.dev/wiki/WebAssembly" },
+              { title: "wasm_exec.js", url: "https://go.dev/misc/wasm/wasm_exec.js" },
+              { title: "WASM 教程", url: "https://golangbot.com/webassembly-using-go/" },
+            ],
+          },
+          {
+            id: "go-w25-2",
+            title: "syscall/js 包",
+            detail: "使用 syscall/js 与 JavaScript 和 DOM 交互。",
+            keyPoints: [
+              "js.Global() 获取全局对象（window）。",
+              "js.FuncOf 创建可被 JS 调用的 Go 函数。",
+              "js.Value 表示 JS 值，支持方法调用。",
+            ],
+            resources: [
+              { title: "syscall/js 文档", url: "https://pkg.go.dev/syscall/js" },
+              { title: "DOM 操作示例", url: "https://go.dev/wiki/WebAssembly#interacting-with-the-dom" },
+              { title: "事件处理", url: "https://go.dev/wiki/WebAssembly#callbacks" },
+            ],
+          },
+          {
+            id: "go-w25-3",
+            title: "TinyGo for WASM",
+            detail: "使用 TinyGo 生成更小的 WASM 文件。",
+            keyPoints: [
+              "TinyGo 生成的 WASM 比标准 Go 小得多。",
+              "支持 WASI（WebAssembly System Interface）。",
+              "部分标准库功能受限。",
+            ],
+            resources: [
+              { title: "TinyGo WASM", url: "https://tinygo.org/docs/guides/webassembly/" },
+              { title: "TinyGo 安装", url: "https://tinygo.org/getting-started/install/" },
+              { title: "WASI 支持", url: "https://tinygo.org/docs/guides/webassembly/wasi/" },
+            ],
+          },
+          {
+            id: "go-w25-4",
+            title: "WASM 实战项目",
+            detail: "构建一个完整的 Go WASM 应用。",
+            keyPoints: [
+              "前后端分离：Go WASM 作为前端逻辑。",
+              "性能考虑：WASM 适合计算密集型任务。",
+              "调试技巧：使用浏览器开发者工具。",
+            ],
+            resources: [
+              { title: "Go WASM 示例", url: "https://github.com/nicholasjackson/go-wasm-example" },
+              { title: "Vugu 框架", url: "https://www.vugu.org/" },
+              { title: "Vecty 框架", url: "https://github.com/hexops/vecty" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export const golangKnowledgeCards: KnowledgeCard[] = [
@@ -1505,7 +1889,7 @@ export const golangRoadmap: RoadmapDefinition = {
   id: "golang",
   label: "Go 语言",
   title: "Go 语言学习路线：从基础到生产实践",
-  durationLabel: "20 周系统学习",
+  durationLabel: "25 周系统学习",
   description:
     "从环境搭建到并发编程，从标准库到生态框架，系统化掌握 Go 语言核心特性与生产实践。路线基于 roadmap.sh Go 开发者路线图扩展而来。",
   heroBadge: "云原生首选",
