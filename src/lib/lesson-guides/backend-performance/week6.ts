@@ -90,6 +90,52 @@ export const week6Guides: Record<string, LessonGuide> = {
             "https://sre.google/sre-book/handling-overload/",
             "https://sre.google/sre-book/embracing-risk/"
         ]
+    },
+    "bp-w6-3": {
+        lessonId: "bp-w6-3",
+        background: [
+            "【FinOps 定义】FinOps Foundation：FinOps 是'an evolving cloud financial management discipline and cultural practice'——一种云财务管理实践，让工程、财务和业务团队协作优化云成本。",
+            "【单位经济指标】FinOps 的核心是单位成本指标（Unit Economics）：每请求成本、每用户成本、每交易成本。将技术指标与业务价值关联，便于决策者理解性能投资回报。",
+            "【性能 ROI 计算】性能优化的 ROI = (成本节省 + 收入增加) / 优化投入。成本节省包括减少的 CPU/内存/存储费用；收入增加来自更好的用户体验带来的转化率提升。",
+            "【Right-Sizing 策略】AWS、GCP 等云厂商提供 Right-Sizing 建议：根据实际资源使用情况推荐更合适的实例类型。过度配置（over-provisioning）是最常见的成本浪费来源。",
+            "【预留实例与 Spot】预留实例（Reserved Instances）比按需定价便宜 30-75%；Spot/Preemptible 实例更便宜但可能被中断。稳定负载用预留，弹性负载用 Spot，组合使用最优化成本。",
+            "【可观测性成本】监控和日志本身也产生成本。高基数指标（high-cardinality metrics）、全量日志、长期 trace 存储都很昂贵。需要采样、聚合、分层存储策略控制成本。"
+        ],
+        keyDifficulties: [
+            "【性能与成本权衡】过度优化可能投入产出不成比例。'Premature optimization is the root of all evil'——需要先测量、识别瓶颈，优先优化 ROI 最高的部分。",
+            "【成本归属（Showback/Chargeback）】将云成本归属到具体团队/服务是 FinOps 的基础。需要通过标签（Tags）策略、命名规范、成本分配规则实现。",
+            "【Spot 实例容错】使用 Spot 实例需要应用具备容错能力：优雅终止处理、检查点机制、多可用区分布、混合使用按需和 Spot。",
+            "【隐性成本识别】除直接资源费用外，还有数据传输费、API 调用费、存储 IOPS 费等隐性成本。跨区域/跨 AZ 数据传输尤其昂贵。",
+            "【性能与碳排放】云服务的能效和碳排放也是考量因素。Green Software Foundation 提倡考虑代码的碳足迹，选择低碳区域部署，使用可再生能源驱动的数据中心。"
+        ],
+        handsOnPath: [
+            "建立单位成本仪表板：计算 Cost per Request = 月度云成本 / 月度请求数；跟踪趋势和异常。",
+            "配置云成本标签策略：定义标准标签如 team、service、environment、cost-center，确保 80%+ 资源有标签。",
+            "分析 Right-Sizing 建议：使用 AWS Cost Explorer、GCP Recommender 或 Kubecost 识别过度配置的实例和 Pod。",
+            "计算优化 ROI：记录优化前后的资源使用量和成本，计算节省金额与投入工时的比值。",
+            "实施 Spot 策略：对无状态服务使用 Spot 实例，配置 Spot 中断处理（如 AWS Spot Instance Advisor、GKE Preemptible VMs）。",
+            "优化可观测性成本：对高频低价值日志降采样、对指标设置合理保留期、使用 Thanos/Cortex 分层存储长期数据。"
+        ],
+        selfCheck: [
+            "什么是 FinOps？它的核心目标是什么？",
+            "如何计算性能优化的 ROI？需要考虑哪些因素？",
+            "什么是单位成本指标（Unit Economics）？为什么它重要？",
+            "Right-Sizing 解决什么问题？如何获取 Right-Sizing 建议？",
+            "预留实例和 Spot 实例各适合什么场景？",
+            "可观测性成本的主要来源有哪些？如何控制？"
+        ],
+        extensions: [
+            "学习 FinOps Foundation 的 FinOps Framework，了解完整的云成本管理成熟度模型。",
+            "研究 OpenCost 项目，了解 Kubernetes 成本监控的开源实现。",
+            "探索 Green Software Foundation 的 Software Carbon Intensity (SCI) 规范，理解如何量化软件的碳排放。",
+            "学习 AWS Cost Anomaly Detection 和 GCP Budgets Alerts，实现成本异常自动告警。"
+        ],
+        sourceUrls: [
+            "https://www.finops.org/framework/",
+            "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/",
+            "https://cloud.google.com/recommender/docs/recommenders",
+            "https://www.kubecost.com/"
+        ]
     }
 }
 
@@ -384,6 +430,152 @@ export const week6Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "压测结果可能有波动。应多次运行取平均值，设置合理的波动容忍范围（如 ±5%），避免误报导致发布阻塞。"
+        }
+    ],
+    "bp-w6-3": [
+        {
+            id: "bp-w6-3-q1",
+            question: "FinOps Foundation 对 FinOps 的定义是什么？",
+            options: [
+                "一种编程语言",
+                "An evolving cloud financial management discipline and cultural practice",
+                "一种监控工具",
+                "一种数据库技术"
+            ],
+            answer: 1,
+            rationale: "FinOps Foundation 定义 FinOps 是'an evolving cloud financial management discipline and cultural practice'——一种让工程、财务和业务团队协作优化云成本的实践。"
+        },
+        {
+            id: "bp-w6-3-q2",
+            question: "什么是单位成本指标（Unit Economics）？",
+            options: [
+                "总成本除以时间",
+                "每请求成本、每用户成本、每交易成本等将技术指标与业务价值关联的指标",
+                "CPU 使用率",
+                "内存使用量"
+            ],
+            answer: 1,
+            rationale: "单位成本指标包括每请求成本、每用户成本、每交易成本等。将技术指标与业务价值关联，便于决策者理解性能投资回报。"
+        },
+        {
+            id: "bp-w6-3-q3",
+            question: "性能优化 ROI 的计算公式是什么？",
+            options: [
+                "ROI = 成本 / 时间",
+                "ROI = (成本节省 + 收入增加) / 优化投入",
+                "ROI = 请求数 / 成本",
+                "ROI = CPU 使用率 × 内存使用率"
+            ],
+            answer: 1,
+            rationale: "性能优化的 ROI = (成本节省 + 收入增加) / 优化投入。成本节省包括减少的资源费用；收入增加来自更好的用户体验带来的转化率提升。"
+        },
+        {
+            id: "bp-w6-3-q4",
+            question: "Right-Sizing 解决什么问题？",
+            options: [
+                "代码质量问题",
+                "过度配置（over-provisioning）导致的成本浪费",
+                "安全漏洞",
+                "网络延迟"
+            ],
+            answer: 1,
+            rationale: "Right-Sizing 解决过度配置（over-provisioning）问题——根据实际资源使用情况推荐更合适的实例类型。过度配置是最常见的成本浪费来源。"
+        },
+        {
+            id: "bp-w6-3-q5",
+            question: "预留实例（Reserved Instances）相比按需定价可以节省多少？",
+            options: [
+                "5-10%",
+                "30-75%",
+                "90%以上",
+                "没有区别"
+            ],
+            answer: 1,
+            rationale: "预留实例比按需定价便宜 30-75%，适合稳定负载。Spot/Preemptible 实例更便宜但可能被中断，适合弹性负载。"
+        },
+        {
+            id: "bp-w6-3-q6",
+            question: "使用 Spot 实例需要应用具备什么能力？",
+            options: [
+                "高 CPU 性能",
+                "容错能力（优雅终止处理、检查点机制、多 AZ 分布）",
+                "高内存容量",
+                "快速网络"
+            ],
+            answer: 1,
+            rationale: "Spot 实例可能被中断，应用需要具备容错能力：优雅终止处理、检查点机制、多可用区分布、混合使用按需和 Spot。"
+        },
+        {
+            id: "bp-w6-3-q7",
+            question: "可观测性成本的主要来源有哪些？",
+            options: [
+                "只有存储成本",
+                "高基数指标、全量日志、长期 trace 存储",
+                "只有 CPU 成本",
+                "只有网络成本"
+            ],
+            answer: 1,
+            rationale: "可观测性成本来源：高基数指标（high-cardinality metrics）、全量日志、长期 trace 存储。需要采样、聚合、分层存储策略控制成本。"
+        },
+        {
+            id: "bp-w6-3-q8",
+            question: "成本归属（Showback/Chargeback）需要什么基础设施？",
+            options: [
+                "更多服务器",
+                "标签（Tags）策略、命名规范、成本分配规则",
+                "更大的数据库",
+                "更快的网络"
+            ],
+            answer: 1,
+            rationale: "将云成本归属到具体团队/服务需要通过标签（Tags）策略、命名规范、成本分配规则实现，这是 FinOps 的基础。"
+        },
+        {
+            id: "bp-w6-3-q9",
+            question: "除直接资源费用外，还有哪些隐性成本？",
+            options: [
+                "只有人力成本",
+                "数据传输费、API 调用费、存储 IOPS 费等",
+                "没有隐性成本",
+                "只有电费"
+            ],
+            answer: 1,
+            rationale: "除直接资源费用外，还有数据传输费、API 调用费、存储 IOPS 费等隐性成本。跨区域/跨 AZ 数据传输尤其昂贵。"
+        },
+        {
+            id: "bp-w6-3-q10",
+            question: "为什么说'Premature optimization is the root of all evil'？",
+            options: [
+                "优化总是有害的",
+                "过度优化可能投入产出不成比例，需要先测量、识别瓶颈",
+                "不需要优化",
+                "优化会导致 bug"
+            ],
+            answer: 1,
+            rationale: "过度优化可能投入产出不成比例。需要先测量、识别瓶颈，优先优化 ROI 最高的部分，避免在非瓶颈处浪费精力。"
+        },
+        {
+            id: "bp-w6-3-q11",
+            question: "云成本标签策略应该确保多少资源有标签？",
+            options: [
+                "50%",
+                "80%以上",
+                "100%",
+                "不需要标签"
+            ],
+            answer: 1,
+            rationale: "标签策略应确保 80%+ 资源有标签（如 team、service、environment、cost-center），便于成本归属和分析。"
+        },
+        {
+            id: "bp-w6-3-q12",
+            question: "Green Software Foundation 提倡考虑什么因素？",
+            options: [
+                "代码行数",
+                "代码的碳足迹、低碳区域部署、可再生能源数据中心",
+                "代码复杂度",
+                "代码风格"
+            ],
+            answer: 1,
+            rationale: "Green Software Foundation 提倡考虑代码的碳足迹，选择低碳区域部署，使用可再生能源驱动的数据中心，关注软件的环境影响。"
         }
     ]
 }

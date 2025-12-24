@@ -93,6 +93,52 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://blog.nginx.org/blog/rate-limiting-nginx",
             "https://www.perfmatrix.com/littles-law-in-performance-testing/"
         ]
+    },
+    "bp-w2-3": {
+        lessonId: "bp-w2-3",
+        background: [
+            "【Context Switch 定义】Linux 内核文档：上下文切换是 CPU 从一个进程/线程切换到另一个的过程。vmstat 的 cs 列显示每秒上下文切换次数，高频切换消耗 CPU 并增加延迟。",
+            "【CPU Steal Time】AWS 文档：Steal time 是虚拟机等待物理 CPU 资源的时间百分比。在云环境中，steal 高于 5% 表示主机过度配置（oversubscribed），需要迁移或升级实例。",
+            "【Softirqs 与网络性能】Linux 内核使用 softirq 处理网络包。/proc/softirqs 显示各类软中断统计，NET_RX/NET_TX 过高可能表示网络密集型负载，需要调优 RPS/RFS 或考虑 DPDK。",
+            "【GC 停顿观测】Go pprof 和 Java Flight Recorder (JFR) 可以观察 GC 行为。STW（Stop-The-World）暂停会导致 P99 延迟抖动，Go 的 GODEBUG=gctrace=1 或 Java 的 -Xlog:gc* 可输出 GC 日志。",
+            "【内存分配速率】高内存分配速率导致频繁 GC。Go 的 pprof alloc_objects 和 Java 的 JFR 可跟踪分配热点。TLAB（Thread Local Allocation Buffer）分配效率更高，应避免大对象直接进入老年代。",
+            "【perf stat 系统指标】perf stat 可以观测 context-switches、cpu-migrations、page-faults 等硬件计数器。Brendan Gregg 推荐的'USE 方法'要求检查每种资源的 Utilization、Saturation、Errors。"
+        ],
+        keyDifficulties: [
+            "【自愿 vs 非自愿切换】/proc/<pid>/status 区分 voluntary_ctxt_switches（主动让出 CPU，如 I/O 等待）和 nonvoluntary_ctxt_switches（被调度器抢占）。非自愿切换高表示 CPU 竞争激烈。",
+            "【GC 调优权衡】增大堆内存减少 GC 频率但增加单次 STW 时间；减小堆增加 GC 频率但缩短 STW。Go 的 GOGC 和 Java 的 -XX:MaxGCPauseMillis 需要根据 SLO 调优。",
+            "【Steal Time 诊断】CloudWatch 的 CPUStealing 指标或 top 的 st 列显示 steal time。解决方案：升级到更大实例、使用专用主机（Dedicated Hosts）、或迁移到负载较低的 AZ。",
+            "【RSS vs VSZ 区分】进程内存包含 RSS（Resident Set Size，实际物理内存）和 VSZ（Virtual Size，包含未分配页）。监控应关注 RSS 和 PSS（Proportional Set Size，考虑共享内存）。",
+            "【CPU 缓存效率】perf stat 的 cache-misses、LLC-load-misses 揭示缓存效率。高缓存未命中率可能源于数据结构不紧凑或访问模式不友好，需要优化内存布局。"
+        ],
+        handsOnPath: [
+            "使用 vmstat 1 观察系统级指标：关注 cs（上下文切换）、si/so（swap in/out）、r（运行队列）、wa（I/O 等待）。",
+            "使用 pidstat -w -p <pid> 1 监控进程级上下文切换，区分自愿和非自愿切换，定位切换热点。",
+            "配置 GC 日志输出：Go 使用 GODEBUG=gctrace=1；Java 使用 -Xlog:gc*:file=gc.log:time,uptime,level,tags。分析 STW 时间占比。",
+            "使用 go tool pprof http://localhost:6060/debug/pprof/allocs 或 JFR 分析内存分配热点，找出高频分配的对象类型和调用栈。",
+            "在 AWS 环境中使用 CloudWatch 监控 CPUUtilization 和 CPUStealing，当 steal > 5% 时触发告警。",
+            "使用 perf stat -e context-switches,cpu-migrations,cache-misses -p <pid> 采集硬件计数器，建立性能基线。"
+        ],
+        selfCheck: [
+            "vmstat 输出中的 cs 列代表什么？什么值算高？",
+            "什么是 CPU Steal Time？在云环境中 steal 高于多少应该关注？",
+            "自愿上下文切换和非自愿上下文切换分别表示什么？如何查看？",
+            "如何观察 Go 或 Java 应用的 GC 停顿时间？STW 时间过长会导致什么问题？",
+            "为什么高内存分配速率会影响性能？如何找出分配热点？",
+            "USE 方法的三个维度分别是什么？如何应用于 CPU 资源分析？"
+        ],
+        extensions: [
+            "学习 eBPF 工具（BCC、bpftrace）进行深度内核级性能分析，无需修改内核或应用即可观测系统行为。",
+            "研究 Java 的 ZGC 和 Shenandoah 低延迟垃圾收集器，了解其如何将 STW 时间控制在 10ms 以内。",
+            "探索 Go 1.19+ 的 GOMEMLIMIT 软内存限制，理解其如何平衡 GC 频率和内存使用。",
+            "学习 Netflix 的 FlameScope 工具，通过子秒级分析定位间歇性性能问题。"
+        ],
+        sourceUrls: [
+            "https://www.brendangregg.com/usemethod.html",
+            "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html",
+            "https://go.dev/doc/gc-guide",
+            "https://docs.oracle.com/en/java/javase/17/gctuning/"
+        ]
     }
 }
 
@@ -387,6 +433,152 @@ export const week2Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "Nginx 文档：delay 参数指定多少个 burst 请求不延迟处理。burst=12 delay=8 表示前 8 个突发请求立即处理，第 9-12 个按速率排队。"
+        }
+    ],
+    "bp-w2-3": [
+        {
+            id: "bp-w2-3-q1",
+            question: "vmstat 输出中的 cs 列代表什么？",
+            options: [
+                "CPU 使用率",
+                "每秒上下文切换次数",
+                "缓存命中率",
+                "系统调用次数"
+            ],
+            answer: 1,
+            rationale: "vmstat 的 cs（context switches）列显示每秒上下文切换次数。高频切换消耗 CPU 并增加延迟，是系统级性能的重要指标。"
+        },
+        {
+            id: "bp-w2-3-q2",
+            question: "什么是 CPU Steal Time？在云环境中 steal 高于多少应该关注？",
+            options: [
+                "CPU 空闲时间，高于 50% 需关注",
+                "虚拟机等待物理 CPU 资源的时间，高于 5% 需关注",
+                "CPU 等待 I/O 的时间，高于 10% 需关注",
+                "CPU 执行内核代码的时间，高于 20% 需关注"
+            ],
+            answer: 1,
+            rationale: "AWS 文档：Steal time 是虚拟机等待物理 CPU 资源的时间百分比。在云环境中，steal 高于 5% 表示主机过度配置，需要升级实例或迁移。"
+        },
+        {
+            id: "bp-w2-3-q3",
+            question: "/proc/<pid>/status 中的 voluntary_ctxt_switches 和 nonvoluntary_ctxt_switches 分别表示什么？",
+            options: [
+                "两者没有区别",
+                "自愿切换（主动让出 CPU）和非自愿切换（被调度器抢占）",
+                "用户态切换和内核态切换",
+                "进程切换和线程切换"
+            ],
+            answer: 1,
+            rationale: "voluntary_ctxt_switches 是进程主动让出 CPU（如 I/O 等待），nonvoluntary_ctxt_switches 是被调度器抢占。非自愿切换高表示 CPU 竞争激烈。"
+        },
+        {
+            id: "bp-w2-3-q4",
+            question: "如何在 Go 应用中输出 GC 日志观察 STW 时间？",
+            options: [
+                "使用 go build -gcflags",
+                "设置环境变量 GODEBUG=gctrace=1",
+                "添加 -race 参数",
+                "使用 go test -bench"
+            ],
+            answer: 1,
+            rationale: "Go 的 GODEBUG=gctrace=1 环境变量可输出 GC 日志，显示每次 GC 的 STW 时间、堆大小变化等信息，用于诊断 P99 延迟抖动。"
+        },
+        {
+            id: "bp-w2-3-q5",
+            question: "Brendan Gregg 的 USE 方法中的三个维度是什么？",
+            options: [
+                "User, System, Error",
+                "Utilization, Saturation, Errors",
+                "Upload, Storage, Execute",
+                "Unit, Scale, Efficiency"
+            ],
+            answer: 1,
+            rationale: "USE 方法要求检查每种资源的 Utilization（使用率）、Saturation（饱和度，如队列长度）、Errors（错误）三个维度。"
+        },
+        {
+            id: "bp-w2-3-q6",
+            question: "高内存分配速率为什么会影响应用性能？",
+            options: [
+                "会导致磁盘 I/O 增加",
+                "会导致频繁 GC，增加 STW 暂停时间",
+                "会导致网络延迟增加",
+                "会导致 CPU 缓存失效"
+            ],
+            answer: 1,
+            rationale: "高内存分配速率导致频繁 GC。每次 GC 都有 STW 暂停，频繁 GC 会显著增加 P99 延迟，需要通过 pprof 或 JFR 找出分配热点优化。"
+        },
+        {
+            id: "bp-w2-3-q7",
+            question: "Linux 的 /proc/softirqs 主要用于观察什么？",
+            options: [
+                "进程的 CPU 使用情况",
+                "各类软中断的统计信息，包括网络包处理",
+                "文件系统 I/O 统计",
+                "内存页面错误"
+            ],
+            answer: 1,
+            rationale: "/proc/softirqs 显示各类软中断统计，NET_RX/NET_TX 显示网络包处理。软中断过高可能表示网络密集型负载，需要调优或考虑 DPDK。"
+        },
+        {
+            id: "bp-w2-3-q8",
+            question: "RSS（Resident Set Size）和 VSZ（Virtual Size）的主要区别是什么？",
+            options: [
+                "RSS 包含共享库，VSZ 不包含",
+                "RSS 是实际物理内存占用，VSZ 包含未分配的虚拟内存",
+                "RSS 是虚拟内存，VSZ 是物理内存",
+                "两者没有区别"
+            ],
+            answer: 1,
+            rationale: "RSS（Resident Set Size）是进程实际占用的物理内存，VSZ（Virtual Size）包含所有虚拟地址空间，包括未实际分配的页。监控应关注 RSS。"
+        },
+        {
+            id: "bp-w2-3-q9",
+            question: "GC 调优中增大堆内存有什么权衡？",
+            options: [
+                "没有任何副作用",
+                "减少 GC 频率但增加单次 STW 时间",
+                "增加 GC 频率但减少 STW 时间",
+                "只会降低性能"
+            ],
+            answer: 1,
+            rationale: "增大堆内存减少 GC 频率但增加单次 STW 时间；减小堆增加 GC 频率但缩短 STW。需要根据 SLO 对延迟的要求进行权衡调优。"
+        },
+        {
+            id: "bp-w2-3-q10",
+            question: "perf stat 命令可以观测哪些硬件计数器？",
+            options: [
+                "只能观测 CPU 使用率",
+                "context-switches、cpu-migrations、cache-misses、page-faults 等",
+                "只能观测内存使用量",
+                "只能观测磁盘 I/O"
+            ],
+            answer: 1,
+            rationale: "perf stat 可以观测 context-switches、cpu-migrations、page-faults、cache-misses、LLC-load-misses 等硬件计数器，用于深度性能分析。"
+        },
+        {
+            id: "bp-w2-3-q11",
+            question: "解决云环境中 CPU Steal Time 过高的方案有哪些？",
+            options: [
+                "只能等待问题自动解决",
+                "升级到更大实例、使用专用主机、或迁移到负载较低的 AZ",
+                "重启虚拟机",
+                "增加应用线程数"
+            ],
+            answer: 1,
+            rationale: "解决 steal time 过高的方案：升级到更大实例类型、使用专用主机（Dedicated Hosts）避免共享、或迁移到负载较低的可用区。"
+        },
+        {
+            id: "bp-w2-3-q12",
+            question: "Java 中用于观察 GC 行为的工具 JFR 全称是什么？",
+            options: [
+                "Java Fast Runtime",
+                "Java Flight Recorder",
+                "Java File Reader",
+                "Java Format Registry"
+            ],
+            answer: 1,
+            rationale: "JFR（Java Flight Recorder）是 Java 内置的低开销性能分析工具，可以记录 GC 事件、线程状态、内存分配等信息，用于生产环境诊断。"
         }
     ]
 }

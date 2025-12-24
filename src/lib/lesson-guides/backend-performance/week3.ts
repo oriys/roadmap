@@ -91,6 +91,52 @@ export const week3Guides: Record<string, LessonGuide> = {
             "https://www.postgresql.org/docs/current/sql-vacuum.html",
             "https://thorben-janssen.com/hibernate-tips-how-to-fetch-associations-in-batches/"
         ]
+    },
+    "bp-w3-3": {
+        lessonId: "bp-w3-3",
+        background: [
+            "【CQRS 定义】Martin Fowler：'CQRS stands for Command Query Responsibility Segregation...the idea is that you can use a different model to update information than the model you use to read information'——读写使用不同的数据模型和存储。",
+            "【CQRS 适用场景】Microsoft 文档：CQRS 适合读写负载差异大、复杂业务逻辑的系统。写入端可以使用规范化模型保证一致性，读取端使用反规范化视图优化查询性能。",
+            "【分库分表策略】数据库分片（Sharding）将数据水平切分到多个数据库实例。常见策略：范围分片（Range）、哈希分片（Hash）、目录分片（Directory）。每种策略有不同的数据分布和查询特点。",
+            "【Redis Hot Key 问题】Redis 官方文档：热点 Key 是指被高频访问的单个 Key，可能导致单个节点过载。解决方案包括：本地缓存、读副本、Key 拆分（如 key_1, key_2...key_n 轮询）。",
+            "【Redis Big Key 问题】Redis 官方建议单个 Key 的 Value 不超过 10KB。大 Key 会导致：网络带宽占用、主线程阻塞、集群数据倾斜、过期删除耗时长。使用 redis-cli --bigkeys 扫描检测。",
+            "【分布式 ID 生成】分库分表后需要全局唯一 ID。常见方案：Snowflake（Twitter 雪花算法）、UUID、数据库自增（步长错开）、Redis 原子递增。Snowflake 生成有序 ID 便于索引。"
+        ],
+        keyDifficulties: [
+            "【CQRS 最终一致性】写入和读取模型同步存在延迟，需要接受最终一致性。适合对实时性要求不高的场景；对于强一致性需求，可能需要同步更新或使用事务发件箱模式。",
+            "【分片键选择】分片键决定数据分布和查询效率。选择高基数（cardinality）、查询频繁的字段。避免选择会导致数据倾斜的字段（如注册日期会导致新数据集中在少数分片）。",
+            "【跨分片查询】分库分表后，跨分片的 JOIN 和聚合查询变得复杂。需要在应用层聚合、使用中间件（如 ShardingSphere）、或维护冗余数据。这是分库分表的主要代价。",
+            "【Hot Key 识别】Redis 4.0+ 的 --hotkeys 选项需要开启 maxmemory-policy 为 LFU 系列。也可以通过代理层（如 Twemproxy）统计访问频率，或使用 MONITOR 命令采样分析。",
+            "【Big Key 删除风险】直接 DEL 大 Key 会阻塞 Redis 主线程。Redis 4.0+ 推荐使用 UNLINK 异步删除；对于 Hash/Set/ZSet，使用 SCAN + HDEL/SREM/ZREM 分批删除。"
+        ],
+        handsOnPath: [
+            "设计 CQRS 架构：写入使用关系型数据库（如 PostgreSQL），读取使用 Elasticsearch 或 Redis。通过事件驱动（如 Kafka CDC）同步数据。",
+            "实现分库分表：使用 ShardingSphere-JDBC 或 Vitess 配置水平分片。选择合适的分片键，测试数据分布均匀性。",
+            "检测 Redis Big Key：使用 redis-cli --bigkeys 扫描，或 MEMORY USAGE <key> 查看单个 Key 内存占用。设置告警阈值。",
+            "处理 Hot Key：实现本地缓存（如 Caffeine）减少 Redis 访问；或将热点 Key 复制到多个节点，客户端轮询访问。",
+            "设计分布式 ID 生成器：实现 Snowflake 算法，配置 Worker ID 和 Datacenter ID。测试 ID 唯一性和有序性。",
+            "监控分片数据均衡：定期统计各分片的数据量和 QPS，发现数据倾斜及时调整分片策略或进行数据迁移。"
+        ],
+        selfCheck: [
+            "什么是 CQRS？它适合什么样的系统？",
+            "分库分表的三种常见分片策略是什么？各有什么优缺点？",
+            "什么是 Redis Hot Key 问题？有哪些解决方案？",
+            "为什么 Redis Big Key 会影响性能？如何检测和处理 Big Key？",
+            "分片键选择需要考虑哪些因素？什么样的字段不适合作为分片键？",
+            "Snowflake 算法生成的 ID 有什么特点？为什么它适合分库分表场景？"
+        ],
+        extensions: [
+            "研究 Event Sourcing 模式，了解其与 CQRS 的配合使用和事件溯源的优势。",
+            "学习 TiDB 等分布式 NewSQL 数据库，了解其如何透明支持分布式事务和自动分片。",
+            "探索 Redis Cluster 的 Hash Slot 机制，理解其数据分片和故障转移原理。",
+            "研究 Consistent Hashing（一致性哈希）算法，理解其在分布式缓存中解决扩缩容问题的原理。"
+        ],
+        sourceUrls: [
+            "https://martinfowler.com/bliki/CQRS.html",
+            "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+            "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+            "https://shardingsphere.apache.org/document/current/en/overview/"
+        ]
     }
 }
 
@@ -385,6 +431,152 @@ export const week3Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "通过查询 pg_stat_user_tables 视图的 n_dead_tup 列可以监控表中的死元组数量，评估是否需要手动触发 VACUUM。"
+        }
+    ],
+    "bp-w3-3": [
+        {
+            id: "bp-w3-3-q1",
+            question: "Martin Fowler 对 CQRS 模式的核心定义是什么？",
+            options: [
+                "读写使用相同的数据模型",
+                "Use a different model to update information than the model you use to read information",
+                "只使用命令模式",
+                "只使用查询模式"
+            ],
+            answer: 1,
+            rationale: "Martin Fowler：'CQRS stands for Command Query Responsibility Segregation...the idea is that you can use a different model to update information than the model you use to read information'。"
+        },
+        {
+            id: "bp-w3-3-q2",
+            question: "分库分表的三种常见分片策略是什么？",
+            options: [
+                "水平、垂直、混合",
+                "范围分片（Range）、哈希分片（Hash）、目录分片（Directory）",
+                "主从、读写、备份",
+                "热、温、冷"
+            ],
+            answer: 1,
+            rationale: "常见的分片策略：范围分片（按数值范围）、哈希分片（按 Key 哈希值）、目录分片（维护映射表）。每种策略有不同的数据分布和查询特点。"
+        },
+        {
+            id: "bp-w3-3-q3",
+            question: "Redis Big Key 的建议大小阈值是多少？",
+            options: [
+                "不超过 1KB",
+                "不超过 10KB",
+                "不超过 1MB",
+                "没有限制"
+            ],
+            answer: 1,
+            rationale: "Redis 官方建议单个 Key 的 Value 不超过 10KB。大 Key 会导致网络带宽占用、主线程阻塞、集群数据倾斜等问题。"
+        },
+        {
+            id: "bp-w3-3-q4",
+            question: "如何检测 Redis 中的 Big Key？",
+            options: [
+                "只能手动查看",
+                "使用 redis-cli --bigkeys 扫描，或 MEMORY USAGE <key> 查看",
+                "查看 Redis 日志",
+                "Big Key 无法检测"
+            ],
+            answer: 1,
+            rationale: "使用 redis-cli --bigkeys 可以扫描整个 Redis 实例找出各类型最大的 Key；MEMORY USAGE <key> 可以查看特定 Key 的内存占用。"
+        },
+        {
+            id: "bp-w3-3-q5",
+            question: "解决 Redis Hot Key 问题的常见方案有哪些？",
+            options: [
+                "只能升级 Redis 实例",
+                "本地缓存、读副本、Key 拆分（轮询访问多个 Key）",
+                "删除热点数据",
+                "限制访问频率"
+            ],
+            answer: 1,
+            rationale: "Hot Key 解决方案：使用本地缓存（如 Caffeine）减少 Redis 访问；使用读副本分担负载；将热点 Key 拆分为多个（如 key_1, key_2）轮询访问。"
+        },
+        {
+            id: "bp-w3-3-q6",
+            question: "为什么直接 DEL 大 Key 有风险？应该如何处理？",
+            options: [
+                "DEL 不会删除数据",
+                "会阻塞 Redis 主线程；应使用 UNLINK 异步删除或分批删除",
+                "会导致数据丢失",
+                "没有任何风险"
+            ],
+            answer: 1,
+            rationale: "直接 DEL 大 Key 会阻塞 Redis 主线程。Redis 4.0+ 推荐使用 UNLINK 异步删除；对于 Hash/Set/ZSet，使用 SCAN + HDEL/SREM/ZREM 分批删除。"
+        },
+        {
+            id: "bp-w3-3-q7",
+            question: "CQRS 模式的主要代价是什么？",
+            options: [
+                "读取性能下降",
+                "写入和读取模型同步存在延迟，需要接受最终一致性",
+                "无法使用关系型数据库",
+                "代码量减少"
+            ],
+            answer: 1,
+            rationale: "CQRS 的主要代价是读写模型同步存在延迟，需要接受最终一致性。适合对实时性要求不高的场景；强一致性需求需要额外处理。"
+        },
+        {
+            id: "bp-w3-3-q8",
+            question: "分库分表后，跨分片查询的主要挑战是什么？",
+            options: [
+                "网络延迟增加",
+                "跨分片的 JOIN 和聚合查询变得复杂，需要在应用层聚合",
+                "无法使用 SQL",
+                "数据会丢失"
+            ],
+            answer: 1,
+            rationale: "分库分表后，跨分片的 JOIN 和聚合查询变得复杂。需要在应用层聚合、使用中间件（如 ShardingSphere）、或维护冗余数据。这是分库分表的主要代价。"
+        },
+        {
+            id: "bp-w3-3-q9",
+            question: "分片键选择应该避免什么？",
+            options: [
+                "高基数字段",
+                "会导致数据倾斜的字段（如注册日期导致新数据集中在少数分片）",
+                "查询频繁的字段",
+                "主键字段"
+            ],
+            answer: 1,
+            rationale: "分片键应选择高基数、查询频繁的字段。避免选择会导致数据倾斜的字段，如注册日期会导致新数据集中在少数分片。"
+        },
+        {
+            id: "bp-w3-3-q10",
+            question: "Snowflake 算法生成的 ID 有什么特点？",
+            options: [
+                "完全随机，无序",
+                "全局唯一、趋势有序，便于数据库索引",
+                "只包含数字",
+                "长度固定为 32 位"
+            ],
+            answer: 1,
+            rationale: "Snowflake 算法生成的 ID 全局唯一且趋势有序（包含时间戳），便于数据库索引和分布式场景下的 ID 生成。"
+        },
+        {
+            id: "bp-w3-3-q11",
+            question: "如何识别 Redis 中的 Hot Key？",
+            options: [
+                "只能通过日志分析",
+                "使用 redis-cli --hotkeys（需 LFU 策略）、代理层统计、或 MONITOR 采样",
+                "Hot Key 无法识别",
+                "查看 CPU 使用率"
+            ],
+            answer: 1,
+            rationale: "Redis 4.0+ 的 --hotkeys 需要开启 LFU 策略。也可以通过代理层（如 Twemproxy）统计访问频率，或使用 MONITOR 命令采样分析。"
+        },
+        {
+            id: "bp-w3-3-q12",
+            question: "Microsoft 文档指出 CQRS 适合什么样的系统？",
+            options: [
+                "读写负载相近的系统",
+                "读写负载差异大、复杂业务逻辑的系统",
+                "只有读操作的系统",
+                "小型单体应用"
+            ],
+            answer: 1,
+            rationale: "Microsoft 文档：CQRS 适合读写负载差异大、复杂业务逻辑的系统。写入端保证一致性，读取端优化查询性能。"
         }
     ]
 }

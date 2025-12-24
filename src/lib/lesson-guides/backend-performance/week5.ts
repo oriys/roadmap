@@ -91,6 +91,52 @@ export const week5Guides: Record<string, LessonGuide> = {
             "https://martinfowler.com/articles/feature-toggles.html",
             "https://sre.google/sre-book/handling-overload/"
         ]
+    },
+    "bp-w5-3": {
+        lessonId: "bp-w5-3",
+        background: [
+            "【HPA 基础】Kubernetes 官方文档：Horizontal Pod Autoscaler（HPA）根据观测到的 CPU 利用率或其他指标自动扩缩 Deployment、ReplicaSet 的 Pod 副本数。",
+            "【HPA 算法】HPA 使用公式：desiredReplicas = ceil[currentReplicas × (currentMetricValue / desiredMetricValue)]。当前值超过目标时扩容，低于目标时缩容。",
+            "【自定义指标】Kubernetes 支持三类指标：Resource（CPU/内存）、Pods（Pod 级自定义指标）、Object/External（外部系统指标如队列长度）。自定义指标通过 Metrics API 暴露。",
+            "【Prometheus Adapter】prometheus-adapter 是常用的 Custom Metrics API 实现，将 Prometheus 指标转换为 Kubernetes metrics.k8s.io API，供 HPA 消费。",
+            "【KEDA 扩展】KEDA（Kubernetes Event-driven Autoscaling）扩展了 HPA 能力，支持基于事件源（Kafka、RabbitMQ、Redis 等）的自动扩缩，可以缩至零副本。",
+            "【扩缩容延迟】HPA 默认每 15 秒检查一次指标（--horizontal-pod-autoscaler-sync-period）。扩容是即时的，但缩容有 5 分钟稳定窗口（stabilizationWindowSeconds）防止震荡。"
+        ],
+        keyDifficulties: [
+            "【指标选择】CPU 是延迟指标（lagging indicator），负载上升时 CPU 先升高，但可能已经影响响应时间。应考虑使用业务指标（如 QPS、队列深度）作为领先指标（leading indicator）。",
+            "【冷启动延迟】新 Pod 启动需要时间（拉取镜像、初始化、预热）。如果扩容速度跟不上流量增长，可能导致级联故障。应优化启动时间并考虑预扩容。",
+            "【缩容震荡】负载波动可能导致频繁扩缩容（flapping）。使用 stabilizationWindowSeconds 设置缩容冷却期，或 behavior.scaleDown.policies 限制缩容速率。",
+            "【多指标冲突】HPA 支持多指标时取最大 desiredReplicas。如果 CPU 指标要求 5 副本，QPS 指标要求 10 副本，最终会扩到 10 副本。需要平衡各指标权重。",
+            "【VPA 与 HPA 冲突】Vertical Pod Autoscaler（VPA）调整 Pod 资源请求，可能与 HPA 的 CPU 指标冲突。Kubernetes 建议对同一 Deployment 不同时使用 VPA 和基于 CPU 的 HPA。"
+        ],
+        handsOnPath: [
+            "部署 prometheus-adapter：安装 helm chart，配置 rules 将 Prometheus 指标映射为 custom.metrics.k8s.io API。",
+            "创建基于 QPS 的 HPA：使用 http_requests_per_second 指标替代 CPU，设置目标值如 1000 请求/秒/Pod。",
+            "配置缩容策略：设置 behavior.scaleDown.stabilizationWindowSeconds: 300 和 policies 限制每分钟最多缩容 10% 或 1 个 Pod。",
+            "部署 KEDA ScaledObject：配置基于 Kafka consumer lag 或 Redis list length 的自动扩缩，支持缩至零。",
+            "监控 HPA 状态：kubectl get hpa -w 观察 TARGETS 列的当前值/目标值，确认扩缩容决策符合预期。",
+            "测试扩容响应时间：使用压测工具产生负载，测量从负载开始到新 Pod Ready 的时间，优化启动速度。"
+        ],
+        selfCheck: [
+            "HPA 计算 desiredReplicas 的公式是什么？",
+            "为什么 CPU 不是理想的扩缩容指标？什么是更好的领先指标？",
+            "如何防止 HPA 缩容震荡（flapping）？",
+            "prometheus-adapter 的作用是什么？它如何连接 Prometheus 和 HPA？",
+            "KEDA 相比原生 HPA 有什么优势？",
+            "VPA 和 HPA 为什么不建议同时使用在基于 CPU 的场景？"
+        ],
+        extensions: [
+            "学习 Knative Serving 的自动扩缩实现，了解其基于并发请求数的扩缩策略和 activator 组件。",
+            "研究 AWS Karpenter 节点自动扩缩器，了解其相比 Cluster Autoscaler 的改进。",
+            "探索 Predictive HPA 实现，基于历史数据预测负载并提前扩容。",
+            "学习 VPA 的 recommender、updater、admission-controller 三个组件的工作原理。"
+        ],
+        sourceUrls: [
+            "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+            "https://github.com/kubernetes-sigs/prometheus-adapter",
+            "https://keda.sh/docs/concepts/",
+            "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/"
+        ]
     }
 }
 
@@ -385,6 +431,152 @@ export const week5Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "Google SRE 指出'以每秒查询数建模容量...往往是糟糕的指标'，改而直接测量 CPU 和内存等实际资源，因为不同请求消耗的资源差异很大。"
+        }
+    ],
+    "bp-w5-3": [
+        {
+            id: "bp-w5-3-q1",
+            question: "Kubernetes HPA 计算期望副本数的公式是什么？",
+            options: [
+                "desiredReplicas = currentReplicas + currentMetricValue",
+                "desiredReplicas = ceil[currentReplicas × (currentMetricValue / desiredMetricValue)]",
+                "desiredReplicas = currentMetricValue / desiredMetricValue",
+                "desiredReplicas = max(currentReplicas, desiredMetricValue)"
+            ],
+            answer: 1,
+            rationale: "HPA 公式：desiredReplicas = ceil[currentReplicas × (currentMetricValue / desiredMetricValue)]。当前值超过目标时扩容，低于目标时缩容。"
+        },
+        {
+            id: "bp-w5-3-q2",
+            question: "HPA 默认每多长时间检查一次指标？",
+            options: [
+                "1 秒",
+                "15 秒",
+                "1 分钟",
+                "5 分钟"
+            ],
+            answer: 1,
+            rationale: "HPA 默认每 15 秒检查一次指标（--horizontal-pod-autoscaler-sync-period）。可以根据需要调整此参数。"
+        },
+        {
+            id: "bp-w5-3-q3",
+            question: "为什么 CPU 不是理想的扩缩容指标？",
+            options: [
+                "CPU 指标不准确",
+                "CPU 是延迟指标（lagging indicator），负载上升时可能已经影响响应时间",
+                "CPU 无法测量",
+                "CPU 不支持 HPA"
+            ],
+            answer: 1,
+            rationale: "CPU 是延迟指标（lagging indicator），负载上升时 CPU 先升高，但可能已经影响响应时间。应考虑使用业务指标（如 QPS）作为领先指标。"
+        },
+        {
+            id: "bp-w5-3-q4",
+            question: "prometheus-adapter 的作用是什么？",
+            options: [
+                "部署 Prometheus",
+                "将 Prometheus 指标转换为 Kubernetes metrics.k8s.io API，供 HPA 消费",
+                "监控 Kubernetes 集群",
+                "存储指标数据"
+            ],
+            answer: 1,
+            rationale: "prometheus-adapter 是 Custom Metrics API 的实现，将 Prometheus 指标转换为 Kubernetes metrics.k8s.io API，使 HPA 能够使用自定义指标。"
+        },
+        {
+            id: "bp-w5-3-q5",
+            question: "KEDA 相比原生 HPA 有什么主要优势？",
+            options: [
+                "更快的扩缩容速度",
+                "支持基于事件源（Kafka、RabbitMQ 等）的自动扩缩，可以缩至零副本",
+                "更低的资源消耗",
+                "更简单的配置"
+            ],
+            answer: 1,
+            rationale: "KEDA 扩展了 HPA 能力，支持基于事件源（Kafka、RabbitMQ、Redis 等）的自动扩缩，最重要的是可以缩至零副本，原生 HPA 最少保留 1 个副本。"
+        },
+        {
+            id: "bp-w5-3-q6",
+            question: "如何防止 HPA 缩容震荡（flapping）？",
+            options: [
+                "禁用 HPA",
+                "设置 stabilizationWindowSeconds 缩容冷却期，或限制缩容速率",
+                "增加 CPU 配额",
+                "减少副本数"
+            ],
+            answer: 1,
+            rationale: "使用 stabilizationWindowSeconds 设置缩容冷却期（默认 5 分钟），或 behavior.scaleDown.policies 限制缩容速率，防止负载波动导致频繁扩缩容。"
+        },
+        {
+            id: "bp-w5-3-q7",
+            question: "HPA 支持多个指标时如何决定最终副本数？",
+            options: [
+                "取平均值",
+                "取最大 desiredReplicas",
+                "取最小值",
+                "随机选择"
+            ],
+            answer: 1,
+            rationale: "HPA 支持多指标时取最大 desiredReplicas。如果 CPU 指标要求 5 副本，QPS 指标要求 10 副本，最终会扩到 10 副本。"
+        },
+        {
+            id: "bp-w5-3-q8",
+            question: "为什么 VPA 和基于 CPU 的 HPA 不建议同时使用？",
+            options: [
+                "它们使用相同的 API",
+                "VPA 调整资源请求会影响 HPA 的 CPU 利用率计算，可能导致冲突",
+                "VPA 不支持 CPU",
+                "HPA 会覆盖 VPA 设置"
+            ],
+            answer: 1,
+            rationale: "VPA 调整 Pod 资源请求，会影响 CPU 利用率的计算基数，可能与 HPA 的 CPU 指标冲突。Kubernetes 建议对同一 Deployment 不同时使用两者。"
+        },
+        {
+            id: "bp-w5-3-q9",
+            question: "Kubernetes HPA 支持哪三类指标？",
+            options: [
+                "CPU、内存、磁盘",
+                "Resource（CPU/内存）、Pods（Pod 级自定义指标）、Object/External（外部系统指标）",
+                "Request、Response、Error",
+                "Input、Output、Throughput"
+            ],
+            answer: 1,
+            rationale: "HPA 支持三类指标：Resource（CPU/内存）、Pods（Pod 级自定义指标）、Object/External（外部系统指标如队列长度）。"
+        },
+        {
+            id: "bp-w5-3-q10",
+            question: "新 Pod 启动延迟（冷启动）为什么会影响 HPA 效果？",
+            options: [
+                "HPA 会跳过新 Pod",
+                "如果扩容速度跟不上流量增长，可能导致级联故障",
+                "新 Pod 不计入副本数",
+                "冷启动不影响 HPA"
+            ],
+            answer: 1,
+            rationale: "新 Pod 启动需要时间（拉取镜像、初始化、预热）。如果扩容速度跟不上流量增长，可能导致级联故障。应优化启动时间并考虑预扩容。"
+        },
+        {
+            id: "bp-w5-3-q11",
+            question: "HPA 的默认缩容稳定窗口是多长？",
+            options: [
+                "1 分钟",
+                "5 分钟",
+                "10 分钟",
+                "30 分钟"
+            ],
+            answer: 1,
+            rationale: "HPA 默认缩容有 5 分钟稳定窗口（stabilizationWindowSeconds: 300）防止震荡。扩容是即时的，无稳定窗口。"
+        },
+        {
+            id: "bp-w5-3-q12",
+            question: "如何使用 kubectl 观察 HPA 的实时状态？",
+            options: [
+                "kubectl describe pod",
+                "kubectl get hpa -w（观察 TARGETS 列的当前值/目标值）",
+                "kubectl logs",
+                "kubectl top nodes"
+            ],
+            answer: 1,
+            rationale: "kubectl get hpa -w 可以实时观察 HPA 状态，TARGETS 列显示当前指标值/目标值，REPLICAS 列显示当前/期望副本数。"
         }
     ]
 }

@@ -90,6 +90,52 @@ export const week4Guides: Record<string, LessonGuide> = {
             "https://grpc.io/docs/guides/performance/",
             "https://protobuf.dev/programming-guides/techniques/"
         ]
+    },
+    "bp-w4-3": {
+        lessonId: "bp-w4-3",
+        background: [
+            "【TCP 缓冲区调优】Linux 内核文档：net.core.rmem_max 和 net.core.wmem_max 控制 TCP 接收/发送缓冲区的最大值。高带宽延迟环境需要更大的缓冲区来填充带宽延迟积（BDP）。",
+            "【BDP 计算】带宽延迟积 BDP = 带宽 × RTT。例如 1Gbps 链路、50ms RTT，BDP = 125MB/s × 0.05s ≈ 6.25MB。TCP 窗口需要至少这么大才能充分利用带宽。",
+            "【文件描述符限制】Linux 默认每个进程最多打开 1024 个文件描述符（ulimit -n）。高并发服务器需要调高：/etc/security/limits.conf 设置 nofile，或 systemd 的 LimitNOFILE。",
+            "【系统级文件描述符】fs.file-max 控制系统级文件描述符总数上限。/proc/sys/fs/file-nr 显示已分配、已使用、最大值。耗尽会导致 'Too many open files' 错误。",
+            "【TLS 1.3 优化】TLS 1.3 将握手从 2-RTT 减少到 1-RTT，0-RTT 恢复进一步减少延迟。Cloudflare 报告 TLS 1.3 比 TLS 1.2 快约 100ms。",
+            "【TLS 加解密开销】对称加密（AES-GCM）CPU 开销较小，非对称加密（RSA/ECDHE）开销大。会话复用（Session Tickets）避免重复握手，减少 CPU 和延迟。"
+        ],
+        keyDifficulties: [
+            "【TCP 调优参数】net.ipv4.tcp_rmem/tcp_wmem 格式为'min default max'三元组。自动调优（tcp_moderate_rcvbuf）会在 min 和 max 之间动态调整。设置不当可能浪费内存或限制吞吐。",
+            "【TIME_WAIT 处理】高并发短连接场景会产生大量 TIME_WAIT 状态。net.ipv4.tcp_tw_reuse 允许复用 TIME_WAIT 连接（仅客户端），但 tcp_tw_recycle 已在 Linux 4.12 废弃。",
+            "【连接积压（Backlog）】net.core.somaxconn 限制 listen() 的积压队列大小。Nginx 的 listen 指令 backlog 参数不能超过此值。高峰期积压满会导致连接被丢弃。",
+            "【TLS CPU 热点】RSA-2048 密钥交换比 ECDHE-P256 慢约 10 倍。在高并发网关层，应优先使用 ECDHE 并考虑硬件加速（AES-NI、QAT）或 TLS 卸载（Offload）。",
+            "【0-RTT 重放风险】TLS 1.3 的 0-RTT 数据可能被重放，只适合幂等请求。应用层需要自己防护非幂等操作，或使用 single-use tickets。"
+        ],
+        handsOnPath: [
+            "计算 BDP 并调优 TCP 缓冲区：sysctl -w net.core.rmem_max=16777216; sysctl -w net.ipv4.tcp_rmem='4096 131072 16777216'。",
+            "调高文件描述符限制：在 /etc/security/limits.conf 添加 '* soft nofile 65535' 和 '* hard nofile 65535'；或 systemd service 添加 LimitNOFILE=65535。",
+            "配置 Nginx 启用 TLS 1.3：ssl_protocols TLSv1.2 TLSv1.3; ssl_prefer_server_ciphers off; 让客户端选择最快的密码套件。",
+            "启用 TLS 会话复用：Nginx 配置 ssl_session_cache shared:SSL:10m; ssl_session_timeout 1d; ssl_session_tickets on;",
+            "监控 TLS 握手性能：使用 openssl s_time 或 Prometheus 的 nginx_ssl_handshake_duration_seconds 指标观察握手延迟。",
+            "使用 ss -s 和 netstat -s 监控 TCP 连接状态和错误统计，关注 TIME_WAIT 数量、重传率、连接重置。"
+        ],
+        selfCheck: [
+            "什么是带宽延迟积（BDP）？如何根据 BDP 调整 TCP 缓冲区大小？",
+            "Linux 的进程级和系统级文件描述符限制分别在哪里配置？",
+            "TLS 1.3 相比 TLS 1.2 在握手延迟上有什么改进？",
+            "为什么 TLS 1.3 的 0-RTT 有重放风险？应该如何处理？",
+            "net.core.somaxconn 控制什么？设置过小会导致什么问题？",
+            "ECDHE 和 RSA 密钥交换在性能上有什么区别？高并发场景应该选择哪个？"
+        ],
+        extensions: [
+            "学习 BBR 拥塞控制算法，理解其相比 CUBIC 在高延迟网络中的优势和 Google 的实践经验。",
+            "研究 QUIC 协议和 HTTP/3，了解其如何解决 TCP 的队头阻塞和连接迁移问题。",
+            "探索 eBPF 的 XDP（eXpress Data Path）技术，实现内核级高性能网络处理。",
+            "学习 TCP Fast Open (TFO)，理解其如何在 TCP 层面减少连接建立延迟。"
+        ],
+        sourceUrls: [
+            "https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt",
+            "https://www.cloudflare.com/learning/ssl/why-use-tls-1.3/",
+            "https://nginx.org/en/docs/http/configuring_https_servers.html",
+            "https://www.kernel.org/doc/Documentation/sysctl/fs.txt"
+        ]
     }
 }
 
@@ -384,6 +430,152 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "gRPC 内置的 channelz 服务可以查看连接状态、流数量、发送/接收字节数等指标，用于监控和调试 HTTP/2 连接健康状况。"
+        }
+    ],
+    "bp-w4-3": [
+        {
+            id: "bp-w4-3-q1",
+            question: "带宽延迟积（BDP）的计算公式是什么？",
+            options: [
+                "BDP = 带宽 / RTT",
+                "BDP = 带宽 × RTT",
+                "BDP = 带宽 + RTT",
+                "BDP = 带宽 - RTT"
+            ],
+            answer: 1,
+            rationale: "BDP（Bandwidth-Delay Product）= 带宽 × RTT。例如 1Gbps 链路、50ms RTT，BDP ≈ 6.25MB。TCP 窗口需要至少这么大才能充分利用带宽。"
+        },
+        {
+            id: "bp-w4-3-q2",
+            question: "Linux 默认每个进程最多打开多少个文件描述符？",
+            options: [
+                "256",
+                "1024",
+                "65535",
+                "无限制"
+            ],
+            answer: 1,
+            rationale: "Linux 默认每个进程最多打开 1024 个文件描述符（ulimit -n）。高并发服务器需要调高此限制。"
+        },
+        {
+            id: "bp-w4-3-q3",
+            question: "TLS 1.3 相比 TLS 1.2 在握手延迟上有什么改进？",
+            options: [
+                "没有改进",
+                "从 2-RTT 减少到 1-RTT，0-RTT 恢复进一步减少延迟",
+                "增加到 3-RTT",
+                "只支持 0-RTT"
+            ],
+            answer: 1,
+            rationale: "TLS 1.3 将握手从 2-RTT 减少到 1-RTT，0-RTT 恢复进一步减少延迟。Cloudflare 报告 TLS 1.3 比 TLS 1.2 快约 100ms。"
+        },
+        {
+            id: "bp-w4-3-q4",
+            question: "net.core.somaxconn 控制什么？",
+            options: [
+                "最大 TCP 连接数",
+                "listen() 的积压队列大小",
+                "最大文件描述符数",
+                "TCP 缓冲区大小"
+            ],
+            answer: 1,
+            rationale: "net.core.somaxconn 限制 listen() 的积压队列大小。Nginx 的 listen 指令 backlog 参数不能超过此值。高峰期积压满会导致连接被丢弃。"
+        },
+        {
+            id: "bp-w4-3-q5",
+            question: "为什么 TLS 1.3 的 0-RTT 有重放风险？",
+            options: [
+                "0-RTT 不加密",
+                "0-RTT 数据可能被攻击者截获并重放，只适合幂等请求",
+                "0-RTT 不验证服务器身份",
+                "0-RTT 使用弱密码"
+            ],
+            answer: 1,
+            rationale: "TLS 1.3 的 0-RTT 数据可能被重放，只适合幂等请求。应用层需要自己防护非幂等操作（如支付），或使用 single-use tickets。"
+        },
+        {
+            id: "bp-w4-3-q6",
+            question: "RSA-2048 和 ECDHE-P256 密钥交换在性能上有什么区别？",
+            options: [
+                "RSA 更快",
+                "RSA 比 ECDHE 慢约 10 倍，高并发场景应优先使用 ECDHE",
+                "没有区别",
+                "ECDHE 不支持高并发"
+            ],
+            answer: 1,
+            rationale: "RSA-2048 密钥交换比 ECDHE-P256 慢约 10 倍。在高并发网关层，应优先使用 ECDHE 并考虑硬件加速（AES-NI、QAT）或 TLS 卸载。"
+        },
+        {
+            id: "bp-w4-3-q7",
+            question: "net.ipv4.tcp_rmem 参数的格式是什么？",
+            options: [
+                "单个数值",
+                "'min default max' 三元组",
+                "百分比",
+                "布尔值"
+            ],
+            answer: 1,
+            rationale: "net.ipv4.tcp_rmem/tcp_wmem 格式为'min default max'三元组。自动调优会在 min 和 max 之间动态调整。"
+        },
+        {
+            id: "bp-w4-3-q8",
+            question: "高并发短连接场景产生大量 TIME_WAIT 状态，应该如何处理？",
+            options: [
+                "重启服务器",
+                "启用 net.ipv4.tcp_tw_reuse 允许复用 TIME_WAIT 连接",
+                "增加 TCP 缓冲区",
+                "禁用 TCP"
+            ],
+            answer: 1,
+            rationale: "net.ipv4.tcp_tw_reuse 允许复用 TIME_WAIT 连接（仅客户端）。注意 tcp_tw_recycle 已在 Linux 4.12 废弃，不应使用。"
+        },
+        {
+            id: "bp-w4-3-q9",
+            question: "fs.file-max 控制什么？耗尽会导致什么错误？",
+            options: [
+                "最大文件大小，导致 'File too large'",
+                "系统级文件描述符总数上限，导致 'Too many open files'",
+                "最大磁盘空间，导致 'No space left'",
+                "最大进程数，导致 'Fork failed'"
+            ],
+            answer: 1,
+            rationale: "fs.file-max 控制系统级文件描述符总数上限。耗尽会导致 'Too many open files' 错误，新连接无法建立。"
+        },
+        {
+            id: "bp-w4-3-q10",
+            question: "TLS 会话复用（Session Tickets）有什么作用？",
+            options: [
+                "增强安全性",
+                "避免重复握手，减少 CPU 和延迟",
+                "压缩数据",
+                "加速加密"
+            ],
+            answer: 1,
+            rationale: "会话复用（Session Tickets）允许客户端复用之前的会话，避免重复的完整握手，减少 CPU 开销和连接延迟。"
+        },
+        {
+            id: "bp-w4-3-q11",
+            question: "如何查看 Linux 系统的文件描述符使用情况？",
+            options: [
+                "使用 top 命令",
+                "查看 /proc/sys/fs/file-nr（已分配、已使用、最大值）",
+                "使用 df 命令",
+                "查看 /etc/passwd"
+            ],
+            answer: 1,
+            rationale: "/proc/sys/fs/file-nr 显示已分配、已使用、最大值三个数字，用于监控系统级文件描述符使用情况。"
+        },
+        {
+            id: "bp-w4-3-q12",
+            question: "Nginx 中如何启用 TLS 1.3？",
+            options: [
+                "ssl_version 3",
+                "ssl_protocols TLSv1.2 TLSv1.3;",
+                "tls_enable on",
+                "https_version 1.3"
+            ],
+            answer: 1,
+            rationale: "Nginx 配置 ssl_protocols TLSv1.2 TLSv1.3; 启用 TLS 1.3。同时建议 ssl_prefer_server_ciphers off; 让客户端选择最快的密码套件。"
         }
     ]
 }
