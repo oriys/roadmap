@@ -55,14 +55,18 @@ export const week1Guides: Record<string, LessonGuide> = {
             "【OpenAPI 结构】根对象包含 openapi（版本）、info（元数据）、servers（服务器地址）、paths（端点定义）、components（可复用组件）。paths 和 components 至少需要一个。",
             "【Schema 定义】使用 JSON Schema（Draft 2020-12）定义请求/响应结构，支持基础类型、数组、对象、组合模式（allOf、oneOf、anyOf）、引用（$ref）复用定义。",
             "【参数位置】OpenAPI 支持五种参数位置：path（路径参数 /users/{id}）、query（查询参数 ?page=1）、header（请求头）、cookie（Cookie）。每种有不同的序列化规则。",
-            "【Spectral Linting】Spectral 是 API 规范的 linter 工具，内置 OpenAPI/AsyncAPI 规则集，支持自定义规则，可集成到 CI/CD 流水线自动检查规范合规性。"
+            "【Spectral Linting】Spectral 是 API 规范的 linter 工具，内置 OpenAPI/AsyncAPI 规则集，支持自定义规则，可集成到 CI/CD 流水线自动检查规范合规性。",
+            "【API Mocking】Prism 是 Stoplight 开发的 Mock Server：基于 OpenAPI 规范自动生成 Mock 响应，支持动态生成（基于 example/schema）和静态示例，实现前后端并行开发。",
+            "【并行开发模式】契约优先 + Mock 服务器的工作流：1) 前后端共同设计 OpenAPI 规范，2) 前端使用 Mock 服务器开发，3) 后端按规范实现，4) 集成测试验证一致性。"
         ],
         keyDifficulties: [
             "【$ref 循环引用】组件相互引用可能导致无限循环。工具通常能处理，但设计时应避免深层嵌套引用，保持 Schema 结构清晰。",
             "【版本兼容性】OpenAPI 3.0 与 3.1 有语法差异（如 nullable vs type: [string, null]）。选择版本时需考虑工具链支持情况。",
             "【描述与示例】description 使用 CommonMark 格式，example 提供具体值帮助理解。没有充分的描述和示例会降低 API 可用性。",
             "【Security Scheme 选择】支持 HTTP Basic、API Key、OAuth2、OpenID Connect、mTLS。不同场景需要不同方案：机器对机器用 OAuth2 Client Credentials，用户认证用 OIDC。",
-            "【Spectral 规则设计】规则需要平衡严格性和可用性。过于严格会阻碍开发，过于宽松则失去意义。建议分层：error（必须修复）、warn（建议修复）、info（提示）。"
+            "【Spectral 规则设计】规则需要平衡严格性和可用性。过于严格会阻碍开发，过于宽松则失去意义。建议分层：error（必须修复）、warn（建议修复）、info（提示）。",
+            "【Mock 响应一致性】Prism 动态模式基于 Schema 生成随机数据，可能与真实响应差异较大。建议在规范中提供真实的 example，使用 --errors 标志强制要求示例。",
+            "【Mock 与真实服务切换】前端代码需要设计环境变量控制 API 基础 URL，便于在 Mock 服务和真实后端之间切换。避免硬编码服务地址。"
         ],
         handsOnPath: [
             "编写订单 API 的 OpenAPI 3.1 规范：定义 /orders 路径、Order Schema、分页参数、错误响应，使用 $ref 复用组件。",
@@ -70,7 +74,9 @@ export const week1Guides: Record<string, LessonGuide> = {
             "设置 CI Linting：在 GitHub Actions 中使用 spectral-action，在 PR 时自动检查 OpenAPI 变更，阻止不合规的变更合并。",
             "生成 SDK 和文档：使用 openapi-generator 从规范生成 TypeScript/Python 客户端，使用 Redoc 或 Swagger UI 生成交互式文档。",
             "添加安全定义：在 components.securitySchemes 中定义 OAuth2 和 API Key 方案，在 paths 中通过 security 字段应用。",
-            "使用 example 和 examples：为请求/响应添加真实示例数据，帮助开发者理解 API 用法，也便于 Mock 服务器生成测试数据。"
+            "使用 example 和 examples：为请求/响应添加真实示例数据，帮助开发者理解 API 用法，也便于 Mock 服务器生成测试数据。",
+            "启动 Prism Mock 服务器：运行 prism mock openapi.yaml，测试前端如何调用 Mock API，验证请求验证和响应生成功能。",
+            "配置并行开发环境：设置前端项目的环境变量（如 VITE_API_BASE_URL），开发时指向 Prism Mock，生产时指向真实后端。"
         ],
         selfCheck: [
             "什么是 OpenAPI Specification？它解决什么问题？",
@@ -78,18 +84,23 @@ export const week1Guides: Record<string, LessonGuide> = {
             "OpenAPI 文档的核心结构包括哪些部分？",
             "如何使用 $ref 复用 Schema 定义？有什么注意事项？",
             "Spectral 是什么？如何将它集成到 CI/CD 流水线？",
-            "OpenAPI 支持哪些安全认证方案？如何选择？"
+            "OpenAPI 支持哪些安全认证方案？如何选择？",
+            "Prism Mock Server 如何实现前后端并行开发？有什么优势？",
+            "如何确保 Mock 响应与真实后端的一致性？"
         ],
         extensions: [
             "学习 AsyncAPI 规范，了解如何描述事件驱动的 API（Kafka、WebSocket）。",
-            "研究 Prism（Stoplight）的 Mock 服务器功能，基于 OpenAPI 规范自动生成 Mock 响应。",
+            "深入研究 Prism 的高级功能：请求验证、回调模拟、动态响应生成。",
             "探索 OpenAPI 与 GraphQL Schema 的互转工具，理解两种规范的映射关系。",
-            "学习 API 变更检测工具如 optic、oasdiff，在 CI 中检测破坏性变更。"
+            "学习 API 变更检测工具如 optic、oasdiff，在 CI 中检测破坏性变更。",
+            "研究 MSW（Mock Service Worker）作为浏览器端 Mock 方案的替代选择。"
         ],
         sourceUrls: [
             "https://spec.openapis.org/oas/latest.html",
             "https://github.com/stoplightio/spectral",
-            "https://roadmap.sh/api-design"
+            "https://roadmap.sh/api-design",
+            "https://stoplight.io/open-source/prism",
+            "https://docs.stoplight.io/docs/prism"
         ]
     }
 }
@@ -385,6 +396,30 @@ export const week1Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "Spectral 被广泛采用，Adidas、Azure、Box、DigitalOcean、Zalando 等公司发布了公开的规则集作为 API 治理标准参考。"
+        },
+        {
+            id: "api-w1-2-q13",
+            question: "Prism Mock Server 的主要作用是什么？",
+            options: [
+                "生成 API 文档",
+                "基于 OpenAPI 规范自动生成 Mock 响应，实现前后端并行开发",
+                "测试 API 性能",
+                "管理 API 版本"
+            ],
+            answer: 1,
+            rationale: "Prism 是 Stoplight 开发的 Mock Server，基于 OpenAPI 规范自动生成 Mock 响应，支持动态生成和静态示例，实现前后端并行开发。"
+        },
+        {
+            id: "api-w1-2-q14",
+            question: "契约优先 + Mock 服务器的并行开发流程是什么？",
+            options: [
+                "先开发后端，再开发前端",
+                "前后端共同设计规范 → 前端用 Mock 开发 → 后端按规范实现 → 集成测试",
+                "前端和后端完全独立开发",
+                "只需要后端开发"
+            ],
+            answer: 1,
+            rationale: "契约优先并行开发流程：1) 前后端共同设计 OpenAPI 规范，2) 前端使用 Mock 服务器开发，3) 后端按规范实现，4) 集成测试验证一致性。"
         }
     ]
 }

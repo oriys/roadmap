@@ -10,14 +10,19 @@ export const week5Guides: Record<string, LessonGuide> = {
             "【Mutation 命名】Mutation 字段应以动词开头：addCustomer 优于 customerAdd。输入类型使用 Input 后缀（AddCustomerInput），输出类型使用 Response 或 Payload 后缀。",
             "【无版本演进】GraphQL 最佳实践：'Avoid API versioning by utilizing new data types, queries, or mutations'——通过添加新类型/字段而非版本号来演进 Schema，保持向后兼容。",
             "【弃用机制】使用 @deprecated 指令标记弃用字段，提供 reason 说明替代方案和移除时间。GraphQL 客户端工具会警告使用已弃用字段的查询。",
-            "【类型系统】GraphQL 支持六种类型：Scalar（标量）、Object（对象）、Input（输入）、Enum（枚举）、Union/Interface（联合/接口）、Root Operation（根操作）。"
+            "【类型系统】GraphQL 支持六种类型：Scalar（标量）、Object（对象）、Input（输入）、Enum（枚举）、Union/Interface（联合/接口）、Root Operation（根操作）。",
+            "【Union 错误建模】业务错误不应放在 errors 数组里，而应使用 Union Types 将错误变为 Schema 的一部分：type CreateUserResult = User | ValidationError | DuplicateEmailError，让前端获得类型安全的错误处理。",
+            "【Result Pattern】推荐的 Mutation 返回模式：union CreateUserResult = CreateUserSuccess | ValidationError | NotFoundError，success 类型包含实际数据，error 类型包含错误详情和代码，客户端用 __typename 区分。"
         ],
         keyDifficulties: [
             "【非空标记】字段的 ! 标记表示非空，但在 resolver 中必须确保返回值。List 类型如 [String!]! 表示列表非空且元素非空，需要理解不同组合的语义。",
             "【命名冲突】当不同领域有同名类型时，使用命名空间前缀：PascalCase 前缀（StoreCustomer、SiteCustomer）或下划线前缀（Store_Customer）。选择一种并保持一致。",
             "【Mutation 串行执行】Apollo 文档：'top-level Mutation fields are resolved serially'——顶层 Mutation 字段串行执行，其他字段可并行。这影响批量操作的设计。",
             "【输入类型限制】Input 类型不能包含其他 Object 类型，只能包含 Scalar、Enum 或其他 Input 类型。需要为复杂输入设计专门的 Input 类型层级。",
-            "【全局对象标识】GraphQL 最佳实践建议每个实体类型有唯一标识字段 id: ID!，支持客户端缓存和全局对象查找。需要设计一致的 ID 生成策略。"
+            "【全局对象标识】GraphQL 最佳实践建议每个实体类型有唯一标识字段 id: ID!，支持客户端缓存和全局对象查找。需要设计一致的 ID 生成策略。",
+            "【Union vs Interface】Union 用于完全不同的类型组合（如 Success | Error），Interface 用于共享字段的类型（如 Node 接口）。错误建模通常用 Union，因为成功和错误结构完全不同。",
+            "【错误类型设计】每种业务错误应定义专门的类型：type ValidationError { message: String!, field: String!, code: String! }，包含足够信息让前端定位问题和显示友好提示。",
+            "【__typename 使用】客户端使用 __typename 区分 Union 中的类型：if (result.__typename === 'ValidationError') { ... }，配合 TypeScript 类型守卫实现类型安全。"
         ],
         handsOnPath: [
             "设计 Schema 命名规范：创建项目的 GraphQL 风格指南，定义字段、类型、枚举、Mutation 的命名规则，配置 GraphOS Schema Linting。",
@@ -25,7 +30,9 @@ export const week5Guides: Record<string, LessonGuide> = {
             "设计 Mutation 模式：为每个 Mutation 创建对应的 Input 和 Payload 类型，Payload 包含成功数据和错误信息，支持部分成功场景。",
             "配置弃用策略：使用 @deprecated(reason: 'Use newField instead, will be removed 2024-06') 标记待移除字段，在文档中维护弃用时间表。",
             "实现分页模式：采用 Relay Connection 规范实现分页，定义 Edge、PageInfo 类型，支持 first/after 和 last/before 参数。",
-            "设置 Schema 版本控制：将 Schema 文件纳入 Git 管理，使用 oasdiff 或 graphql-inspector 检测破坏性变更，在 CI 中阻止不兼容修改。"
+            "设置 Schema 版本控制：将 Schema 文件纳入 Git 管理，使用 oasdiff 或 graphql-inspector 检测破坏性变更，在 CI 中阻止不兼容修改。",
+            "实现 Union 错误建模：定义业务错误类型（ValidationError、NotFoundError、PermissionError），创建 Result Union，Mutation 返回 Union 而非直接返回数据。",
+            "配置 TypeScript 类型生成：使用 GraphQL Code Generator 从 Schema 生成 TypeScript 类型，包含 Union 类型的类型守卫函数。"
         ],
         selfCheck: [
             "GraphQL Schema 中字段名、类型名、枚举值应该使用什么命名风格？",
@@ -33,18 +40,25 @@ export const week5Guides: Record<string, LessonGuide> = {
             "@deprecated 指令如何使用？应该在 reason 中包含什么信息？",
             "Mutation 的命名规范是什么？Input 和 Payload 类型如何命名？",
             "顶层 Mutation 字段的执行顺序是什么？这对设计有什么影响？",
-            "如何解决不同领域的类型命名冲突？"
+            "如何解决不同领域的类型命名冲突？",
+            "为什么业务错误应该使用 Union Types 而非 errors 数组？",
+            "Union 和 Interface 在错误建模中各自适合什么场景？",
+            "客户端如何使用 __typename 区分 Union 中的不同类型？"
         ],
         extensions: [
             "学习 Relay Cursor Connections 规范，理解边缘（Edge）和连接（Connection）的完整模式。",
             "研究 GraphQL Federation 中的 @key、@external、@requires 指令，理解分布式 Schema 设计。",
             "探索 GraphQL Code Generator，从 Schema 自动生成 TypeScript 类型定义。",
-            "学习 Schema Stitching 与 Federation 的对比，理解不同的 Schema 组合策略。"
+            "学习 Schema Stitching 与 Federation 的对比，理解不同的 Schema 组合策略。",
+            "研究 The Guild 的错误处理最佳实践和 Union 错误模式。",
+            "学习 GraphQL Scalars 自定义标量类型的实现。"
         ],
         sourceUrls: [
             "https://roadmap.sh/graphql",
             "https://www.apollographql.com/docs/graphos/schema-design/guides/naming-conventions",
-            "https://graphql.org/learn/best-practices/"
+            "https://graphql.org/learn/best-practices/",
+            "https://productionreadygraphql.com/2020-08-01-guide-to-graphql-errors",
+            "https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/"
         ]
     },
     "api-w5-2": {
@@ -239,6 +253,42 @@ export const week5Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "GraphQL 最佳实践：每个表示实体的输出对象类型应有唯一标识字段 id: ID!，支持客户端缓存和全局对象查找。"
+        },
+        {
+            id: "api-w5-1-q13",
+            question: "为什么业务错误应该使用 Union Types 而非 errors 数组？",
+            options: [
+                "Union Types 性能更好",
+                "Union Types 让前端获得类型安全的错误处理，错误成为 Schema 的一部分",
+                "errors 数组不支持",
+                "Union Types 更简单"
+            ],
+            answer: 1,
+            rationale: "使用 Union Types 建模错误：type CreateUserResult = User | ValidationError | DuplicateEmailError，让前端获得类型安全的错误处理，IDE 支持自动补全，编译时检查。"
+        },
+        {
+            id: "api-w5-1-q14",
+            question: "客户端如何区分 Union 中的不同类型？",
+            options: [
+                "检查 id 字段",
+                "使用 __typename 字段判断",
+                "检查 error 字段",
+                "检查 HTTP 状态码"
+            ],
+            answer: 1,
+            rationale: "客户端使用 __typename 区分 Union 中的类型：if (result.__typename === 'ValidationError') { ... }，配合 TypeScript 类型守卫实现类型安全。"
+        },
+        {
+            id: "api-w5-1-q15",
+            question: "Union 和 Interface 在错误建模中各自适合什么场景？",
+            options: [
+                "都适合错误建模",
+                "Union 用于完全不同结构的类型组合（如 Success|Error），Interface 用于共享字段的类型",
+                "Interface 更适合错误建模",
+                "两者没有区别"
+            ],
+            answer: 1,
+            rationale: "Union 用于完全不同的类型组合（如 Success | Error），Interface 用于共享字段的类型（如 Node 接口）。错误建模通常用 Union，因为成功和错误结构完全不同。"
         }
     ],
     "api-w5-2": [

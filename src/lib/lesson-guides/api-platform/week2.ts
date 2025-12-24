@@ -55,14 +55,20 @@ export const week2Guides: Record<string, LessonGuide> = {
             "【弃用周期】最佳实践建议 6-12 个月的弃用通知期。Google 建议 Beta 功能的弃用周期至少 180 天。弃用期间保持功能可用，只是标记为将被移除。",
             "【Stripe 版本变换】Stripe 使用版本变换模块封装破坏性变更，每个模块记录变更内容、定义响应转换逻辑。系统按时间顺序执行变换直到目标版本。",
             "【特性开关集成】将破坏性变更放在特性开关后面，先对内部用户或 Beta 测试者开放，收集反馈后再全量发布。降低风险并允许快速回滚。",
-            "【双写策略】在迁移期间同时支持旧格式和新格式的写入，确保新旧客户端都能正常工作。迁移完成后移除旧格式支持。"
+            "【双写策略】在迁移期间同时支持旧格式和新格式的写入，确保新旧客户端都能正常工作。迁移完成后移除旧格式支持。",
+            "【契约测试】Pact 等工具实现消费者驱动的契约测试：消费者定义期望的交互，生成契约文件（Pact 文件），提供者验证实现是否符合契约，确保前后端一致性。",
+            "【Webhooks 设计】Webhooks 是异步事件通知机制：服务器主动推送事件到客户端 URL。设计要点包括：签名验证（HMAC-SHA256）、幂等处理、重试机制（指数退避）、事件类型过滤。",
+            "【SSE 实时流】Server-Sent Events 是轻量级的服务器推送协议：单向通信（服务器到客户端）、基于 HTTP、自动重连、比 WebSocket 简单。适合 AI 聊天流式输出、进度条、实时通知等场景。"
         ],
         keyDifficulties: [
             "【添加必需字段】Google AIP-180 明确禁止向现有请求消息添加必需字段——这会破坏不发送该字段的现有客户端。只能添加可选字段。",
             "【字段类型变更】即使新类型在语义上兼容（如 int32 改为 int64），也不应该更改字段类型。不同语言的代码生成器可能无法正确处理。",
             "【枚举值添加】请求消息中的枚举可以自由添加新值，但响应消息中添加新枚举值需要谨慎——旧客户端可能无法处理未知的枚举值。",
             "【默认值陷阱】不能更改字段的默认值，因为这会改变未设置该字段时的资源行为。如果需要更改默认行为，只能引入新字段。",
-            "【资源名称不可变】资源名称（ID、路径结构）在版本间必须保持一致，甚至跨越主版本。用户可能已经存储了这些名称作为引用。"
+            "【资源名称不可变】资源名称（ID、路径结构）在版本间必须保持一致，甚至跨越主版本。用户可能已经存储了这些名称作为引用。",
+            "【契约测试维护】Pact 契约文件需要版本控制和共享。当消费者需求变化时，需要更新契约并确保提供者验证通过。需要建立契约发布和验证的 CI 流程。",
+            "【Webhook 可靠性】Webhook 接收端可能暂时不可用，需要设计重试策略（指数退避、最大重试次数）。接收端必须实现幂等处理，防止重复事件导致重复操作。",
+            "【SSE 连接管理】SSE 连接是长连接，需要处理连接断开和重连。服务端需要管理大量并发连接，考虑使用连接池和心跳机制保持连接活跃。"
         ],
         handsOnPath: [
             "建立弃用流程：定义弃用公告模板（包含弃用日期、移除日期、迁移说明），在 OpenAPI 中使用 deprecated: true 标记。",
@@ -70,7 +76,10 @@ export const week2Guides: Record<string, LessonGuide> = {
             "配置弃用告警：在响应头中添加 Deprecation 和 Sunset 头（RFC 8594），监控弃用 API 的使用量，主动通知活跃用户。",
             "实现字段演进：演示如何安全添加可选字段、如何引入新字段替代旧字段、如何处理字段重命名场景。",
             "设置迁移仪表板：创建 Dashboard 显示各版本使用量、弃用 API 调用趋势、客户端迁移进度。",
-            "编写迁移指南：为每个破坏性变更编写详细的迁移文档，包含代码示例、常见问题、时间线。"
+            "编写迁移指南：为每个破坏性变更编写详细的迁移文档，包含代码示例、常见问题、时间线。",
+            "配置 Pact 契约测试：在消费者端定义期望交互并生成 Pact 文件，在提供者端运行验证确保实现符合契约。",
+            "实现 Webhook 端点：设计 Webhook 事件结构，实现签名验证（HMAC-SHA256），配置重试策略和死信队列。",
+            "实现 SSE 端点：创建 /events 流式端点，设置正确的 Content-Type: text/event-stream，处理客户端断连和重连。"
         ],
         selfCheck: [
             "什么是向后兼容的变更？什么是破坏性变更？",
@@ -78,18 +87,27 @@ export const week2Guides: Record<string, LessonGuide> = {
             "弃用 API 功能时应该提前多长时间通知用户？",
             "Stripe 的版本变换模块如何工作？有什么优点？",
             "如何使用 HTTP 头告知客户端 API 即将弃用？",
-            "资源名称为什么在版本间必须保持一致？"
+            "资源名称为什么在版本间必须保持一致？",
+            "Pact 契约测试的工作流程是什么？消费者和提供者各自的职责？",
+            "Webhook 设计需要考虑哪些安全和可靠性问题？",
+            "SSE 相比 WebSocket 有什么优势？适合什么场景？"
         ],
         extensions: [
             "学习 GraphQL 的 @deprecated 指令，了解 Schema 级别的弃用机制。",
             "研究 Kubernetes 的 API 弃用政策，了解其版本移除流程。",
             "探索 API 变更日志自动生成工具，从 OpenAPI diff 生成 Changelog。",
-            "学习 gRPC 的字段演进规则，理解 Protobuf 的向后兼容保证。"
+            "学习 gRPC 的字段演进规则，理解 Protobuf 的向后兼容保证。",
+            "深入学习 Pact Broker，了解如何在微服务架构中管理和共享契约。",
+            "研究 Webhook 事件系统的设计模式，如 Stripe、GitHub 的 Webhook 实现。",
+            "学习 OpenAPI 3.1 中的 Webhooks 和 AsyncAPI 对事件驱动 API 的描述。"
         ],
         sourceUrls: [
             "https://zuplo.com/learning-center/api-versioning-backward-compatibility-best-practices",
             "https://google.aip.dev/180",
-            "https://stripe.com/blog/api-versioning"
+            "https://stripe.com/blog/api-versioning",
+            "https://docs.pact.io/",
+            "https://developer.mozilla.org/docs/Web/API/Server-sent_events",
+            "https://stripe.com/docs/webhooks"
         ]
     }
 }
@@ -385,6 +403,54 @@ export const week2Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 2,
             rationale: "Google 建议 Beta 频道的弃用功能在 180 天后移除。已弃用的功能不能从 alpha 升级到 beta，也不能从 beta 升级到稳定版。"
+        },
+        {
+            id: "api-w2-2-q13",
+            question: "Pact 契约测试的核心概念是什么？",
+            options: [
+                "提供者定义 API 规范",
+                "消费者驱动：消费者定义期望的交互，提供者验证实现是否符合",
+                "自动生成所有测试",
+                "只测试 UI 界面"
+            ],
+            answer: 1,
+            rationale: "Pact 实现消费者驱动的契约测试：消费者定义期望的交互并生成契约文件，提供者验证实现是否符合契约，确保前后端一致性。"
+        },
+        {
+            id: "api-w2-2-q14",
+            question: "Webhook 设计中，如何确保事件不会被重复处理？",
+            options: [
+                "禁止重试",
+                "接收端实现幂等处理，使用事件 ID 去重",
+                "只发送一次",
+                "使用同步调用"
+            ],
+            answer: 1,
+            rationale: "Webhook 接收端必须实现幂等处理，使用事件 ID 或幂等键去重。因为网络问题可能导致重试，相同事件可能被发送多次。"
+        },
+        {
+            id: "api-w2-2-q15",
+            question: "Server-Sent Events (SSE) 相比 WebSocket 有什么特点？",
+            options: [
+                "双向通信",
+                "单向通信（服务器到客户端）、基于 HTTP、自动重连、更简单",
+                "性能更好",
+                "支持二进制数据"
+            ],
+            answer: 1,
+            rationale: "SSE 是单向服务器推送协议，基于 HTTP，自动重连，比 WebSocket 简单。适合 AI 聊天流式输出、进度条、实时通知等只需服务器推送的场景。"
+        },
+        {
+            id: "api-w2-2-q16",
+            question: "Webhook 事件签名验证通常使用什么算法？",
+            options: [
+                "MD5",
+                "HMAC-SHA256",
+                "Base64",
+                "AES"
+            ],
+            answer: 1,
+            rationale: "Webhook 签名验证通常使用 HMAC-SHA256：发送方用共享密钥对 payload 签名，接收方验证签名确保事件来源可信且未被篡改。"
         }
     ]
 }

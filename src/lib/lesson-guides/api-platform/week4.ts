@@ -10,14 +10,20 @@ export const week4Guides: Record<string, LessonGuide> = {
             "【最小权限原则】审计日志的 IAM 权限应遵循最小权限原则：移除非必要用户、仅授予必要的最小权限、使用细粒度访问控制限制对特定资源的访问。",
             "【结构化日志】API 日志应该使用结构化格式（JSON）而非纯文本，便于查询和分析。包含固定字段如时间戳、用户 ID、操作类型、资源 ID、结果、来源 IP。",
             "【日志分析集成】审计日志应与 SIEM（安全信息与事件管理）工具或监控系统集成，分析异常、可疑活动和合规违规。配置告警通知关键事件如未授权访问尝试。",
-            "【日志存储与访问控制】日志存储在日志桶（log buckets）中，使用日志视图（log views）控制访问权限。可以为不同项目的用户配置不同的日志访问范围。"
+            "【日志存储与访问控制】日志存储在日志桶（log buckets）中，使用日志视图（log views）控制访问权限。可以为不同项目的用户配置不同的日志访问范围。",
+            "【熔断器模式】Circuit Breaker 是 API 韧性的关键：当下游服务故障率超过阈值时，熔断器打开，快速失败而非等待超时。状态：Closed（正常）→ Open（熔断）→ Half-Open（探测恢复）。",
+            "【幂等性设计】Idempotency-Key 确保请求安全重试：客户端生成唯一 ID 放在请求头，服务端存储（Key, Response）映射，相同 Key 直接返回缓存结果。Stripe、PayPal 等支付 API 必备。",
+            "【凭证安全管理】永不在代码、环境变量、配置文件中明文存储 API Key 和密码。使用 HashiCorp Vault、AWS Secrets Manager 等工具动态注入凭证，支持自动轮换和访问审计。"
         ],
         keyDifficulties: [
             "【Data Access 日志成本】Data Access 日志可能非常大，产生额外存储成本。应评估哪些服务需要开启，排除开发环境中不必要的日志，使用成本告警监控。",
             "【日志敏感数据脱敏】审计日志不能包含敏感数据（密码、令牌、PII）。需要在记录前脱敏或使用引用 ID 替代实际值。",
             "【72 小时通知要求】GDPR 要求数据泄露后 72 小时内通知监管机构。这需要有效的日志监控和告警机制，快速检测和响应安全事件。",
             "【日志完整性】审计日志必须防篡改，使用只追加存储、数字签名或不可变存储。日志导出应加密并控制访问权限。",
-            "【告警疲劳】过多的安全告警会导致疲劳和忽视。应调优告警阈值，分级处理（严重/警告/信息），聚合相关事件减少噪音。"
+            "【告警疲劳】过多的安全告警会导致疲劳和忽视。应调优告警阈值，分级处理（严重/警告/信息），聚合相关事件减少噪音。",
+            "【熔断阈值调优】熔断器阈值设置需要平衡：过于敏感会误触发，过于宽松则无法保护。需要根据历史数据分析正常错误率，设置合理的故障百分比和时间窗口。",
+            "【幂等性存储】Idempotency-Key 响应需要存储，存储时间需要平衡：太短可能客户端重试时已过期，太长占用存储。建议 24-48 小时，使用 Redis 或数据库存储。",
+            "【Secrets 轮换挑战】凭证自动轮换需要确保所有使用该凭证的服务同时更新。需要设计零停机轮换策略，如短暂支持新旧两个版本。"
         ],
         handsOnPath: [
             "配置 API 审计日志：为关键 API 操作（认证、授权、数据修改）记录结构化日志，包含 traceId、userId、action、resource、result、timestamp。",
@@ -25,7 +31,10 @@ export const week4Guides: Record<string, LessonGuide> = {
             "配置日志告警：设置告警规则检测异常模式（多次登录失败、权限提升、批量数据访问），发送通知到 Slack/PagerDuty。",
             "集成 SIEM 系统：将 API 日志导出到 Elasticsearch/Splunk/Google SecOps，创建仪表板可视化安全指标。",
             "实现请求追踪：在 API 网关注入 X-Request-ID 和 X-Trace-ID，在所有服务间传递，便于关联分析。",
-            "配置日志保留策略：根据合规要求设置不同类型日志的保留期（如安全日志保留 1 年），配置自动归档和删除。"
+            "配置日志保留策略：根据合规要求设置不同类型日志的保留期（如安全日志保留 1 年），配置自动归档和删除。",
+            "配置 API 网关熔断器：在 Kong/Envoy 中配置 Circuit Breaker，设置故障阈值、熔断时间、恢复探测策略。",
+            "实现幂等性支持：创建 Idempotency-Key 中间件，使用 Redis 存储 (key, response) 映射，相同请求直接返回缓存结果。",
+            "配置 Secrets 管理：部署 HashiCorp Vault 或使用 AWS Secrets Manager，配置应用通过 SDK 动态获取凭证，设置自动轮换策略。"
         ],
         selfCheck: [
             "审计日志应该回答哪些问题？",
@@ -33,18 +42,27 @@ export const week4Guides: Record<string, LessonGuide> = {
             "审计日志为什么不能包含密码和令牌等敏感数据？",
             "如何与 SIEM 系统集成进行安全分析？",
             "告警疲劳是什么？如何避免？",
-            "日志的完整性为什么重要？如何保证？"
+            "日志的完整性为什么重要？如何保证？",
+            "熔断器的三种状态及其转换条件是什么？",
+            "Idempotency-Key 如何确保请求安全重试？响应应该缓存多长时间？",
+            "为什么不应该在环境变量中明文存储 API Key？应该使用什么替代方案？"
         ],
         extensions: [
             "学习 ELK Stack（Elasticsearch、Logstash、Kibana）的日志分析能力。",
             "研究 OpenTelemetry 的日志规范，了解可观测性三支柱的统一。",
             "探索 AI/ML 在安全日志分析中的应用，如异常检测和威胁预测。",
-            "学习 SOC（安全运营中心）的日志处理流程和事件响应机制。"
+            "学习 SOC（安全运营中心）的日志处理流程和事件响应机制。",
+            "深入学习 Resilience4j 或 Polly 等熔断器库的高级配置。",
+            "研究 Stripe 的 Idempotency-Key 实现细节和最佳实践。",
+            "学习 HashiCorp Vault 的高级功能：动态密钥、PKI、数据库凭证轮换。"
         ],
         sourceUrls: [
             "https://cloud.google.com/architecture/security-logging-best-practices",
             "https://www.elastic.co/security",
-            "https://owasp.org/API-Security/"
+            "https://owasp.org/API-Security/",
+            "https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker",
+            "https://stripe.com/docs/api/idempotent_requests",
+            "https://developer.hashicorp.com/vault/docs"
         ]
     },
     "api-w4-2": {
@@ -239,6 +257,42 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "Google Cloud 建议：创建 sink 将日志转发到 Pub/Sub topic 是导出 Cloud Audit Logs 到第三方服务的推荐方法。"
+        },
+        {
+            id: "api-w4-1-q13",
+            question: "熔断器（Circuit Breaker）的三种状态是什么？",
+            options: [
+                "Open、Closed、Error",
+                "Closed（正常）、Open（熔断）、Half-Open（探测恢复）",
+                "Active、Inactive、Pending",
+                "Running、Stopped、Paused"
+            ],
+            answer: 1,
+            rationale: "熔断器三种状态：Closed（正常请求通过）→ Open（故障率超阈值，快速失败）→ Half-Open（探测下游是否恢复）→ 根据结果回到 Closed 或 Open。"
+        },
+        {
+            id: "api-w4-1-q14",
+            question: "Idempotency-Key 的工作原理是什么？",
+            options: [
+                "加密请求数据",
+                "客户端生成唯一 ID，服务端存储 (Key, Response) 映射，相同 Key 返回缓存结果",
+                "验证用户身份",
+                "限制请求频率"
+            ],
+            answer: 1,
+            rationale: "Idempotency-Key 机制：客户端生成唯一 ID 放在请求头，服务端存储 (Key, Response) 映射，相同 Key 直接返回缓存结果，确保请求安全重试。"
+        },
+        {
+            id: "api-w4-1-q15",
+            question: "为什么不应该在环境变量中明文存储 API Key？",
+            options: [
+                "环境变量太长",
+                "环境变量容易泄露（日志、错误信息、进程列表），无法审计访问和自动轮换",
+                "环境变量性能差",
+                "环境变量不支持特殊字符"
+            ],
+            answer: 1,
+            rationale: "环境变量存储 API Key 的问题：容易通过日志、错误信息、进程列表泄露，无法审计谁访问了凭证，无法自动轮换。应使用 Vault 等 Secrets 管理工具。"
         }
     ],
     "api-w4-2": [

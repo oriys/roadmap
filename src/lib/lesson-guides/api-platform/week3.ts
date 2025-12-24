@@ -10,14 +10,19 @@ export const week3Guides: Record<string, LessonGuide> = {
             "【认证 vs 授权】认证（Authentication）验证用户身份——你是谁；授权（Authorization）验证用户权限——你能做什么。两者必须分开处理，认证通过不代表有授权。",
             "【API Key vs OAuth2】API Key 适合机器对机器的简单场景，但无法限制权限范围；OAuth2 支持细粒度的 scope 控制，适合需要用户授权的场景。敏感操作应使用 OAuth2。",
             "【JWT 安全】JWT 令牌应该：设置合理的过期时间、验证签名算法（避免 alg=none 攻击）、验证 iss/aud/exp 声明、不存储敏感数据在 payload（因为只是编码非加密）。",
-            "【最小权限原则】RFC 9700 强调：访问令牌的权限应限制到最小必需。这防止客户端超越资源所有者授权的权限，降低令牌泄露的影响。"
+            "【最小权限原则】RFC 9700 强调：访问令牌的权限应限制到最小必需。这防止客户端超越资源所有者授权的权限，降低令牌泄露的影响。",
+            "【BOLA 防御架构】BOLA 是 API 安全的头号威胁：攻击者通过修改对象 ID（如 /orders/123 改为 /orders/456）访问他人数据。防御需要在业务逻辑层建立权限检查点，验证用户与资源的关联关系。",
+            "【Token 生命周期管理】完整的 Token 管理包括：Access Token 短期有效（15 分钟-1 小时）、Refresh Token 长期有效但需要轮转（Rotation）、Token 黑名单机制处理登出和安全事件。"
         ],
         keyDifficulties: [
             "【BOLA 防护】Broken Object Level Authorization：确保每个 API 端点都验证用户是否有权访问请求的对象。不能仅依赖客户端传递的对象 ID，必须验证所有权。",
             "【重定向 URI 验证】OAuth2 重定向 URI 验证不足会导致授权码或令牌被窃取。必须精确匹配注册的 redirect_uri，不能使用通配符或宽松的模式匹配。",
             "【令牌存储】访问令牌和刷新令牌必须安全存储，永不明文传输。浏览器中应使用 HttpOnly Cookie 或安全的 session storage，移动端使用系统 keychain。",
             "【CSRF 防护】OAuth2 流程中必须使用 state 参数携带一次性 CSRF 令牌，并与用户会话绑定。服务器必须验证返回的 state 与发送的一致。",
-            "【令牌绑定】RFC 9700 建议使用发送者约束（Sender-Constraining）机制如 mTLS 或 DPoP 防止令牌重放。刷新令牌应该绑定发送者或使用轮换机制。"
+            "【令牌绑定】RFC 9700 建议使用发送者约束（Sender-Constraining）机制如 mTLS 或 DPoP 防止令牌重放。刷新令牌应该绑定发送者或使用轮换机制。",
+            "【BOLA 检查点设计】BOLA 防御不能只在网关层，必须在业务逻辑层：1) 从 Token 提取用户 ID，2) 查询资源所有者，3) 比对是否匹配，4) 拒绝未授权访问。",
+            "【Refresh Token 轮转】每次使用 Refresh Token 时，颁发新的 Refresh Token 并废弃旧的。检测旧 Token 被使用时，撤销该用户所有 Token（可能表示 Token 泄露）。",
+            "【JWT 黑名单实现】JWT 无状态特性与黑名单机制矛盾。实现方式：1) 短过期时间 + 黑名单只存短期，2) Token 版本号（jti）+ Redis 黑名单，3) 用户级别的 Token 版本控制。"
         ],
         handsOnPath: [
             "实现 OAuth2 Authorization Code Flow + PKCE：生成 code_verifier 和 code_challenge，在授权请求和令牌交换中使用，防止授权码拦截。",
@@ -25,7 +30,10 @@ export const week3Guides: Record<string, LessonGuide> = {
             "实现对象级授权：在每个 API 端点验证用户是否有权访问请求的资源，使用中间件统一处理授权逻辑。",
             "设置 OAuth2 客户端：注册 redirect_uri 白名单、配置允许的 scope、启用 PKCE 要求、设置令牌过期时间。",
             "实现 API Key 认证：为机器客户端生成唯一 API Key，支持按 key 限流，记录使用日志用于审计。",
-            "配置令牌安全存储：使用 HttpOnly + Secure + SameSite Cookie 存储令牌，或使用 BFF（Backend For Frontend）模式管理令牌。"
+            "配置令牌安全存储：使用 HttpOnly + Secure + SameSite Cookie 存储令牌，或使用 BFF（Backend For Frontend）模式管理令牌。",
+            "实现 BOLA 防御中间件：创建授权中间件，从 JWT 提取用户 ID，查询数据库验证资源所有权，拒绝未授权访问并记录日志。",
+            "实现 Refresh Token 轮转：每次刷新时生成新的 Refresh Token，将旧 Token 加入黑名单，检测重放攻击时撤销所有 Token。",
+            "配置 JWT 黑名单：使用 Redis 存储已撤销 Token 的 jti，设置 TTL 与 Token 过期时间一致，验证时检查黑名单。"
         ],
         selfCheck: [
             "OWASP API Security Top 10 2023 的第一大风险是什么？如何防护？",
@@ -33,18 +41,25 @@ export const week3Guides: Record<string, LessonGuide> = {
             "API Key 和 OAuth2 各适合什么场景？",
             "JWT 验证时需要检查哪些声明？为什么？",
             "什么是 BOLA（Broken Object Level Authorization）？如何防护？",
-            "OAuth2 的 state 参数有什么作用？"
+            "OAuth2 的 state 参数有什么作用？",
+            "BOLA 防御为什么必须在业务逻辑层而非网关层实现？",
+            "Refresh Token 轮转机制如何工作？检测到旧 Token 被使用时应该怎么处理？",
+            "JWT 黑名单的实现方式有哪些？各有什么优缺点？"
         ],
         extensions: [
             "学习 OpenID Connect (OIDC) 协议，了解其在 OAuth2 基础上添加的身份层。",
             "研究 mTLS（双向 TLS）认证，适用于服务对服务的高安全场景。",
             "探索零信任架构中的 API 安全实践，包括持续验证和最小权限。",
-            "学习 PASETO（Platform-Agnostic Security Tokens）作为 JWT 的替代方案。"
+            "学习 PASETO（Platform-Agnostic Security Tokens）作为 JWT 的替代方案。",
+            "深入研究 OWASP API Security Top 10 的各项风险及其防护策略。",
+            "学习 DPoP（Demonstrating Proof of Possession）令牌绑定机制。"
         ],
         sourceUrls: [
             "https://roadmap.sh/api-security-best-practices",
             "https://datatracker.ietf.org/doc/html/rfc6819",
-            "https://owasp.org/API-Security/"
+            "https://owasp.org/API-Security/",
+            "https://auth0.com/docs/secure/tokens/refresh-tokens/refresh-token-rotation",
+            "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"
         ]
     },
     "api-w3-2": {
@@ -239,6 +254,42 @@ export const week3Quizzes: Record<string, QuizQuestion[]> = {
             ],
             answer: 1,
             rationale: "RFC 9700 强调访问令牌的权限应限制到最小必需，防止客户端超越授权权限，降低令牌泄露的影响范围。"
+        },
+        {
+            id: "api-w3-1-q13",
+            question: "BOLA 防御为什么必须在业务逻辑层实现？",
+            options: [
+                "网关层性能更好",
+                "网关层不知道用户与资源的关联关系，只有业务逻辑层能验证所有权",
+                "业务逻辑层更容易实现",
+                "网关层不支持授权"
+            ],
+            answer: 1,
+            rationale: "BOLA 防御需要验证用户与资源的关联关系：1) 从 Token 提取用户 ID，2) 查询资源所有者，3) 比对是否匹配。网关层无法知道这些业务关系。"
+        },
+        {
+            id: "api-w3-1-q14",
+            question: "Refresh Token 轮转（Rotation）的核心机制是什么？",
+            options: [
+                "定期更换 Refresh Token",
+                "每次使用 Refresh Token 时颁发新的并废弃旧的",
+                "只使用一次 Refresh Token",
+                "多个 Refresh Token 同时有效"
+            ],
+            answer: 1,
+            rationale: "Refresh Token 轮转：每次刷新时生成新的 Refresh Token 并废弃旧的。若检测到旧 Token 被使用，说明可能泄露，应撤销该用户所有 Token。"
+        },
+        {
+            id: "api-w3-1-q15",
+            question: "JWT 黑名单机制如何解决 JWT 无状态的矛盾？",
+            options: [
+                "完全放弃 JWT",
+                "使用短过期时间 + Redis 存储黑名单，黑名单 TTL 与 Token 过期时间一致",
+                "不需要黑名单",
+                "使用数据库存储所有 Token"
+            ],
+            answer: 1,
+            rationale: "JWT 黑名单实现：1) Access Token 使用短过期时间，2) 使用 Redis 存储已撤销 Token 的 jti，3) TTL 与 Token 过期时间一致，Token 过期后自动清理黑名单。"
         }
     ],
     "api-w3-2": [
