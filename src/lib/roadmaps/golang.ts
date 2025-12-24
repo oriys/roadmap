@@ -1166,6 +1166,158 @@ export const golangStages: Stage[] = [
       },
     ],
   },
+  {
+    id: "go-advanced",
+    title: "阶段九：高级话题",
+    duration: "第 19-20 周",
+    goal: "深入理解 Go 底层机制，掌握反射、unsafe、CGO 等高级特性。",
+    weeks: [
+      {
+        id: "go-w19",
+        title: "第 19 周：内存管理与反射",
+        summary: "深入理解 Go 内存模型、逃逸分析和反射机制。",
+        keyPoints: [
+          "理解栈与堆分配的区别和逃逸分析。",
+          "掌握 reflect 包进行运行时类型操作。",
+          "了解 Go 运行时的内存管理机制。",
+        ],
+        lessons: [
+          {
+            id: "go-w19-1",
+            title: "内存管理深度解析",
+            detail: "深入理解 Go 的内存分配、栈增长和垃圾回收机制。",
+            keyPoints: [
+              "Go 使用分段栈（segmented stack）到连续栈的演进。",
+              "小对象使用 mcache/mcentral/mheap 三级分配。",
+              "GC 使用三色标记和写屏障实现并发回收。",
+            ],
+            resources: [
+              { title: "Go 内存分配器", url: "https://go.dev/src/runtime/malloc.go" },
+              { title: "Go GC Guide", url: "https://tip.golang.org/doc/gc-guide" },
+              { title: "Go Memory Model", url: "https://go.dev/ref/mem" },
+            ],
+          },
+          {
+            id: "go-w19-2",
+            title: "逃逸分析详解",
+            detail: "理解编译器如何决定变量在栈还是堆上分配。",
+            keyPoints: [
+              "使用 go build -gcflags='-m -m' 查看详细逃逸分析。",
+              "返回局部变量指针、闭包捕获、接口转换会导致逃逸。",
+              "减少逃逸可以降低 GC 压力，提高性能。",
+            ],
+            resources: [
+              { title: "逃逸分析详解", url: "https://go.dev/doc/faq#stack_or_heap" },
+              { title: "Go 编译器优化", url: "https://github.com/golang/go/wiki/CompilerOptimizations" },
+              { title: "性能优化建议", url: "https://go.dev/doc/diagnostics" },
+            ],
+          },
+          {
+            id: "go-w19-3",
+            title: "反射基础",
+            detail: "使用 reflect 包进行运行时类型检查和值操作。",
+            keyPoints: [
+              "reflect.TypeOf 和 reflect.ValueOf 获取类型和值信息。",
+              "通过 Value.Elem() 获取指针指向的值。",
+              "反射性能开销大，应谨慎使用。",
+            ],
+            resources: [
+              { title: "Go Blog: Laws of Reflection", url: "https://go.dev/blog/laws-of-reflection" },
+              { title: "reflect 包文档", url: "https://pkg.go.dev/reflect" },
+              { title: "反射性能分析", url: "https://go.dev/doc/faq#reflection" },
+            ],
+          },
+          {
+            id: "go-w19-4",
+            title: "反射高级应用",
+            detail: "使用反射实现通用函数、结构体操作和动态调用。",
+            keyPoints: [
+              "遍历结构体字段和标签。",
+              "动态创建和修改值。",
+              "调用方法和函数。",
+            ],
+            resources: [
+              { title: "encoding/json 源码", url: "https://go.dev/src/encoding/json/encode.go" },
+              { title: "反射最佳实践", url: "https://go.dev/blog/laws-of-reflection" },
+              { title: "ORM 实现原理", url: "https://gorm.io/docs/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "go-w20",
+        title: "第 20 周：Unsafe、CGO 与底层编程",
+        summary: "学习 unsafe 包、CGO 调用 C 代码以及编译器/链接器高级用法。",
+        keyPoints: [
+          "理解 unsafe 包的使用场景和风险。",
+          "掌握 CGO 调用 C 库的方法。",
+          "了解编译器标志和链接器选项。",
+        ],
+        lessons: [
+          {
+            id: "go-w20-1",
+            title: "unsafe 包详解",
+            detail: "使用 unsafe 包进行底层内存操作和类型转换。",
+            keyPoints: [
+              "unsafe.Pointer 是通用指针类型，可与任何指针互转。",
+              "unsafe.Sizeof/Alignof/Offsetof 获取内存布局信息。",
+              "违反 unsafe 规则会导致未定义行为。",
+            ],
+            resources: [
+              { title: "unsafe 包文档", url: "https://pkg.go.dev/unsafe" },
+              { title: "Unsafe Pointer Rules", url: "https://go.dev/ref/spec#Package_unsafe" },
+              { title: "unsafe 使用模式", url: "https://go101.org/article/unsafe.html" },
+            ],
+          },
+          {
+            id: "go-w20-2",
+            title: "CGO 基础",
+            detail: "使用 CGO 调用 C 代码，理解 Go 与 C 的交互机制。",
+            keyPoints: [
+              "import \"C\" 启用 CGO，注释块定义 C 代码。",
+              "C.xxx 访问 C 类型和函数。",
+              "CGO 有性能开销，交叉编译更复杂。",
+            ],
+            resources: [
+              { title: "CGO 文档", url: "https://go.dev/cmd/cgo/" },
+              { title: "CGO Wiki", url: "https://go.dev/wiki/cgo" },
+              { title: "CGO 最佳实践", url: "https://dave.cheney.net/2016/01/18/cgo-is-not-go" },
+            ],
+          },
+          {
+            id: "go-w20-3",
+            title: "编译器与链接器标志",
+            detail: "使用 -gcflags 和 -ldflags 控制编译和链接行为。",
+            keyPoints: [
+              "-gcflags='-N -l' 禁用优化便于调试。",
+              "-ldflags='-s -w' 去除调试信息减小体积。",
+              "-ldflags='-X main.version=v1.0' 注入版本信息。",
+            ],
+            resources: [
+              { title: "Go 编译器", url: "https://go.dev/cmd/compile/" },
+              { title: "Go 链接器", url: "https://go.dev/cmd/link/" },
+              { title: "构建模式", url: "https://go.dev/cmd/go/#hdr-Build_modes" },
+            ],
+          },
+          {
+            id: "go-w20-4",
+            title: "插件与动态加载",
+            detail: "使用 plugin 包实现动态加载和扩展机制。",
+            keyPoints: [
+              "go build -buildmode=plugin 构建插件。",
+              "plugin.Open 加载 .so 文件。",
+              "plugin.Lookup 获取导出的符号。",
+            ],
+            resources: [
+              { title: "plugin 包文档", url: "https://pkg.go.dev/plugin" },
+              { title: "Go 插件系统", url: "https://go.dev/blog/plugins" },
+              { title: "构建模式", url: "https://go.dev/cmd/go/#hdr-Build_modes" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export const golangKnowledgeCards: KnowledgeCard[] = [
@@ -1353,7 +1505,7 @@ export const golangRoadmap: RoadmapDefinition = {
   id: "golang",
   label: "Go 语言",
   title: "Go 语言学习路线：从基础到生产实践",
-  durationLabel: "18 周系统学习",
+  durationLabel: "20 周系统学习",
   description:
     "从环境搭建到并发编程，从标准库到生态框架，系统化掌握 Go 语言核心特性与生产实践。路线基于 roadmap.sh Go 开发者路线图扩展而来。",
   heroBadge: "云原生首选",

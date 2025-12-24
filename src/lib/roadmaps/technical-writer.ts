@@ -610,7 +610,7 @@ export const technicalWriterRoadmap: RoadmapDefinition = {
     durationLabel: "8 周",
     description:
         "8 周打造可复用的技术写作体系：写作基础与模板 → Docs-as-Code 工具链/协作 → API/CLI 文档可复现 → 内容体系与质量线 → 发布运营与作品集。每周打卡与课时测验自动保存，持续迭代作品。",
-    heroBadge: "Docs-as-Code Bootcamp · shadcn UI",
+    heroBadge: "Docs-as-Code Bootcamp",
     stages: technicalWriterStages,
     knowledgeCards: technicalWriterKnowledgeCards,
     examQuestions: technicalWriterExamQuestions,

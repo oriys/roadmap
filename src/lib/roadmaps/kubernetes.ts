@@ -1077,7 +1077,7 @@ export const kubernetesRoadmap: RoadmapDefinition = {
     durationLabel: "16 周",
     description:
         "16 周把 Kubernetes 练到可落地：容器与 Linux 基石 → 集群核心 → 网络/存储/调度 → 可观测性 → 安全与合规 → GitOps/Service Mesh。每周有打卡、文档题单与即时测验，进度自动本地保存。",
-    heroBadge: "Cloud Native Bootcamp · shadcn UI",
+    heroBadge: "Cloud Native Bootcamp",
     stages: kubernetesStages,
     knowledgeCards: kubernetesKnowledgeCards,
     examQuestions: kubernetesExamQuestions,
