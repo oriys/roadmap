@@ -35,7 +35,7 @@ export const apiPlatformStages: Stage[] = [
             detail: "使用 OpenAPI/Swagger 描述接口契约，自动生成文档与客户端。",
             resources: [
               { title: "OpenAPI Specification", url: "https://spec.openapis.org/oas/latest.html" },
-              { title: "Stoplight Style Guide", url: "https://meta.stoplight.io/docs/spectral/67b22b261f3e4-style-guide" },
+              { title: "Spectral OpenAPI Linter", url: "https://github.com/stoplightio/spectral" },
               { title: "roadmap.sh: API Design", url: "https://roadmap.sh/api-design" },
             ],
           },
@@ -51,7 +51,7 @@ export const apiPlatformStages: Stage[] = [
             title: "版本管理策略",
             detail: "比较 URI 版本、Header 版本与语义版本控制，选择适合团队的方案。",
             resources: [
-              { title: "API Versioning Best Practices", url: "https://cloud.google.com/apis/design/versioning" },
+              { title: "API Versioning Best Practices", url: "https://google.aip.dev/185" },
               { title: "SemVer", url: "https://semver.org/" },
               { title: "roadmap.sh: API Design", url: "https://roadmap.sh/api-design" },
             ],
@@ -61,8 +61,8 @@ export const apiPlatformStages: Stage[] = [
             title: "弃用与兼容性守护",
             detail: "通过特性开关与双写策略平滑发布，给客户端迁移窗口与告警。",
             resources: [
-              { title: "Rolling Updates Guide", url: "https://martinfowler.com/bliki/RollingUpgrade.html" },
-              { title: "Backward Compatibility", url: "https://cloud.google.com/apis/design/changing" },
+              { title: "Rolling Updates Guide", url: "https://zuplo.com/learning-center/api-versioning-backward-compatibility-best-practices" },
+              { title: "Backward Compatibility", url: "https://google.aip.dev/180" },
               { title: "API Deprecation Playbook", url: "https://stripe.com/blog/api-versioning" },
             ],
           },
@@ -149,7 +149,7 @@ export const apiPlatformStages: Stage[] = [
             detail: "制定命名规范、类型描述与弃用策略，让 Schema 成为可靠契约。",
             resources: [
               { title: "roadmap.sh: GraphQL", url: "https://roadmap.sh/graphql" },
-              { title: "Apollo Schema Design", url: "https://www.apollographql.com/docs/odyssey/courses/schema-design" },
+              { title: "Apollo Schema Design", url: "https://www.apollographql.com/docs/graphos/schema-design/guides/naming-conventions" },
               { title: "GraphQL Best Practices", url: "https://graphql.org/learn/best-practices/" },
             ],
           },
@@ -176,7 +176,7 @@ export const apiPlatformStages: Stage[] = [
             detail: "实现查询深度/复杂度限制、字段级授权与输入验证。",
             resources: [
               { title: "GraphQL Security Checklist", url: "https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html" },
-              { title: "GraphQL Depth/Cost Limits", url: "https://www.apollographql.com/docs/apollo-server/security/operation-limits/" },
+              { title: "GraphQL Depth/Cost Limits", url: "https://www.apollographql.com/docs/graphos/routing/security/request-limits" },
               { title: "roadmap.sh: GraphQL", url: "https://roadmap.sh/graphql" },
             ],
           },
@@ -186,7 +186,7 @@ export const apiPlatformStages: Stage[] = [
             detail: "用 tracing/metrics 观测 resolver 延迟，评估是否需要 Schema Federation。",
             resources: [
               { title: "Apollo Federation", url: "https://www.apollographql.com/docs/federation/" },
-              { title: "GraphQL Observability", url: "https://www.apollographql.com/docs/graphos/metrics/metrics/" },
+              { title: "GraphQL Observability", url: "https://www.apollographql.com/docs/graphos/platform/insights/field-usage" },
               { title: "roadmap.sh: GraphQL", url: "https://roadmap.sh/graphql" },
             ],
           },

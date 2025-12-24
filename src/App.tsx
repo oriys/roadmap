@@ -58,6 +58,7 @@ import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
 import { kubernetesGuides } from "@/lib/lesson-guides/kubernetes"
 import { systemDesignGuides } from "@/lib/lesson-guides/system-design"
 import { backendPerformanceGuides } from "@/lib/lesson-guides/backend-performance"
+import { apiPlatformGuides } from "@/lib/lesson-guides/api-platform"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -752,6 +753,8 @@ export default function App() {
                                           ? systemDesignGuides[lesson.id]
                                           : activeRoadmapId === "backend-performance-best-practices"
                                           ? backendPerformanceGuides[lesson.id]
+                                          : activeRoadmapId === "api-platform"
+                                          ? apiPlatformGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
