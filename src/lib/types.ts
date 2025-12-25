@@ -16,6 +16,7 @@ export type RoadmapId =
   | "api-platform"
   | "engineering-manager"
   | "golang"
+  | "senior-engineer-interview"
   | "observability-sre"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
