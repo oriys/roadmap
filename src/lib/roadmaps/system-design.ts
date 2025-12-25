@@ -1619,10 +1619,10 @@ export const systemDesignRoadmap: RoadmapDefinition = {
     id: "system-design",
     label: "系统设计",
     title: "系统设计大师课",
-    durationLabel: "24 周",
+    durationLabel: "24 个主题",
     description:
-        "24 周系统设计深度学习路线，专为有经验的后端开发者设计：分布式系统理论 → 网络与负载均衡 → 数据存储与扩展 → 缓存与异步处理 → API 设计与通信 → 可观测性与案例实战。每周 4 个主题，覆盖从 CAP 定理到 Twitter 时间线设计的完整知识体系。",
-    heroBadge: "24 周 · 96 主题 · 面向资深后端",
+        "分布式系统理论 → 网络与负载均衡 → 数据存储与扩展 → 缓存与异步处理 → API 设计与通信 → 可观测性与案例实战，共 24 个主题，覆盖从 CAP 定理到 Twitter 时间线设计的完整知识体系。按阶段拆解，保持稳定节奏。",
+    heroBadge: "多阶段 · 96 主题 · 面向资深后端",
     stages: systemDesignStages,
     knowledgeCards: systemDesignKnowledgeCards,
     examQuestions: systemDesignExamQuestions,

@@ -884,7 +884,7 @@ export const backendPerformanceRoadmap: RoadmapDefinition = {
   id: "backend-performance-best-practices",
   label: "后端性能最佳实践",
   title: "后端性能优化路线：从观测到顶尖专家",
-  durationLabel: "18 周精进",
+  durationLabel: "18 个主题精进",
   description:
     "以业务 SLO 为导向，从观测、热点优化、韧性演练，到操作系统内核、运行时深度、网络协议、数据架构、安全权衡、FinOps，再到 eBPF、混沌工程、边缘计算、性能建模与 AI 推理，系统化打造顶尖性能专家能力。",
   heroBadge: "性能诊断",

@@ -1889,7 +1889,7 @@ export const golangRoadmap: RoadmapDefinition = {
   id: "golang",
   label: "Go 语言",
   title: "Go 语言学习路线：从基础到生产实践",
-  durationLabel: "25 周系统学习",
+  durationLabel: "25 个主题系统学习",
   description:
     "从环境搭建到并发编程，从标准库到生态框架，系统化掌握 Go 语言核心特性与生产实践。路线基于 roadmap.sh Go 开发者路线图扩展而来。",
   heroBadge: "云原生首选",

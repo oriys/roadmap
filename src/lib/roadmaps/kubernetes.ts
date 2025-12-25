@@ -1074,24 +1074,24 @@ export const kubernetesRoadmap: RoadmapDefinition = {
     id: "kubernetes",
     label: "Kubernetes",
     title: "Kubernetes 云原生实战路线",
-    durationLabel: "16 周",
+    durationLabel: "16 个主题",
     description:
-        "16 周把 Kubernetes 练到可落地：容器与 Linux 基石 → 集群核心 → 网络/存储/调度 → 可观测性 → 安全与合规 → GitOps/Service Mesh。每周有打卡、文档题单与即时测验，进度自动本地保存。",
+        "按阶段拆成 16 个主题：容器与 Linux 基石 → 集群核心 → 网络/存储/调度 → 可观测性 → 安全与合规 → GitOps/Service Mesh。每个主题都有打卡、文档题单与即时测验，进度自动本地保存，按自己的节奏推进。",
     heroBadge: "Cloud Native Bootcamp",
     stages: kubernetesStages,
     knowledgeCards: kubernetesKnowledgeCards,
     examQuestions: kubernetesExamQuestions,
     suggestion: (percent: number) => {
         if (percent < 25) {
-            return "建议先完成第 1 阶段前两周，专注 Namespaces、Cgroups 与 Dockerfile 多阶段构建。"
+            return "建议先完成基础阶段的前几个主题，专注 Namespaces、Cgroups 与 Dockerfile 多阶段构建。"
         }
         if (percent < 50) {
-            return "完成阶段二工作负载与存储（周 4-5），顺便练习滚动更新与 PVC 绑定。"
+            return "完成工作负载与存储相关主题，顺便练习滚动更新与 PVC 绑定。"
         }
         if (percent < 75) {
-            return "补齐调度/NetworkPolicy（周 6）并搭建一条 CI/CD 流水线（周 9）。"
+            return "补齐调度/NetworkPolicy 主题，并搭建一条 CI/CD 流水线打通发布闭环。"
         }
-        return "加强可观测性（周 11-12）与安全考点（周 14），再做一次全量测验。"
+        return "加强可观测性与安全相关主题，完成 2 次全量测验再收尾。"
     },
     resourceGuide: {
         environment: "本地 Kind/Minikube 或云上集群，具备 kubectl/容器工具链。",
@@ -1113,7 +1113,7 @@ export const kubernetesRoadmap: RoadmapDefinition = {
         extensions: [
             "把官方示例收录到你的实验仓库，写出“期望 vs 实际”差异与复盘。",
             "列 3 条常见坑，并附上排查脚本/命令（kubectl/日志/监控）。",
-            "把本节知识与前后周的内容串联，设计一个小型端到端演练（部署 → 观测 → 调优 → 回滚）。",
+            "把本节知识与前后主题串联，设计一个小型端到端演练（部署 → 观测 → 调优 → 回滚）。",
         ],
         lessonQuizAdvice: "建议：复盘错题对应的配置/命令，回到文档或实验里重新验证。",
     },
