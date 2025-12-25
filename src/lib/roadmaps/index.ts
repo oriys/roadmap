@@ -11,6 +11,8 @@ import { messageQueueRoadmap } from "./message-queue"
 import { databaseRoadmap } from "./database"
 import { javaJvmRoadmap } from "./java-jvm"
 import { securityRoadmap } from "./security"
+import { linuxRoadmap } from "./linux"
+import { softSkillsRoadmap } from "./soft-skills"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -26,6 +28,8 @@ export * from "./message-queue"
 export * from "./database"
 export * from "./java-jvm"
 export * from "./security"
+export * from "./linux"
+export * from "./soft-skills"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -41,6 +45,8 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   database: databaseRoadmap,
   "java-jvm": javaJvmRoadmap,
   security: securityRoadmap,
+  linux: linuxRoadmap,
+  "soft-skills": softSkillsRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -57,5 +63,7 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   databaseRoadmap,
   javaJvmRoadmap,
   securityRoadmap,
+  linuxRoadmap,
+  softSkillsRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

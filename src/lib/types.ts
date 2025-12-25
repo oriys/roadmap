@@ -22,6 +22,8 @@ export type RoadmapId =
   | "database"
   | "java-jvm"
   | "security"
+  | "linux"
+  | "soft-skills"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
