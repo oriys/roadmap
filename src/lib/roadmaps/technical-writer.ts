@@ -481,6 +481,622 @@ export const technicalWriterStages: Stage[] = [
             },
         ],
     },
+    {
+        id: "tw-phase5",
+        title: "第五阶段：内容战略与信息架构",
+        duration: "第 9-10 周",
+        goal: "从写作者进阶到内容负责人，掌握内容治理、生命周期管理与深度信息架构。",
+        weeks: [
+            {
+                id: "tw-w9",
+                title: "第 9 周：内容战略与治理",
+                summary: "建立内容生命周期管理、治理框架与单源发布能力。",
+                overview: "内容不只是写出来，还要管起来。本周从内容审计到治理框架，建立可持续的内容运营体系。",
+                keyPoints: [
+                    "内容审计：盘点现有内容，识别过时、重复与缺失。",
+                    "内容生命周期：创建→发布→维护→归档→删除的完整流程。",
+                    "单源发布：一次编写，多处发布（DITA/Topic-based Authoring）。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w9-1",
+                        title: "内容审计与缺口分析",
+                        detail: "系统盘点现有文档：覆盖率、准确性、时效性，识别高优先级改进点。",
+                        keyPoints: [
+                            "内容清单（Content Inventory）：URL、标题、类型、最后更新、负责人。",
+                            "缺口分析：对比用户旅程，找出文档缺失的关键节点。",
+                            "优先级矩阵：影响×成本，确定改进顺序。",
+                        ],
+                        resources: [
+                            { title: "Content Audits Guide", url: "https://www.nngroup.com/articles/content-audits/" },
+                            { title: "Write the Docs: Content Strategy", url: "https://www.writethedocs.org/guide/content/" },
+                            { title: "Content Audit Process", url: "https://ahrefs.com/blog/content-audit/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w9-2",
+                        title: "内容生命周期管理",
+                        detail: "定义内容从创建到归档的完整流程：审批、发布、定期审查与淘汰。",
+                        keyPoints: [
+                            "生命周期阶段：草稿→审核→发布→维护→归档→删除。",
+                            "定期审查机制：设置内容过期提醒，避免「僵尸文档」。",
+                            "归档 vs 删除：何时保留历史版本，何时彻底移除。",
+                        ],
+                        resources: [
+                            { title: "Content Lifecycle Management", url: "https://www.heretto.com/blog/content-lifecycle-management" },
+                            { title: "Docs Expiration Strategy", url: "https://www.egnyte.com/guides/governance/document-retention-policy-guide" },
+                            { title: "Write the Docs: Maintaining Docs", url: "https://www.writethedocs.org/guide/writing/mindshare/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w9-3",
+                        title: "内容治理与标准化",
+                        detail: "建立治理框架：谁能创建/修改/删除，审批流程与质量标准。",
+                        keyPoints: [
+                            "RACI 矩阵：明确内容的 Responsible/Accountable/Consulted/Informed。",
+                            "风格指南执行：从建议到强制，用工具保障一致性。",
+                            "变更管理：重大内容变更的评审与沟通流程。",
+                        ],
+                        resources: [
+                            { title: "Content Governance Framework", url: "https://www.heretto.com/blog/content-governance" },
+                            { title: "Atlassian: Documentation Governance", url: "https://www.atlassian.com/software/confluence/guides/expand-confluence/create-governance" },
+                            { title: "RACI Matrix", url: "https://www.projectmanager.com/blog/raci-chart-definitions-uses-and-examples-for-project-managers" },
+                        ],
+                    },
+                    {
+                        id: "tw-w9-4",
+                        title: "单源发布与内容复用",
+                        detail: "一次编写，多处发布：Topic-based Authoring、条件文本与变量。",
+                        keyPoints: [
+                            "Topic-based Authoring：将内容拆成可复用的独立单元。",
+                            "条件文本（Conditional Text）：同一源文件生成不同版本。",
+                            "内容复用策略：片段（Snippet）、Transclusion 与继承。",
+                        ],
+                        resources: [
+                            { title: "Single-Sourcing Principles", url: "https://paligo.net/in-depth/the-5-principles-of-single-sourcing/" },
+                            { title: "Topic-Based Authoring", url: "https://www.oasis-open.org/committees/dita/" },
+                            { title: "Paligo: Content Reuse", url: "https://paligo.net/docs/en/content-reuse.html" },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: "tw-w10",
+                title: "第 10 周：信息架构深度",
+                summary: "用用户研究方法优化导航、分类与内容组织。",
+                overview: "信息架构决定用户能否找到内容。本周从卡片分类到树状测试，用数据驱动 IA 优化。",
+                keyPoints: [
+                    "分类法（Taxonomy）：建立一致的内容分类体系。",
+                    "卡片分类：用用户视角组织内容结构。",
+                    "树状测试：验证导航的可发现性。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w10-1",
+                        title: "分类法与元数据策略",
+                        detail: "设计内容分类体系：标签、类别、产品线与版本的元数据模型。",
+                        keyPoints: [
+                            "受控词汇表（Controlled Vocabulary）：统一术语与标签。",
+                            "多维分类：按产品、用户角色、内容类型多维度组织。",
+                            "元数据模型：为内容添加可查询的结构化属性。",
+                        ],
+                        resources: [
+                            { title: "NN/g: Taxonomy Design", url: "https://www.nngroup.com/articles/taxonomy-101/" },
+                            { title: "Content Modeling", url: "https://www.contentstack.com/blog/all-about-headless/content-modeling-and-headless-cms" },
+                            { title: "Metadata Strategy", url: "https://storyneedle.com/your-content-needs-a-metadata-strategy/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w10-2",
+                        title: "卡片分类与内容组织",
+                        detail: "用卡片分类（Card Sorting）了解用户的心智模型，优化内容分组。",
+                        keyPoints: [
+                            "开放式 vs 封闭式卡片分类：探索 vs 验证。",
+                            "远程工具：Optimal Workshop、UserZoom、Miro。",
+                            "分析结果：相似度矩阵与聚类分析。",
+                        ],
+                        resources: [
+                            { title: "NN/g: Card Sorting", url: "https://www.nngroup.com/articles/card-sorting-definition/" },
+                            { title: "Optimal Workshop", url: "https://www.optimalworkshop.com/optimalsort/" },
+                            { title: "Card Sorting Analysis", url: "https://www.usability.gov/how-to-and-tools/methods/card-sorting.html" },
+                        ],
+                    },
+                    {
+                        id: "tw-w10-3",
+                        title: "树状测试与导航验证",
+                        detail: "用树状测试（Tree Testing）验证用户能否通过导航找到目标内容。",
+                        keyPoints: [
+                            "任务设计：基于真实用户场景的查找任务。",
+                            "成功率与直达率：衡量导航效率的核心指标。",
+                            "迭代优化：根据测试结果调整层级与命名。",
+                        ],
+                        resources: [
+                            { title: "NN/g: Tree Testing", url: "https://www.nngroup.com/articles/tree-testing/" },
+                            { title: "Optimal Workshop: Treejack", url: "https://www.optimalworkshop.com/treejack/" },
+                            { title: "Tree Testing Guide", url: "https://www.usability.gov/how-to-and-tools/methods/tree-testing.html" },
+                        ],
+                    },
+                    {
+                        id: "tw-w10-4",
+                        title: "导航模式与跨内容链接",
+                        detail: "设计多入口导航：侧边栏、面包屑、相关内容与搜索的协同。",
+                        keyPoints: [
+                            "导航模式：层级导航、分面导航、情境导航。",
+                            "交叉链接策略：Related、See Also、Prerequisites 的使用场景。",
+                            "搜索与导航互补：当导航失效时，搜索是最后防线。",
+                        ],
+                        resources: [
+                            { title: "NN/g: Navigation Design", url: "https://www.nngroup.com/articles/navigation-you-are-here/" },
+                            { title: "Docs Navigation Patterns", url: "https://idratherbewriting.com/learnapidoc/docapis_design_patterns.html" },
+                            { title: "Cross-Linking Best Practices", url: "https://developers.google.com/style/cross-references" },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "tw-phase6",
+        title: "第六阶段：开发者体验与高级 API",
+        duration: "第 11-12 周",
+        goal: "设计优秀的开发者体验，掌握 GraphQL、SDK 与交互式文档。",
+        weeks: [
+            {
+                id: "tw-w11",
+                title: "第 11 周：开发者体验设计",
+                summary: "从开发者旅程出发，设计门户、Onboarding 与社区文档。",
+                overview: "开发者体验（DX）是文档的上层建筑。本周从旅程地图到门户设计，打造让开发者「爽」的体验。",
+                keyPoints: [
+                    "开发者旅程：发现→评估→上手→深入→扩展→贡献。",
+                    "Onboarding 漏斗：追踪从注册到首次成功调用的转化。",
+                    "开发者门户：API 文档 + 控制台 + 社区的一体化入口。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w11-1",
+                        title: "开发者旅程地图",
+                        detail: "绘制开发者从发现产品到成为贡献者的完整旅程，识别文档触点。",
+                        keyPoints: [
+                            "旅程阶段：Awareness → Evaluation → Adoption → Expansion → Advocacy。",
+                            "触点分析：每个阶段开发者需要什么文档支持。",
+                            "痛点识别：哪些环节流失最严重，文档如何补救。",
+                        ],
+                        resources: [
+                            { title: "Developer Journey Map", url: "https://medium.com/codex/developer-relations-the-developer-journey-map-36bd4619f5f3" },
+                            { title: "Stripe: API Design", url: "https://stripe.com/blog/payment-api-design" },
+                            { title: "Moesif: Developer Journey Tracking", url: "https://www.moesif.com/blog/api-product-management/developer-journey/Tracking-a-Developer's-Journey-From-Visiting-Documentation-Visit-to-First-API-Call/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w11-2",
+                        title: "Onboarding 优化与 Time-to-First-Success",
+                        detail: "设计最短路径让开发者体验成功：注册→获取凭证→首次调用→看到结果。",
+                        keyPoints: [
+                            "Time-to-Hello-World：从注册到首次成功调用的时间。",
+                            "渐进式披露：先给最小可用，再引导深入功能。",
+                            "交互式 Quickstart：让用户在文档页面直接尝试。",
+                        ],
+                        resources: [
+                            { title: "What is TTFHW", url: "https://www.moesif.com/blog/technical/api-product-management/What-is-TTFHW/" },
+                            { title: "Time to First Call Metric", url: "https://nordicapis.com/why-time-to-first-call-is-a-vital-api-metric/" },
+                            { title: "Twilio Quickstart", url: "https://www.twilio.com/docs/usage/tutorials" },
+                        ],
+                    },
+                    {
+                        id: "tw-w11-3",
+                        title: "开发者门户设计",
+                        detail: "设计集 API 文档、控制台、示例与社区于一体的开发者门户。",
+                        keyPoints: [
+                            "门户核心模块：文档、API Reference、控制台、状态页、Changelog。",
+                            "统一身份：跨文档/控制台/社区的登录与个性化。",
+                            "搜索优先：全站搜索是开发者的主要入口。",
+                        ],
+                        resources: [
+                            { title: "Developer Portal Best Practices", url: "https://swagger.io/blog/api-development/developer-portal-best-practices/" },
+                            { title: "Stripe Developer Dashboard", url: "https://stripe.com/docs" },
+                            { title: "Postman Developer Portal", url: "https://www.postman.com/api-platform/api-developer-portal/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w11-4",
+                        title: "社区驱动文档",
+                        detail: "建立社区贡献机制：编辑建议、示例提交与文档翻译。",
+                        keyPoints: [
+                            "编辑此页（Edit this page）：降低贡献门槛。",
+                            "示例征集：让社区贡献多语言/多框架示例。",
+                            "翻译社区：众包翻译与质量保障流程。",
+                        ],
+                        resources: [
+                            { title: "Open Source Docs Contribution", url: "https://opensource.guide/how-to-contribute/" },
+                            { title: "MDN Contribution Guide", url: "https://developer.mozilla.org/en-US/docs/MDN/Contribute" },
+                            { title: "Crowdin for Docs", url: "https://crowdin.com/" },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: "tw-w12",
+                title: "第 12 周：高级 API 文档",
+                summary: "掌握 GraphQL、SDK 与交互式文档的写法。",
+                overview: "超越 REST：GraphQL 有不同的文档范式，SDK 需要多语言支持，交互式探索提升可用性。",
+                keyPoints: [
+                    "GraphQL 文档：Schema 即文档，但需要补充上下文。",
+                    "SDK 文档：多语言示例、安装指南与版本兼容。",
+                    "交互式探索：让开发者在文档中直接尝试 API。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w12-1",
+                        title: "GraphQL 文档写法",
+                        detail: "GraphQL 的自描述特性与文档补充：Schema 注释、查询示例与最佳实践。",
+                        keyPoints: [
+                            "Schema 注释：用 description 字段为 Type/Field 添加说明。",
+                            "查询示例：展示常见查询模式与变量用法。",
+                            "错误处理：GraphQL 错误模型与排错指南。",
+                        ],
+                        resources: [
+                            { title: "GraphQL Best Practices: Documentation", url: "https://graphql.org/learn/best-practices/#documentation" },
+                            { title: "Apollo GraphQL Docs", url: "https://www.apollographql.com/docs/" },
+                            { title: "GitHub GraphQL API Docs", url: "https://docs.github.com/en/graphql" },
+                        ],
+                    },
+                    {
+                        id: "tw-w12-2",
+                        title: "SDK 文档与多语言示例",
+                        detail: "为多语言 SDK 写文档：安装、初始化、核心方法与版本兼容矩阵。",
+                        keyPoints: [
+                            "语言切换器：让用户选择首选语言查看示例。",
+                            "安装指南：npm/pip/gem/maven 等包管理器说明。",
+                            "版本兼容：SDK 版本与 API 版本的对应关系。",
+                        ],
+                        resources: [
+                            { title: "Stripe SDKs Docs", url: "https://stripe.com/docs/libraries" },
+                            { title: "Twilio SDKs", url: "https://www.twilio.com/docs/libraries" },
+                            { title: "SDK Documentation Guide", url: "https://idratherbewriting.com/learnapidoc/docapis_sdks.html" },
+                        ],
+                    },
+                    {
+                        id: "tw-w12-3",
+                        title: "交互式 API 探索",
+                        detail: "在文档中嵌入可运行的 API 调用：Try It、代码沙箱与 Playground。",
+                        keyPoints: [
+                            "Try It 面板：Swagger UI、Redoc、Stoplight 的交互功能。",
+                            "代码沙箱：CodeSandbox、StackBlitz 嵌入式示例。",
+                            "Playground：GraphQL Playground、Postman 集成。",
+                        ],
+                        resources: [
+                            { title: "Swagger UI", url: "https://swagger.io/tools/swagger-ui/" },
+                            { title: "Redoc Try It", url: "https://redocly.com/docs/redoc/" },
+                            { title: "Stoplight", url: "https://stoplight.io/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w12-4",
+                        title: "API 弃用与迁移指南",
+                        detail: "写清弃用计划：时间线、影响范围、迁移步骤与兼容性说明。",
+                        keyPoints: [
+                            "弃用公告：提前通知、影响评估与迁移时间窗口。",
+                            "迁移指南：Before/After 对比、逐步迁移与回滚方案。",
+                            "Sunset Header：用 HTTP Header 通知即将弃用。",
+                        ],
+                        resources: [
+                            { title: "API Deprecation Best Practices", url: "https://cloud.google.com/apis/design/compatibility" },
+                            { title: "Stripe API Versioning", url: "https://stripe.com/docs/api/versioning" },
+                            { title: "Sunset HTTP Header", url: "https://datatracker.ietf.org/doc/html/rfc8594" },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "tw-phase7",
+        title: "第七阶段：数据驱动与现代工具",
+        duration: "第 13-14 周",
+        goal: "用指标和用户研究驱动改进，掌握高级工具链与搜索优化。",
+        weeks: [
+            {
+                id: "tw-w13",
+                title: "第 13 周：文档指标与用户研究",
+                summary: "建立文档 KPI 体系，用用户研究方法持续优化。",
+                overview: "从「感觉」到「数据」：本周建立可量化的文档质量指标，并用用户研究方法验证假设。",
+                keyPoints: [
+                    "文档 KPI：满意度、完成率、Time-to-Success。",
+                    "定量分析：页面访问、搜索失败、跳出率。",
+                    "定性研究：用户访谈、可用性测试、调查问卷。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w13-1",
+                        title: "文档 KPI 体系",
+                        detail: "定义核心指标：用户满意度（CSAT）、任务完成率、Time-to-First-Success。",
+                        keyPoints: [
+                            "CSAT/NPS：页面级反馈「这篇文档有帮助吗？」",
+                            "任务完成率：用户能否完成文档引导的任务。",
+                            "Time-to-Success：从阅读到成功完成任务的时间。",
+                        ],
+                        resources: [
+                            { title: "Measuring Docs Quality", url: "https://www.writethedocs.org/guide/docs-as-code/#measuring-success" },
+                            { title: "Google: Technical Writing KPIs", url: "https://developers.google.com/tech-writing" },
+                            { title: "DX Metrics Guide", url: "https://getdx.com/blog/developer-experience/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w13-2",
+                        title: "定量分析：Analytics 与搜索",
+                        detail: "用 Google Analytics、Plausible 分析访问模式；用搜索日志识别内容缺口。",
+                        keyPoints: [
+                            "高跳出页面：识别需要优化的内容。",
+                            "搜索零结果：用户在找什么但找不到。",
+                            "用户路径：从入口到目标的典型路径分析。",
+                        ],
+                        resources: [
+                            { title: "Google Analytics for Docs", url: "https://support.google.com/analytics/answer/9306384" },
+                            { title: "Algolia Analytics", url: "https://www.algolia.com/doc/guides/search-analytics/overview/" },
+                            { title: "Plausible Analytics", url: "https://plausible.io/docs" },
+                        ],
+                    },
+                    {
+                        id: "tw-w13-3",
+                        title: "用户访谈与可用性测试",
+                        detail: "通过访谈了解用户痛点，用可用性测试验证文档是否可用。",
+                        keyPoints: [
+                            "用户访谈：开放式问题，了解真实使用场景与痛点。",
+                            "可用性测试：给任务，观察用户如何使用文档完成。",
+                            "Think-aloud 协议：让用户边做边说，暴露认知障碍。",
+                        ],
+                        resources: [
+                            { title: "NN/g: User Interviews", url: "https://www.nngroup.com/articles/user-interviews/" },
+                            { title: "NN/g: Usability Testing 101", url: "https://www.nngroup.com/articles/usability-testing-101/" },
+                            { title: "Think Aloud Protocol", url: "https://www.nngroup.com/articles/thinking-aloud-the-1-usability-tool/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w13-4",
+                        title: "A/B 测试与持续优化",
+                        detail: "用 A/B 测试验证文档改进效果：标题、结构、示例的对比实验。",
+                        keyPoints: [
+                            "假设驱动：明确要验证什么（如「更短的标题提高点击率」）。",
+                            "统计显著性：样本量与置信区间的考量。",
+                            "迭代循环：测试→分析→优化→再测试。",
+                        ],
+                        resources: [
+                            { title: "A/B Testing for Content", url: "https://www.optimizely.com/optimization-glossary/ab-testing/" },
+                            { title: "Google Optimize (sunset alternatives)", url: "https://support.google.com/optimize/answer/6211930" },
+                            { title: "Content Experiments", url: "https://www.nngroup.com/articles/ab-testing-vs-usability-testing/" },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: "tw-w14",
+                title: "第 14 周：高级工具链",
+                summary: "掌握 DITA、CCMS、多版本管理与搜索优化。",
+                overview: "企业级文档需要专业工具。本周从结构化写作到搜索优化，掌握大规模文档的技术栈。",
+                keyPoints: [
+                    "DITA：企业级结构化写作标准。",
+                    "CCMS：组件内容管理系统。",
+                    "多版本：并行维护多个产品/API 版本的文档。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w14-1",
+                        title: "DITA 与结构化写作",
+                        detail: "理解 DITA 的 Topic 类型、Map 结构与专业化（Specialization）。",
+                        keyPoints: [
+                            "Topic 类型：Concept、Task、Reference、Troubleshooting。",
+                            "DITA Map：组织 Topic 的层级与导航结构。",
+                            "条件处理：用 profiling 属性生成不同版本。",
+                        ],
+                        resources: [
+                            { title: "OASIS DITA", url: "https://www.oasis-open.org/committees/dita/" },
+                            { title: "LearningDITA", url: "https://learningdita.com/" },
+                            { title: "DITA Style Guide", url: "https://www.oxygenxml.com/dita/styleguide/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w14-2",
+                        title: "组件内容管理系统（CCMS）",
+                        detail: "了解 Paligo、Heretto、SDL 等 CCMS 的能力与适用场景。",
+                        keyPoints: [
+                            "CCMS vs CMS：组件级复用与版本管理。",
+                            "工作流集成：审批、翻译、发布的自动化。",
+                            "选型考量：规模、预算、团队技能与集成需求。",
+                        ],
+                        resources: [
+                            { title: "What is a CCMS", url: "https://paligo.net/blog/technical-writing/what-is-a-ccms/" },
+                            { title: "Paligo CCMS", url: "https://paligo.net/" },
+                            { title: "Heretto CCMS", url: "https://heretto.com/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w14-3",
+                        title: "多版本文档管理",
+                        detail: "并行维护多个版本：版本分支策略、版本选择器与 URL 设计。",
+                        keyPoints: [
+                            "版本策略：每个版本一个分支 vs 条件文本。",
+                            "版本选择器 UI：让用户清楚知道在看哪个版本。",
+                            "SEO 考量：canonical URL 与版本间的关系。",
+                        ],
+                        resources: [
+                            { title: "Docusaurus Versioning", url: "https://docusaurus.io/docs/versioning" },
+                            { title: "Read the Docs Versioning", url: "https://docs.readthedocs.io/en/stable/versions.html" },
+                            { title: "Multi-Version Docs Best Practices", url: "https://idratherbewriting.com/learnapidoc/pubapis_versioning.html" },
+                        ],
+                    },
+                    {
+                        id: "tw-w14-4",
+                        title: "文档搜索优化",
+                        detail: "配置 Algolia DocSearch 或自建搜索：索引策略、同义词与权重调优。",
+                        keyPoints: [
+                            "Algolia DocSearch：免费开源项目搜索方案。",
+                            "索引策略：标题权重 > 正文，代码块特殊处理。",
+                            "同义词与纠错：处理用户拼写错误与术语变体。",
+                        ],
+                        resources: [
+                            { title: "Algolia DocSearch", url: "https://docsearch.algolia.com/" },
+                            { title: "Meilisearch", url: "https://www.meilisearch.com/" },
+                            { title: "Search UX Best Practices", url: "https://www.nngroup.com/articles/search-visible-and-simple/" },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "tw-phase8",
+        title: "第八阶段：前沿技术与领导力",
+        duration: "第 15-16 周",
+        goal: "掌握 AI、多媒体等前沿技术，建立团队领导与企业级文档能力。",
+        weeks: [
+            {
+                id: "tw-w15",
+                title: "第 15 周：AI 与多媒体文档",
+                summary: "探索 AI 辅助写作与多媒体内容创作。",
+                overview: "AI 正在改变技术写作。本周从 AI 辅助工具到视频脚本，扩展文档的形式边界。",
+                keyPoints: [
+                    "AI 辅助写作：草稿生成、编辑润色、翻译辅助。",
+                    "AI 驱动搜索：语义搜索与文档问答机器人。",
+                    "多媒体文档：视频、动画与交互式教程。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w15-1",
+                        title: "AI 辅助写作与编辑",
+                        detail: "用 AI 工具加速写作：草稿生成、风格统一、语法检查与简化。",
+                        keyPoints: [
+                            "草稿生成：用 AI 生成初稿，人工审核与优化。",
+                            "风格统一：用 AI 检查并统一术语与语气。",
+                            "质量把控：AI 输出需要人工验证准确性。",
+                        ],
+                        resources: [
+                            { title: "AI Tools for Documentation", url: "https://document360.com/blog/ai-tools-for-software-documentation/" },
+                            { title: "Grammarly for Tech Docs", url: "https://www.grammarly.com/business" },
+                            { title: "Writer.com", url: "https://writer.com/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w15-2",
+                        title: "AI 驱动的文档搜索与问答",
+                        detail: "用语义搜索和 RAG 技术构建文档问答机器人。",
+                        keyPoints: [
+                            "语义搜索：超越关键词匹配，理解用户意图。",
+                            "RAG（检索增强生成）：基于文档的精准问答。",
+                            "准确性保障：引用来源、置信度与人工回退。",
+                        ],
+                        resources: [
+                            { title: "Docs Chatbot with RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" },
+                            { title: "Algolia AI Search", url: "https://www.algolia.com/products/ai-search/" },
+                            { title: "Mendable", url: "https://www.mendable.ai/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w15-3",
+                        title: "视频文档与屏幕录制",
+                        detail: "制作教程视频：脚本编写、录制工具与后期编辑。",
+                        keyPoints: [
+                            "视频脚本：结构化脚本，控制时长与节奏。",
+                            "录制工具：Loom、OBS、Camtasia 的选择。",
+                            "可维护性：视频更新成本高，适合稳定功能。",
+                        ],
+                        resources: [
+                            { title: "Loom", url: "https://www.loom.com/" },
+                            { title: "OBS Studio", url: "https://obsproject.com/" },
+                            { title: "Video Documentation Best Practices", url: "https://www.techsmith.com/blog/video-documentation/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w15-4",
+                        title: "交互式教程与 Playground",
+                        detail: "创建可在浏览器中运行的交互式学习环境。",
+                        keyPoints: [
+                            "代码沙箱：CodeSandbox、StackBlitz、Replit 嵌入。",
+                            "交互式教程：Jupyter、Observable 的应用。",
+                            "Playground：让用户在安全环境中实验。",
+                        ],
+                        resources: [
+                            { title: "CodeSandbox", url: "https://codesandbox.io/" },
+                            { title: "StackBlitz", url: "https://stackblitz.com/" },
+                            { title: "Jupyter Book", url: "https://jupyterbook.org/" },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: "tw-w16",
+                title: "第 16 周：企业级文档与团队领导力",
+                summary: "掌握企业级文档架构与技术写作团队管理。",
+                overview: "从个人贡献者到团队领导：本周覆盖多产品文档架构、合规要求与团队建设。",
+                keyPoints: [
+                    "多产品架构：统一门户、共享组件与品牌一致性。",
+                    "合规文档：SOC2、GDPR、行业监管要求。",
+                    "团队领导：招聘、培训与跨职能协作。",
+                ],
+                lessons: [
+                    {
+                        id: "tw-w16-1",
+                        title: "多产品文档架构",
+                        detail: "设计支持多产品线的统一文档平台：共享组件、一致体验与独立发布。",
+                        keyPoints: [
+                            "统一门户：多产品共享导航、搜索与身份。",
+                            "共享组件：认证、错误处理等通用内容复用。",
+                            "独立发布：各产品团队可独立更新，不互相阻塞。",
+                        ],
+                        resources: [
+                            { title: "Multi-Product Docs Strategy", url: "https://document360.com/blog/multi-product-documentation-strategy/" },
+                            { title: "Google Cloud Docs Architecture", url: "https://cloud.google.com/docs" },
+                            { title: "AWS Docs", url: "https://docs.aws.amazon.com/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w16-2",
+                        title: "合规与监管文档",
+                        detail: "满足 SOC2、GDPR、HIPAA 等合规要求的文档策略。",
+                        keyPoints: [
+                            "合规文档类型：隐私政策、安全白皮书、审计报告。",
+                            "版本控制与审计追踪：满足合规审查要求。",
+                            "敏感信息处理：数据分类与访问控制。",
+                        ],
+                        resources: [
+                            { title: "SOC2 Compliance Docs", url: "https://www.vanta.com/resources/what-is-soc-2" },
+                            { title: "GDPR Documentation Requirements", url: "https://gdpr.eu/documentation/" },
+                            { title: "Security Documentation", url: "https://www.atlassian.com/trust" },
+                        ],
+                    },
+                    {
+                        id: "tw-w16-3",
+                        title: "技术写作团队建设",
+                        detail: "招聘、培训与发展技术写作团队：能力模型、职级体系与绩效评估。",
+                        keyPoints: [
+                            "能力模型：写作、技术、工具、协作四个维度。",
+                            "职级体系：Junior → Senior → Staff → Principal 的成长路径。",
+                            "招聘与面试：写作测试、Portfolio 评审与文化匹配。",
+                        ],
+                        resources: [
+                            { title: "Write the Docs: Hiring Guide", url: "https://www.writethedocs.org/hiring-guide/" },
+                            { title: "Tech Writing Career Ladder", url: "https://developers.google.com/tech-writing/resources" },
+                            { title: "Building a Docs Team", url: "https://document360.com/blog/technical-writers-team-structure/" },
+                        ],
+                    },
+                    {
+                        id: "tw-w16-4",
+                        title: "培训工程师写文档",
+                        detail: "建立工程师文档贡献的文化与流程：模板、培训与激励机制。",
+                        keyPoints: [
+                            "降低门槛：提供模板、示例与快速反馈。",
+                            "嵌入流程：代码评审包含文档检查。",
+                            "认可与激励：公开表彰、贡献统计与晋升考量。",
+                        ],
+                        resources: [
+                            { title: "Engineers and Documentation", url: "https://www.writethedocs.org/guide/writing/mindshare/" },
+                            { title: "Google Tech Writing Training", url: "https://developers.google.com/tech-writing" },
+                            { title: "Docs Culture at GitLab", url: "https://about.gitlab.com/handbook/engineering/ux/technical-writing/" },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
 ]
 
 export const technicalWriterKnowledgeCards: KnowledgeCard[] = [
@@ -526,7 +1142,51 @@ export const technicalWriterKnowledgeCards: KnowledgeCard[] = [
             "反馈入口要低摩擦：issue 模板、评分组件或表单。",
             "作品集要可验证：在线链接 + PR 记录 + 取舍复盘。",
         ],
-        practice: "为作品集站点加“反馈入口”与“变更日志”，并用数据挑 1 页做优化复盘。",
+        practice: "为作品集站点加「反馈入口」与「变更日志」，并用数据挑 1 页做优化复盘。",
+    },
+    {
+        id: "tw-phase5",
+        title: "内容战略思维",
+        summary: "从写作者到内容负责人：不只是写，还要管理内容的生命周期与组织架构。",
+        points: [
+            "内容审计：定期盘点，识别过时、重复与缺失的内容。",
+            "生命周期管理：创建→发布→维护→归档→删除的完整流程。",
+            "单源发布：一次编写多处发布，降低维护成本。",
+        ],
+        practice: "对现有文档做一次内容审计，识别 Top 5 需要改进的页面并制定计划。",
+    },
+    {
+        id: "tw-phase6",
+        title: "开发者体验优先",
+        summary: "好的 API 文档不止是参考手册，而是完整的开发者体验设计。",
+        points: [
+            "开发者旅程：从发现到贡献，每个阶段都需要文档支持。",
+            "Time-to-First-Success：让开发者尽快体验成功是核心指标。",
+            "交互式文档：让开发者在文档中直接尝试 API。",
+        ],
+        practice: "绘制你产品的开发者旅程地图，标注每个阶段的文档触点与痛点。",
+    },
+    {
+        id: "tw-phase7",
+        title: "数据驱动改进",
+        summary: "从「感觉好」到「证明好」：用指标和用户研究驱动文档优化。",
+        points: [
+            "文档 KPI：CSAT、任务完成率、Time-to-Success。",
+            "定量+定性：Analytics 看趋势，用户访谈挖原因。",
+            "持续迭代：测试→分析→优化→再测试的闭环。",
+        ],
+        practice: "为文档站点配置 Analytics，识别高跳出页面并做一次可用性测试。",
+    },
+    {
+        id: "tw-phase8",
+        title: "团队与领导力",
+        summary: "从个人贡献者到团队领导：招聘、培训与建立文档文化。",
+        points: [
+            "能力模型：写作、技术、工具、协作四个维度的成长路径。",
+            "培训工程师：降低门槛、嵌入流程、认可激励。",
+            "企业级架构：多产品、多版本、合规要求的统一方案。",
+        ],
+        practice: "设计一个「工程师文档贡献」培训计划，包括模板、示例与反馈机制。",
     },
 ]
 
@@ -601,53 +1261,139 @@ export const technicalWriterExamQuestions: QuizQuestion[] = [
         answer: 1,
         rationale: "Quickstart 的目标是最短路径跑通成功体验：前置条件、步骤与验证结果。",
     },
+    {
+        id: "tw-q11",
+        question: "内容审计（Content Audit）的首要目标是？",
+        options: ["让文档看起来更长", "系统盘点现有内容，识别过时、重复与缺失", "删除所有旧文档", "统一所有文档的字体"],
+        answer: 1,
+        rationale: "内容审计帮助识别需要更新、合并或补充的内容，是内容战略的基础。",
+    },
+    {
+        id: "tw-q12",
+        question: "单源发布（Single-Sourcing）的核心好处是？",
+        options: ["让文档更难维护", "一次编写多处发布，降低维护成本与不一致风险", "增加翻译难度", "只能发布一种格式"],
+        answer: 1,
+        rationale: "单源发布让同一内容可以输出到多个渠道，减少重复工作与版本不一致。",
+    },
+    {
+        id: "tw-q13",
+        question: "卡片分类（Card Sorting）主要用于？",
+        options: ["测试代码质量", "了解用户的心智模型，优化内容分组与导航", "设计数据库表结构", "评估服务器性能"],
+        answer: 1,
+        rationale: "卡片分类让用户参与内容组织，帮助设计符合用户期望的信息架构。",
+    },
+    {
+        id: "tw-q14",
+        question: "开发者体验（DX）中的 Time-to-First-Success 是指？",
+        options: ["产品上线时间", "从注册到首次成功调用 API 的时间", "文档编写时间", "服务器响应时间"],
+        answer: 1,
+        rationale: "Time-to-First-Success 衡量开发者多快能体验到产品价值，是 DX 的核心指标。",
+    },
+    {
+        id: "tw-q15",
+        question: "GraphQL 文档相比 REST 文档的特殊之处是？",
+        options: ["不需要任何文档", "Schema 自描述，但仍需补充上下文、示例与最佳实践", "只需要写错误码", "必须用视频形式"],
+        answer: 1,
+        rationale: "GraphQL Schema 提供类型信息，但查询模式、最佳实践与错误处理仍需文档补充。",
+    },
+    {
+        id: "tw-q16",
+        question: "SDK 文档中，版本兼容矩阵的作用是？",
+        options: ["装饰页面", "帮助用户了解 SDK 版本与 API 版本的对应关系", "隐藏错误信息", "增加文档长度"],
+        answer: 1,
+        rationale: "版本兼容矩阵帮助用户选择正确的 SDK 版本，避免兼容性问题。",
+    },
+    {
+        id: "tw-q17",
+        question: "文档 KPI 中的 CSAT 是指？",
+        options: ["代码覆盖率", "用户满意度（Customer Satisfaction）", "页面加载速度", "文档字数"],
+        answer: 1,
+        rationale: "CSAT 通过「这篇文档有帮助吗？」等反馈收集用户满意度。",
+    },
+    {
+        id: "tw-q18",
+        question: "DITA 中的 Topic 类型不包括？",
+        options: ["Concept", "Task", "Reference", "Database"],
+        answer: 3,
+        rationale: "DITA 标准 Topic 类型包括 Concept、Task、Reference、Troubleshooting 等，不包括 Database。",
+    },
+    {
+        id: "tw-q19",
+        question: "用 AI 辅助文档写作时，最重要的是？",
+        options: ["完全信任 AI 输出", "人工验证准确性，AI 输出需要审核", "不需要风格指南", "只用 AI 不用人"],
+        answer: 1,
+        rationale: "AI 可以加速写作，但技术准确性必须由人工验证，尤其是代码和命令。",
+    },
+    {
+        id: "tw-q20",
+        question: "企业级多产品文档架构的关键挑战是？",
+        options: ["让每个产品用完全不同的风格", "统一体验与独立发布的平衡", "只用一个人维护所有文档", "不需要搜索功能"],
+        answer: 1,
+        rationale: "多产品架构需要在统一的用户体验与各团队独立发布之间找到平衡。",
+    },
 ]
 
 export const technicalWriterRoadmap: RoadmapDefinition = {
     id: "technical-writer",
     label: "Technical Writer",
     title: "技术写作",
-    durationLabel: "8 个主题",
+    durationLabel: "16 个主题",
     description:
-        "按 8 个主题打造可复用的技术写作体系：写作基础与模板 → Docs-as-Code 工具链/协作 → API/CLI 文档可复现 → 内容体系与质量线 → 发布运营与作品集。每个主题都可打卡并保存测验记录，持续迭代作品。",
-    heroBadge: "Docs-as-Code Bootcamp",
+        "从入门到专家的完整技术写作体系：写作基础与 Diátaxis → Docs-as-Code 工具链 → API/CLI 文档 → 内容体系与质量线 → 发布运营与作品集 → 内容战略与信息架构 → 开发者体验与高级 API → 数据驱动与现代工具 → AI/多媒体与团队领导力。覆盖从个人贡献者到内容负责人的完整成长路径。",
+    heroBadge: "入门到专家 · 16 主题",
     stages: technicalWriterStages,
     knowledgeCards: technicalWriterKnowledgeCards,
     examQuestions: technicalWriterExamQuestions,
     suggestion: (percent: number) => {
-        if (percent < 25) {
-            return "先补齐第 1 阶段：读者分析 + 写作模板 + 风格指南，确保“可用”优先。"
+        if (percent < 15) {
+            return "先补齐第 1 阶段：读者分析 + 写作模板 + 风格指南，确保「可用」优先。"
         }
-        if (percent < 50) {
+        if (percent < 30) {
             return "把 docs-as-code 跑起来：Git + PR + 自动检查 + 预览发布，形成协作闭环。"
         }
-        if (percent < 75) {
+        if (percent < 45) {
             return "重点练 API/CLI 文档：认证/错误模型/示例可复现，并补齐四类文档模板。"
         }
-        return "开始做作品集：挑 1 个真实项目做信息架构与发布，并用反馈/数据做一次迭代复盘。"
+        if (percent < 60) {
+            return "开始做作品集：挑 1 个真实项目做信息架构与发布，并用反馈/数据做一次迭代复盘。"
+        }
+        if (percent < 75) {
+            return "进阶内容战略：做一次内容审计，建立生命周期管理与信息架构优化流程。"
+        }
+        if (percent < 90) {
+            return "深入开发者体验：绘制开发者旅程地图，优化 Onboarding 与交互式文档。"
+        }
+        return "向团队领导迈进：建立文档 KPI 体系，探索 AI 工具，培训工程师写文档。"
     },
     resourceGuide: {
-        environment: "Markdown 编辑器 + Git 仓库（可选：静态站点生成器），能运行示例命令并产出截图/链接。",
+        environment: "Markdown 编辑器 + Git 仓库 + 静态站点生成器 + Analytics（可选：Algolia 搜索、AI 工具）。",
         fallbackKeyPoints: [
             "先写大纲再写正文：标题层级、导航与交叉链接优先。",
             "每一步都可复现：前置条件、版本、命令与预期输出齐全。",
-            "术语一致与示例可运行，比“写得很长”更重要。",
+            "术语一致与示例可运行，比「写得很长」更重要。",
+            "内容战略：不只是写，还要管理内容的生命周期。",
+            "数据驱动：用指标和用户研究验证改进效果。",
         ],
         handsOnSteps: [
             "阅读原文，提炼目标读者、前置条件与验收标准，先写 5-10 行大纲。",
             "写一份最小可用内容（Quickstart/How-to/Reference 任选其一），补齐示例与预期输出/截图。",
             "用 checklist 自检（结构/术语/链接/示例可复现），提交 PR 并邀请评审。",
+            "配置 Analytics，识别高跳出页面，做一次内容审计与优化。",
         ],
         selfChecks: [
             "读者是谁？看完能完成什么任务？成功/失败如何验证？",
             "步骤是否可复制粘贴、可复现？是否遗漏版本/环境差异？",
             "术语、命名与示例是否一致？链接与截图是否可用？",
+            "有没有定期审查机制？过时内容如何处理？",
+            "开发者旅程中，哪个阶段流失最严重？文档能否补救？",
         ],
         extensions: [
             "把本节产出沉淀为模板（Quickstart/How-to/Reference/Explanation），后续复用。",
             "为仓库加上自动化检查：link check + style linter（如 Vale）+ PR 预览。",
-            "补一页 Troubleshooting/FAQ，把高频问题写成可搜索的答案。",
+            "探索 DITA/CCMS 等企业级工具，评估是否适合团队规模。",
+            "尝试 AI 辅助写作工具，建立人机协作的质量把控流程。",
+            "设计工程师文档贡献培训计划，推动文档文化。",
         ],
-        lessonQuizAdvice: "建议：把错题对应的概念/模板写成一段可复用示例，并用真实场景验证可用性。",
+        lessonQuizAdvice: "建议：把错题对应的概念/模板写成一段可复用示例，并用真实场景验证可用性。高级主题的错题可结合实际工作场景深入研究。",
     },
 }

@@ -194,6 +194,254 @@ export const apiPlatformStages: Stage[] = [
       },
     ],
   },
+  {
+    id: "api-realtime",
+    title: "阶段四：实时 API 与事件驱动",
+    duration: "第 7-8 周",
+    goal: "掌握实时通信模式与事件驱动架构，构建响应式 API 系统。",
+    weeks: [
+      {
+        id: "api-w7",
+        title: "第 7 周：实时通信模式",
+        summary: "对比 WebSocket、SSE 与 Long Polling，选择合适的实时方案。",
+        overview:
+          "理解不同实时通信协议的特点与适用场景，掌握 GraphQL Subscriptions 实现实时数据推送。",
+        lessons: [
+          {
+            id: "api-w7-1",
+            title: "实时协议选型",
+            detail: "对比 WebSocket（双向）、SSE（服务端推送）与 Long Polling（兼容性），根据场景选择。",
+            keyPoints: [
+              "WebSocket 适合双向高频通信（聊天、游戏），需处理重连与心跳。",
+              "SSE 适合服务端单向推送（通知、实时更新），自动重连且兼容 HTTP/2。",
+              "Long Polling 作为降级方案，兼容性最好但延迟较高。",
+            ],
+            resources: [
+              { title: "WebSocket vs SSE", url: "https://ably.com/blog/websockets-vs-sse" },
+              { title: "MDN: Server-Sent Events", url: "https://developer.mozilla.org/docs/Web/API/Server-sent_events" },
+              { title: "WebSocket Protocol", url: "https://datatracker.ietf.org/doc/html/rfc6455" },
+            ],
+          },
+          {
+            id: "api-w7-2",
+            title: "GraphQL Subscriptions",
+            detail: "使用 Subscriptions 实现实时数据流，理解 @defer/@stream 增量响应。",
+            keyPoints: [
+              "Subscriptions 基于 WebSocket 或 SSE 传输，适合事件触发的实时更新。",
+              "@defer 延迟加载非关键字段，@stream 流式返回列表项。",
+              "生产环境需考虑连接数限制、认证续期与优雅断开。",
+            ],
+            resources: [
+              { title: "GraphQL Subscriptions", url: "https://graphql.org/blog/subscriptions-in-graphql-and-relay/" },
+              { title: "Apollo Subscriptions", url: "https://www.apollographql.com/docs/react/data/subscriptions/" },
+              { title: "@defer and @stream", url: "https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "api-w8",
+        title: "第 8 周：事件驱动 API",
+        summary: "设计 Webhook 与事件系统，使用 AsyncAPI 描述异步接口契约。",
+        lessons: [
+          {
+            id: "api-w8-1",
+            title: "Webhook 设计模式",
+            detail: "实现安全可靠的 Webhook 推送，包括签名验证、重试与幂等处理。",
+            keyPoints: [
+              "使用 HMAC-SHA256 签名 payload，接收方验证签名防止伪造。",
+              "指数退避重试失败的 Webhook，记录投递状态供排查。",
+              "接收方实现幂等处理，用事件 ID 去重避免重复消费。",
+            ],
+            resources: [
+              { title: "Standard Webhooks", url: "https://www.standardwebhooks.com/" },
+              { title: "Webhook Security", url: "https://hookdeck.com/webhooks/guides/webhook-security-vulnerabilities-guide" },
+              { title: "Stripe Webhooks", url: "https://stripe.com/docs/webhooks" },
+            ],
+          },
+          {
+            id: "api-w8-2",
+            title: "AsyncAPI 与 CloudEvents",
+            detail: "用 AsyncAPI 描述事件驱动接口，采用 CloudEvents 标准化事件格式。",
+            keyPoints: [
+              "AsyncAPI 是事件驱动 API 的 OpenAPI，描述 channel、message 与 schema。",
+              "CloudEvents 定义通用事件属性：source、type、id、time、datacontenttype。",
+              "结合消息队列（Kafka/RabbitMQ）构建可靠的事件总线。",
+            ],
+            resources: [
+              { title: "AsyncAPI Specification", url: "https://www.asyncapi.com/docs/reference/specification/latest" },
+              { title: "CloudEvents Spec", url: "https://cloudevents.io/" },
+              { title: "Event-Driven Architecture", url: "https://microservices.io/patterns/data/event-driven-architecture.html" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "api-performance",
+    title: "阶段五：API 性能与高级模式",
+    duration: "第 9-10 周",
+    goal: "深入 API 性能优化与架构模式，掌握 BFF、高级分页与条件请求。",
+    weeks: [
+      {
+        id: "api-w9",
+        title: "第 9 周：性能深度优化",
+        summary: "掌握分页、条件请求与响应优化，提升 API 吞吐与用户体验。",
+        lessons: [
+          {
+            id: "api-w9-1",
+            title: "高级分页模式",
+            detail: "对比 Offset、Keyset 与 Cursor 分页，选择适合数据特征的方案。",
+            keyPoints: [
+              "Offset 分页简单但大偏移量性能差，适合小数据集。",
+              "Keyset 分页基于索引列，性能稳定但不支持跳页。",
+              "Cursor 分页（Base64 编码游标）兼顾性能与灵活性，是 GraphQL 推荐方案。",
+            ],
+            resources: [
+              { title: "Pagination Comparison", url: "https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/" },
+              { title: "Relay Cursor Connections", url: "https://relay.dev/graphql/connections.htm" },
+              { title: "Slack API Pagination", url: "https://api.slack.com/docs/pagination" },
+            ],
+          },
+          {
+            id: "api-w9-2",
+            title: "条件请求与响应优化",
+            detail: "使用 ETags、压缩与部分响应减少带宽，提升缓存命中率。",
+            keyPoints: [
+              "ETag + If-None-Match 实现条件 GET，304 响应节省带宽。",
+              "支持 fields/sparse fieldsets 参数，客户端按需获取字段。",
+              "启用 gzip/brotli 压缩，配置合理的 Cache-Control 策略。",
+            ],
+            resources: [
+              { title: "HTTP Conditional Requests", url: "https://developer.mozilla.org/docs/Web/HTTP/Conditional_requests" },
+              { title: "JSON:API Sparse Fieldsets", url: "https://jsonapi.org/format/#fetching-sparse-fieldsets" },
+              { title: "HTTP Caching", url: "https://web.dev/http-cache/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "api-w10",
+        title: "第 10 周：架构模式与高级 GraphQL",
+        summary: "实践 BFF 模式与 Relay 规范，构建可扩展的 API 架构。",
+        lessons: [
+          {
+            id: "api-w10-1",
+            title: "BFF 与 API 聚合",
+            detail: "为不同客户端定制 Backend for Frontend，聚合多服务响应。",
+            keyPoints: [
+              "BFF 为特定客户端（Web/Mobile/IoT）优化响应格式与字段。",
+              "聚合层处理跨服务调用、数据转换与错误合并。",
+              "权衡 BFF 数量与维护成本，避免逻辑分散。",
+            ],
+            resources: [
+              { title: "BFF Pattern", url: "https://samnewman.io/patterns/architectural/bff/" },
+              { title: "API Gateway vs BFF", url: "https://microservices.io/patterns/apigateway.html" },
+              { title: "Netflix API Gateway", url: "https://netflixtechblog.com/embracing-the-differences-inside-the-netflix-api-redesign-15fd8b3dc49d" },
+            ],
+          },
+          {
+            id: "api-w10-2",
+            title: "Relay 规范与高级 GraphQL",
+            detail: "遵循 Relay 规范设计 GraphQL Schema，实现 Node 接口与 Connections。",
+            keyPoints: [
+              "Node 接口提供全局唯一 ID，支持任意对象的直接查询与缓存。",
+              "Connections 规范定义 edges/node/pageInfo/cursor，标准化分页行为。",
+              "Global ID 编码类型与本地 ID，支持客户端缓存规范化。",
+            ],
+            resources: [
+              { title: "Relay GraphQL Spec", url: "https://relay.dev/docs/guides/graphql-server-specification/" },
+              { title: "Global Object Identification", url: "https://graphql.org/learn/global-object-identification/" },
+              { title: "Relay Connections", url: "https://relay.dev/graphql/connections.htm" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "api-advanced-security",
+    title: "阶段六：安全进阶与服务网格",
+    duration: "第 11-12 周",
+    goal: "深入 Zero Trust 架构与服务网格安全，掌握 API 威胁建模与高级防护。",
+    weeks: [
+      {
+        id: "api-w11",
+        title: "第 11 周：Zero Trust 与高级认证",
+        summary: "实践零信任架构，掌握服务身份与令牌绑定技术。",
+        lessons: [
+          {
+            id: "api-w11-1",
+            title: "Zero Trust API 架构",
+            detail: "实现持续验证、最小权限与微分段，不信任网络边界。",
+            keyPoints: [
+              "每个请求都需验证身份与授权，不依赖网络位置判断信任。",
+              "服务间通信使用 mTLS，证书自动轮换与撤销。",
+              "实施细粒度访问控制，基于属性（ABAC）而非仅角色（RBAC）。",
+            ],
+            resources: [
+              { title: "Zero Trust Architecture", url: "https://www.nist.gov/publications/zero-trust-architecture" },
+              { title: "BeyondCorp", url: "https://cloud.google.com/beyondcorp" },
+              { title: "Zero Trust APIs", url: "https://www.cloudflare.com/learning/security/glossary/what-is-zero-trust/" },
+            ],
+          },
+          {
+            id: "api-w11-2",
+            title: "服务身份与令牌绑定",
+            detail: "使用 SPIFFE/SPIRE 管理服务身份，DPoP 绑定令牌到客户端。",
+            keyPoints: [
+              "SPIFFE 为服务提供统一身份标识（SPIFFE ID），SPIRE 负责证书签发。",
+              "DPoP (Demonstrating Proof of Possession) 将令牌绑定到客户端密钥，防止令牌盗用。",
+              "Token Exchange (RFC 8693) 实现服务间安全的令牌传递与降权。",
+            ],
+            resources: [
+              { title: "SPIFFE/SPIRE", url: "https://spiffe.io/" },
+              { title: "DPoP RFC 9449", url: "https://datatracker.ietf.org/doc/html/rfc9449" },
+              { title: "Token Exchange", url: "https://datatracker.ietf.org/doc/html/rfc8693" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "api-w12",
+        title: "第 12 周：服务网格与威胁防护",
+        summary: "集成服务网格安全能力，实践 API 威胁建模与渗透测试。",
+        lessons: [
+          {
+            id: "api-w12-1",
+            title: "服务网格安全",
+            detail: "利用 Istio/Linkerd 实现 mTLS、流量策略与可观测性。",
+            keyPoints: [
+              "服务网格自动注入 sidecar，透明实现 mTLS 加密与身份验证。",
+              "AuthorizationPolicy 定义细粒度访问规则，基于服务身份与请求属性。",
+              "流量镜像用于影子测试，金丝雀发布实现渐进式上线。",
+            ],
+            resources: [
+              { title: "Istio Security", url: "https://istio.io/latest/docs/concepts/security/" },
+              { title: "Linkerd mTLS", url: "https://linkerd.io/2.14/features/automatic-mtls/" },
+              { title: "Traffic Mirroring", url: "https://istio.io/latest/docs/tasks/traffic-management/mirroring/" },
+            ],
+          },
+          {
+            id: "api-w12-2",
+            title: "API 威胁建模与渗透测试",
+            detail: "使用 STRIDE 进行威胁建模，自动化 API 安全扫描与渗透测试。",
+            keyPoints: [
+              "STRIDE 模型分析 Spoofing、Tampering、Repudiation、Information Disclosure、DoS、Elevation of Privilege。",
+              "使用 OWASP ZAP、Burp Suite 进行 API 安全扫描，集成 CI/CD。",
+              "Bot 检测结合行为分析、设备指纹与验证码挑战。",
+            ],
+            resources: [
+              { title: "STRIDE Threat Modeling", url: "https://learn.microsoft.com/azure/security/develop/threat-modeling-tool-threats" },
+              { title: "OWASP ZAP", url: "https://www.zaproxy.org/" },
+              { title: "API Security Testing", url: "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/12-API_Testing/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export const apiPlatformKnowledgeCards: KnowledgeCard[] = [
@@ -284,6 +532,83 @@ export const apiPlatformKnowledgeCards: KnowledgeCard[] = [
       "返回 429 状态码与 Retry-After 头，指导客户端合理重试。",
     ],
     practice: "配置 API 网关的分层限流规则，验证超限响应与重试行为。",
+  },
+  {
+    id: "api-realtime-patterns",
+    title: "实时通信选型",
+    summary: "根据场景特征选择 WebSocket、SSE 或 Long Polling。",
+    points: [
+      "WebSocket 双向全双工，适合聊天、协作编辑、游戏等高频双向场景。",
+      "SSE 服务端单向推送，自动重连、兼容 HTTP/2，适合通知与实时更新。",
+      "Long Polling 兼容性最好，作为降级方案处理不支持 WebSocket 的环境。",
+    ],
+    practice: "实现一个实时通知系统，对比 SSE 与 WebSocket 的连接管理与资源消耗。",
+  },
+  {
+    id: "api-event-driven",
+    title: "事件驱动设计",
+    summary: "通过 Webhook 与消息队列解耦系统，实现异步可靠通信。",
+    points: [
+      "Webhook 使用 HMAC 签名防伪造，指数退避重试保证投递。",
+      "CloudEvents 标准化事件格式，source/type/id/time 属性通用。",
+      "AsyncAPI 描述事件接口契约，与 OpenAPI 形成互补。",
+    ],
+    practice: "为订单系统实现 Webhook 推送，包括签名生成、验证与重试队列。",
+  },
+  {
+    id: "api-bff-pattern",
+    title: "BFF 模式",
+    summary: "为不同客户端定制后端聚合层，优化响应格式与性能。",
+    points: [
+      "Web、Mobile、IoT 客户端需求不同，BFF 按客户端优化字段与格式。",
+      "BFF 聚合多个微服务调用，减少客户端请求次数与复杂度。",
+      "权衡 BFF 数量，避免过度分散导致维护成本上升。",
+    ],
+    practice: "为移动端设计 BFF 层，聚合用户、订单、推荐服务的响应。",
+  },
+  {
+    id: "api-relay-spec",
+    title: "Relay 规范",
+    summary: "遵循 Relay GraphQL 规范，实现标准化的分页与对象识别。",
+    points: [
+      "Node 接口定义全局唯一 ID，支持 node(id: ID!) 直接查询任意对象。",
+      "Connections 规范（edges/node/pageInfo/cursor）标准化游标分页。",
+      "Global ID 编码类型名与本地 ID，支持客户端缓存规范化。",
+    ],
+    practice: "将现有 GraphQL Schema 改造为 Relay 兼容，实现 Node 接口与 Connections。",
+  },
+  {
+    id: "api-zero-trust",
+    title: "Zero Trust API",
+    summary: "不信任网络边界，每个请求都需验证身份与授权。",
+    points: [
+      "持续验证：每个 API 调用都验证令牌、权限与上下文。",
+      "最小权限：令牌只包含必要的 scope，服务间使用降权令牌。",
+      "微分段：服务间通信使用 mTLS，网络隔离与身份验证结合。",
+    ],
+    practice: "配置服务网格实现服务间 mTLS，定义细粒度 AuthorizationPolicy。",
+  },
+  {
+    id: "api-pagination-patterns",
+    title: "分页模式对比",
+    summary: "根据数据特征与查询需求选择合适的分页策略。",
+    points: [
+      "Offset 分页：简单直观但深页性能差，适合管理后台小数据集。",
+      "Keyset 分页：基于索引列性能稳定，适合时间线与无限滚动。",
+      "Cursor 分页：不透明游标兼顾安全与灵活，GraphQL 推荐方案。",
+    ],
+    practice: "对比 100 万条数据下 offset=999000 与 keyset 分页的查询性能。",
+  },
+  {
+    id: "api-service-mesh",
+    title: "服务网格安全",
+    summary: "利用 Istio/Linkerd 自动化服务间安全与可观测性。",
+    points: [
+      "Sidecar 代理透明处理 mTLS、重试、超时与熔断。",
+      "AuthorizationPolicy 基于服务身份与请求属性定义访问规则。",
+      "流量镜像支持影子测试，金丝雀发布实现渐进式上线。",
+    ],
+    practice: "在 Istio 中配置服务间访问策略，测试未授权请求被拒绝。",
   },
 ]
 
@@ -432,26 +757,172 @@ export const apiPlatformExamQuestions: QuizQuestion[] = [
     answer: 1,
     rationale: "Stripe 的日期版本（如 2024-01-15）支持细粒度演进，用户可以按需升级。",
   },
+  {
+    id: "api-exam-13",
+    question: "需要服务端向客户端单向推送实时通知，哪种方案最合适？",
+    options: [
+      "短轮询（每秒请求一次）",
+      "Server-Sent Events (SSE)，支持自动重连与 HTTP/2",
+      "WebSocket，因为它是最新的技术",
+      "定时批量拉取",
+    ],
+    answer: 1,
+    rationale: "SSE 专为服务端单向推送设计，自动重连、兼容 HTTP/2，比 WebSocket 更轻量。",
+  },
+  {
+    id: "api-exam-14",
+    question: "Webhook 安全最佳实践应包括？",
+    options: [
+      "直接信任来源 IP，不做签名验证",
+      "使用 HMAC-SHA256 签名 payload，接收方验证签名并实现幂等处理",
+      "只用 HTTP 不加密，方便调试",
+      "失败后立即无限重试",
+    ],
+    answer: 1,
+    rationale: "HMAC 签名防止伪造，幂等处理避免重复消费，指数退避重试保护双方资源。",
+  },
+  {
+    id: "api-exam-15",
+    question: "CloudEvents 规范定义的必需属性包括？",
+    options: [
+      "只需要 data 字段",
+      "source、type、id、specversion",
+      "topic 和 message",
+      "key 和 value",
+    ],
+    answer: 1,
+    rationale: "CloudEvents 必需属性包括 source（事件源）、type（事件类型）、id（唯一标识）、specversion（规范版本）。",
+  },
+  {
+    id: "api-exam-16",
+    question: "处理百万级数据分页时，哪种方式性能最稳定？",
+    options: [
+      "OFFSET 999000 LIMIT 20",
+      "Keyset 分页，基于索引列 WHERE id > last_id LIMIT 20",
+      "一次性返回所有数据让客户端分页",
+      "随机跳页访问",
+    ],
+    answer: 1,
+    rationale: "Keyset 分页基于索引列，性能与页码无关，适合大数据集的顺序遍历。",
+  },
+  {
+    id: "api-exam-17",
+    question: "Relay GraphQL 规范中 Connections 的核心组成是？",
+    options: [
+      "data 和 meta",
+      "edges（含 node 和 cursor）与 pageInfo（含 hasNextPage 等）",
+      "items 和 total",
+      "results 和 pagination",
+    ],
+    answer: 1,
+    rationale: "Relay Connections 定义 edges 数组（每个元素含 node 和 cursor）与 pageInfo 对象。",
+  },
+  {
+    id: "api-exam-18",
+    question: "BFF (Backend for Frontend) 模式的主要目的是？",
+    options: [
+      "让所有客户端共享同一个 API 格式",
+      "为不同客户端（Web/Mobile/IoT）定制优化的 API 聚合层",
+      "替代所有微服务",
+      "只用于前端缓存",
+    ],
+    answer: 1,
+    rationale: "BFF 为特定客户端优化响应格式与字段，聚合多服务调用减少客户端复杂度。",
+  },
+  {
+    id: "api-exam-19",
+    question: "Zero Trust 架构的核心原则是？",
+    options: [
+      "内网流量默认信任，只验证外部请求",
+      "不信任网络边界，每个请求都需验证身份与授权",
+      "只在网关做一次认证",
+      "信任 VPN 连接的所有请求",
+    ],
+    answer: 1,
+    rationale: "Zero Trust 不依赖网络位置判断信任，每个 API 调用都需持续验证。",
+  },
+  {
+    id: "api-exam-20",
+    question: "DPoP (Demonstrating Proof of Possession) 的作用是？",
+    options: [
+      "加密存储令牌",
+      "将访问令牌绑定到客户端密钥，防止令牌被盗用",
+      "延长令牌有效期",
+      "替代 HTTPS",
+    ],
+    answer: 1,
+    rationale: "DPoP 要求客户端证明持有与令牌绑定的私钥，即使令牌泄露也无法被他人使用。",
+  },
+  {
+    id: "api-exam-21",
+    question: "服务网格（如 Istio）如何实现服务间安全通信？",
+    options: [
+      "依赖应用代码手动实现 TLS",
+      "Sidecar 代理自动注入 mTLS，透明处理加密与身份验证",
+      "只用 IP 白名单",
+      "关闭所有网络访问",
+    ],
+    answer: 1,
+    rationale: "服务网格通过 Sidecar 代理自动实现 mTLS，无需应用代码修改。",
+  },
+  {
+    id: "api-exam-22",
+    question: "STRIDE 威胁建模中的 'R' 代表什么？",
+    options: [
+      "Ransomware（勒索软件）",
+      "Repudiation（抵赖）",
+      "Replay（重放攻击）",
+      "Reconnaissance（侦察）",
+    ],
+    answer: 1,
+    rationale: "STRIDE 中 R 代表 Repudiation（抵赖），指用户否认执行过某操作，需要审计日志防范。",
+  },
+  {
+    id: "api-exam-23",
+    question: "GraphQL @defer 指令的作用是？",
+    options: [
+      "延迟执行整个查询",
+      "延迟加载非关键字段，先返回关键数据再增量补充",
+      "缓存查询结果",
+      "跳过字段验证",
+    ],
+    answer: 1,
+    rationale: "@defer 让服务端先返回关键字段，再异步补充被 defer 的字段，优化首屏加载。",
+  },
+  {
+    id: "api-exam-24",
+    question: "使用 ETag 实现条件请求时，客户端应发送什么请求头？",
+    options: [
+      "Cache-Control: no-cache",
+      "If-None-Match: <etag-value>",
+      "Accept: application/json",
+      "X-Conditional: true",
+    ],
+    answer: 1,
+    rationale: "If-None-Match 携带之前的 ETag 值，服务端比对后返回 304 Not Modified 或新内容。",
+  },
 ]
 
 export const apiPlatformRoadmap: RoadmapDefinition = {
   id: "api-platform",
   label: "API 设计·安全·GraphQL",
   title: "API 设计",
-  durationLabel: "6 个主题",
-  description: "围绕 API 设计、接口安全与 GraphQL 生产化的完整路线，涵盖契约驱动开发、版本演进、OAuth2/OIDC 认证、OWASP 安全防护、审计合规、Schema 设计与 Federation 联邦架构。",
+  durationLabel: "12 个主题",
+  description: "围绕 API 设计、接口安全与 GraphQL 生产化的完整路线，涵盖契约驱动开发、版本演进、OAuth2/OIDC 认证、OWASP 安全防护、实时通信、事件驱动、高级分页、BFF 模式、Zero Trust 架构与服务网格安全。",
   heroBadge: "API 全栈",
   stages: apiPlatformStages,
   knowledgeCards: apiPlatformKnowledgeCards,
   examQuestions: apiPlatformExamQuestions,
   suggestion: (percent: number) => {
     if (percent === 0) return "先完成 REST 资源建模与 OpenAPI 描述，理解 HTTP 方法语义与错误码规范。"
-    if (percent < 40) return "深入认证授权机制（OAuth2/PKCE），实现输入验证、速率限制与审计日志。"
-    if (percent < 70) return "掌握 GraphQL Schema 设计，配置深度/复杂度限制与 DataLoader 批量加载。"
-    return "持续治理：CI 集成契约 lint、自动检测破坏性变更、定期演练安全与兼容性场景。"
+    if (percent < 25) return "深入认证授权机制（OAuth2/PKCE），实现输入验证、速率限制与审计日志。"
+    if (percent < 50) return "掌握 GraphQL Schema 设计，配置深度/复杂度限制与 DataLoader 批量加载。"
+    if (percent < 75) return "学习实时通信（WebSocket/SSE）与事件驱动（Webhook/AsyncAPI），构建响应式系统。"
+    if (percent < 90) return "深入 BFF 模式、Relay 规范与高级分页，优化 API 性能与架构。"
+    return "进阶 Zero Trust 与服务网格：配置 mTLS、威胁建模、渗透测试，持续演练安全场景。"
   },
   resourceGuide: {
-    environment: "准备 API 网关（Kong/Envoy）、OpenAPI Linter（Spectral）、GraphQL 开发环境（Apollo Server）、链路追踪（Jaeger/Zipkin）与日志系统（ELK/Loki）。",
+    environment: "准备 API 网关（Kong/Envoy）、OpenAPI Linter（Spectral）、GraphQL 开发环境（Apollo Server）、服务网格（Istio/Linkerd）、链路追踪（Jaeger/Zipkin）与日志系统（ELK/Loki）。",
     fallbackKeyPoints: [
       "REST 路径使用名词复数，HTTP 方法语义明确，错误使用 RFC 7807 格式。",
       "版本策略选择 URI/Header/日期版本，弃用期 6-12 个月。",
@@ -461,6 +932,10 @@ export const apiPlatformRoadmap: RoadmapDefinition = {
       "GraphQL 字段用 camelCase，类型用 PascalCase，枚举值用 SCREAMING_SNAKE_CASE。",
       "DataLoader 每请求创建新实例，批量函数结果顺序必须与输入键一致。",
       "Federation 使用 @key 定义实体标识，__resolveReference 解析跨子图实体。",
+      "SSE 适合服务端单向推送，WebSocket 适合双向高频通信。",
+      "Webhook 使用 HMAC-SHA256 签名，接收方实现幂等处理。",
+      "Keyset 分页性能稳定，Cursor 分页是 GraphQL 推荐方案。",
+      "Zero Trust 每个请求都验证身份，mTLS 保护服务间通信。",
     ],
     handsOnSteps: [
       "为核心接口编写 OpenAPI 3.1 规范，配置 Spectral linter 检查命名规范。",
@@ -470,7 +945,11 @@ export const apiPlatformRoadmap: RoadmapDefinition = {
       "设置审计日志中间件，记录用户、操作、资源、结果，集成告警。",
       "创建 GraphQL Schema 并配置 DataLoader，验证 N+1 查询被批量化。",
       "配置 GraphQL 深度限制（max_depth: 10）和复杂度限制，测试拒绝过深查询。",
-      "使用 @deprecated 标记待移除字段，在文档中维护弃用时间表。",
+      "实现 SSE 实时通知推送，处理连接管理与断线重连。",
+      "为订单系统实现 Webhook 推送，包括签名生成、验证与重试队列。",
+      "实现 Keyset 分页并对比 Offset 分页在大数据集下的性能差异。",
+      "将 GraphQL Schema 改造为 Relay 兼容，实现 Node 接口与 Connections。",
+      "配置 Istio 服务网格，启用 mTLS 并定义 AuthorizationPolicy。",
     ],
     selfChecks: [
       "所有接口是否有 OpenAPI/GraphQL Schema 描述并在 CI 校验？",
@@ -481,15 +960,21 @@ export const apiPlatformRoadmap: RoadmapDefinition = {
       "GraphQL 是否有深度/复杂度限制和 DataLoader？",
       "生产环境是否禁用了 GraphQL 内省查询？",
       "版本弃用是否有 6 个月以上的迁移窗口？",
+      "Webhook 是否使用 HMAC 签名并实现幂等处理？",
+      "大数据集分页是否使用 Keyset/Cursor 而非 Offset？",
+      "服务间通信是否启用 mTLS？",
+      "是否进行过 API 威胁建模与安全扫描？",
     ],
     extensions: [
       "研究 gRPC 与 Protocol Buffers，对比 REST/GraphQL 的适用场景。",
-      "学习 Webhook 签名验证与重试机制，参考 Standard Webhooks 规范。",
-      "探索 AsyncAPI 规范，描述 Kafka/RabbitMQ 等事件驱动接口。",
       "实践契约测试（Pact/Dredd），在 CI 中自动检测接口破坏。",
       "引入 OPA/ABAC 策略引擎统一授权，支持复杂的权限规则。",
       "配置 API 网关的熔断与金丝雀发布，提升服务韧性。",
+      "探索 SPIFFE/SPIRE 服务身份管理，实现细粒度服务认证。",
+      "学习 DPoP 令牌绑定机制，增强 OAuth2 令牌安全性。",
+      "实践 GraphQL @defer/@stream 增量响应，优化大查询性能。",
+      "使用 OWASP ZAP 自动化 API 安全扫描，集成 CI/CD 流水线。",
     ],
-    lessonQuizAdvice: "从 REST 设计原则和 HTTP 语义出发，结合 OWASP API Security Top 10 和 OAuth2 安全最佳实践，排除不符合规范的选项。GraphQL 题目关注 N+1 问题、安全限制和 Federation 机制。",
+    lessonQuizAdvice: "从 REST 设计原则和 HTTP 语义出发，结合 OWASP API Security Top 10 和 OAuth2 安全最佳实践。实时通信题目关注 SSE/WebSocket 选型，事件驱动关注 Webhook 安全与 CloudEvents。高级主题涵盖分页模式、Relay 规范、Zero Trust 与服务网格。",
   },
 }
