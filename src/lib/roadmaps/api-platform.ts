@@ -438,7 +438,7 @@ export const apiPlatformRoadmap: RoadmapDefinition = {
   id: "api-platform",
   label: "API 设计·安全·GraphQL",
   title: "API 设计 + 安全 + GraphQL 全栈路线",
-  durationLabel: "6 周进阶",
+  durationLabel: "6 个主题进阶",
   description: "围绕 API 设计、接口安全与 GraphQL 生产化的完整路线，涵盖契约驱动开发、版本演进、OAuth2/OIDC 认证、OWASP 安全防护、审计合规、Schema 设计与 Federation 联邦架构。",
   heroBadge: "API 全栈",
   stages: apiPlatformStages,

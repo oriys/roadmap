@@ -183,6 +183,15 @@ function loadPersisted(roadmap: RoadmapDefinition) {
   }
 }
 
+function formatTopicLabel(title: string) {
+  return title.replace(/^第\s*\d+\s*周[:：]?\s*/, "").trim() || title
+}
+
+function displayTopicTitle(title: string, idx?: number) {
+  const cleaned = formatTopicLabel(title)
+  return idx != null ? `主题 ${idx + 1}：${cleaned}` : `主题：${cleaned}`
+}
+
 export default function App() {
   const initial = React.useMemo(() => {
     const pathRoadmapId = typeof window === "undefined" ? null : getRoadmapIdFromPath(window.location.pathname)
@@ -430,7 +439,7 @@ export default function App() {
             </div>
             <CardTitle className="text-4xl font-bold tracking-tight">学习路线（Roadmaps）</CardTitle>
             <CardDescription className="text-base leading-relaxed">
-              选择一条路线，按阶段/周推进；每节配套权威资源、文档题单与即时测验。
+              选择一条路线，按阶段与主题拆解；每节配套权威资源、文档题单与即时测验，按自己的节奏推进。
             </CardDescription>
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => openRoadmap(activeRoadmapId, "overview")} className="gap-2">
@@ -461,7 +470,7 @@ export default function App() {
                       Live
                     </Badge>
                     <Badge variant="outline">{totals.stages} 阶段</Badge>
-                    <Badge variant="outline">{totals.weeks} 周</Badge>
+                    <Badge variant="outline">{totals.weeks} 主题</Badge>
                     <Badge variant="outline">{totals.lessons} 课时</Badge>
                   </div>
                   <CardTitle className="text-2xl font-semibold tracking-tight">
@@ -520,7 +529,7 @@ export default function App() {
                 <Brain className="h-4 w-4 text-accent" />
                 即时测验
               </div>
-              <CardDescription className="text-sm">每周/每课配套测验与解析，帮助形成闭环。</CardDescription>
+              <CardDescription className="text-sm">每个主题/课时配套测验与解析，帮助形成闭环。</CardDescription>
             </Card>
             <Card className="glass-card p-5 space-y-2 animate-fade-in">
               <div className="flex items-center gap-2 font-semibold">
@@ -541,6 +550,22 @@ export default function App() {
   const showQuizFeedback = quizState.lastScore != null
   const lastScore = quizState.lastScore ?? 0
   const bestScore = quizState.bestScore ?? lastScore
+  const topicIndex = resourceView ? resourceView.stage.weeks.findIndex((week) => week.id === resourceView.week.id) : -1
+  const topicTitle = resourceView
+    ? displayTopicTitle(resourceView.week.title, topicIndex === -1 ? undefined : topicIndex)
+    : ""
+  const lessonQuizTopicIndex = lessonQuizView
+    ? lessonQuizView.stage.weeks.findIndex((week) => week.id === lessonQuizView.week.id)
+    : -1
+  const lessonQuizTopicTitle = lessonQuizView
+    ? displayTopicTitle(lessonQuizView.week.title, lessonQuizTopicIndex === -1 ? undefined : lessonQuizTopicIndex)
+    : ""
+  const lessonGuideTopicIndex = lessonGuideView
+    ? lessonGuideView.stage.weeks.findIndex((week) => week.id === lessonGuideView.week.id)
+    : -1
+  const lessonGuideTopicTitle = lessonGuideView
+    ? displayTopicTitle(lessonGuideView.week.title, lessonGuideTopicIndex === -1 ? undefined : lessonGuideTopicIndex)
+    : ""
 
   return (
     <div className="min-h-screen bg-background/80 text-foreground relative">
@@ -662,8 +687,8 @@ export default function App() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">路线分期</p>
-                <h2 className="text-2xl font-semibold leading-tight">{activeRoadmap.durationLabel} 学习地图</h2>
-                <p className="text-muted-foreground text-sm">逐周卡片 + 可勾选课时，自动统计完成度并生成行动建议。</p>
+                <h2 className="text-2xl font-semibold leading-tight">阶段/主题学习地图</h2>
+                <p className="text-muted-foreground text-sm">按阶段与主题组织的卡片，可勾选课时，自动统计完成度并生成行动建议。</p>
               </div>
               <Badge variant="secondary" className="gap-1">
                 <Lightbulb className="h-4 w-4" />
@@ -672,7 +697,7 @@ export default function App() {
             </div>
 
             <div className="space-y-4">
-              {activeRoadmap.stages.map((stage) => {
+              {activeRoadmap.stages.map((stage, stageIdx) => {
                 const stats = stageStats(stage.id)
                 const percent = stats.total === 0 ? 0 : Math.round((stats.done / stats.total) * 100)
                 return (
@@ -680,7 +705,7 @@ export default function App() {
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary">{stage.duration}</Badge>
+                          <Badge variant="secondary">阶段 {stageIdx + 1}</Badge>
                           <Badge variant="outline" className="text-muted-foreground">
                             {stage.goal}
                           </Badge>
@@ -699,11 +724,13 @@ export default function App() {
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
-                      {stage.weeks.map((week) => (
+                      {stage.weeks.map((week, weekIdx) => (
                         <div key={week.id} className="rounded-xl border border-border/60 bg-background/70 p-4 space-y-3">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">{week.title}</p>
+                              <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                                {displayTopicTitle(week.title, weekIdx)}
+                              </p>
                               <p className="text-sm text-muted-foreground">{week.summary}</p>
                             </div>
                             <Badge variant="outline" className="text-muted-foreground">
@@ -846,7 +873,7 @@ export default function App() {
                   如何快速内化？
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  每周跟踪一个“输入-输出”闭环：理解概念 → 动手实验 → 写出一句话总结。下方基于已完成的课时给你下一步建议。
+                  每个主题跟踪一个“输入-输出”闭环：理解概念 → 动手实验 → 写出一句话总结。下方基于已完成的课时给你下一步建议。
                 </CardDescription>
                 <Alert className="border-accent/50 bg-accent/10">
                   <AlertTitle>行动建议</AlertTitle>
@@ -942,7 +969,7 @@ export default function App() {
                                   <p className="text-xs text-muted-foreground">这是正确答案</p>
                                 )}
                                 {showQuizFeedback && isWrong && (
-                                  <p className="text-xs text-destructive">已选择，建议回顾对应周次</p>
+                                  <p className="text-xs text-destructive">已选择，建议回顾对应主题</p>
                                 )}
                               </div>
                             </label>
@@ -975,12 +1002,12 @@ export default function App() {
                   <AlertDescription className="space-y-1">
                     <p>最佳成绩：{bestScore}% · 已尝试 {quizState.attempts} 次</p>
                     <p>
-                      {lastScore >= 90
+                          {lastScore >= 90
                         ? "优秀！具备实战水平，可以做一遍故障排查演练。"
                         : lastScore >= 75
                           ? "良好，再补充 NetworkPolicy / Helm 与可观测性查询练习。"
                           : lastScore >= 60
-                            ? "及格，回顾错题对应的周次，并重做动手实验。"
+                            ? "及格，回顾错题对应的主题，并重做动手实验。"
                             : "需要加强：重学第 1-4 阶段核心内容，完成 2 次小实验后再测。"}
                     </p>
                   </AlertDescription>
@@ -999,7 +1026,7 @@ export default function App() {
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">文档讲解</p>
                 <h3 className="text-xl font-semibold text-foreground">{resourceView.resource.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {resourceView.stage.title} · {resourceView.week.title} · {resourceView.lesson.title}
+                  {resourceView.stage.title} · {topicTitle} · {resourceView.lesson.title}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -1032,7 +1059,7 @@ export default function App() {
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>与其他周关联：{resourceView.stage.title} → {resourceView.stage.goal}</span>
+                    <span>与其他主题关联：{resourceView.stage.title} → {resourceView.stage.goal}</span>
                   </li>
                 </ul>
               </div>
@@ -1099,7 +1126,7 @@ export default function App() {
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">课时测验</p>
                 <h3 className="text-xl font-semibold text-foreground">{lessonQuizView.lesson.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {lessonQuizView.stage.title} · {lessonQuizView.week.title}
+                  {lessonQuizView.stage.title} · {lessonQuizTopicTitle}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">{getLessonOverview(lessonQuizView.lesson) || lessonQuizView.lesson.detail}</p>
               </div>
@@ -1284,7 +1311,7 @@ export default function App() {
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">主题讲解</p>
                 <h3 className="text-xl font-semibold text-foreground">{lessonGuideView.lesson.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {lessonGuideView.stage.title} · {lessonGuideView.week.title}
+                  {lessonGuideView.stage.title} · {lessonGuideTopicTitle}
                 </p>
               </div>
               <Button variant="outline" onClick={() => setLessonGuideView(null)}>
