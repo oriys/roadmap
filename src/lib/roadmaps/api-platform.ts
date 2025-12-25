@@ -256,7 +256,7 @@ export const apiPlatformStages: Stage[] = [
             resources: [
               { title: "Standard Webhooks", url: "https://www.standardwebhooks.com/" },
               { title: "Webhook Security", url: "https://hookdeck.com/webhooks/guides/webhook-security-vulnerabilities-guide" },
-              { title: "Stripe Webhooks", url: "https://stripe.com/docs/webhooks" },
+              { title: "Stripe Webhooks", url: "https://docs.stripe.com/webhooks" },
             ],
           },
           {
@@ -265,7 +265,7 @@ export const apiPlatformStages: Stage[] = [
             detail: "用 AsyncAPI 描述事件驱动接口，采用 CloudEvents 标准化事件格式。",
             keyPoints: [
               "AsyncAPI 是事件驱动 API 的 OpenAPI，描述 channel、message 与 schema。",
-              "CloudEvents 定义通用事件属性：source、type、id、time、datacontenttype。",
+              "CloudEvents 必需属性：specversion、type、source、id；可选属性包括 time、datacontenttype。",
               "结合消息队列（Kafka/RabbitMQ）构建可靠的事件总线。",
             ],
             resources: [
@@ -301,7 +301,7 @@ export const apiPlatformStages: Stage[] = [
             resources: [
               { title: "Pagination Comparison", url: "https://www.citusdata.com/blog/2016/03/30/five-ways-to-paginate/" },
               { title: "Relay Cursor Connections", url: "https://relay.dev/graphql/connections.htm" },
-              { title: "Slack API Pagination", url: "https://api.slack.com/docs/pagination" },
+              { title: "Slack API Pagination", url: "https://docs.slack.dev/apis/web-api/pagination" },
             ],
           },
           {
@@ -338,7 +338,7 @@ export const apiPlatformStages: Stage[] = [
             resources: [
               { title: "BFF Pattern", url: "https://samnewman.io/patterns/architectural/bff/" },
               { title: "API Gateway vs BFF", url: "https://microservices.io/patterns/apigateway.html" },
-              { title: "Netflix API Gateway", url: "https://netflixtechblog.com/embracing-the-differences-inside-the-netflix-api-redesign-15fd8b3dc49d" },
+              { title: "API Composition", url: "https://microservices.io/patterns/data/api-composition.html" },
             ],
           },
           {
@@ -550,7 +550,7 @@ export const apiPlatformKnowledgeCards: KnowledgeCard[] = [
     summary: "通过 Webhook 与消息队列解耦系统，实现异步可靠通信。",
     points: [
       "Webhook 使用 HMAC 签名防伪造，指数退避重试保证投递。",
-      "CloudEvents 标准化事件格式，source/type/id/time 属性通用。",
+      "CloudEvents 标准化事件格式，specversion/type/source/id 为必需属性。",
       "AsyncAPI 描述事件接口契约，与 OpenAPI 形成互补。",
     ],
     practice: "为订单系统实现 Webhook 推送，包括签名生成、验证与重试队列。",
