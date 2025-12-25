@@ -9,6 +9,7 @@ import { seniorEngineerInterviewRoadmap } from "./senior-engineer-interview"
 import { observabilitySreRoadmap } from "./observability-sre"
 import { messageQueueRoadmap } from "./message-queue"
 import { databaseRoadmap } from "./database"
+import { javaJvmRoadmap } from "./java-jvm"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -22,6 +23,7 @@ export * from "./senior-engineer-interview"
 export * from "./observability-sre"
 export * from "./message-queue"
 export * from "./database"
+export * from "./java-jvm"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -35,6 +37,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "observability-sre": observabilitySreRoadmap,
   "message-queue": messageQueueRoadmap,
   database: databaseRoadmap,
+  "java-jvm": javaJvmRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -49,5 +52,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   observabilitySreRoadmap,
   messageQueueRoadmap,
   databaseRoadmap,
+  javaJvmRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
