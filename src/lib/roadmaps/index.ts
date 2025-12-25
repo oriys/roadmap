@@ -7,6 +7,7 @@ import { golangRoadmap } from "./golang"
 import { engineeringManagerRoadmap } from "./engineering-manager"
 import { seniorEngineerInterviewRoadmap } from "./senior-engineer-interview"
 import { observabilitySreRoadmap } from "./observability-sre"
+import { messageQueueRoadmap } from "./message-queue"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -18,6 +19,7 @@ export * from "./golang"
 export * from "./engineering-manager"
 export * from "./senior-engineer-interview"
 export * from "./observability-sre"
+export * from "./message-queue"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -29,6 +31,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   golang: golangRoadmap,
   "senior-engineer-interview": seniorEngineerInterviewRoadmap,
   "observability-sre": observabilitySreRoadmap,
+  "message-queue": messageQueueRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -41,5 +44,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   golangRoadmap,
   seniorEngineerInterviewRoadmap,
   observabilitySreRoadmap,
+  messageQueueRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

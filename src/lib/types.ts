@@ -18,6 +18,7 @@ export type RoadmapId =
   | "golang"
   | "senior-engineer-interview"
   | "observability-sre"
+  | "message-queue"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
