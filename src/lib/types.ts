@@ -14,6 +14,7 @@ export type RoadmapId =
   | "system-design"
   | "backend-performance-best-practices"
   | "api-platform"
+  | "engineering-manager"
   | "golang"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
