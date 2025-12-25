@@ -19,6 +19,7 @@ export type RoadmapId =
   | "senior-engineer-interview"
   | "observability-sre"
   | "message-queue"
+  | "database"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
