@@ -551,6 +551,234 @@ export const backendPerformanceStages: Stage[] = [
       },
     ],
   },
+  {
+    id: "bp-deep-observability",
+    title: "阶段七：深度可观测与服务网格",
+    duration: "第 13-14 周",
+    goal: "掌握 eBPF 内核级可观测性与服务网格性能优化，深入理解数据库内核与低延迟系统。",
+    weeks: [
+      {
+        id: "bp-w13",
+        title: "第 13 周：eBPF 与服务网格性能",
+        summary: "使用 eBPF 实现内核级追踪，优化服务网格的延迟和资源开销。",
+        lessons: [
+          {
+            id: "bp-w13-1",
+            title: "eBPF 内核级可观测",
+            detail: "掌握 bpftrace、BCC 工具进行系统调用追踪和性能分析，构建内核级可观测性。",
+            resources: [
+              { title: "eBPF.io", url: "https://ebpf.io/" },
+              { title: "bpftrace", url: "https://github.com/iovisor/bpftrace" },
+            ],
+          },
+          {
+            id: "bp-w13-2",
+            title: "XDP 网络加速",
+            detail: "使用 XDP 在网卡驱动层处理数据包，实现高速 DDoS 防护和负载均衡。",
+            resources: [
+              { title: "XDP Tutorial", url: "https://github.com/xdp-project/xdp-tutorial" },
+              { title: "Katran", url: "https://github.com/facebookincubator/katran" },
+            ],
+          },
+          {
+            id: "bp-w13-3",
+            title: "服务网格性能优化",
+            detail: "理解 Sidecar 开销，优化 Istio/Envoy 配置，探索 Sidecar-less 模式。",
+            resources: [
+              { title: "Istio Performance", url: "https://istio.io/latest/docs/ops/deployment/performance-and-scalability/" },
+              { title: "Cilium Service Mesh", url: "https://cilium.io/blog/2021/12/01/cilium-service-mesh-beta/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "bp-w14",
+        title: "第 14 周：数据库内核与低延迟系统",
+        summary: "深入数据库存储引擎与查询优化，掌握实时低延迟系统设计。",
+        lessons: [
+          {
+            id: "bp-w14-1",
+            title: "数据库存储引擎",
+            detail: "理解 B-tree vs LSM-tree、Buffer Pool、MVCC，掌握写放大优化。",
+            resources: [
+              { title: "Use The Index, Luke!", url: "https://use-the-index-luke.com/" },
+              { title: "RocksDB Compaction", url: "https://github.com/facebook/rocksdb/wiki/Compaction" },
+            ],
+          },
+          {
+            id: "bp-w14-2",
+            title: "查询优化深度",
+            detail: "精通 EXPLAIN ANALYZE 解读、执行计划优化、分区表与统计信息调优。",
+            resources: [
+              { title: "PostgreSQL EXPLAIN", url: "https://www.postgresql.org/docs/current/using-explain.html" },
+              { title: "MySQL Optimizer", url: "https://dev.mysql.com/doc/refman/8.0/en/execution-plan-information.html" },
+            ],
+          },
+          {
+            id: "bp-w14-3",
+            title: "实时低延迟系统",
+            detail: "掌握内核旁路、DPDK、Busy Polling、CPU 隔离等极致低延迟技术。",
+            resources: [
+              { title: "DPDK", url: "https://www.dpdk.org/" },
+              { title: "Real-Time Linux", url: "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/8/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "bp-chaos-global",
+    title: "阶段八：混沌工程与全球化架构",
+    duration: "第 15-16 周",
+    goal: "通过混沌工程验证系统韧性，掌握边缘计算与 Kubernetes 性能优化。",
+    weeks: [
+      {
+        id: "bp-w15",
+        title: "第 15 周：混沌工程与分布式追踪",
+        summary: "建立混沌工程实践，优化大规模分布式追踪的采样与存储策略。",
+        lessons: [
+          {
+            id: "bp-w15-1",
+            title: "混沌工程基础",
+            detail: "理解混沌工程原则，设计稳态假设，控制实验爆炸半径。",
+            resources: [
+              { title: "Principles of Chaos", url: "https://principlesofchaos.org/" },
+              { title: "Chaos Mesh", url: "https://chaos-mesh.org/docs/" },
+            ],
+          },
+          {
+            id: "bp-w15-2",
+            title: "故障注入实践",
+            detail: "使用 Chaos Mesh、LitmusChaos 进行网络、资源、进程故障注入。",
+            resources: [
+              { title: "LitmusChaos", url: "https://litmuschaos.io/" },
+              { title: "AWS FIS", url: "https://aws.amazon.com/fis/" },
+            ],
+          },
+          {
+            id: "bp-w15-3",
+            title: "分布式追踪采样策略",
+            detail: "掌握头部采样、尾部采样、自适应采样，优化追踪存储成本。",
+            resources: [
+              { title: "OpenTelemetry Sampling", url: "https://opentelemetry.io/docs/concepts/sampling/" },
+              { title: "Grafana Tempo", url: "https://grafana.com/docs/tempo/latest/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "bp-w16",
+        title: "第 16 周：边缘计算与 Kubernetes 性能",
+        summary: "在边缘节点部署计算能力，优化 Kubernetes 集群的调度与网络性能。",
+        lessons: [
+          {
+            id: "bp-w16-1",
+            title: "边缘计算与 CDN 优化",
+            detail: "使用边缘函数减少延迟，优化缓存策略和地理路由。",
+            resources: [
+              { title: "Cloudflare Workers", url: "https://developers.cloudflare.com/workers/" },
+              { title: "Lambda@Edge", url: "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-at-the-edge.html" },
+            ],
+          },
+          {
+            id: "bp-w16-2",
+            title: "全球负载均衡",
+            detail: "掌握 GeoDNS、Anycast、多区域架构设计与故障转移。",
+            resources: [
+              { title: "Route 53 Routing", url: "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" },
+              { title: "Global Accelerator", url: "https://aws.amazon.com/global-accelerator/" },
+            ],
+          },
+          {
+            id: "bp-w16-3",
+            title: "Kubernetes 性能调优",
+            detail: "优化 Pod 启动时间、资源配额、CNI 网络性能与 HPA 响应速度。",
+            resources: [
+              { title: "K8s Scheduling", url: "https://kubernetes.io/docs/concepts/scheduling-eviction/" },
+              { title: "Cilium CNI Benchmark", url: "https://cilium.io/blog/2021/05/11/cni-benchmark/" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "bp-advanced-engineering",
+    title: "阶段九：性能建模与工程化",
+    duration: "第 17-18 周",
+    goal: "掌握性能建模理论与全栈优化，建立可持续的性能工程文化。",
+    weeks: [
+      {
+        id: "bp-w17",
+        title: "第 17 周：性能建模与全栈优化",
+        summary: "运用排队论与 USL 模型进行容量规划，实现端到端性能优化。",
+        lessons: [
+          {
+            id: "bp-w17-1",
+            title: "性能建模理论",
+            detail: "掌握 Little's Law、USL、Amdahl 定律，预测系统扩展性。",
+            resources: [
+              { title: "USL Scalability", url: "http://www.perfdynamics.com/Manifesto/USLscalability.html" },
+              { title: "USE Method", url: "https://www.brendangregg.com/usemethod.html" },
+            ],
+          },
+          {
+            id: "bp-w17-2",
+            title: "容量规划实践",
+            detail: "基于历史数据和业务预测进行资源规划，设置安全余量。",
+            resources: [
+              { title: "SRE Capacity Planning", url: "https://sre.google/sre-book/software-engineering-in-sre/" },
+              { title: "Prophet", url: "https://facebook.github.io/prophet/" },
+            ],
+          },
+          {
+            id: "bp-w17-3",
+            title: "全栈性能优化",
+            detail: "优化 Core Web Vitals，实现从前端到后端的端到端性能监控。",
+            resources: [
+              { title: "Web Vitals", url: "https://web.dev/vitals/" },
+              { title: "Lighthouse", url: "https://developer.chrome.com/docs/lighthouse/overview/" },
+            ],
+          },
+        ],
+      },
+      {
+        id: "bp-w18",
+        title: "第 18 周：前沿技术与工程文化",
+        summary: "探索 AI 推理优化与 WebAssembly，建立持续的性能工程文化。",
+        lessons: [
+          {
+            id: "bp-w18-1",
+            title: "AI/ML 推理性能",
+            detail: "掌握 GPU 优化、批处理策略、模型量化与推理服务部署。",
+            resources: [
+              { title: "Triton Server", url: "https://github.com/triton-inference-server/server" },
+              { title: "vLLM", url: "https://github.com/vllm-project/vllm" },
+            ],
+          },
+          {
+            id: "bp-w18-2",
+            title: "WebAssembly 性能",
+            detail: "使用 Wasm 实现接近原生的性能，在边缘和浏览器高效运行。",
+            resources: [
+              { title: "WebAssembly", url: "https://webassembly.org/" },
+              { title: "Rust Wasm", url: "https://rustwasm.github.io/docs/book/" },
+            ],
+          },
+          {
+            id: "bp-w18-3",
+            title: "性能工程文化",
+            detail: "建立性能左移、回归防护、SLO 驱动的持续性能工程实践。",
+            resources: [
+              { title: "SRE Book", url: "https://sre.google/sre-book/table-of-contents/" },
+              { title: "Performance Methodology", url: "https://www.brendangregg.com/methodology.html" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export const backendPerformanceKnowledgeCards: KnowledgeCard[] = [
@@ -656,9 +884,9 @@ export const backendPerformanceRoadmap: RoadmapDefinition = {
   id: "backend-performance-best-practices",
   label: "后端性能最佳实践",
   title: "后端性能优化路线：从观测到顶尖专家",
-  durationLabel: "12 周精进",
+  durationLabel: "18 周精进",
   description:
-    "以业务 SLO 为导向，从观测、热点优化、韧性演练，到操作系统内核、运行时深度、网络协议、数据架构、安全权衡与 FinOps，系统化打造顶尖性能专家能力。",
+    "以业务 SLO 为导向，从观测、热点优化、韧性演练，到操作系统内核、运行时深度、网络协议、数据架构、安全权衡、FinOps，再到 eBPF、混沌工程、边缘计算、性能建模与 AI 推理，系统化打造顶尖性能专家能力。",
   heroBadge: "性能诊断",
   stages: backendPerformanceStages,
   knowledgeCards: backendPerformanceKnowledgeCards,
