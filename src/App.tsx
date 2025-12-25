@@ -427,8 +427,8 @@ export default function App() {
         <div className="absolute top-4 right-4 z-50">
           <ThemeToggle />
         </div>
-        <div className="container py-12 space-y-8">
-          <Card className="glass-card p-8 space-y-5 animate-fade-in">
+        <div className="container px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
+          <Card className="glass-card p-5 sm:p-8 space-y-4 sm:space-y-5 animate-fade-in">
             <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <Badge variant="secondary" className="bg-secondary/70 text-xs">
                 Roadmaps · Interactive
@@ -437,7 +437,7 @@ export default function App() {
               <Badge variant="outline">测验 + 题单</Badge>
               <Badge variant="outline">本地保存</Badge>
             </div>
-            <CardTitle className="text-4xl font-bold tracking-tight">学习路线（Roadmaps）</CardTitle>
+            <CardTitle className="text-2xl sm:text-4xl font-bold tracking-tight">学习路线（Roadmaps）</CardTitle>
             <CardDescription className="text-base leading-relaxed">
               选择一条路线，按阶段与主题拆解；每节配套权威资源、文档题单与即时测验，按自己的节奏推进。
             </CardDescription>
@@ -457,7 +457,7 @@ export default function App() {
             </div>
           </Card>
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {ROADMAP_LIST.map((roadmap) => {
               const totals = roadmapTotals(roadmap.stages)
               const summary = loadProgressSummary(roadmap)
@@ -473,7 +473,7 @@ export default function App() {
                     <Badge variant="outline">{totals.weeks} 主题</Badge>
                     <Badge variant="outline">{totals.lessons} 课时</Badge>
                   </div>
-                  <CardTitle className="text-2xl font-semibold tracking-tight">
+                  <CardTitle className="text-xl sm:text-2xl font-semibold tracking-tight">
                     {roadmap.title}（{roadmap.durationLabel}）
                   </CardTitle>
                   <CardDescription className="text-base leading-relaxed">{roadmap.description}</CardDescription>
@@ -572,8 +572,8 @@ export default function App() {
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
-      <div className="container py-10 space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="container px-4 sm:px-6 py-6 sm:py-10 space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Button variant="ghost" size="sm" onClick={() => openLanding()} className="gap-2 text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
             返回 Roadmaps
@@ -593,7 +593,7 @@ export default function App() {
               </Badge>
               <Badge variant="outline">本地保存进度</Badge>
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">
+            <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">
               {activeRoadmap.title}（{activeRoadmap.durationLabel}）
             </CardTitle>
             <CardDescription className="text-base leading-relaxed">{activeRoadmap.description}</CardDescription>
@@ -639,18 +639,18 @@ export default function App() {
               </Button>
             </div>
             <Progress value={overall.percent} />
-            <div className="grid grid-cols-3 gap-3 text-sm">
-              <div className="rounded-lg border border-border/60 bg-background/60 p-3">
+            <div className="grid gap-2 grid-cols-3 text-sm">
+              <div className="rounded-lg border border-border/60 bg-background/60 p-2 sm:p-3">
                 <p className="text-muted-foreground text-xs">已完成</p>
-                <p className="text-lg font-semibold">{overall.done}</p>
+                <p className="text-base sm:text-lg font-semibold">{overall.done}</p>
               </div>
-              <div className="rounded-lg border border-border/60 bg-background/60 p-3">
+              <div className="rounded-lg border border-border/60 bg-background/60 p-2 sm:p-3">
                 <p className="text-muted-foreground text-xs">总课时</p>
-                <p className="text-lg font-semibold">{overall.total}</p>
+                <p className="text-base sm:text-lg font-semibold">{overall.total}</p>
               </div>
-              <div className="rounded-lg border border-border/60 bg-background/60 p-3">
+              <div className="rounded-lg border border-border/60 bg-background/60 p-2 sm:p-3">
                 <p className="text-muted-foreground text-xs">最佳成绩</p>
-                <p className="text-lg font-semibold">{quizState.bestScore != null ? `${quizState.bestScore}%` : "—"}</p>
+                <p className="text-base sm:text-lg font-semibold">{quizState.bestScore != null ? `${quizState.bestScore}%` : "—"}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -668,26 +668,28 @@ export default function App() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-          <TabsList className="bg-card/80 border border-border/70">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <ListChecks className="h-4 w-4" />
-              路线总览
-            </TabsTrigger>
-            <TabsTrigger value="knowledge" className="flex items-center gap-2">
-              <Brain className="h-4 w-4" />
-              知识讲解
-            </TabsTrigger>
-            <TabsTrigger value="exam" className="flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              考试环节
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <TabsList className="bg-card/80 border border-border/70 w-max sm:w-auto">
+              <TabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <ListChecks className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">路线</span>总览
+              </TabsTrigger>
+              <TabsTrigger value="knowledge" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
+                知识<span className="hidden xs:inline">讲解</span>
+              </TabsTrigger>
+              <TabsTrigger value="exam" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
+                考试<span className="hidden xs:inline">环节</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="overview" className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">路线分期</p>
-                <h2 className="text-2xl font-semibold leading-tight">阶段/主题学习地图</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold leading-tight">阶段/主题学习地图</h2>
                 <p className="text-muted-foreground text-sm">按阶段与主题组织的卡片，可勾选课时，自动统计完成度并生成行动建议。</p>
               </div>
               <Badge variant="secondary" className="gap-1">
@@ -821,7 +823,7 @@ export default function App() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">深入浅出</p>
-                <h2 className="text-2xl font-semibold leading-tight">关键知识点速览</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold leading-tight">关键知识点速览</h2>
                 <p className="text-muted-foreground text-sm">按阶段拆解术语、落地价值与常见误区，并给出练习方向。</p>
               </div>
             </div>
@@ -899,7 +901,7 @@ export default function App() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">自测</p>
-                <h2 className="text-2xl font-semibold leading-tight">阶段考试与复盘</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold leading-tight">阶段考试与复盘</h2>
                 <p className="text-muted-foreground text-sm">即时判分、查看解析，保存最佳成绩并给出复习建议。</p>
               </div>
               <Badge variant="outline" className="gap-1 text-muted-foreground">
@@ -1019,21 +1021,21 @@ export default function App() {
       </div>
 
       {resourceView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-10 backdrop-blur">
-          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-6 shadow-glow overflow-y-auto max-h-[90vh]">
-            <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
+          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">文档讲解</p>
-                <h3 className="text-xl font-semibold text-foreground">{resourceView.resource.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{resourceView.resource.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {resourceView.stage.title} · {topicTitle} · {resourceView.lesson.title}
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setResourceView(null)}>
+                <Button variant="outline" size="sm" onClick={() => setResourceView(null)}>
                   关闭
                 </Button>
-                <Button asChild>
+                <Button size="sm" asChild>
                   <a href={resourceView.resource.url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
                     打开原文 <ArrowUpRight className="h-4 w-4" />
                   </a>
@@ -1119,20 +1121,21 @@ export default function App() {
       )}
 
       {lessonQuizView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-10 backdrop-blur">
-          <div className="w-full max-w-4xl rounded-2xl border border-border/70 bg-card/90 p-6 shadow-glow overflow-y-auto max-h-[90vh]">
-            <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
+          <div className="w-full max-w-4xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">课时测验</p>
-                <h3 className="text-xl font-semibold text-foreground">{lessonQuizView.lesson.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{lessonQuizView.lesson.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {lessonQuizView.stage.title} · {lessonQuizTopicTitle}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">{getLessonOverview(lessonQuizView.lesson) || lessonQuizView.lesson.detail}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">{getLessonOverview(lessonQuizView.lesson) || lessonQuizView.lesson.detail}</p>
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => {
                     resetLessonQuiz(lessonQuizView.lesson.id)
                     resetDocQuiz(lessonQuizView.lesson.id)
@@ -1140,7 +1143,7 @@ export default function App() {
                 >
                   清空记录
                 </Button>
-                <Button variant="ghost" onClick={() => setLessonQuizView(null)}>
+                <Button variant="ghost" size="sm" onClick={() => setLessonQuizView(null)}>
                   关闭
                 </Button>
               </div>
@@ -1304,17 +1307,17 @@ export default function App() {
       )}
 
       {lessonGuideView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-10 backdrop-blur">
-          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-6 shadow-glow overflow-y-auto max-h-[90vh]">
-            <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
+          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">主题讲解</p>
-                <h3 className="text-xl font-semibold text-foreground">{lessonGuideView.lesson.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{lessonGuideView.lesson.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {lessonGuideView.stage.title} · {lessonGuideTopicTitle}
                 </p>
               </div>
-              <Button variant="outline" onClick={() => setLessonGuideView(null)}>
+              <Button variant="outline" size="sm" onClick={() => setLessonGuideView(null)}>
                 关闭
               </Button>
             </div>
