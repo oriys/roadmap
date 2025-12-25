@@ -1,4 +1,4 @@
-import { Moon, Sun, Cloud, Sunset } from "lucide-react"
+import { Moon, Sun, Cloud, Sunset, Sparkles, PartyPopper, TreePine, Star } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/theme-provider"
@@ -25,6 +25,10 @@ export function ThemeToggle() {
             case "dark": return <Moon className="h-[1.2rem] w-[1.2rem]" />
             case "ocean": return <Cloud className="h-[1.2rem] w-[1.2rem]" />
             case "sunset": return <Sunset className="h-[1.2rem] w-[1.2rem]" />
+            case "clean": return <Sparkles className="h-[1.2rem] w-[1.2rem]" />
+            case "newyear": return <PartyPopper className="h-[1.2rem] w-[1.2rem]" />
+            case "xmas": return <TreePine className="h-[1.2rem] w-[1.2rem]" />
+            case "starry": return <Star className="h-[1.2rem] w-[1.2rem]" />
             default: return <Sun className="h-[1.2rem] w-[1.2rem]" />
         }
     }
@@ -62,6 +66,30 @@ export function ThemeToggle() {
                             onClick={() => { setTheme("sunset"); setIsOpen(false) }}
                         >
                             <Sunset className="mr-2 h-4 w-4" /> Sunset
+                        </button>
+                        <button
+                            className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-muted"
+                            onClick={() => { setTheme("clean"); setIsOpen(false) }}
+                        >
+                            <Sparkles className="mr-2 h-4 w-4" /> Clean
+                        </button>
+                        <button
+                            className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-muted"
+                            onClick={() => { setTheme("newyear"); setIsOpen(false) }}
+                        >
+                            <PartyPopper className="mr-2 h-4 w-4" /> New Year
+                        </button>
+                        <button
+                            className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-muted"
+                            onClick={() => { setTheme("xmas"); setIsOpen(false) }}
+                        >
+                            <TreePine className="mr-2 h-4 w-4" /> Christmas
+                        </button>
+                        <button
+                            className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-muted"
+                            onClick={() => { setTheme("starry"); setIsOpen(false) }}
+                        >
+                            <Star className="mr-2 h-4 w-4" /> Starry
                         </button>
                     </div>
                 </div>

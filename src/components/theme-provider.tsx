@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 
-export type Theme = "light" | "dark" | "ocean" | "sunset"
+export type Theme = "light" | "dark" | "ocean" | "sunset" | "clean" | "newyear" | "xmas" | "starry"
 
 type ThemeProviderProps = {
     children: React.ReactNode
@@ -32,7 +32,7 @@ export function ThemeProvider({
     useEffect(() => {
         const root = window.document.documentElement
 
-        root.classList.remove("light", "dark", "ocean", "sunset")
+        root.classList.remove("light", "dark", "ocean", "sunset", "clean", "newyear", "xmas", "starry")
 
         // If theme is system, we could handle it here, but keeping it simple for now
         root.classList.add(theme)

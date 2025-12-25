@@ -94,6 +94,94 @@
     --ring: 340 80% 60%;
   }
 
+  [data-theme="clean"] {
+    --background: 0 0% 100%; /* Pure White */
+    --foreground: 220 10% 25%; /* Elegant Dark Gray */
+    --card: 0 0% 99%; /* Off-White */
+    --card-foreground: 220 10% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 25%;
+    --primary: 220 15% 40%; /* Refined Slate */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 95%; /* Light Gray */
+    --secondary-foreground: 220 10% 30%;
+    --muted: 220 10% 96%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 220 15% 90%; /* Subtle Accent */
+    --accent-foreground: 220 10% 25%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 90%;
+    --input: 220 10% 92%;
+    --ring: 220 15% 50%;
+  }
+
+  [data-theme="newyear"] {
+    --background: 45 60% 95%; /* Warm Champagne White */
+    --foreground: 0 60% 35%; /* Festive Red-Brown */
+    --card: 45 70% 92%; /* Soft Gold Tint */
+    --card-foreground: 0 60% 30%;
+    --popover: 45 70% 92%;
+    --popover-foreground: 0 60% 30%;
+    --primary: 0 75% 50%; /* Festive Red */
+    --primary-foreground: 45 90% 98%;
+    --secondary: 45 90% 55%; /* Bright Gold */
+    --secondary-foreground: 0 60% 25%;
+    --muted: 45 40% 88%;
+    --muted-foreground: 0 40% 45%;
+    --accent: 45 100% 50%; /* Gold */
+    --accent-foreground: 0 60% 25%;
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 45 90% 98%;
+    --border: 45 50% 80%;
+    --input: 45 50% 85%;
+    --ring: 0 75% 50%;
+  }
+
+  [data-theme="xmas"] {
+    --background: 120 25% 96%; /* Soft Mint White */
+    --foreground: 150 40% 25%; /* Pine Green */
+    --card: 120 30% 93%; /* Light Green Tint */
+    --card-foreground: 150 40% 22%;
+    --popover: 120 30% 93%;
+    --popover-foreground: 150 40% 22%;
+    --primary: 0 75% 50%; /* Christmas Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 60% 35%; /* Holly Green */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 120 20% 90%;
+    --muted-foreground: 150 30% 40%;
+    --accent: 45 90% 50%; /* Gold Star */
+    --accent-foreground: 150 40% 20%;
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 150 25% 82%;
+    --input: 120 20% 88%;
+    --ring: 0 75% 50%;
+  }
+
+  [data-theme="starry"] {
+    --background: 230 35% 12%; /* Deep Night Sky */
+    --foreground: 220 30% 90%; /* Starlight */
+    --card: 235 40% 16%; /* Darker Sky */
+    --card-foreground: 220 30% 90%;
+    --popover: 235 40% 16%;
+    --popover-foreground: 220 30% 90%;
+    --primary: 45 90% 65%; /* Golden Star */
+    --primary-foreground: 230 35% 12%;
+    --secondary: 260 50% 55%; /* Nebula Purple */
+    --secondary-foreground: 220 30% 95%;
+    --muted: 230 30% 22%;
+    --muted-foreground: 220 25% 65%;
+    --accent: 200 70% 50%; /* Cosmic Blue */
+    --accent-foreground: 220 30% 95%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 220 30% 95%;
+    --border: 230 30% 25%;
+    --input: 230 30% 20%;
+    --ring: 45 90% 65%;
+  }
+
   * {
     @apply border-border;
   }
