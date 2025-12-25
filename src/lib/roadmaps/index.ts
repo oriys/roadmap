@@ -13,6 +13,7 @@ import { javaJvmRoadmap } from "./java-jvm"
 import { securityRoadmap } from "./security"
 import { linuxRoadmap } from "./linux"
 import { softSkillsRoadmap } from "./soft-skills"
+import { mcpRoadmap } from "./mcp"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -30,6 +31,7 @@ export * from "./java-jvm"
 export * from "./security"
 export * from "./linux"
 export * from "./soft-skills"
+export * from "./mcp"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -47,6 +49,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   security: securityRoadmap,
   linux: linuxRoadmap,
   "soft-skills": softSkillsRoadmap,
+  mcp: mcpRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -65,5 +68,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   securityRoadmap,
   linuxRoadmap,
   softSkillsRoadmap,
+  mcpRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

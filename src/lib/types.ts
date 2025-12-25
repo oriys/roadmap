@@ -24,6 +24,7 @@ export type RoadmapId =
   | "security"
   | "linux"
   | "soft-skills"
+  | "mcp"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
