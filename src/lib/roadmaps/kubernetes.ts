@@ -1073,7 +1073,7 @@ export const kubernetesExamQuestions: QuizQuestion[] = [
 export const kubernetesRoadmap: RoadmapDefinition = {
     id: "kubernetes",
     label: "Kubernetes",
-    title: "Kubernetes 云原生实战路线",
+    title: "Kubernetes",
     durationLabel: "16 个主题",
     description:
         "按阶段拆成 16 个主题：容器与 Linux 基石 → 集群核心 → 网络/存储/调度 → 可观测性 → 安全与合规 → GitOps/Service Mesh。每个主题都有打卡、文档题单与即时测验，进度自动本地保存，按自己的节奏推进。",

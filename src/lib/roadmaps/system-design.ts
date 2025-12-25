@@ -1618,7 +1618,7 @@ export const systemDesignExamQuestions: QuizQuestion[] = [
 export const systemDesignRoadmap: RoadmapDefinition = {
     id: "system-design",
     label: "系统设计",
-    title: "系统设计大师课",
+    title: "系统设计",
     durationLabel: "24 个主题",
     description:
         "分布式系统理论 → 网络与负载均衡 → 数据存储与扩展 → 缓存与异步处理 → API 设计与通信 → 可观测性与案例实战，共 24 个主题，覆盖从 CAP 定理到 Twitter 时间线设计的完整知识体系。按阶段拆解，保持稳定节奏。",
