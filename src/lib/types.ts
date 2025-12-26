@@ -26,6 +26,7 @@ export type RoadmapId =
   | "soft-skills"
   | "blockchain"
   | "mcp"
+  | "cto"
   | "open-platform-gateway"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
