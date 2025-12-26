@@ -15,6 +15,7 @@ import { linuxRoadmap } from "./linux"
 import { softSkillsRoadmap } from "./soft-skills"
 import { mcpRoadmap } from "./mcp"
 import { blockchainRoadmap } from "./blockchain"
+import { openGatewayRoadmap } from "./open-platform-gateway"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -34,6 +35,7 @@ export * from "./linux"
 export * from "./soft-skills"
 export * from "./mcp"
 export * from "./blockchain"
+export * from "./open-platform-gateway"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -53,6 +55,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "soft-skills": softSkillsRoadmap,
   mcp: mcpRoadmap,
   blockchain: blockchainRoadmap,
+  "open-platform-gateway": openGatewayRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -73,5 +76,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   softSkillsRoadmap,
   mcpRoadmap,
   blockchainRoadmap,
+  openGatewayRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
