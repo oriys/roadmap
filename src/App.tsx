@@ -1307,8 +1307,8 @@ export default function App() {
       )}
 
       {lessonGuideView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
-          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto" onClick={() => setLessonGuideView(null)}>
+          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">主题讲解</p>
