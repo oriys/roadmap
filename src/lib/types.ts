@@ -28,6 +28,7 @@ export type RoadmapId =
   | "mcp"
   | "cto"
   | "open-platform-gateway"
+  | "machine-learning"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
