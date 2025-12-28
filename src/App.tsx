@@ -59,6 +59,7 @@ import { kubernetesGuides } from "@/lib/lesson-guides/kubernetes"
 import { systemDesignGuides } from "@/lib/lesson-guides/system-design"
 import { backendPerformanceGuides } from "@/lib/lesson-guides/backend-performance"
 import { apiPlatformGuides } from "@/lib/lesson-guides/api-platform"
+import { machineLearningGuides } from "@/lib/lesson-guides/machine-learning"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -784,6 +785,8 @@ export default function App() {
                                           ? backendPerformanceGuides[lesson.id]
                                           : activeRoadmapId === "api-platform"
                                           ? apiPlatformGuides[lesson.id]
+                                          : activeRoadmapId === "machine-learning"
+                                          ? machineLearningGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
