@@ -31,6 +31,8 @@ export type RoadmapId =
   | "machine-learning"
   | "ecommerce"
   | "data-structures-algorithms"
+  | "linux-kernel"
+  | "investment"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
