@@ -18,6 +18,7 @@ import { blockchainRoadmap } from "./blockchain"
 import { openGatewayRoadmap } from "./open-platform-gateway"
 import { ctoRoadmap } from "./cto"
 import { machineLearningRoadmap } from "./machine-learning"
+import { ecommerceRoadmap } from "./ecommerce"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -40,6 +41,7 @@ export * from "./blockchain"
 export * from "./open-platform-gateway"
 export * from "./cto"
 export * from "./machine-learning"
+export * from "./ecommerce"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -62,6 +64,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "open-platform-gateway": openGatewayRoadmap,
   cto: ctoRoadmap,
   "machine-learning": machineLearningRoadmap,
+  ecommerce: ecommerceRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -85,5 +88,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   openGatewayRoadmap,
   ctoRoadmap,
   machineLearningRoadmap,
+  ecommerceRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
