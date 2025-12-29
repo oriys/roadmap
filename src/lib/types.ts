@@ -25,6 +25,7 @@ export type RoadmapId =
   | "linux"
   | "soft-skills"
   | "blockchain"
+  | "llm-engineering"
   | "mcp"
   | "cto"
   | "open-platform-gateway"
