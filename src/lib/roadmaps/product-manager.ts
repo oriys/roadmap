@@ -104,8 +104,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Teresa Torres: Customer Interviews", url: "https://www.producttalk.org/getting-started-with-discovery/" },
-              { title: "IDEO: Interview Guide", url: "https://www.designkit.org/methods/interview" },
-              { title: "Maze: User Interviews", url: "https://maze.co/guides/ux-research/user-interviews/" },
+              { title: "User Interviews: UX Research Guide", url: "https://www.userinterviews.com/ux-research-field-guide-chapter/user-interviews" },
+              { title: "IxDF: User Interviews", url: "https://www.interaction-design.org/literature/topics/user-interviews" },
             ],
           },
           {
@@ -133,8 +133,8 @@ export const productManagerStages: Stage[] = [
               "用 JTBD 发现真正的竞争对手。",
             ],
             resources: [
-              { title: "JTBD 官方资源", url: "https://jtbd.info/" },
-              { title: "Intercom: JTBD Framework", url: "https://www.intercom.com/blog/using-job-stories-design-features-ui-ux/" },
+              { title: "Strategyn: JTBD Framework", url: "https://strategyn.com/jobs-to-be-done/" },
+              { title: "Intercom: Job Stories", url: "https://www.intercom.com/blog/using-job-stories-design-features-ui-ux/" },
               { title: "Harvard Business Review: JTBD", url: "https://hbr.org/2016/09/know-your-customers-jobs-to-be-done" },
             ],
           },
