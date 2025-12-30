@@ -22,6 +22,7 @@ import { ecommerceRoadmap } from "./ecommerce"
 import { dataStructuresAlgorithmsRoadmap } from "./data-structures-algorithms"
 import { linuxKernelRoadmap } from "./linux-kernel"
 import { investmentRoadmap } from "./investment"
+import { productManagerRoadmap } from "./product-manager"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -48,6 +49,7 @@ export * from "./ecommerce"
 export * from "./data-structures-algorithms"
 export * from "./linux-kernel"
 export * from "./investment"
+export * from "./product-manager"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -74,6 +76,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "data-structures-algorithms": dataStructuresAlgorithmsRoadmap,
   "linux-kernel": linuxKernelRoadmap,
   investment: investmentRoadmap,
+  "product-manager": productManagerRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -101,5 +104,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   dataStructuresAlgorithmsRoadmap,
   linuxKernelRoadmap,
   investmentRoadmap,
+  productManagerRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
