@@ -60,8 +60,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "AIPMM: Product Lifecycle", url: "https://aipmm.com/certification" },
-              { title: "ProductPlan: Product Lifecycle", url: "https://www.productplan.com/glossary/product-life-cycle/" },
-              { title: "Mind the Product: Product Lifecycle", url: "https://www.mindtheproduct.com/what-is-product-lifecycle-management/" },
+              { title: "HubSpot: Product Life Cycle", url: "https://blog.hubspot.com/marketing/product-life-cycle" },
+              { title: "Corporate Finance Institute: Product Life Cycle", url: "https://corporatefinanceinstitute.com/resources/management/product-life-cycle/" },
             ],
           },
           {
@@ -75,8 +75,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Teresa Torres: Product Discovery", url: "https://www.producttalk.org/2021/08/product-discovery/" },
-              { title: "John Cutler: 12 PM Competencies", url: "https://medium.com/@johnpcutler/12-core-competencies-for-product-managers-8d5744f91bd" },
-              { title: "ProductPlan: Product Thinking", url: "https://www.productplan.com/glossary/product-thinking/" },
+              { title: "Amplitude: Feature Factory Signs", url: "https://amplitude.com/blog/12-signs-youre-working-in-a-feature-factory-3-years-later" },
+              { title: "Product School: Product Thinking", url: "https://productschool.com/blog/product-fundamentals/product-thinking-vs-product-management" },
             ],
           },
         ],
