@@ -177,8 +177,8 @@ export const productManagerStages: Stage[] = [
               "SOM：可获取市场（短期目标）。",
             ],
             resources: [
-              { title: "ProductPlan: TAM SAM SOM", url: "https://www.productplan.com/glossary/tam-sam-som/" },
-              { title: "HubSpot: Market Sizing", url: "https://blog.hubspot.com/sales/tam-sam-som" },
+              { title: "Antler: TAM SAM SOM", url: "https://www.antler.co/blog/tam-sam-som" },
+              { title: "HubSpot: Market Sizing", url: "https://blog.hubspot.com/marketing/tam-sam-som" },
               { title: "Y Combinator: Market Size", url: "https://www.ycombinator.com/library/6r-how-to-evaluate-startup-ideas" },
             ],
           },
@@ -192,9 +192,9 @@ export const productManagerStages: Stage[] = [
               "竞品的商业模式与增长策略。",
             ],
             resources: [
-              { title: "ProductPlan: Competitive Analysis", url: "https://www.productplan.com/glossary/competitive-analysis/" },
-              { title: "Atlassian: Competitor Analysis", url: "https://www.atlassian.com/work-management/strategic-planning/competitive-analysis" },
-              { title: "Klue: Competitive Intelligence", url: "https://klue.com/blog/competitive-analysis-framework" },
+              { title: "Creately: Competitor Analysis Framework", url: "https://creately.com/guides/competitor-analysis-framework/" },
+              { title: "Shopify: Competitive Analysis", url: "https://www.shopify.com/blog/competitive-analysis" },
+              { title: "Stratechi: Market Competitive Analysis", url: "https://www.stratechi.com/market-competitive-analysis-template/" },
             ],
           },
           {
@@ -208,8 +208,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Harvard Business Review: Porter's Five Forces", url: "https://hbr.org/1979/03/how-competitive-forces-shape-strategy" },
-              { title: "MindTools: Five Forces", url: "https://www.mindtools.com/at7s3rm/porters-five-forces" },
-              { title: "Investopedia: Porter's Five Forces", url: "https://www.investopedia.com/terms/p/porter.asp" },
+              { title: "MindTools: Five Forces", url: "https://www.mindtools.com/at7k8my/porter-s-five-forces/" },
+              { title: "Cascade: Porter's Five Forces", url: "https://www.cascade.app/blog/porters-5-forces" },
             ],
           },
           {
@@ -222,8 +222,8 @@ export const productManagerStages: Stage[] = [
               "定位陈述（Positioning Statement）撰写。",
             ],
             resources: [
-              { title: "April Dunford: Positioning", url: "https://www.aprildunford.com/positioning" },
-              { title: "ProductPlan: Product Positioning", url: "https://www.productplan.com/glossary/product-positioning/" },
+              { title: "April Dunford: Obviously Awesome", url: "https://www.aprildunford.com/books" },
+              { title: "Lenny's Newsletter: April Dunford Positioning", url: "https://www.lennysnewsletter.com/p/summary-april-dunford-on-product" },
               { title: "Strategyzer: Value Proposition Canvas", url: "https://www.strategyzer.com/canvas/value-proposition-canvas" },
             ],
           },
