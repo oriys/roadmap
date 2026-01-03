@@ -260,7 +260,7 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Teresa Torres: Opportunity Solution Tree", url: "https://www.producttalk.org/2021/08/product-discovery/" },
-              { title: "ProductPlan: Feature Requests", url: "https://www.productplan.com/glossary/feature-request/" },
+              { title: "ProductPlan: Feature Requests", url: "https://www.productplan.com/learn/feature-requests-from-prospects/" },
               { title: "Intercom: Customer Feedback", url: "https://www.intercom.com/blog/customer-feedback/" },
             ],
           },
@@ -379,7 +379,7 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "ProductPlan: Stakeholder Management", url: "https://www.productplan.com/glossary/stakeholder-management/" },
-              { title: "Mind the Product: Stakeholder Alignment", url: "https://www.mindtheproduct.com/how-to-manage-stakeholders-as-a-product-manager/" },
+              { title: "SVPG: Stakeholder Management", url: "https://www.svpg.com/stakeholder-management/" },
               { title: "Aha!: Communicate Roadmap", url: "https://www.aha.io/roadmapping/guide/product-roadmap/how-to-communicate-your-product-roadmap" },
             ],
           },
@@ -439,7 +439,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "Amplitude: Analytics Guide", url: "https://amplitude.com/blog/product-analytics" },
               { title: "Mixpanel: Analytics Academy", url: "https://mixpanel.com/content/guide-to-product-analytics/" },
-              { title: "ProductPlan: Data-Driven PM", url: "https://www.productplan.com/glossary/data-driven-product-management/" },
+              { title: "ProductPlan: Data-Driven PM", url: "https://www.productplan.com/learn/data-driven-product-management/" },
             ],
           },
           {
@@ -565,8 +565,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "SVPG: Engineers", url: "https://www.svpg.com/product-managers-and-engineers/" },
-              { title: "Pragmatic Engineer: Working with PM", url: "https://blog.pragmaticengineer.com/product-managers/" },
-              { title: "Lenny's Newsletter: Eng Partnership", url: "https://www.lennysnewsletter.com/p/how-to-work-with-engineers" },
+              { title: "Pragmatic Engineer: Working with PM", url: "https://newsletter.pragmaticengineer.com/p/working-with-product-managers" },
+              { title: "GitLab Handbook: Product Management", url: "https://handbook.gitlab.com/handbook/product/product-management/" },
             ],
           },
           {
@@ -581,7 +581,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "SVPG: Designers", url: "https://www.svpg.com/product-manager-and-designer/" },
               { title: "InVision: PM and Design", url: "https://www.invisionapp.com/inside-design/product-managers-designers/" },
-              { title: "Nielsen Norman: PM Design Partnership", url: "https://www.nngroup.com/articles/pm-ux-collaboration/" },
+              { title: "Teresa Torres: Product Trio", url: "https://www.producttalk.org/product-trio/" },
             ],
           },
           {
@@ -594,7 +594,7 @@ export const productManagerStages: Stage[] = [
               "学会说「不」，但要给出理由。",
             ],
             resources: [
-              { title: "Mind Tools: Stakeholder Analysis", url: "https://www.mindtools.com/akqsmd5/stakeholder-analysis" },
+              { title: "Miro: Stakeholder Map", url: "https://miro.com/templates/stakeholder-map/" },
               { title: "ProductPlan: Stakeholder Management", url: "https://www.productplan.com/glossary/stakeholder-management/" },
               { title: "Atlassian: RACI", url: "https://www.atlassian.com/team-playbook/plays/roles-and-responsibilities" },
             ],
@@ -609,9 +609,9 @@ export const productManagerStages: Stage[] = [
               "用数据支撑观点。",
             ],
             resources: [
-              { title: "McKinsey: Pyramid Principle", url: "https://www.mckinsey.com/featured-insights/mckinsey-explainers/what-is-the-pyramid-principle" },
-              { title: "Atlassian: Status Updates", url: "https://www.atlassian.com/work-management/project-management/status-updates" },
-              { title: "Lenny's Newsletter: Communication", url: "https://www.lennysnewsletter.com/p/how-to-communicate-as-a-pm" },
+              { title: "Untools: Pyramid Principle", url: "https://untools.co/pyramid-principle/" },
+              { title: "Atlassian: Project Status Report Template", url: "https://www.atlassian.com/software/confluence/templates/project-status-report" },
+              { title: "Untools: MECE", url: "https://untools.co/mece/" },
             ],
           },
         ],
@@ -638,9 +638,9 @@ export const productManagerStages: Stage[] = [
               "跨部门协调：销售、客服、市场。",
             ],
             resources: [
-              { title: "ProductPlan: Launch Checklist", url: "https://www.productplan.com/glossary/product-launch-checklist/" },
+              { title: "ProductPlan: Launch Checklist", url: "https://www.productplan.com/learn/product-launch-checklist/" },
               { title: "Atlassian: Release Management", url: "https://www.atlassian.com/agile/software-development/release-management" },
-              { title: "Intercom: Product Launch", url: "https://www.intercom.com/blog/product-launch-checklist/" },
+              { title: "Atlassian: Product Launch", url: "https://www.atlassian.com/agile/product-management/product-launch" },
             ],
           },
           {
@@ -655,7 +655,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "LaunchDarkly: Feature Flags", url: "https://launchdarkly.com/blog/what-are-feature-flags/" },
               { title: "Martin Fowler: Feature Toggles", url: "https://martinfowler.com/articles/feature-toggles.html" },
-              { title: "ProductPlan: Release Strategy", url: "https://www.productplan.com/glossary/release-strategy/" },
+              { title: "Atlassian: Release Planning", url: "https://www.atlassian.com/agile/product-management/release-planning" },
             ],
           },
           {
@@ -670,7 +670,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "HubSpot: GTM Strategy", url: "https://blog.hubspot.com/sales/gtm-strategy" },
               { title: "ProductPlan: Go-to-Market", url: "https://www.productplan.com/glossary/go-to-market-strategy/" },
-              { title: "Gartner: GTM Planning", url: "https://www.gartner.com/en/sales/topics/go-to-market-strategy" },
+              { title: "Atlassian: Go-to-Market Strategy", url: "https://www.atlassian.com/agile/product-management/go-to-market-strategy" },
             ],
           },
           {
@@ -685,7 +685,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "Amplitude: Post-Launch", url: "https://amplitude.com/blog/product-launch-metrics" },
               { title: "ProductPlan: Iteration", url: "https://www.productplan.com/glossary/iteration/" },
-              { title: "Intercom: Post-Launch", url: "https://www.intercom.com/blog/product-launches/" },
+              { title: "Intercom: Product Launch (What Next)", url: "https://www.intercom.com/blog/product-launch-what-next/" },
             ],
           },
         ],
@@ -722,7 +722,7 @@ export const productManagerStages: Stage[] = [
             resources: [
               { title: "SVPG: Product Strategy", url: "https://www.svpg.com/product-strategy-overview/" },
               { title: "Gibson Biddle: Product Strategy", url: "https://gibsonbiddle.medium.com/intro-to-product-strategy-60bdf72b17e3" },
-              { title: "Lenny's Newsletter: Strategy", url: "https://www.lennysnewsletter.com/p/product-strategy" },
+              { title: "Atlassian: Product Strategy", url: "https://www.atlassian.com/agile/product-management/product-strategy" },
             ],
           },
           {
@@ -751,8 +751,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Price Intelligently: Pricing", url: "https://www.priceintelligently.com/" },
-              { title: "OpenView: Pricing Strategy", url: "https://openviewpartners.com/blog/product-pricing/" },
-              { title: "Lenny's Newsletter: Pricing", url: "https://www.lennysnewsletter.com/p/how-to-price-your-product" },
+              { title: "Paddle: Pricing Strategy", url: "https://www.paddle.com/resources/pricing-strategy" },
+              { title: "Wikipedia: Value-based pricing", url: "https://en.wikipedia.org/wiki/Value-based_pricing" },
             ],
           },
           {
@@ -765,9 +765,9 @@ export const productManagerStages: Stage[] = [
               "资源在不同产品间的分配。",
             ],
             resources: [
-              { title: "BCG: Growth-Share Matrix", url: "https://www.bcg.com/about/overview/our-history/growth-share-matrix" },
+              { title: "Wikipedia: Growth-share matrix", url: "https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix" },
               { title: "ProductPlan: Portfolio Management", url: "https://www.productplan.com/glossary/product-portfolio-management/" },
-              { title: "McKinsey: Portfolio Strategy", url: "https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/enduring-ideas-the-ge-and-mckinsey-nine-box-matrix" },
+              { title: "Wikipedia: GE multifactorial analysis", url: "https://en.wikipedia.org/wiki/GE_multifactorial_analysis" },
             ],
           },
         ],
@@ -794,9 +794,9 @@ export const productManagerStages: Stage[] = [
               "用「我们」而非「我」的心态协作。",
             ],
             resources: [
-              { title: "Harvard Business Review: Influence", url: "https://hbr.org/2013/04/three-ways-to-influence-people" },
+              { title: "Harvard Business Review: Influence Without Authority", url: "https://hbr.org/2008/02/exerting-influence-without-aut" },
               { title: "SVPG: Product Leadership", url: "https://www.svpg.com/product-leadership/" },
-              { title: "Mind the Product: Influence", url: "https://www.mindtheproduct.com/leading-without-authority/" },
+              { title: "Harvard Business Review: Leading Without Authority", url: "https://hbr.org/2009/05/leading-when-you-dont-have-for" },
             ],
           },
           {
@@ -810,8 +810,8 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Harvard Negotiation Project", url: "https://www.pon.harvard.edu/daily/negotiation-skills-daily/principled-negotiation-focus-interests-create-value/" },
-              { title: "Mind Tools: Conflict Resolution", url: "https://www.mindtools.com/ahcbc96/conflict-resolution" },
-              { title: "HBR: Managing Conflict", url: "https://hbr.org/2017/07/how-to-handle-conflict-in-product-management" },
+              { title: "Harvard Negotiation Project: Conflict Resolution", url: "https://www.pon.harvard.edu/daily/conflict-resolution/conflict-resolution-and-opportunities-for-mutual-gains-in-negotiation-key-concepts-from-getting-to-yes/" },
+              { title: "HBR: Conflict Resolution Skills", url: "https://hbr.org/2023/10/the-conflict-resolution-skills-every-project-manager-needs" },
             ],
           },
           {
@@ -825,7 +825,7 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "HBR: Managing Up", url: "https://hbr.org/2015/01/what-everyone-should-know-about-managing-up" },
-              { title: "Lenny's Newsletter: Managing Up", url: "https://www.lennysnewsletter.com/p/how-to-manage-up" },
+              { title: "HBR: Managing Up (Without Sucking Up)", url: "https://hbr.org/2014/12/managing-up-without-sucking-up" },
               { title: "First Round: Executive Communication", url: "https://review.firstround.com/how-to-become-insanely-well-connected" },
             ],
           },
@@ -840,7 +840,7 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "SVPG: Product Culture", url: "https://www.svpg.com/product-culture/" },
-              { title: "Mind the Product: Product Culture", url: "https://www.mindtheproduct.com/building-a-product-culture/" },
+              { title: "Atlassian: Product Culture", url: "https://www.atlassian.com/agile/product-management/product-culture" },
               { title: "Marty Cagan: Empowered", url: "https://www.svpg.com/empowered-ordinary-people-extraordinary-products/" },
             ],
           },
@@ -869,7 +869,7 @@ export const productManagerStages: Stage[] = [
             ],
             resources: [
               { title: "Coursera: PM Career Path", url: "https://www.coursera.org/resources/job-leveling-matrix-for-product-management-career-pathways" },
-              { title: "Lenny's Newsletter: PM Levels", url: "https://www.lennysnewsletter.com/p/what-distinguishes-a-great-product" },
+              { title: "Levels.fyi: Product Manager Levels", url: "https://www.levels.fyi/t/product-manager" },
               { title: "The Product Folks: Career Path", url: "https://www.theproductfolks.com/product-management-blog/skills-required-for-a-product-manager-unveiling-core-competencies" },
             ],
           },
@@ -898,8 +898,8 @@ export const productManagerStages: Stage[] = [
               "展示思考过程，而非只是结果。",
             ],
             resources: [
-              { title: "Product Manager HQ: Portfolio", url: "https://www.productmanagerhq.com/2019/12/product-manager-portfolio/" },
-              { title: "Lewis Lin: PM Interview", url: "https://www.lewis-lin.com/blog/product-manager-portfolio" },
+              { title: "CareerFoundry: PM Portfolio", url: "https://careerfoundry.com/en/blog/product-management/product-manager-portfolio/" },
+              { title: "Notion: Product Manager Portfolio Template", url: "https://www.notion.so/templates/product-manager-portfolio" },
               { title: "Medium: PM Portfolio", url: "https://medium.com/the-year-of-the-looking-glass/building-a-strong-pm-portfolio-9dd9cb1cc11a" },
             ],
           },

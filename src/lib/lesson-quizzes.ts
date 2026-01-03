@@ -3,6 +3,7 @@ import { technicalWriterQuizzes } from "./quizzes/technical-writer"
 import { apiPlatformLessonQuizzes } from "./lesson-guides/api-platform"
 import { golangLessonQuizzes } from "./lesson-guides/golang"
 import { dataStructuresAlgorithmsLessonQuizzes } from "./lesson-guides/data-structures-algorithms"
+import { productManagerLessonQuizzes } from "./lesson-guides/product-manager"
 import type { QuizQuestion } from "./quizzes/types"
 
 export type { QuizQuestion }
@@ -13,4 +14,5 @@ export const customLessonQuizzes: Record<string, QuizQuestion[]> = {
   ...apiPlatformLessonQuizzes,
   ...golangLessonQuizzes,
   ...dataStructuresAlgorithmsLessonQuizzes,
+  ...productManagerLessonQuizzes,
 }

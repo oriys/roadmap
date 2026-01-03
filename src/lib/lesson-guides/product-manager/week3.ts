@@ -86,8 +86,8 @@ export const week3Guides: Record<string, LessonGuide> = {
     ],
     sourceUrls: [
       "https://creately.com/guides/competitor-analysis-framework/",
-      "https://www.atlassian.com/work-management/strategic-planning/competitive-analysis",
-      "https://klue.com/blog/competitive-analysis-framework",
+      "https://www.atlassian.com/agile/product-management/competitive-analysis",
+      "https://www.shopify.com/blog/competitive-analysis",
     ],
   },
   "pm-w3-3": {

@@ -61,6 +61,7 @@ import { backendPerformanceGuides } from "@/lib/lesson-guides/backend-performanc
 import { apiPlatformGuides } from "@/lib/lesson-guides/api-platform"
 import { machineLearningGuides } from "@/lib/lesson-guides/machine-learning"
 import { dataStructuresAlgorithmsGuides } from "@/lib/lesson-guides/data-structures-algorithms"
+import { productManagerGuides } from "@/lib/lesson-guides/product-manager"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -790,6 +791,8 @@ export default function App() {
                                           ? machineLearningGuides[lesson.id]
                                           : activeRoadmapId === "data-structures-algorithms"
                                           ? dataStructuresAlgorithmsGuides[lesson.id]
+                                          : activeRoadmapId === "product-manager"
+                                          ? productManagerGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
