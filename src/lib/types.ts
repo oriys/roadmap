@@ -34,6 +34,7 @@ export type RoadmapId =
   | "linux-kernel"
   | "investment"
   | "product-manager"
+  | "home-buying"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
