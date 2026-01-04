@@ -1,0 +1,208 @@
+import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
+
+export const week5Guides: Record<string, LessonGuide> = {
+    "w5-1": {
+        lessonId: "w5-1",
+        background: [
+            "【独立数据库】每租户一个数据库实例，提供最强的隔离性，租户数据完全物理分离。",
+            "【连接管理】独立数据库模式需要为每个租户维护独立的连接池，连接数随租户增长。",
+            "【资源配置】可以为不同租户配置不同的数据库规格，支持差异化的性能 SLA。",
+            "【PgBouncer】连接池中间件，减少数据库连接开销，支持多租户连接路由。",
+        ],
+        keyDifficulties: [
+            "【成本压力】每租户独立实例成本高，小租户可能不经济，需要租户分层策略。",
+            "【运维复杂】需要管理大量数据库实例，升级、备份、监控都需要自动化。",
+            "【连接爆炸】租户数量增长导致连接数激增，需要连接池优化。",
+            "【跨租户查询】独立数据库模式下，跨租户聚合分析非常困难。",
+        ],
+        handsOnPath: [
+            "使用 Terraform 创建租户数据库自动化模板",
+            "配置 PgBouncer 多数据库连接池",
+            "实现租户数据库连接工厂模式",
+            "设计租户数据库监控和告警",
+            "实现租户数据库自动备份策略",
+        ],
+        selfCheck: [
+            "独立数据库模式的主要优势和劣势是什么？",
+            "如何管理大量租户数据库的连接？",
+            "PgBouncer 的 transaction 和 session 模式有什么区别？",
+            "如何实现跨租户的数据分析？",
+        ],
+        extensions: [
+            "研究 AWS RDS Multi-AZ 在多租户场景的应用",
+            "了解 Aurora Serverless 的按需扩缩容特性",
+        ],
+        sourceUrls: [
+            "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/database-per-tenant",
+            "https://www.pgbouncer.org/",
+            "https://aws.amazon.com/blogs/database/multi-tenant-data-isolation-with-amazon-rds-for-postgresql/",
+        ],
+    },
+    "w5-2": {
+        lessonId: "w5-2",
+        background: [
+            "【Schema 隔离】共享数据库实例，每租户独立 Schema，平衡隔离与成本。",
+            "【PostgreSQL Schema】PostgreSQL 原生支持 Schema，可通过 search_path 切换当前 Schema。",
+            "【连接复用】所有租户共享数据库连接，通过设置 Schema 切换租户上下文。",
+            "【Flyway 迁移】Flyway 支持 Schema 级别的迁移，可为每个租户独立执行。",
+        ],
+        keyDifficulties: [
+            "【Schema 数量限制】某些数据库对 Schema 数量有限制，影响大规模租户。",
+            "【迁移一致性】所有租户 Schema 需要保持结构一致，迁移需要协调。",
+            "【连接切换】每次请求需要正确设置 Schema，遗漏会导致跨租户访问。",
+            "【资源共享】共享实例的资源（CPU、内存、IOPS）需要在租户间公平分配。",
+        ],
+        handsOnPath: [
+            "创建租户 Schema 自动化脚本",
+            "配置 Spring 多租户 Schema 切换拦截器",
+            "设置 Flyway 多 Schema 迁移",
+            "实现 Schema 级别的资源隔离监控",
+        ],
+        selfCheck: [
+            "Schema 隔离相比独立数据库有什么优劣势？",
+            "如何确保每个请求都正确切换到目标 Schema？",
+            "Flyway 如何处理多 Schema 迁移？",
+        ],
+        extensions: [
+            "研究 Hibernate 多租户 Schema 支持",
+            "了解 MySQL 中使用 Database 实现类似隔离",
+        ],
+        sourceUrls: [
+            "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/schema-per-tenant",
+            "https://www.postgresql.org/docs/current/ddl-schemas.html",
+            "https://flywaydb.org/documentation/concepts/callbacks#schema-based-callbacks",
+        ],
+    },
+    "w5-3": {
+        lessonId: "w5-3",
+        background: [
+            "【共享表】所有租户数据在同一表中，通过 tenant_id 字段区分，成本最低。",
+            "【RLS】PostgreSQL Row Level Security 在数据库层面强制租户隔离。",
+            "【复合索引】tenant_id 应该是所有索引的前缀，确保查询效率。",
+            "【分区表】可以按 tenant_id 分区，提高大租户的查询性能。",
+        ],
+        keyDifficulties: [
+            "【隔离风险】应用层 Bug 可能导致跨租户数据泄露，需要多层防护。",
+            "【索引设计】所有查询都需要包含 tenant_id，遗漏会导致全表扫描或数据泄露。",
+            "【数据恢复】共享表模式下，单租户数据恢复非常复杂。",
+            "【热点问题】大租户数据量大，可能影响同表其他租户的查询性能。",
+        ],
+        handsOnPath: [
+            "创建带 tenant_id 的表结构",
+            "配置 PostgreSQL RLS 策略",
+            "设计包含 tenant_id 的复合索引",
+            "实现租户级别数据导出功能",
+            "测试 RLS 隔离有效性",
+        ],
+        selfCheck: [
+            "共享表模式的主要风险是什么？",
+            "RLS 策略的 USING 和 WITH CHECK 有什么区别？",
+            "为什么 tenant_id 应该是索引前缀？",
+        ],
+        extensions: [
+            "研究 MySQL 8.0 的替代方案（视图 + 应用层过滤）",
+            "了解 Citus 分布式 PostgreSQL 的多租户支持",
+        ],
+        sourceUrls: [
+            "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/multi-tenancy-database",
+            "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+            "https://dev.mysql.com/doc/refman/8.0/en/create-table-generated-columns.html",
+        ],
+    },
+    "w5-4": {
+        lessonId: "w5-4",
+        background: [
+            "【模式选择】选择数据库模式需要综合考虑隔离要求、成本预算、运维能力、规模预期。",
+            "【迁移策略】支持租户从共享表升级到独立 Schema 或独立数据库。",
+            "【零停机迁移】使用 CDC（Change Data Capture）实现在线迁移。",
+            "【gh-ost】GitHub 开源的 MySQL 在线 Schema 迁移工具。",
+        ],
+        keyDifficulties: [
+            "【决策复杂】没有万能方案，需要根据具体场景权衡。",
+            "【迁移风险】数据迁移过程中的一致性和可用性挑战。",
+            "【混合模式】实际场景常需要多种模式混合，增加架构复杂度。",
+            "【回滚计划】迁移失败时的回滚策略需要提前规划。",
+        ],
+        handsOnPath: [
+            "制定数据库模式选择决策树",
+            "设计租户数据迁移方案",
+            "实现 CDC 增量同步",
+            "制定迁移回滚计划",
+            "执行迁移演练",
+        ],
+        selfCheck: [
+            "选择数据库模式需要考虑哪些因素？",
+            "如何实现零停机租户数据迁移？",
+            "CDC 的基本原理是什么？",
+        ],
+        extensions: [
+            "研究 Debezium CDC 平台",
+            "了解 AWS DMS 数据迁移服务",
+        ],
+        sourceUrls: [
+            "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/choose-tenancy-model#database-tenancy",
+            "https://aws.amazon.com/blogs/database/migrating-a-multi-tenant-database/",
+            "https://github.com/github/gh-ost",
+        ],
+    },
+}
+
+export const week5Quizzes: Record<string, QuizQuestion[]> = {
+    "w5-1": [
+        { id: "w5-1-q1", question: "独立数据库模式的主要优势是什么？", options: ["成本最低", "最强的数据隔离", "运维最简单", "扩展性最好"], answer: 1, rationale: "独立数据库为每租户提供完全物理隔离的数据存储，隔离性最强。" },
+        { id: "w5-1-q2", question: "PgBouncer 在多租户场景中的作用是什么？", options: ["数据加密", "连接池管理和路由", "数据备份", "监控告警"], answer: 1, rationale: "PgBouncer 是连接池中间件，可以管理多数据库连接，减少连接开销。" },
+        { id: "w5-1-q3", question: "独立数据库模式的主要挑战是什么？", options: ["隔离性不足", "成本高、运维复杂", "性能差", "安全性低"], answer: 1, rationale: "每租户独立实例导致成本高，大量实例的运维也很复杂。" },
+        { id: "w5-1-q4", question: "如何实现跨租户的数据分析？", options: ["直接 JOIN 查询", "数据仓库聚合", "禁止跨租户分析", "使用缓存"], answer: 1, rationale: "独立数据库模式下，通常需要将数据同步到数据仓库进行聚合分析。" },
+        { id: "w5-1-q5", question: "PgBouncer 的 transaction 模式适合什么场景？", options: ["长连接应用", "短查询应用", "流式处理", "批量导入"], answer: 1, rationale: "transaction 模式在事务结束后释放连接，适合短查询高并发场景。" },
+        { id: "w5-1-q6", question: "租户数据库自动化 Provisioning 通常使用什么工具？", options: ["手动脚本", "Terraform/CloudFormation", "Excel 表格", "邮件申请"], answer: 1, rationale: "Infrastructure as Code 工具如 Terraform 可以自动化创建租户数据库。" },
+        { id: "w5-1-q7", question: "独立数据库模式下，如何处理连接数增长问题？", options: ["增加服务器", "使用连接池", "减少租户", "降低并发"], answer: 1, rationale: "连接池可以复用连接，减少每租户所需的连接数。" },
+        { id: "w5-1-q8", question: "AWS RDS Multi-AZ 在多租户场景中的好处是什么？", options: ["降低成本", "提高可用性和故障恢复能力", "简化开发", "加快查询"], answer: 1, rationale: "Multi-AZ 提供自动故障转移，提高每个租户数据库的可用性。" },
+        { id: "w5-1-q9", question: "独立数据库模式适合什么类型的租户？", options: ["所有租户", "高合规要求或大型企业租户", "免费用户", "试用用户"], answer: 1, rationale: "独立数据库成本高，通常用于有严格隔离要求的企业级租户。" },
+        { id: "w5-1-q10", question: "租户数据库备份策略应该考虑什么？", options: ["统一备份所有租户", "每租户独立的 RPO/RTO 和保留策略", "不需要备份", "只备份大租户"], answer: 1, rationale: "不同租户可能有不同的合规和恢复要求，需要独立的备份策略。" },
+        { id: "w5-1-q11", question: "Aurora Serverless 的什么特性对多租户有价值？", options: ["固定容量", "按需自动扩缩容", "手动管理", "单区域部署"], answer: 1, rationale: "Aurora Serverless 可以根据租户负载自动扩缩容，优化成本。" },
+        { id: "w5-1-q12", question: "独立数据库模式下，数据库升级的挑战是什么？", options: ["无挑战", "需要协调大量实例的升级窗口", "升级太快", "不能升级"], answer: 1, rationale: "大量独立实例需要协调升级计划，可能需要较长的维护窗口。" },
+    ],
+    "w5-2": [
+        { id: "w5-2-q1", question: "Schema 隔离模式的核心特点是什么？", options: ["每租户独立数据库实例", "共享实例，每租户独立 Schema", "所有租户共享表", "无隔离"], answer: 1, rationale: "Schema 隔离在共享数据库实例内为每租户创建独立的 Schema。" },
+        { id: "w5-2-q2", question: "PostgreSQL 如何切换当前 Schema？", options: ["USE 语句", "SET search_path", "SWITCH SCHEMA", "ALTER SESSION"], answer: 1, rationale: "PostgreSQL 使用 SET search_path 来设置当前 Schema 搜索路径。" },
+        { id: "w5-2-q3", question: "Schema 隔离相比独立数据库的优势是什么？", options: ["更强隔离", "更低成本和更简单的连接管理", "更好性能", "更安全"], answer: 1, rationale: "共享实例降低成本，所有租户可以共享连接池。" },
+        { id: "w5-2-q4", question: "Flyway 多 Schema 迁移的挑战是什么？", options: ["不支持 PostgreSQL", "需要确保所有租户 Schema 结构一致", "太快", "太慢"], answer: 1, rationale: "迁移需要在所有租户 Schema 上执行，保持结构一致性。" },
+        { id: "w5-2-q5", question: "Schema 隔离模式下，如何确保请求访问正确的租户数据？", options: ["应用层过滤", "在连接/会话级别设置正确的 Schema", "数据库自动判断", "不需要处理"], answer: 1, rationale: "每个请求需要在连接或会话级别设置正确的 search_path。" },
+        { id: "w5-2-q6", question: "Spring 多租户 Schema 切换通常在哪里实现？", options: ["Controller", "拦截器/Filter", "Repository", "Entity"], answer: 1, rationale: "通常在请求拦截器中根据租户上下文设置 Schema。" },
+        { id: "w5-2-q7", question: "Schema 隔离模式的租户数量限制来自哪里？", options: ["应用代码", "数据库对 Schema 数量的限制", "网络带宽", "存储空间"], answer: 1, rationale: "某些数据库对 Schema 数量有限制，影响可支持的租户数。" },
+        { id: "w5-2-q8", question: "Hibernate 多租户支持哪种隔离策略？", options: ["只支持共享表", "支持 SCHEMA、DATABASE、DISCRIMINATOR 三种", "只支持独立数据库", "不支持多租户"], answer: 1, rationale: "Hibernate 原生支持三种多租户策略。" },
+        { id: "w5-2-q9", question: "Schema 隔离模式下，资源争用问题如何缓解？", options: ["无法缓解", "资源配额、监控告警、负载均衡", "增加 Schema", "减少租户"], answer: 1, rationale: "通过资源配额限制单租户消耗，监控识别问题租户。" },
+        { id: "w5-2-q10", question: "MySQL 中如何实现类似 PostgreSQL Schema 的隔离？", options: ["使用 Schema", "使用 Database（每租户一个 Database）", "使用表前缀", "无法实现"], answer: 1, rationale: "MySQL 的 Database 概念类似 PostgreSQL 的 Schema。" },
+        { id: "w5-2-q11", question: "Schema 迁移失败时应该如何处理？", options: ["忽略继续", "回滚失败的 Schema，记录并告警", "重试所有", "删除租户"], answer: 1, rationale: "需要回滚失败的迁移，记录问题租户，后续修复。" },
+        { id: "w5-2-q12", question: "Schema 隔离模式适合什么规模的租户数量？", options: ["无限租户", "中等规模（数百到数千）", "只适合少量租户", "只适合单租户"], answer: 1, rationale: "Schema 数量有限制，适合中等规模，大规模需要考虑分片。" },
+    ],
+    "w5-3": [
+        { id: "w5-3-q1", question: "共享表模式的核心实现方式是什么？", options: ["独立表", "通过 tenant_id 字段区分租户数据", "独立数据库", "独立 Schema"], answer: 1, rationale: "共享表模式所有租户数据在同一表中，通过 tenant_id 区分。" },
+        { id: "w5-3-q2", question: "PostgreSQL RLS 的作用是什么？", options: ["加密数据", "在数据库层面强制行级访问控制", "压缩数据", "备份数据"], answer: 1, rationale: "Row Level Security 在数据库层面自动过滤行，强制隔离。" },
+        { id: "w5-3-q3", question: "共享表模式下，索引设计的最佳实践是什么？", options: ["不需要索引", "tenant_id 作为复合索引的前缀", "只索引 tenant_id", "避免索引"], answer: 1, rationale: "tenant_id 作为前缀确保查询可以利用索引过滤租户数据。" },
+        { id: "w5-3-q4", question: "共享表模式的主要风险是什么？", options: ["成本太高", "应用 Bug 可能导致跨租户数据泄露", "性能太好", "太安全"], answer: 1, rationale: "如果应用层忘记添加 tenant_id 过滤，可能泄露其他租户数据。" },
+        { id: "w5-3-q5", question: "RLS 策略中 USING 子句的作用是什么？", options: ["控制 INSERT", "控制 SELECT/UPDATE/DELETE 的行可见性", "控制 DDL", "控制权限"], answer: 1, rationale: "USING 子句定义哪些行对当前用户可见，用于读取操作。" },
+        { id: "w5-3-q6", question: "共享表模式下，单租户数据恢复为什么困难？", options: ["数据太少", "数据与其他租户混在一起，难以隔离恢复", "不支持备份", "恢复太快"], answer: 1, rationale: "共享表中租户数据交织，无法简单恢复单租户到某个时间点。" },
+        { id: "w5-3-q7", question: "如何测试 RLS 隔离的有效性？", options: ["不需要测试", "使用不同租户上下文尝试访问其他租户数据", "只测试性能", "只测试功能"], answer: 1, rationale: "需要用不同租户身份验证无法访问其他租户数据。" },
+        { id: "w5-3-q8", question: "分区表在共享表多租户中的作用是什么？", options: ["增加隔离", "按租户分区提高大租户查询性能", "减少存储", "简化开发"], answer: 1, rationale: "按 tenant_id 分区可以提高大租户的查询效率。" },
+        { id: "w5-3-q9", question: "共享表模式为什么成本最低？", options: ["硬件便宜", "所有租户共享数据库资源，利用率最高", "不需要开发", "不需要运维"], answer: 1, rationale: "共享表最大化资源利用率，边际成本最低。" },
+        { id: "w5-3-q10", question: "Citus 如何帮助共享表多租户？", options: ["提供 RLS", "分布式分片，按 tenant_id 分布数据", "提供备份", "提供监控"], answer: 1, rationale: "Citus 可以按 tenant_id 分片，解决单机容量和性能限制。" },
+        { id: "w5-3-q11", question: "WITH CHECK 子句在 RLS 中的作用是什么？", options: ["检查查询性能", "控制 INSERT/UPDATE 时新行必须满足的条件", "检查语法", "检查权限"], answer: 1, rationale: "WITH CHECK 确保新插入或更新的数据满足策略条件。" },
+        { id: "w5-3-q12", question: "查询遗漏 tenant_id 过滤会导致什么问题？", options: ["无问题", "全表扫描性能差，或可能泄露其他租户数据", "语法错误", "连接失败"], answer: 1, rationale: "遗漏 tenant_id 导致无法利用索引，且可能返回错误数据。" },
+    ],
+    "w5-4": [
+        { id: "w5-4-q1", question: "选择数据库多租户模式需要考虑哪些因素？", options: ["只考虑成本", "隔离要求、成本、运维能力、规模", "只考虑性能", "只考虑安全"], answer: 1, rationale: "需要综合考虑多个因素，没有万能方案。" },
+        { id: "w5-4-q2", question: "CDC（Change Data Capture）的作用是什么？", options: ["压缩数据", "捕获数据变更，支持实时同步", "加密数据", "删除数据"], answer: 1, rationale: "CDC 捕获数据库变更事件，可用于实时数据同步。" },
+        { id: "w5-4-q3", question: "gh-ost 工具的用途是什么？", options: ["数据备份", "MySQL 在线 Schema 迁移", "数据加密", "连接池"], answer: 1, rationale: "gh-ost 是 GitHub 开源的 MySQL 在线 Schema 变更工具。" },
+        { id: "w5-4-q4", question: "零停机迁移的关键技术是什么？", options: ["快速重启", "双写 + CDC 增量同步 + 切换", "备份恢复", "禁止写入"], answer: 1, rationale: "通过双写或 CDC 保持数据同步，切换时不丢失数据。" },
+        { id: "w5-4-q5", question: "租户从共享表升级到独立 Schema 的典型原因是什么？", options: ["降低成本", "隔离要求提升或性能需求增加", "减少功能", "简化架构"], answer: 1, rationale: "租户增长后可能需要更强的隔离或独立的性能保证。" },
+        { id: "w5-4-q6", question: "数据迁移回滚计划应该包含什么？", options: ["不需要回滚", "回滚步骤、时间窗口、数据一致性验证", "只需要文档", "自动回滚"], answer: 1, rationale: "需要详细的回滚步骤和验证方法，确保可以安全回退。" },
+        { id: "w5-4-q7", question: "Debezium 是什么类型的工具？", options: ["数据库引擎", "分布式 CDC 平台", "监控工具", "备份工具"], answer: 1, rationale: "Debezium 是开源的 CDC 平台，支持多种数据库。" },
+        { id: "w5-4-q8", question: "混合数据库模式的优势是什么？", options: ["简化架构", "根据租户需求灵活选择最适合的模式", "降低成本", "提高安全"], answer: 1, rationale: "不同租户可以使用不同的隔离级别，优化成本和隔离平衡。" },
+        { id: "w5-4-q9", question: "数据迁移过程中如何保证一致性？", options: ["停止服务", "使用事务或 CDC 确保变更不丢失", "忽略不一致", "重新生成数据"], answer: 1, rationale: "通过事务或 CDC 捕获迁移过程中的变更，保证一致性。" },
+        { id: "w5-4-q10", question: "AWS DMS 的作用是什么？", options: ["数据加密", "数据库迁移和持续复制服务", "数据备份", "数据压缩"], answer: 1, rationale: "DMS 提供数据库迁移和持续同步能力。" },
+        { id: "w5-4-q11", question: "决策数据库模式时，规模预期指什么？", options: ["数据库大小", "预期的租户数量和数据增长", "团队规模", "代码规模"], answer: 1, rationale: "需要考虑未来租户数量和数据量的增长。" },
+        { id: "w5-4-q12", question: "迁移演练的目的是什么？", options: ["测试功能", "验证迁移流程、发现问题、测量时间", "测试性能", "测试安全"], answer: 1, rationale: "演练可以发现问题、验证步骤、估算实际迁移时间。" },
+    ],
+}
