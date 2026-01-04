@@ -37,6 +37,9 @@ export type RoadmapId =
   | "investment"
   | "product-manager"
   | "home-buying"
+  | "microservices-patterns"
+  | "domain-driven-design"
+  | "multi-tenant"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {

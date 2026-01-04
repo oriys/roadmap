@@ -26,6 +26,9 @@ import { investmentRoadmap } from "./investment"
 import { productManagerRoadmap } from "./product-manager"
 import { homeBuyingRoadmap } from "./home-buying"
 import { javaFeaturesRoadmap } from "./java-features"
+import { microservicesPatternsRoadmap } from "./microservices-patterns"
+import { domainDrivenDesignRoadmap } from "./domain-driven-design"
+import { multiTenantRoadmap } from "./multi-tenant"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -56,6 +59,9 @@ export * from "./investment"
 export * from "./product-manager"
 export * from "./home-buying"
 export * from "./java-features"
+export * from "./microservices-patterns"
+export * from "./domain-driven-design"
+export * from "./multi-tenant"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -86,6 +92,9 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "product-manager": productManagerRoadmap,
   "home-buying": homeBuyingRoadmap,
   "java-features": javaFeaturesRoadmap,
+  "microservices-patterns": microservicesPatternsRoadmap,
+  "domain-driven-design": domainDrivenDesignRoadmap,
+  "multi-tenant": multiTenantRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -117,5 +126,8 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   productManagerRoadmap,
   homeBuyingRoadmap,
   javaFeaturesRoadmap,
+  microservicesPatternsRoadmap,
+  domainDrivenDesignRoadmap,
+  multiTenantRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
