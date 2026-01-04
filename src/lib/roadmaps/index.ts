@@ -10,6 +10,7 @@ import { observabilitySreRoadmap } from "./observability-sre"
 import { messageQueueRoadmap } from "./message-queue"
 import { databaseRoadmap } from "./database"
 import { javaJvmRoadmap } from "./java-jvm"
+import { jvmRoadmap } from "./jvm"
 import { securityRoadmap } from "./security"
 import { linuxRoadmap } from "./linux"
 import { softSkillsRoadmap } from "./soft-skills"
@@ -24,6 +25,7 @@ import { linuxKernelRoadmap } from "./linux-kernel"
 import { investmentRoadmap } from "./investment"
 import { productManagerRoadmap } from "./product-manager"
 import { homeBuyingRoadmap } from "./home-buying"
+import { javaFeaturesRoadmap } from "./java-features"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -38,6 +40,7 @@ export * from "./observability-sre"
 export * from "./message-queue"
 export * from "./database"
 export * from "./java-jvm"
+export * from "./jvm"
 export * from "./security"
 export * from "./linux"
 export * from "./soft-skills"
@@ -52,6 +55,7 @@ export * from "./linux-kernel"
 export * from "./investment"
 export * from "./product-manager"
 export * from "./home-buying"
+export * from "./java-features"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -66,6 +70,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "message-queue": messageQueueRoadmap,
   database: databaseRoadmap,
   "java-jvm": javaJvmRoadmap,
+  jvm: jvmRoadmap,
   security: securityRoadmap,
   linux: linuxRoadmap,
   "soft-skills": softSkillsRoadmap,
@@ -80,6 +85,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   investment: investmentRoadmap,
   "product-manager": productManagerRoadmap,
   "home-buying": homeBuyingRoadmap,
+  "java-features": javaFeaturesRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -95,6 +101,7 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   messageQueueRoadmap,
   databaseRoadmap,
   javaJvmRoadmap,
+  jvmRoadmap,
   securityRoadmap,
   linuxRoadmap,
   softSkillsRoadmap,
@@ -109,5 +116,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   investmentRoadmap,
   productManagerRoadmap,
   homeBuyingRoadmap,
+  javaFeaturesRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

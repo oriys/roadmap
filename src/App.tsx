@@ -62,6 +62,7 @@ import { apiPlatformGuides } from "@/lib/lesson-guides/api-platform"
 import { machineLearningGuides } from "@/lib/lesson-guides/machine-learning"
 import { dataStructuresAlgorithmsGuides } from "@/lib/lesson-guides/data-structures-algorithms"
 import { productManagerGuides } from "@/lib/lesson-guides/product-manager"
+import { javaFeaturesGuides } from "@/lib/lesson-guides/java-features"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -793,6 +794,8 @@ export default function App() {
                                           ? dataStructuresAlgorithmsGuides[lesson.id]
                                           : activeRoadmapId === "product-manager"
                                           ? productManagerGuides[lesson.id]
+                                          : activeRoadmapId === "java-features"
+                                          ? javaFeaturesGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
