@@ -63,6 +63,7 @@ import { machineLearningGuides } from "@/lib/lesson-guides/machine-learning"
 import { dataStructuresAlgorithmsGuides } from "@/lib/lesson-guides/data-structures-algorithms"
 import { productManagerGuides } from "@/lib/lesson-guides/product-manager"
 import { javaFeaturesGuides } from "@/lib/lesson-guides/java-features"
+import { jvmGuides } from "@/lib/lesson-guides/jvm"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -796,6 +797,8 @@ export default function App() {
                                           ? productManagerGuides[lesson.id]
                                           : activeRoadmapId === "java-features"
                                           ? javaFeaturesGuides[lesson.id]
+                                          : activeRoadmapId === "jvm"
+                                          ? jvmGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button

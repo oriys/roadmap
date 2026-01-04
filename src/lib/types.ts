@@ -21,6 +21,8 @@ export type RoadmapId =
   | "message-queue"
   | "database"
   | "java-jvm"
+  | "java-features"
+  | "jvm"
   | "security"
   | "linux"
   | "soft-skills"
