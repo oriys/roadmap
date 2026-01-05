@@ -29,6 +29,7 @@ import { javaFeaturesRoadmap } from "./java-features"
 import { microservicesPatternsRoadmap } from "./microservices-patterns"
 import { domainDrivenDesignRoadmap } from "./domain-driven-design"
 import { multiTenantRoadmap } from "./multi-tenant"
+import { pythonRoadmap } from "./python"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -62,6 +63,7 @@ export * from "./java-features"
 export * from "./microservices-patterns"
 export * from "./domain-driven-design"
 export * from "./multi-tenant"
+export * from "./python"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -95,6 +97,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "microservices-patterns": microservicesPatternsRoadmap,
   "domain-driven-design": domainDrivenDesignRoadmap,
   "multi-tenant": multiTenantRoadmap,
+  python: pythonRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -129,5 +132,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   microservicesPatternsRoadmap,
   domainDrivenDesignRoadmap,
   multiTenantRoadmap,
+  pythonRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

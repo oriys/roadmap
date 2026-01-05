@@ -64,6 +64,14 @@ import { dataStructuresAlgorithmsGuides } from "@/lib/lesson-guides/data-structu
 import { productManagerGuides } from "@/lib/lesson-guides/product-manager"
 import { javaFeaturesGuides } from "@/lib/lesson-guides/java-features"
 import { jvmGuides } from "@/lib/lesson-guides/jvm"
+import { pythonGuides } from "@/lib/lesson-guides/python"
+import { domainDrivenDesignGuides } from "@/lib/lesson-guides/domain-driven-design"
+import { ecommerceGuides } from "@/lib/lesson-guides/ecommerce"
+import { golangGuides } from "@/lib/lesson-guides/golang"
+import { homeBuyingGuides } from "@/lib/lesson-guides/home-buying"
+import { investmentGuides } from "@/lib/lesson-guides/investment"
+import { microservicesPatternsGuides } from "@/lib/lesson-guides/microservices-patterns"
+import { multiTenantGuides } from "@/lib/lesson-guides/multi-tenant"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -799,6 +807,22 @@ export default function App() {
                                           ? javaFeaturesGuides[lesson.id]
                                           : activeRoadmapId === "jvm"
                                           ? jvmGuides[lesson.id]
+                                          : activeRoadmapId === "python"
+                                          ? pythonGuides[lesson.id]
+                                          : activeRoadmapId === "domain-driven-design"
+                                          ? domainDrivenDesignGuides[lesson.id]
+                                          : activeRoadmapId === "ecommerce"
+                                          ? ecommerceGuides[lesson.id]
+                                          : activeRoadmapId === "golang"
+                                          ? golangGuides[lesson.id]
+                                          : activeRoadmapId === "home-buying"
+                                          ? homeBuyingGuides[lesson.id]
+                                          : activeRoadmapId === "investment"
+                                          ? investmentGuides[lesson.id]
+                                          : activeRoadmapId === "microservices-patterns"
+                                          ? microservicesPatternsGuides[lesson.id]
+                                          : activeRoadmapId === "multi-tenant"
+                                          ? multiTenantGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
