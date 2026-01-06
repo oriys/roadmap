@@ -26,59 +26,38 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { docQuestionMap } from "@/lib/doc-questions"
+import { LessonGuideModal } from "@/components/roadmap/LessonGuideModal"
+import { LessonQuizModal } from "@/components/roadmap/LessonQuizModal"
+import { ResourceModal } from "@/components/roadmap/ResourceModal"
+import { getLessonGuide } from "@/lib/lesson-guides/by-roadmap"
+import { roadmapTotals } from "@/lib/roadmap-totals"
+import { displayTopicTitle } from "@/lib/topic-title"
 
 import {
   type Lesson,
   type Week,
   type Stage,
-
   type QuizState,
   type LessonQuizState,
   type DocQuizProgress,
   type ResourceContext,
   type RoadmapId,
   type QuizQuestion,
-  type RoadmapDefinition,
 } from "@/lib/types"
-import {
-  getLessonOverview,
-  hashToUint32,
-  shuffledOrder,
-
-  buildLessonQuizCanonical,
-  buildLessonQuiz,
-} from "@/lib/quiz-helpers"
 import {
   ROADMAPS,
   ROADMAP_LIST,
   DEFAULT_ROADMAP_ID,
 } from "@/lib/roadmaps"
-import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
-import { kubernetesGuides } from "@/lib/lesson-guides/kubernetes"
-import { systemDesignGuides } from "@/lib/lesson-guides/system-design"
-import { backendPerformanceGuides } from "@/lib/lesson-guides/backend-performance"
-import { apiPlatformGuides } from "@/lib/lesson-guides/api-platform"
-import { machineLearningGuides } from "@/lib/lesson-guides/machine-learning"
-import { dataStructuresAlgorithmsGuides } from "@/lib/lesson-guides/data-structures-algorithms"
-import { productManagerGuides } from "@/lib/lesson-guides/product-manager"
-import { javaFeaturesGuides } from "@/lib/lesson-guides/java-features"
-import { jvmGuides } from "@/lib/lesson-guides/jvm"
-import { pythonGuides } from "@/lib/lesson-guides/python"
-import { domainDrivenDesignGuides } from "@/lib/lesson-guides/domain-driven-design"
-import { ecommerceGuides } from "@/lib/lesson-guides/ecommerce"
-import { golangGuides } from "@/lib/lesson-guides/golang"
-import { homeBuyingGuides } from "@/lib/lesson-guides/home-buying"
-import { investmentGuides } from "@/lib/lesson-guides/investment"
-import { microservicesPatternsGuides } from "@/lib/lesson-guides/microservices-patterns"
-import { multiTenantGuides } from "@/lib/lesson-guides/multi-tenant"
-import { cloudDesignPatternsGuides } from "@/lib/lesson-guides/cloud-design-patterns"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
-
-
-const ACTIVE_ROADMAP_KEY = "roadmap-active-id"
-const STORAGE_KEY_PREFIX = "roadmap-progress-v1"
-const LEGACY_K8S_STORAGE_KEY = "k8s-roadmap-progress-v2"
+import {
+  ACTIVE_ROADMAP_KEY,
+  defaultLessonQuizState,
+  defaultQuizState,
+  loadPersistedProgress,
+  loadProgressSummary,
+  storageKeyForRoadmap,
+} from "@/lib/progress-storage"
 
 const isRoadmapId = (value: string | null): value is RoadmapId =>
   !!value && Object.hasOwn(ROADMAPS, value)
@@ -87,123 +66,6 @@ function getRoadmapIdFromPath(pathname: string): RoadmapId | null {
   const normalized = pathname.replace(/^\/+|\/+$/g, "")
   const [first] = normalized.split("/")
   return isRoadmapId(first) ? first : null
-}
-
-function storageKeyForRoadmap(roadmapId: RoadmapId) {
-  return `${STORAGE_KEY_PREFIX}:${roadmapId}`
-}
-
-function roadmapTotals(stages: Stage[]) {
-  const lessons = stages.reduce((sum, stage) => sum + stage.weeks.reduce((weekSum, w) => weekSum + w.lessons.length, 0), 0)
-  const weeks = stages.reduce((sum, stage) => sum + stage.weeks.length, 0)
-  return { lessons, weeks, stages: stages.length }
-}
-
-function loadProgressSummary(roadmap: RoadmapDefinition) {
-  if (typeof window === "undefined") return { completed: 0, bestScore: undefined as number | undefined }
-  try {
-    const key = storageKeyForRoadmap(roadmap.id)
-    const raw =
-      localStorage.getItem(key) || (roadmap.id === "kubernetes" ? localStorage.getItem(LEGACY_K8S_STORAGE_KEY) : null)
-    if (!raw) return { completed: 0, bestScore: undefined as number | undefined }
-    const parsed = JSON.parse(raw)
-    const completed = Array.isArray(parsed.completed) ? parsed.completed.length : 0
-    const bestScore = typeof parsed?.quiz?.bestScore === "number" ? parsed.quiz.bestScore : undefined
-    return { completed, bestScore }
-  } catch {
-    return { completed: 0, bestScore: undefined as number | undefined }
-  }
-}
-
-const defaultQuizState: QuizState = { answers: {}, attempts: 0, bestScore: undefined, lastScore: undefined }
-const defaultLessonQuizState: LessonQuizState = { answers: {}, attempts: 0, bestScore: undefined, lastScore: undefined }
-
-function loadPersisted(roadmap: RoadmapDefinition) {
-  if (typeof window === "undefined") {
-    return {
-      completed: new Set<string>(),
-      quiz: defaultQuizState,
-      lessonQuiz: {} as Record<string, LessonQuizState>,
-      docQuiz: {} as DocQuizProgress,
-    }
-  }
-  try {
-    const key = storageKeyForRoadmap(roadmap.id)
-    const raw = localStorage.getItem(key) || (roadmap.id === "kubernetes" ? localStorage.getItem(LEGACY_K8S_STORAGE_KEY) : null)
-    if (!raw)
-      return {
-        completed: new Set<string>(),
-        quiz: defaultQuizState,
-        lessonQuiz: {} as Record<string, LessonQuizState>,
-        docQuiz: {} as DocQuizProgress,
-      }
-    const parsed = JSON.parse(raw)
-
-    let lessonQuiz: Record<string, LessonQuizState> = parsed.lessonQuiz || {}
-    if (!parsed.lessonQuizOptionsShuffled) {
-      try {
-        const optionCountByQuestionId: Record<string, number> = {}
-        roadmap.stages.forEach((stage) =>
-          stage.weeks.forEach((week) =>
-            week.lessons.forEach((lesson) =>
-              buildLessonQuizCanonical(lesson, week, stage).forEach((q) => {
-                optionCountByQuestionId[q.id] = q.options.length
-              })
-            )
-          )
-        )
-
-        const migrated: Record<string, LessonQuizState> = {}
-        Object.entries(lessonQuiz).forEach(([lessonId, state]) => {
-          const answers = state?.answers || {}
-          const nextAnswers: Record<string, number | undefined> = {}
-          Object.entries(answers).forEach(([qid, idx]) => {
-            if (typeof idx !== "number") return
-            const optionCount = optionCountByQuestionId[qid]
-            if (typeof optionCount !== "number") {
-              nextAnswers[qid] = idx
-              return
-            }
-            const order = shuffledOrder(optionCount, hashToUint32(qid))
-            const nextIdx = order.indexOf(idx)
-            nextAnswers[qid] = nextIdx === -1 ? idx : nextIdx
-          })
-          migrated[lessonId] = { ...state, answers: nextAnswers }
-        })
-        lessonQuiz = migrated
-      } catch (error) {
-        console.warn("课时测验选项顺序迁移失败，将使用原记录", error)
-      }
-    }
-
-    return {
-      completed: new Set<string>(parsed.completed || []),
-      quiz: {
-        ...defaultQuizState,
-        ...parsed.quiz,
-        answers: parsed.quiz?.answers ?? {},
-      },
-      lessonQuiz,
-      docQuiz: parsed.docQuiz || ({} as DocQuizProgress),
-    }
-  } catch (error) {
-    console.warn("无法读取本地进度，将使用默认值", error)
-    return {
-      completed: new Set<string>(),
-      quiz: defaultQuizState,
-      lessonQuiz: {} as Record<string, LessonQuizState>,
-      docQuiz: {} as DocQuizProgress,
-    }
-  }
-}
-
-function formatTopicLabel(title: string) {
-  return title.replace(/^第\s*\d+\s*周[:：]?\s*/, "").trim() || title
-}
-
-function displayTopicTitle(title: string, idx?: number) {
-  const cleaned = formatTopicLabel(title)
-  return idx != null ? `主题 ${idx + 1}：${cleaned}` : `主题：${cleaned}`
 }
 
 export default function App() {
@@ -215,7 +77,7 @@ export default function App() {
       (isRoadmapId(stored) ? stored : DEFAULT_ROADMAP_ID)
     const roadmap = ROADMAPS[roadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
     const page: "landing" | "roadmap" = pathRoadmapId ? "roadmap" : "landing"
-    return { roadmapId: roadmap.id, roadmap, persisted: loadPersisted(roadmap), page }
+    return { roadmapId: roadmap.id, roadmap, persisted: loadPersistedProgress(roadmap), page }
   }, [])
 
   const [activeRoadmapId, setActiveRoadmapId] = React.useState<RoadmapId>(initial.roadmapId)
@@ -365,9 +227,10 @@ export default function App() {
     (roadmapId: RoadmapId, nextTab: string = "overview", updateHistory = true) => {
       setResourceView(null)
       setLessonQuizView(null)
+      setLessonGuideView(null)
       if (roadmapId !== activeRoadmapId) {
         const nextRoadmap = ROADMAPS[roadmapId]
-        const persisted = loadPersisted(nextRoadmap)
+        const persisted = loadPersistedProgress(nextRoadmap)
         setCompletedLessons(persisted.completed)
         setQuizState(persisted.quiz)
         setLessonQuiz(persisted.lessonQuiz || {})
@@ -389,6 +252,7 @@ export default function App() {
     (updateHistory = true) => {
       setResourceView(null)
       setLessonQuizView(null)
+      setLessonGuideView(null)
       setPage("landing")
       if (updateHistory && typeof window !== "undefined") {
         window.history.pushState({}, "", "/")
@@ -412,15 +276,6 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState)
   }, [openLanding, openRoadmap])
 
-  const docQuestionList = React.useCallback((lessonId: string) => docQuestionMap[lessonId] || [], [])
-  const docDoneCount = React.useCallback(
-    (lessonId: string) => {
-      const list = docQuestionList(lessonId)
-      const done = docQuiz[lessonId]?.length || 0
-      return { done, total: list.length }
-    },
-    [docQuiz, docQuestionList]
-  )
   const toggleDocQuestion = (lessonId: string, idx: number) => {
     setDocQuiz((prev) => {
       const current = new Set(prev[lessonId] || [])
@@ -564,22 +419,6 @@ export default function App() {
   const showQuizFeedback = quizState.lastScore != null
   const lastScore = quizState.lastScore ?? 0
   const bestScore = quizState.bestScore ?? lastScore
-  const topicIndex = resourceView ? resourceView.stage.weeks.findIndex((week) => week.id === resourceView.week.id) : -1
-  const topicTitle = resourceView
-    ? displayTopicTitle(resourceView.week.title, topicIndex === -1 ? undefined : topicIndex)
-    : ""
-  const lessonQuizTopicIndex = lessonQuizView
-    ? lessonQuizView.stage.weeks.findIndex((week) => week.id === lessonQuizView.week.id)
-    : -1
-  const lessonQuizTopicTitle = lessonQuizView
-    ? displayTopicTitle(lessonQuizView.week.title, lessonQuizTopicIndex === -1 ? undefined : lessonQuizTopicIndex)
-    : ""
-  const lessonGuideTopicIndex = lessonGuideView
-    ? lessonGuideView.stage.weeks.findIndex((week) => week.id === lessonGuideView.week.id)
-    : -1
-  const lessonGuideTopicTitle = lessonGuideView
-    ? displayTopicTitle(lessonGuideView.week.title, lessonGuideTopicIndex === -1 ? undefined : lessonGuideTopicIndex)
-    : ""
 
   return (
     <div className="min-h-screen bg-background/80 text-foreground relative">
@@ -756,6 +595,7 @@ export default function App() {
                           <div className="space-y-2">
                             {week.lessons.map((lesson) => {
                               const checked = completedLessons.has(lesson.id)
+                              const guide = getLessonGuide(activeRoadmapId, lesson.id)
                               return (
                                 <div
                                   key={lesson.id}
@@ -787,57 +627,16 @@ export default function App() {
                                           </a>
                                         ))
                                         : null}
-                                      {(() => {
-                                        const guide = activeRoadmapId === "technical-writer"
-                                          ? technicalWriterGuides[lesson.id]
-                                          : activeRoadmapId === "kubernetes"
-                                          ? kubernetesGuides[lesson.id]
-                                          : activeRoadmapId === "system-design"
-                                          ? systemDesignGuides[lesson.id]
-                                          : activeRoadmapId === "backend-performance-best-practices"
-                                          ? backendPerformanceGuides[lesson.id]
-                                          : activeRoadmapId === "api-platform"
-                                          ? apiPlatformGuides[lesson.id]
-                                          : activeRoadmapId === "machine-learning"
-                                          ? machineLearningGuides[lesson.id]
-                                          : activeRoadmapId === "data-structures-algorithms"
-                                          ? dataStructuresAlgorithmsGuides[lesson.id]
-                                          : activeRoadmapId === "product-manager"
-                                          ? productManagerGuides[lesson.id]
-                                          : activeRoadmapId === "java-features"
-                                          ? javaFeaturesGuides[lesson.id]
-                                          : activeRoadmapId === "jvm"
-                                          ? jvmGuides[lesson.id]
-                                          : activeRoadmapId === "python"
-                                          ? pythonGuides[lesson.id]
-                                          : activeRoadmapId === "domain-driven-design"
-                                          ? domainDrivenDesignGuides[lesson.id]
-                                          : activeRoadmapId === "ecommerce"
-                                          ? ecommerceGuides[lesson.id]
-                                          : activeRoadmapId === "golang"
-                                          ? golangGuides[lesson.id]
-                                          : activeRoadmapId === "home-buying"
-                                          ? homeBuyingGuides[lesson.id]
-                                          : activeRoadmapId === "investment"
-                                          ? investmentGuides[lesson.id]
-                                          : activeRoadmapId === "microservices-patterns"
-                                          ? microservicesPatternsGuides[lesson.id]
-                                          : activeRoadmapId === "multi-tenant"
-                                          ? multiTenantGuides[lesson.id]
-                                          : activeRoadmapId === "cloud-design-patterns"
-                                          ? cloudDesignPatternsGuides[lesson.id]
-                                          : null
-                                        return guide ? (
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="h-7 px-2 text-xs"
-                                            onClick={() => setLessonGuideView({ lesson, week, stage, guide })}
-                                          >
-                                            主题讲解
-                                          </Button>
-                                        ) : null
-                                      })()}
+                                      {guide ? (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          className="h-7 px-2 text-xs"
+                                          onClick={() => setLessonGuideView({ lesson, week, stage, guide })}
+                                        >
+                                          主题讲解
+                                        </Button>
+                                      ) : null}
                                       <Button
                                         size="sm"
                                         variant="outline"
@@ -1046,7 +845,7 @@ export default function App() {
                   <AlertDescription className="space-y-1">
                     <p>最佳成绩：{bestScore}% · 已尝试 {quizState.attempts} 次</p>
                     <p>
-                          {lastScore >= 90
+                      {lastScore >= 90
                         ? "优秀！具备实战水平，可以做一遍故障排查演练。"
                         : lastScore >= 75
                           ? "良好，再补充 NetworkPolicy / Helm 与可观测性查询练习。"
@@ -1062,385 +861,28 @@ export default function App() {
         </Tabs>
       </div>
 
-      {resourceView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
-          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">文档讲解</p>
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{resourceView.resource.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {resourceView.stage.title} · {topicTitle} · {resourceView.lesson.title}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setResourceView(null)}>
-                  关闭
-                </Button>
-                <Button size="sm" asChild>
-                  <a href={resourceView.resource.url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
-                    打开原文 <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-            </div>
+      {resourceView ? (
+        <ResourceModal view={resourceView} roadmap={activeRoadmap} onClose={() => setResourceView(null)} />
+      ) : null}
 
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground">
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">背景补充</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>前置认知：{resourceView.week.overview || resourceView.week.summary || "先通读官方概念与示例，再上手实验。"}</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>本课综述：{getLessonOverview(resourceView.lesson) || resourceView.lesson.detail}</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>环境预期：{activeRoadmap.resourceGuide.environment}</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                    <span>与其他主题关联：{resourceView.stage.title} → {resourceView.stage.goal}</span>
-                  </li>
-                </ul>
-              </div>
+      {lessonQuizView ? (
+        <LessonQuizModal
+          view={lessonQuizView}
+          roadmap={activeRoadmap}
+          docQuiz={docQuiz}
+          getLessonQuizState={getLessonQuizState}
+          onSelectAnswer={handleLessonQuizSelect}
+          onSubmitQuiz={submitLessonQuiz}
+          onResetQuiz={resetLessonQuiz}
+          onToggleDocQuestion={toggleDocQuestion}
+          onResetDocQuiz={resetDocQuiz}
+          onClose={() => setLessonQuizView(null)}
+        />
+      ) : null}
 
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">重难点拆解</p>
-                <ul className="space-y-1 text-foreground/90">
-                  {(resourceView.week.keyPoints && resourceView.week.keyPoints.length
-                    ? resourceView.week.keyPoints
-                    : resourceView.lesson.keyPoints && resourceView.lesson.keyPoints.length
-                      ? resourceView.lesson.keyPoints
-                      : activeRoadmap.resourceGuide.fallbackKeyPoints
-                  ).map((kp, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{kp}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">动手路径</p>
-                <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
-                  {activeRoadmap.resourceGuide.handsOnSteps.map((step, idx) => (
-                    <li key={idx}>{step}</li>
-                  ))}
-                </ol>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">自检/质询</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  {activeRoadmap.resourceGuide.selfChecks.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">扩展与衍生</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  {activeRoadmap.resourceGuide.extensions.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {lessonQuizView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
-          <div className="w-full max-w-4xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">课时测验</p>
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{lessonQuizView.lesson.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {lessonQuizView.stage.title} · {lessonQuizTopicTitle}
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-2">{getLessonOverview(lessonQuizView.lesson) || lessonQuizView.lesson.detail}</p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    resetLessonQuiz(lessonQuizView.lesson.id)
-                    resetDocQuiz(lessonQuizView.lesson.id)
-                  }}
-                >
-                  清空记录
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setLessonQuizView(null)}>
-                  关闭
-                </Button>
-              </div>
-            </div>
-
-            {(() => {
-              const docList = docQuestionList(lessonQuizView.lesson.id)
-              if (docList.length) {
-                const { done, total } = docDoneCount(lessonQuizView.lesson.id)
-                return (
-                  <div className="mt-4 space-y-4">
-                    <div className="grid gap-3 md:grid-cols-3">
-                      <div className="rounded-lg border border-border/60 bg-background/70 p-3">
-                        <p className="text-xs text-muted-foreground">文档题数</p>
-                        <p className="text-lg font-semibold">
-                          {done}/{total}
-                        </p>
-                      </div>
-                      <div className="rounded-lg border border-border/60 bg-background/70 p-3">
-                        <p className="text-xs text-muted-foreground">来源</p>
-                        <p className="text-sm text-muted-foreground">自动解析 lesson_quizzes.md</p>
-                      </div>
-                      <div className="rounded-lg border border-border/60 bg-background/70 p-3 flex items-center justify-between">
-                        <p className="text-xs text-muted-foreground">重置标记</p>
-                        <Button size="sm" variant="outline" onClick={() => resetDocQuiz(lessonQuizView.lesson.id)}>
-                          清空
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {docList.map((prompt, idx) => {
-                        const checked = docQuiz[lessonQuizView.lesson.id]?.includes(idx) || false
-                        return (
-                          <div key={idx} className="rounded-xl border border-border/60 bg-background/70 p-4 flex gap-3">
-                            <Checkbox
-                              checked={checked}
-                              onCheckedChange={() => toggleDocQuestion(lessonQuizView.lesson.id, idx)}
-                              className="mt-1"
-                            />
-                            <div className="space-y-1">
-                              <p className="text-sm font-semibold">
-                                Q{idx + 1}. {prompt}
-                              </p>
-                              <p className="text-xs text-muted-foreground">阅读官方/权威文档后作答并勾选完成</p>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              }
-              const qlist = buildLessonQuiz(lessonQuizView.lesson, lessonQuizView.week, lessonQuizView.stage)
-              const state = getLessonQuizState(lessonQuizView.lesson.id)
-              const showFeedback = state.lastScore != null
-              return (
-                <div className="mt-4 space-y-3">
-                  <div className="grid gap-3 md:grid-cols-3">
-                    <div className="rounded-lg border border-border/60 bg-background/70 p-3">
-                      <p className="text-xs text-muted-foreground">已尝试</p>
-                      <p className="text-lg font-semibold">{state.attempts || 0}</p>
-                    </div>
-                    <div className="rounded-lg border border-border/60 bg-background/70 p-3">
-                      <p className="text-xs text-muted-foreground">最佳成绩</p>
-                      <p className="text-lg font-semibold">{state.bestScore != null ? `${state.bestScore}%` : "—"}</p>
-                    </div>
-                    <div className="rounded-lg border border-border/60 bg-background/70 p-3">
-                      <p className="text-xs text-muted-foreground">已答题目</p>
-                      <p className="text-lg font-semibold">
-                        {Object.keys(state.answers || {}).length}/{qlist.length}
-                      </p>
-                    </div>
-                  </div>
-
-                  {qlist.map((q, idx) => {
-                    const selected = state.answers[q.id]
-                    return (
-                      <div key={q.id} className="rounded-xl border border-border/60 bg-background/70 p-4 space-y-3">
-                        <div className="flex items-start gap-2">
-                          <Badge variant="secondary">Q{idx + 1}</Badge>
-                          <div className="space-y-1">
-                            <p className="font-semibold text-base">{q.question}</p>
-                            {showFeedback && (
-                              <p className="text-xs text-muted-foreground">正确答案：{String.fromCharCode(65 + q.answer)}</p>
-                            )}
-                          </div>
-                        </div>
-                        <RadioGroup
-                          value={selected !== undefined ? String(selected) : undefined}
-                          onValueChange={(val) => handleLessonQuizSelect(lessonQuizView.lesson.id, q.id, Number(val))}
-                          className="space-y-2"
-                        >
-                          {q.options.map((opt, optIdx) => {
-                            const isSelected = selected === optIdx
-                            const isCorrect = showFeedback && optIdx === q.answer
-                            const isWrong = showFeedback && isSelected && optIdx !== q.answer
-                            return (
-                              <label
-                                key={optIdx}
-                                className={[
-                                  "flex cursor-pointer items-start gap-3 rounded-lg border border-border/50 bg-card/40 p-3 transition",
-                                  isCorrect ? "border-primary/60 bg-primary/10" : "",
-                                  isWrong ? "border-destructive/50 bg-destructive/10" : "",
-                                  !showFeedback && isSelected ? "border-accent/50 bg-accent/10" : "",
-                                ].join(" ")}
-                                htmlFor={`${q.id}-${optIdx}`}
-                              >
-                                <RadioGroupItem value={String(optIdx)} id={`${q.id}-${optIdx}`} className="mt-1" />
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium">
-                                    {String.fromCharCode(65 + optIdx)}. {opt}
-                                  </p>
-                                  {showFeedback && isCorrect && (
-                                    <p className="text-xs text-muted-foreground">正确</p>
-                                  )}
-                                  {showFeedback && isWrong && (
-                                    <p className="text-xs text-destructive">已选择，建议回顾对应讲解</p>
-                                  )}
-                                </div>
-                              </label>
-                            )
-                          })}
-                        </RadioGroup>
-                        {showFeedback && <p className="text-sm text-muted-foreground">{q.rationale}</p>}
-                      </div>
-                    )
-                  })}
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button onClick={() => submitLessonQuiz(lessonQuizView.lesson.id, qlist)} className="gap-2">
-                      提交并查看成绩
-                    </Button>
-                    <Button variant="outline" onClick={() => resetLessonQuiz(lessonQuizView.lesson.id)}>
-                      清空答题
-                    </Button>
-                  </div>
-
-                  {(() => {
-                    if (!showFeedback) return null
-                    return (
-                      <Alert className="border-accent/60 bg-accent/10">
-                        <AlertTitle>成绩：{getLessonQuizState(lessonQuizView.lesson.id).lastScore}%</AlertTitle>
-                        <AlertDescription className="space-y-1">
-                          <p>
-                            最佳：{getLessonQuizState(lessonQuizView.lesson.id).bestScore}% · 尝试{" "}
-                            {getLessonQuizState(lessonQuizView.lesson.id).attempts} 次
-                          </p>
-                          <p className="text-muted-foreground">
-                            {activeRoadmap.resourceGuide.lessonQuizAdvice}
-                          </p>
-                        </AlertDescription>
-                      </Alert>
-                    )
-                  })()}
-                </div>
-              )
-            })()}
-          </div>
-        </div>
-      )}
-
-      {lessonGuideView && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto" onClick={() => setLessonGuideView(null)}>
-          <div className="w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 sm:p-6 shadow-glow my-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">主题讲解</p>
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{lessonGuideView.lesson.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {lessonGuideView.stage.title} · {lessonGuideTopicTitle}
-                </p>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => setLessonGuideView(null)}>
-                关闭
-              </Button>
-            </div>
-
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-foreground">
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">背景补充</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  {lessonGuideView.guide.background.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">重难点拆解</p>
-                <ul className="space-y-1 text-foreground/90">
-                  {lessonGuideView.guide.keyDifficulties.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">动手路径</p>
-                <ol className="list-decimal pl-4 space-y-1 text-muted-foreground">
-                  {lessonGuideView.guide.handsOnPath.map((step, idx) => (
-                    <li key={idx}>{step}</li>
-                  ))}
-                </ol>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">自检/质询</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  {lessonGuideView.guide.selfCheck.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">扩展与衍生</p>
-                <ul className="space-y-1 text-muted-foreground">
-                  {lessonGuideView.guide.extensions.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {lessonGuideView.guide.sourceUrls.length > 0 && (
-                <div className="rounded-lg border border-border/60 bg-background/70 p-4 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">参考来源</p>
-                  <ul className="space-y-1 text-muted-foreground">
-                    {lessonGuideView.guide.sourceUrls.map((url, idx) => (
-                      <li key={idx} className="flex gap-2">
-                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
-                        <a href={url} target="_blank" rel="noreferrer" className="text-accent hover:underline break-all">
-                          {url}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {lessonGuideView ? (
+        <LessonGuideModal view={lessonGuideView} onClose={() => setLessonGuideView(null)} />
+      ) : null}
     </div>
   )
 }
