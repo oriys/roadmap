@@ -19,6 +19,11 @@ import { week16Guides, week16Quizzes } from "./week16"
 import { week17Guides, week17Quizzes } from "./week17"
 import { week18Guides, week18Quizzes } from "./week18"
 import { week19Guides, week19Quizzes } from "./week19"
+import { week20Guides, week20Quizzes } from "./week20"
+import { week21Guides, week21Quizzes } from "./week21"
+import { week22Guides, week22Quizzes } from "./week22"
+import { week23Guides, week23Quizzes } from "./week23"
+import { week24Guides, week24Quizzes } from "./week24"
 
 // 课时测验接口
 export interface LessonQuiz {
@@ -47,6 +52,11 @@ export const pythonGuides: Record<string, LessonGuide> = {
     ...week17Guides,
     ...week18Guides,
     ...week19Guides,
+    ...week20Guides,
+    ...week21Guides,
+    ...week22Guides,
+    ...week23Guides,
+    ...week24Guides,
 }
 
 // 课时测验汇总
@@ -70,4 +80,9 @@ export const pythonLessonQuizzes: Record<string, QuizQuestion[]> = {
     ...week17Quizzes,
     ...week18Quizzes,
     ...week19Quizzes,
+    ...week20Quizzes,
+    ...week21Quizzes,
+    ...week22Quizzes,
+    ...week23Quizzes,
+    ...week24Quizzes,
 }
