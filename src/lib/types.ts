@@ -41,6 +41,7 @@ export type RoadmapId =
   | "domain-driven-design"
   | "multi-tenant"
   | "python"
+  | "cloud-design-patterns"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {

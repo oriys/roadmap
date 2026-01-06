@@ -72,6 +72,7 @@ import { homeBuyingGuides } from "@/lib/lesson-guides/home-buying"
 import { investmentGuides } from "@/lib/lesson-guides/investment"
 import { microservicesPatternsGuides } from "@/lib/lesson-guides/microservices-patterns"
 import { multiTenantGuides } from "@/lib/lesson-guides/multi-tenant"
+import { cloudDesignPatternsGuides } from "@/lib/lesson-guides/cloud-design-patterns"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 
 
@@ -823,6 +824,8 @@ export default function App() {
                                           ? microservicesPatternsGuides[lesson.id]
                                           : activeRoadmapId === "multi-tenant"
                                           ? multiTenantGuides[lesson.id]
+                                          : activeRoadmapId === "cloud-design-patterns"
+                                          ? cloudDesignPatternsGuides[lesson.id]
                                           : null
                                         return guide ? (
                                           <Button
