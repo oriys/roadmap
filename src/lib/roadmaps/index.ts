@@ -32,6 +32,7 @@ import { multiTenantRoadmap } from "./multi-tenant"
 import { pythonRoadmap } from "./python"
 import { cloudDesignPatternsRoadmap } from "./cloud-design-patterns"
 import { pulsarRoadmap } from "./pulsar"
+import { grpcRoadmap } from "./grpc"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -68,6 +69,7 @@ export * from "./multi-tenant"
 export * from "./python"
 export * from "./cloud-design-patterns"
 export * from "./pulsar"
+export * from "./grpc"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -104,6 +106,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   python: pythonRoadmap,
   "cloud-design-patterns": cloudDesignPatternsRoadmap,
   pulsar: pulsarRoadmap,
+  grpc: grpcRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -141,5 +144,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   pythonRoadmap,
   cloudDesignPatternsRoadmap,
   pulsarRoadmap,
+  grpcRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
