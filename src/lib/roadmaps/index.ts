@@ -31,6 +31,7 @@ import { domainDrivenDesignRoadmap } from "./domain-driven-design"
 import { multiTenantRoadmap } from "./multi-tenant"
 import { pythonRoadmap } from "./python"
 import { cloudDesignPatternsRoadmap } from "./cloud-design-patterns"
+import { pulsarRoadmap } from "./pulsar"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -66,6 +67,7 @@ export * from "./domain-driven-design"
 export * from "./multi-tenant"
 export * from "./python"
 export * from "./cloud-design-patterns"
+export * from "./pulsar"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -101,6 +103,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "multi-tenant": multiTenantRoadmap,
   python: pythonRoadmap,
   "cloud-design-patterns": cloudDesignPatternsRoadmap,
+  pulsar: pulsarRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -137,5 +140,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   multiTenantRoadmap,
   pythonRoadmap,
   cloudDesignPatternsRoadmap,
+  pulsarRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

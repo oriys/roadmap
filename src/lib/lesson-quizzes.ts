@@ -17,6 +17,7 @@ import { investmentLessonQuizzes } from "./lesson-guides/investment"
 import { microservicesPatternsLessonQuizzes } from "./lesson-guides/microservices-patterns"
 import { multiTenantLessonQuizzes } from "./lesson-guides/multi-tenant"
 import { cloudDesignPatternsLessonQuizzes } from "./lesson-guides/cloud-design-patterns"
+import { pulsarLessonQuizzes } from "./lesson-guides/pulsar"
 import type { QuizQuestion } from "./quizzes/types"
 
 export type { QuizQuestion }
@@ -41,4 +42,5 @@ export const customLessonQuizzes: Record<string, QuizQuestion[]> = {
   ...microservicesPatternsLessonQuizzes,
   ...multiTenantLessonQuizzes,
   ...cloudDesignPatternsLessonQuizzes,
+  ...pulsarLessonQuizzes,
 }

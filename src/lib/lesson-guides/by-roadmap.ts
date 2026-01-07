@@ -20,6 +20,7 @@ import { pythonGuides } from "@/lib/lesson-guides/python"
 import { systemDesignGuides } from "@/lib/lesson-guides/system-design"
 import { technicalWriterGuides } from "@/lib/lesson-guides/technical-writer"
 import { investmentGuides } from "@/lib/lesson-guides/investment"
+import { pulsarGuides } from "@/lib/lesson-guides/pulsar"
 
 type LessonGuideMap = Record<string, LessonGuide>
 
@@ -43,6 +44,7 @@ const LESSON_GUIDES_BY_ROADMAP_ID: Partial<Record<RoadmapId, LessonGuideMap>> = 
   python: pythonGuides,
   "system-design": systemDesignGuides,
   "technical-writer": technicalWriterGuides,
+  pulsar: pulsarGuides,
 }
 
 export function getLessonGuide(roadmapId: RoadmapId, lessonId: string): LessonGuide | undefined {
