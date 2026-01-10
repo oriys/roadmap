@@ -27,8 +27,7 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LessonGuideModal } from "@/components/roadmap/LessonGuideModal"
-import { LessonQuizModal } from "@/components/roadmap/LessonQuizModal"
+import { LessonPage } from "@/components/lesson/LessonPage"
 import { ResourceModal } from "@/components/roadmap/ResourceModal"
 import { AppShell } from "@/components/layout/AppShell"
 import { SwipeContainer } from "@/components/mobile/SwipeContainer"
@@ -40,9 +39,6 @@ import { displayTopicTitle } from "@/lib/topic-title"
 import type { BottomNavTab } from "@/components/layout/BottomNav"
 
 import {
-  type Lesson,
-  type Week,
-  type Stage,
   type QuizState,
   type LessonQuizState,
   type DocQuizProgress,
@@ -58,7 +54,6 @@ import {
   ROADMAP_CATEGORIES,
   CATEGORY_MAP,
 } from "@/lib/roadmaps"
-import type { LessonGuide } from "@/lib/lesson-guides/types"
 import {
   ACTIVE_ROADMAP_KEY,
   defaultLessonQuizState,
@@ -72,22 +67,54 @@ import { matchAnyPinyin } from "@/lib/pinyin-search"
 const isRoadmapId = (value: string | null): value is RoadmapId =>
   !!value && Object.hasOwn(ROADMAPS, value)
 
-function getRoadmapIdFromPath(pathname: string): RoadmapId | null {
+type LessonViewType = "guide" | "quiz"
+type PageType = "landing" | "roadmap" | "lesson"
+
+function parsePathname(pathname: string): {
+  page: PageType
+  roadmapId: RoadmapId | null
+  lessonId: string | null
+  viewType: LessonViewType | null
+} {
   const normalized = pathname.replace(/^\/+|\/+$/g, "")
-  const [first] = normalized.split("/")
-  return isRoadmapId(first) ? first : null
+  const parts = normalized.split("/")
+
+  if (parts.length === 0 || parts[0] === "") {
+    return { page: "landing", roadmapId: null, lessonId: null, viewType: null }
+  }
+
+  const roadmapId = isRoadmapId(parts[0]) ? parts[0] : null
+  if (!roadmapId) {
+    return { page: "landing", roadmapId: null, lessonId: null, viewType: null }
+  }
+
+  // /go/w1-1/guide or /go/w1-1/quiz
+  if (parts.length >= 3 && (parts[2] === "guide" || parts[2] === "quiz")) {
+    return { page: "lesson", roadmapId, lessonId: parts[1], viewType: parts[2] as LessonViewType }
+  }
+
+  // /go (roadmap page)
+  return { page: "roadmap", roadmapId, lessonId: null, viewType: null }
 }
 
 export default function App() {
   const initial = React.useMemo(() => {
-    const pathRoadmapId = typeof window === "undefined" ? null : getRoadmapIdFromPath(window.location.pathname)
+    const parsed = typeof window === "undefined"
+      ? { page: "landing" as PageType, roadmapId: null, lessonId: null, viewType: null }
+      : parsePathname(window.location.pathname)
     const stored = typeof window === "undefined" ? null : localStorage.getItem(ACTIVE_ROADMAP_KEY)
     const roadmapId: RoadmapId =
-      pathRoadmapId ||
+      parsed.roadmapId ||
       (isRoadmapId(stored) ? stored : DEFAULT_ROADMAP_ID)
     const roadmap = ROADMAPS[roadmapId] || ROADMAPS[DEFAULT_ROADMAP_ID]
-    const page: "landing" | "roadmap" = pathRoadmapId ? "roadmap" : "landing"
-    return { roadmapId: roadmap.id, roadmap, persisted: loadPersistedProgress(roadmap), page }
+    return {
+      roadmapId: roadmap.id,
+      roadmap,
+      persisted: loadPersistedProgress(roadmap),
+      page: parsed.page,
+      lessonId: parsed.lessonId,
+      viewType: parsed.viewType,
+    }
   }, [])
 
   const [activeRoadmapId, setActiveRoadmapId] = React.useState<RoadmapId>(initial.roadmapId)
@@ -98,14 +125,15 @@ export default function App() {
   const [lessonQuiz, setLessonQuiz] = React.useState<Record<string, LessonQuizState>>(initial.persisted.lessonQuiz || {})
   const [docQuiz, setDocQuiz] = React.useState<DocQuizProgress>(initial.persisted.docQuiz || {})
   const [lastStudiedLessonId, setLastStudiedLessonId] = React.useState<string | undefined>(initial.persisted.lastStudiedLessonId)
-  const [page, setPage] = React.useState<"landing" | "roadmap">(initial.page)
+  const [page, setPage] = React.useState<PageType>(initial.page)
+  const [lessonPageView, setLessonPageView] = React.useState<{ lessonId: string; viewType: LessonViewType } | null>(
+    initial.lessonId && initial.viewType ? { lessonId: initial.lessonId, viewType: initial.viewType } : null
+  )
   const [selectedCategory, setSelectedCategory] = React.useState<RoadmapCategory>("all")
   const [searchQuery, setSearchQuery] = React.useState("")
   const [tab, setTab] = React.useState("overview")
   const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
-  const [lessonQuizView, setLessonQuizView] = React.useState<{ lesson: Lesson; week: Week; stage: Stage } | null>(null)
-  const [lessonGuideView, setLessonGuideView] = React.useState<{ lesson: Lesson; week: Week; stage: Stage; guide: LessonGuide } | null>(null)
 
   const totalLessons = React.useMemo(
     () =>
@@ -259,8 +287,7 @@ export default function App() {
   const openRoadmap = React.useCallback(
     (roadmapId: RoadmapId, nextTab: string = "overview", updateHistory = true, scrollToRecent = false) => {
       setResourceView(null)
-      setLessonQuizView(null)
-      setLessonGuideView(null)
+      setLessonPageView(null)
       let lessonToScrollTo: string | undefined
       if (roadmapId !== activeRoadmapId) {
         const nextRoadmap = ROADMAPS[roadmapId]
@@ -293,8 +320,7 @@ export default function App() {
   const openLanding = React.useCallback(
     (updateHistory = true) => {
       setResourceView(null)
-      setLessonQuizView(null)
-      setLessonGuideView(null)
+      setLessonPageView(null)
       setPage("landing")
       if (updateHistory && typeof window !== "undefined") {
         window.history.pushState({}, "", "/")
@@ -304,19 +330,46 @@ export default function App() {
     [scrollToTop]
   )
 
+  const openLesson = React.useCallback(
+    (lessonId: string, viewType: LessonViewType, updateHistory = true) => {
+      setResourceView(null)
+      setLessonPageView({ lessonId, viewType })
+      setLastStudiedLessonId(lessonId)
+      setPage("lesson")
+      if (updateHistory && typeof window !== "undefined") {
+        window.history.pushState({ lessonId, viewType }, "", `/${activeRoadmapId}/${lessonId}/${viewType}`)
+      }
+      scrollToTop()
+    },
+    [activeRoadmapId, scrollToTop]
+  )
+
   React.useEffect(() => {
     if (typeof window === "undefined") return
     const handlePopState = () => {
-      const roadmapIdFromPath = getRoadmapIdFromPath(window.location.pathname)
-      if (roadmapIdFromPath) {
-        openRoadmap(roadmapIdFromPath, "overview", false)
+      const parsed = parsePathname(window.location.pathname)
+      if (parsed.page === "lesson" && parsed.roadmapId && parsed.lessonId && parsed.viewType) {
+        if (parsed.roadmapId !== activeRoadmapId) {
+          const nextRoadmap = ROADMAPS[parsed.roadmapId]
+          const persisted = loadPersistedProgress(nextRoadmap)
+          setCompletedLessons(persisted.completed)
+          setQuizState(persisted.quiz)
+          setLessonQuiz(persisted.lessonQuiz || {})
+          setDocQuiz(persisted.docQuiz || {})
+          setKnowledgeStage(nextRoadmap.knowledgeCards[0]?.id || "")
+          setActiveRoadmapId(parsed.roadmapId)
+        }
+        setLessonPageView({ lessonId: parsed.lessonId, viewType: parsed.viewType })
+        setPage("lesson")
+      } else if (parsed.roadmapId) {
+        openRoadmap(parsed.roadmapId, "overview", false)
       } else {
         openLanding(false)
       }
     }
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
-  }, [openLanding, openRoadmap])
+  }, [openLanding, openRoadmap, activeRoadmapId])
 
   // Scroll to last studied lesson on initial page load
   React.useEffect(() => {
@@ -514,6 +567,29 @@ export default function App() {
           </div>
         </div>
       </div>
+    )
+  }
+
+  // Lesson page
+  if (page === "lesson" && lessonPageView) {
+    return (
+      <LessonPage
+        roadmapId={activeRoadmapId}
+        roadmap={activeRoadmap}
+        lessonId={lessonPageView.lessonId}
+        viewType={lessonPageView.viewType}
+        completedLessons={completedLessons}
+        docQuiz={docQuiz}
+        getLessonQuizState={getLessonQuizState}
+        onSelectAnswer={handleLessonQuizSelect}
+        onSubmitQuiz={submitLessonQuiz}
+        onResetQuiz={resetLessonQuiz}
+        onToggleDocQuestion={toggleDocQuestion}
+        onResetDocQuiz={resetDocQuiz}
+        onNavigate={(lessonId, viewType) => openLesson(lessonId, viewType)}
+        onToggleComplete={toggleLesson}
+        onBack={() => openRoadmap(activeRoadmapId, "overview")}
+      />
     )
   }
 
@@ -751,10 +827,7 @@ export default function App() {
                                           size="sm"
                                           variant="outline"
                                           className="h-7 px-2 text-xs"
-                                          onClick={() => {
-                                            setLessonGuideView({ lesson, week, stage, guide })
-                                            setLastStudiedLessonId(lesson.id)
-                                          }}
+                                          onClick={() => openLesson(lesson.id, "guide")}
                                         >
                                           主题讲解
                                         </Button>
@@ -763,10 +836,7 @@ export default function App() {
                                         size="sm"
                                         variant="outline"
                                         className="h-7 px-2 text-xs"
-                                        onClick={() => {
-                                          setLessonQuizView({ lesson, week, stage })
-                                          setLastStudiedLessonId(lesson.id)
-                                        }}
+                                        onClick={() => openLesson(lesson.id, "quiz")}
                                       >
                                         课时测验
                                       </Button>
@@ -989,25 +1059,6 @@ export default function App() {
 
       {resourceView ? (
         <ResourceModal view={resourceView} roadmap={activeRoadmap} onClose={() => setResourceView(null)} />
-      ) : null}
-
-      {lessonQuizView ? (
-        <LessonQuizModal
-          view={lessonQuizView}
-          roadmap={activeRoadmap}
-          docQuiz={docQuiz}
-          getLessonQuizState={getLessonQuizState}
-          onSelectAnswer={handleLessonQuizSelect}
-          onSubmitQuiz={submitLessonQuiz}
-          onResetQuiz={resetLessonQuiz}
-          onToggleDocQuestion={toggleDocQuestion}
-          onResetDocQuiz={resetDocQuiz}
-          onClose={() => setLessonQuizView(null)}
-        />
-      ) : null}
-
-      {lessonGuideView ? (
-        <LessonGuideModal view={lessonGuideView} onClose={() => setLessonGuideView(null)} />
       ) : null}
 
       <ScrollToTop />
