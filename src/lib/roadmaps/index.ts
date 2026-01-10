@@ -35,6 +35,7 @@ import { pulsarRoadmap } from "./pulsar"
 import { grpcRoadmap } from "./grpc"
 import { locksRoadmap } from "./locks"
 import { techManagementRoadmap } from "./tech-management"
+import { serverlessRoadmap } from "./serverless"
 import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
@@ -74,6 +75,7 @@ export * from "./pulsar"
 export * from "./grpc"
 export * from "./locks"
 export * from "./tech-management"
+export * from "./serverless"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -113,6 +115,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   grpc: grpcRoadmap,
   locks: locksRoadmap,
   "tech-management": techManagementRoadmap,
+  serverless: serverlessRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -153,6 +156,7 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   grpcRoadmap,
   locksRoadmap,
   techManagementRoadmap,
+  serverlessRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
 
@@ -194,6 +198,7 @@ export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
   linux: "devops",
   "linux-kernel": "devops",
   security: "devops",
+  serverless: "devops",
   // AI/ML
   "machine-learning": "ai-ml",
   mcp: "ai-ml",

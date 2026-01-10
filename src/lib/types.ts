@@ -46,6 +46,7 @@ export type RoadmapId =
   | "grpc"
   | "locks"
   | "tech-management"
+  | "serverless"
 
 export type RoadmapCategory =
   | "all"
