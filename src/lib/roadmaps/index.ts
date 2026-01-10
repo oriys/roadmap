@@ -33,6 +33,7 @@ import { pythonRoadmap } from "./python"
 import { cloudDesignPatternsRoadmap } from "./cloud-design-patterns"
 import { pulsarRoadmap } from "./pulsar"
 import { grpcRoadmap } from "./grpc"
+import { locksRoadmap } from "./locks"
 import type { RoadmapDefinition, RoadmapId } from "../types"
 
 export * from "./kubernetes"
@@ -70,6 +71,7 @@ export * from "./python"
 export * from "./cloud-design-patterns"
 export * from "./pulsar"
 export * from "./grpc"
+export * from "./locks"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -107,6 +109,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "cloud-design-patterns": cloudDesignPatternsRoadmap,
   pulsar: pulsarRoadmap,
   grpc: grpcRoadmap,
+  locks: locksRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -145,5 +148,6 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   cloudDesignPatternsRoadmap,
   pulsarRoadmap,
   grpcRoadmap,
+  locksRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"

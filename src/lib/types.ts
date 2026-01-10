@@ -44,6 +44,7 @@ export type RoadmapId =
   | "cloud-design-patterns"
   | "pulsar"
   | "grpc"
+  | "locks"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {
