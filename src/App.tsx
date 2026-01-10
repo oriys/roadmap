@@ -67,6 +67,7 @@ import {
   loadProgressSummary,
   storageKeyForRoadmap,
 } from "@/lib/progress-storage"
+import { matchAnyPinyin } from "@/lib/pinyin-search"
 
 const isRoadmapId = (value: string | null): value is RoadmapId =>
   !!value && Object.hasOwn(ROADMAPS, value)
@@ -424,11 +425,11 @@ export default function App() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {ROADMAP_LIST.filter((roadmap) => {
               const matchesCategory = selectedCategory === "all" || CATEGORY_MAP[roadmap.id] === selectedCategory
-              const query = searchQuery.trim().toLowerCase()
-              const matchesSearch = !query ||
-                roadmap.title.toLowerCase().includes(query) ||
-                roadmap.label.toLowerCase().includes(query) ||
-                roadmap.description.toLowerCase().includes(query)
+              const query = searchQuery.trim()
+              const matchesSearch = !query || matchAnyPinyin(
+                [roadmap.title, roadmap.label, roadmap.description],
+                query
+              )
               return matchesCategory && matchesSearch
             }).map((roadmap) => {
               const totals = roadmapTotals(roadmap.stages)
@@ -436,7 +437,7 @@ export default function App() {
               const percent = totals.lessons === 0 ? 0 : Math.round((summary.completed / totals.lessons) * 100)
               const roadmapSuggestion = roadmap.suggestion(percent)
               return (
-                <Card key={roadmap.id} className="glass-card p-6 space-y-4 animate-fade-in">
+                <Card key={roadmap.id} className="glass-card p-6 flex flex-col animate-fade-in">
                   <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     <Badge variant="secondary" className="bg-secondary/70 text-xs">
                       Live
@@ -445,11 +446,11 @@ export default function App() {
                     <Badge variant="outline">{totals.weeks} 主题</Badge>
                     <Badge variant="outline">{totals.lessons} 课时</Badge>
                   </div>
-                  <CardTitle className="text-xl sm:text-2xl font-semibold tracking-tight">
+                  <CardTitle className="text-xl sm:text-2xl font-semibold tracking-tight mt-4">
                     {roadmap.title}
                   </CardTitle>
-                  <CardDescription className="text-base leading-relaxed">{roadmap.description}</CardDescription>
-                  <div className="grid gap-3 sm:grid-cols-3 text-sm text-muted-foreground">
+                  <CardDescription className="text-base leading-relaxed mt-4 flex-1">{roadmap.description}</CardDescription>
+                  <div className="grid gap-3 sm:grid-cols-3 text-sm text-muted-foreground mt-4">
                     <span className="inline-flex items-center gap-2">
                       <ShieldCheck className="h-4 w-4 text-primary" />
                       实战优先
@@ -463,7 +464,7 @@ export default function App() {
                       权威资料
                     </span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 mt-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">学习进度</span>
                       <span className="font-medium">
@@ -471,9 +472,9 @@ export default function App() {
                       </span>
                     </div>
                     <Progress value={percent} />
-                    <p className="text-sm text-muted-foreground">{roadmapSuggestion}</p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <p className="text-sm text-muted-foreground mt-2 min-h-[40px]">{roadmapSuggestion}</p>
+                  <div className="flex flex-wrap gap-3 mt-4">
                     <Button onClick={() => openRoadmap(roadmap.id, "overview", true, summary.completed > 0)} className="gap-2">
                       <ArrowUpRight className="h-4 w-4" />
                       {summary.completed > 0 ? "继续学习" : "开始学习"}

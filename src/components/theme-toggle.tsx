@@ -1,4 +1,4 @@
-import { Moon, Sun, Cloud, Sunset, Sparkles, PartyPopper, TreePine, Star, type LucideIcon } from "lucide-react"
+import { Moon, Sun, Cloud, Sunset, Sparkles, PartyPopper, TreePine, Star, Gamepad2, type LucideIcon } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useTheme, type Theme } from "@/components/theme-provider"
@@ -18,6 +18,7 @@ const THEMES: ThemeConfig[] = [
   { id: "newyear", label: "New Year", icon: PartyPopper },
   { id: "xmas", label: "Christmas", icon: TreePine },
   { id: "starry", label: "Starry", icon: Star },
+  { id: "pixel", label: "Pixel", icon: Gamepad2 },
 ]
 
 export function ThemeToggle() {
