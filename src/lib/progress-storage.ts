@@ -29,7 +29,35 @@ export const defaultLessonQuizState: LessonQuizState = {
   lastScore: undefined,
 }
 
-export function storageKeyForRoadmap(roadmapId: RoadmapId) {
+type ProgressSummary = {
+  completed: number
+  bestScore: number | undefined
+  lastStudiedLessonId: string | undefined
+}
+
+type PersistedProgress = {
+  completed: Set<string>
+  quiz: QuizState
+  lessonQuiz: Record<string, LessonQuizState>
+  docQuiz: DocQuizProgress
+  lastStudiedLessonId: string | undefined
+}
+
+function createDefaultSummary(): ProgressSummary {
+  return { completed: 0, bestScore: undefined, lastStudiedLessonId: undefined }
+}
+
+function createDefaultProgress(): PersistedProgress {
+  return {
+    completed: new Set<string>(),
+    quiz: defaultQuizState,
+    lessonQuiz: {},
+    docQuiz: {},
+    lastStudiedLessonId: undefined,
+  }
+}
+
+export function storageKeyForRoadmap(roadmapId: RoadmapId): string {
   return `${STORAGE_KEY_PREFIX}:${roadmapId}`
 }
 
@@ -84,13 +112,13 @@ function migrateLessonQuizOptionIndexes(
   return migrated
 }
 
-export function loadProgressSummary(roadmap: RoadmapDefinition) {
-  if (typeof window === "undefined") return { completed: 0, bestScore: undefined as number | undefined, lastStudiedLessonId: undefined as string | undefined }
+export function loadProgressSummary(roadmap: RoadmapDefinition): ProgressSummary {
+  if (typeof window === "undefined") return createDefaultSummary()
   try {
     const raw = getRawProgress(roadmap.id)
-    if (!raw) return { completed: 0, bestScore: undefined as number | undefined, lastStudiedLessonId: undefined as string | undefined }
+    if (!raw) return createDefaultSummary()
     const parsed = safeJsonParse(raw)
-    if (!parsed || typeof parsed !== "object") return { completed: 0, bestScore: undefined as number | undefined, lastStudiedLessonId: undefined as string | undefined }
+    if (!parsed || typeof parsed !== "object") return createDefaultSummary()
     const payload = parsed as Record<string, unknown>
     const completed = Array.isArray(payload.completed) ? payload.completed.length : 0
     const quiz = payload.quiz as Record<string, unknown> | undefined
@@ -98,43 +126,19 @@ export function loadProgressSummary(roadmap: RoadmapDefinition) {
     const lastStudiedLessonId = typeof payload.lastStudiedLessonId === "string" ? payload.lastStudiedLessonId : undefined
     return { completed, bestScore, lastStudiedLessonId }
   } catch {
-    return { completed: 0, bestScore: undefined as number | undefined, lastStudiedLessonId: undefined as string | undefined }
+    return createDefaultSummary()
   }
 }
 
-export function loadPersistedProgress(roadmap: RoadmapDefinition) {
-  if (typeof window === "undefined") {
-    return {
-      completed: new Set<string>(),
-      quiz: defaultQuizState,
-      lessonQuiz: {} as Record<string, LessonQuizState>,
-      docQuiz: {} as DocQuizProgress,
-      lastStudiedLessonId: undefined as string | undefined,
-    }
-  }
+export function loadPersistedProgress(roadmap: RoadmapDefinition): PersistedProgress {
+  if (typeof window === "undefined") return createDefaultProgress()
 
   try {
     const raw = getRawProgress(roadmap.id)
-    if (!raw) {
-      return {
-        completed: new Set<string>(),
-        quiz: defaultQuizState,
-        lessonQuiz: {} as Record<string, LessonQuizState>,
-        docQuiz: {} as DocQuizProgress,
-        lastStudiedLessonId: undefined as string | undefined,
-      }
-    }
+    if (!raw) return createDefaultProgress()
 
     const parsed = safeJsonParse(raw)
-    if (!parsed || typeof parsed !== "object") {
-      return {
-        completed: new Set<string>(),
-        quiz: defaultQuizState,
-        lessonQuiz: {} as Record<string, LessonQuizState>,
-        docQuiz: {} as DocQuizProgress,
-        lastStudiedLessonId: undefined as string | undefined,
-      }
-    }
+    if (!parsed || typeof parsed !== "object") return createDefaultProgress()
 
     const payload = parsed as Record<string, unknown>
     const completed = new Set<string>(Array.isArray(payload.completed) ? (payload.completed as string[]) : [])
@@ -156,19 +160,13 @@ export function loadPersistedProgress(roadmap: RoadmapDefinition) {
       }
     }
 
-    const docQuiz = (payload.docQuiz as DocQuizProgress | undefined) || ({} as DocQuizProgress)
+    const docQuiz = (payload.docQuiz as DocQuizProgress | undefined) || {}
     const lastStudiedLessonId = typeof payload.lastStudiedLessonId === "string" ? payload.lastStudiedLessonId : undefined
 
     return { completed, quiz, lessonQuiz, docQuiz, lastStudiedLessonId }
   } catch (error) {
     console.warn("无法读取本地进度，将使用默认值", error)
-    return {
-      completed: new Set<string>(),
-      quiz: defaultQuizState,
-      lessonQuiz: {} as Record<string, LessonQuizState>,
-      docQuiz: {} as DocQuizProgress,
-      lastStudiedLessonId: undefined as string | undefined,
-    }
+    return createDefaultProgress()
   }
 }
 

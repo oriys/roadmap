@@ -212,12 +212,6 @@ export function LessonQuizModal({
   onClose,
 }: LessonQuizModalProps) {
   const isMobile = useIsMobile()
-  const topicIndex = view.stage.weeks.findIndex((week) => week.id === view.week.id)
-  const topicTitle = displayTopicTitle(view.week.title, topicIndex === -1 ? undefined : topicIndex)
-  const docList = docQuestionMap[view.lesson.id] || []
-  const questions = buildLessonQuiz(view.lesson, view.week, view.stage)
-  const state = getLessonQuizState(view.lesson.id)
-  const showFeedback = state.lastScore != null
 
   if (isMobile) {
     return (
@@ -236,6 +230,13 @@ export function LessonQuizModal({
       </SheetModal>
     )
   }
+
+  const topicIndex = view.stage.weeks.findIndex((week) => week.id === view.week.id)
+  const topicTitle = displayTopicTitle(view.week.title, topicIndex === -1 ? undefined : topicIndex)
+  const docList = docQuestionMap[view.lesson.id] || []
+  const questions = buildLessonQuiz(view.lesson, view.week, view.stage)
+  const state = getLessonQuizState(view.lesson.id)
+  const showFeedback = state.lastScore != null
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 sm:px-4 py-4 sm:py-10 backdrop-blur overflow-y-auto">
