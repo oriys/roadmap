@@ -45,6 +45,16 @@ export type RoadmapId =
   | "pulsar"
   | "grpc"
   | "locks"
+  | "tech-management"
+
+export type RoadmapCategory =
+  | "all"
+  | "backend"
+  | "system-design"
+  | "devops"
+  | "ai-ml"
+  | "career"
+  | "other"
 
 // Improved QuizQuestion type to be more precise about undefined vs number
 export type QuizQuestion = {

@@ -34,7 +34,8 @@ import { cloudDesignPatternsRoadmap } from "./cloud-design-patterns"
 import { pulsarRoadmap } from "./pulsar"
 import { grpcRoadmap } from "./grpc"
 import { locksRoadmap } from "./locks"
-import type { RoadmapDefinition, RoadmapId } from "../types"
+import { techManagementRoadmap } from "./tech-management"
+import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
 export * from "./technical-writer"
@@ -72,6 +73,7 @@ export * from "./cloud-design-patterns"
 export * from "./pulsar"
 export * from "./grpc"
 export * from "./locks"
+export * from "./tech-management"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -110,6 +112,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   pulsar: pulsarRoadmap,
   grpc: grpcRoadmap,
   locks: locksRoadmap,
+  "tech-management": techManagementRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -149,5 +152,62 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   pulsarRoadmap,
   grpcRoadmap,
   locksRoadmap,
+  techManagementRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
+
+export const ROADMAP_CATEGORIES: { id: RoadmapCategory; label: string }[] = [
+  { id: "all", label: "全部" },
+  { id: "backend", label: "后端开发" },
+  { id: "system-design", label: "系统设计" },
+  { id: "devops", label: "DevOps" },
+  { id: "ai-ml", label: "AI/ML" },
+  { id: "career", label: "职业发展" },
+  { id: "other", label: "其他" },
+]
+
+export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
+  // Backend Development
+  golang: "backend",
+  "java-jvm": "backend",
+  "java-features": "backend",
+  jvm: "backend",
+  "backend-performance-best-practices": "backend",
+  database: "backend",
+  "message-queue": "backend",
+  grpc: "backend",
+  locks: "backend",
+  "microservices-patterns": "backend",
+  "domain-driven-design": "backend",
+  "multi-tenant": "backend",
+  pulsar: "backend",
+  python: "backend",
+  // System Design
+  "system-design": "system-design",
+  "api-platform": "system-design",
+  "open-platform-gateway": "system-design",
+  ecommerce: "system-design",
+  "cloud-design-patterns": "system-design",
+  // DevOps
+  kubernetes: "devops",
+  "observability-sre": "devops",
+  linux: "devops",
+  "linux-kernel": "devops",
+  security: "devops",
+  // AI/ML
+  "machine-learning": "ai-ml",
+  mcp: "ai-ml",
+  // Career
+  "engineering-manager": "career",
+  "senior-engineer-interview": "career",
+  "soft-skills": "career",
+  cto: "career",
+  "product-manager": "career",
+  "technical-writer": "career",
+  "tech-management": "career",
+  // Other
+  blockchain: "other",
+  "data-structures-algorithms": "other",
+  investment: "other",
+  "home-buying": "other",
+}
