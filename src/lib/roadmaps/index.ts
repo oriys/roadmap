@@ -36,6 +36,7 @@ import { grpcRoadmap } from "./grpc"
 import { locksRoadmap } from "./locks"
 import { techManagementRoadmap } from "./tech-management"
 import { serverlessRoadmap } from "./serverless"
+import { developmentAntiPatternsRoadmap } from "./development-anti-patterns"
 import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
@@ -76,6 +77,7 @@ export * from "./grpc"
 export * from "./locks"
 export * from "./tech-management"
 export * from "./serverless"
+export * from "./development-anti-patterns"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -116,6 +118,7 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   locks: locksRoadmap,
   "tech-management": techManagementRoadmap,
   serverless: serverlessRoadmap,
+  "development-anti-patterns": developmentAntiPatternsRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -157,6 +160,7 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   locksRoadmap,
   techManagementRoadmap,
   serverlessRoadmap,
+  developmentAntiPatternsRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
 
@@ -210,6 +214,7 @@ export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
   "product-manager": "career",
   "technical-writer": "career",
   "tech-management": "career",
+  "development-anti-patterns": "system-design",
   // Other
   blockchain: "other",
   "data-structures-algorithms": "other",
