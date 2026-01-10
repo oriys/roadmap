@@ -47,6 +47,7 @@ export type RoadmapId =
   | "locks"
   | "tech-management"
   | "serverless"
+  | "development-anti-patterns"
 
 export type RoadmapCategory =
   | "all"
