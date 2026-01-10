@@ -41,7 +41,7 @@ export function ThemeToggle() {
             </Button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-popover shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-card border border-border shadow-lg focus:outline-none z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="py-1">
                         <button
                             className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-muted"

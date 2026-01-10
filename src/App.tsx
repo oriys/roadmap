@@ -11,6 +11,7 @@ import {
   Lightbulb,
   ListChecks,
   RefreshCw,
+  Search,
   ShieldCheck,
   Sparkles,
   Trophy,
@@ -29,9 +30,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LessonGuideModal } from "@/components/roadmap/LessonGuideModal"
 import { LessonQuizModal } from "@/components/roadmap/LessonQuizModal"
 import { ResourceModal } from "@/components/roadmap/ResourceModal"
+import { AppShell } from "@/components/layout/AppShell"
+import { SwipeContainer } from "@/components/mobile/SwipeContainer"
+import { ScrollToTop } from "@/components/mobile/ScrollToTop"
+import { useIsMobile } from "@/hooks/useMediaQuery"
 import { getLessonGuide } from "@/lib/lesson-guides/by-roadmap"
 import { roadmapTotals } from "@/lib/roadmap-totals"
 import { displayTopicTitle } from "@/lib/topic-title"
+import type { BottomNavTab } from "@/components/layout/BottomNav"
 
 import {
   type Lesson,
@@ -42,12 +48,15 @@ import {
   type DocQuizProgress,
   type ResourceContext,
   type RoadmapId,
+  type RoadmapCategory,
   type QuizQuestion,
 } from "@/lib/types"
 import {
   ROADMAPS,
   ROADMAP_LIST,
   DEFAULT_ROADMAP_ID,
+  ROADMAP_CATEGORIES,
+  CATEGORY_MAP,
 } from "@/lib/roadmaps"
 import type { LessonGuide } from "@/lib/lesson-guides/types"
 import {
@@ -87,7 +96,10 @@ export default function App() {
   const [quizState, setQuizState] = React.useState<QuizState>(initial.persisted.quiz)
   const [lessonQuiz, setLessonQuiz] = React.useState<Record<string, LessonQuizState>>(initial.persisted.lessonQuiz || {})
   const [docQuiz, setDocQuiz] = React.useState<DocQuizProgress>(initial.persisted.docQuiz || {})
+  const [lastStudiedLessonId, setLastStudiedLessonId] = React.useState<string | undefined>(initial.persisted.lastStudiedLessonId)
   const [page, setPage] = React.useState<"landing" | "roadmap">(initial.page)
+  const [selectedCategory, setSelectedCategory] = React.useState<RoadmapCategory>("all")
+  const [searchQuery, setSearchQuery] = React.useState("")
   const [tab, setTab] = React.useState("overview")
   const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
@@ -134,9 +146,10 @@ export default function App() {
       lessonQuiz,
       docQuiz,
       lessonQuizOptionsShuffled: true,
+      lastStudiedLessonId,
     }
     localStorage.setItem(storageKeyForRoadmap(activeRoadmapId), JSON.stringify(payload))
-  }, [activeRoadmapId, completedLessons, quizState, lessonQuiz, docQuiz])
+  }, [activeRoadmapId, completedLessons, quizState, lessonQuiz, docQuiz, lastStudiedLessonId])
 
   const toggleLesson = (lessonId: string) => {
     setCompletedLessons((prev) => {
@@ -144,6 +157,7 @@ export default function App() {
       next.has(lessonId) ? next.delete(lessonId) : next.add(lessonId)
       return next
     })
+    setLastStudiedLessonId(lessonId)
   }
 
   const handleQuizSelect = (qid: string, value: number) => {
@@ -223,11 +237,30 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [])
 
+  const scrollToLastLesson = React.useCallback((lessonId: string | undefined) => {
+    if (typeof window === "undefined" || !lessonId) return
+    // Use requestAnimationFrame to wait for DOM to update
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const element = document.querySelector(`[data-lesson-id="${lessonId}"]`)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" })
+          // Add a brief highlight effect
+          element.classList.add("ring-2", "ring-primary/50")
+          setTimeout(() => {
+            element.classList.remove("ring-2", "ring-primary/50")
+          }, 2000)
+        }
+      }, 100)
+    })
+  }, [])
+
   const openRoadmap = React.useCallback(
-    (roadmapId: RoadmapId, nextTab: string = "overview", updateHistory = true) => {
+    (roadmapId: RoadmapId, nextTab: string = "overview", updateHistory = true, scrollToRecent = false) => {
       setResourceView(null)
       setLessonQuizView(null)
       setLessonGuideView(null)
+      let lessonToScrollTo: string | undefined
       if (roadmapId !== activeRoadmapId) {
         const nextRoadmap = ROADMAPS[roadmapId]
         const persisted = loadPersistedProgress(nextRoadmap)
@@ -237,15 +270,23 @@ export default function App() {
         setDocQuiz(persisted.docQuiz || {})
         setKnowledgeStage(nextRoadmap.knowledgeCards[0]?.id || "")
         setActiveRoadmapId(roadmapId)
+        setLastStudiedLessonId(persisted.lastStudiedLessonId)
+        lessonToScrollTo = persisted.lastStudiedLessonId
+      } else {
+        lessonToScrollTo = lastStudiedLessonId
       }
       setTab(nextTab)
       setPage("roadmap")
       if (updateHistory && typeof window !== "undefined") {
         window.history.pushState({ roadmapId }, "", `/${roadmapId}`)
       }
-      scrollToTop()
+      if (scrollToRecent && nextTab === "overview" && lessonToScrollTo) {
+        scrollToLastLesson(lessonToScrollTo)
+      } else {
+        scrollToTop()
+      }
     },
-    [activeRoadmapId, scrollToTop]
+    [activeRoadmapId, scrollToTop, scrollToLastLesson, lastStudiedLessonId]
   )
 
   const openLanding = React.useCallback(
@@ -276,6 +317,13 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState)
   }, [openLanding, openRoadmap])
 
+  // Scroll to last studied lesson on initial page load
+  React.useEffect(() => {
+    if (initial.page === "roadmap" && initial.persisted.lastStudiedLessonId) {
+      scrollToLastLesson(initial.persisted.lastStudiedLessonId)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const toggleDocQuestion = (lessonId: string, idx: number) => {
     setDocQuiz((prev) => {
       const current = new Set(prev[lessonId] || [])
@@ -287,6 +335,27 @@ export default function App() {
     setDocQuiz((prev) => ({ ...prev, [lessonId]: [] }))
   }
   const suggestion = React.useMemo(() => activeRoadmap.suggestion(overall.percent), [activeRoadmapId, overall.percent])
+
+  const isMobile = useIsMobile()
+
+  const tabs: BottomNavTab[] = ["overview", "knowledge", "exam"]
+  const handleSwipeLeft = React.useCallback(() => {
+    const currentIndex = tabs.indexOf(tab as BottomNavTab)
+    if (currentIndex < tabs.length - 1) {
+      setTab(tabs[currentIndex + 1])
+    }
+  }, [tab])
+
+  const handleSwipeRight = React.useCallback(() => {
+    const currentIndex = tabs.indexOf(tab as BottomNavTab)
+    if (currentIndex > 0) {
+      setTab(tabs[currentIndex - 1])
+    }
+  }, [tab])
+
+  const handleTabChange = React.useCallback((newTab: BottomNavTab) => {
+    setTab(newTab)
+  }, [])
 
   const startLabel = overall.done > 0 ? "继续学习" : "开始学习"
 
@@ -311,7 +380,7 @@ export default function App() {
               选择一条路线，按阶段与主题拆解；每节配套权威资源、文档题单与即时测验，按自己的节奏推进。
             </CardDescription>
             <div className="flex flex-wrap gap-3">
-              <Button onClick={() => openRoadmap(activeRoadmapId, "overview")} className="gap-2">
+              <Button onClick={() => openRoadmap(activeRoadmapId, "overview", true, true)} className="gap-2">
                 <GraduationCap className="h-4 w-4" />
                 {startLabel}
               </Button>
@@ -326,8 +395,42 @@ export default function App() {
             </div>
           </Card>
 
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="搜索课程..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+              {ROADMAP_CATEGORIES.map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant={selectedCategory === cat.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className="shrink-0"
+                >
+                  {cat.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {ROADMAP_LIST.map((roadmap) => {
+            {ROADMAP_LIST.filter((roadmap) => {
+              const matchesCategory = selectedCategory === "all" || CATEGORY_MAP[roadmap.id] === selectedCategory
+              const query = searchQuery.trim().toLowerCase()
+              const matchesSearch = !query ||
+                roadmap.title.toLowerCase().includes(query) ||
+                roadmap.label.toLowerCase().includes(query) ||
+                roadmap.description.toLowerCase().includes(query)
+              return matchesCategory && matchesSearch
+            }).map((roadmap) => {
               const totals = roadmapTotals(roadmap.stages)
               const summary = loadProgressSummary(roadmap)
               const percent = totals.lessons === 0 ? 0 : Math.round((summary.completed / totals.lessons) * 100)
@@ -343,7 +446,7 @@ export default function App() {
                     <Badge variant="outline">{totals.lessons} 课时</Badge>
                   </div>
                   <CardTitle className="text-xl sm:text-2xl font-semibold tracking-tight">
-                    {roadmap.title}（{roadmap.durationLabel}）
+                    {roadmap.title}
                   </CardTitle>
                   <CardDescription className="text-base leading-relaxed">{roadmap.description}</CardDescription>
                   <div className="grid gap-3 sm:grid-cols-3 text-sm text-muted-foreground">
@@ -371,7 +474,7 @@ export default function App() {
                     <p className="text-sm text-muted-foreground">{roadmapSuggestion}</p>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <Button onClick={() => openRoadmap(roadmap.id, "overview")} className="gap-2">
+                    <Button onClick={() => openRoadmap(roadmap.id, "overview", true, summary.completed > 0)} className="gap-2">
                       <ArrowUpRight className="h-4 w-4" />
                       {summary.completed > 0 ? "继续学习" : "开始学习"}
                     </Button>
@@ -421,12 +524,20 @@ export default function App() {
   const bestScore = quizState.bestScore ?? lastScore
 
   return (
+    <AppShell
+      page="roadmap"
+      currentTab={tab as BottomNavTab}
+      onTabChange={handleTabChange}
+      onHomeClick={() => openLanding()}
+      roadmapTitle={activeRoadmap.label}
+      rightAction={<ThemeToggle />}
+    >
     <div className="min-h-screen bg-background/80 text-foreground relative">
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 hidden md:block">
         <ThemeToggle />
       </div>
       <div className="container px-4 sm:px-6 py-6 sm:py-10 space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="hidden md:flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Button variant="ghost" size="sm" onClick={() => openLanding()} className="gap-2 text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
             返回 Roadmaps
@@ -447,7 +558,7 @@ export default function App() {
               <Badge variant="outline">本地保存进度</Badge>
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">
-              {activeRoadmap.title}（{activeRoadmap.durationLabel}）
+              {activeRoadmap.title}
             </CardTitle>
             <CardDescription className="text-base leading-relaxed">{activeRoadmap.description}</CardDescription>
             <div className="flex flex-wrap gap-3">
@@ -521,7 +632,7 @@ export default function App() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="hidden md:block overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="bg-card/80 border border-border/70 w-max sm:w-auto">
               <TabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                 <ListChecks className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -537,6 +648,12 @@ export default function App() {
               </TabsTrigger>
             </TabsList>
           </div>
+
+          <SwipeContainer
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+            enabled={isMobile}
+          >
 
           <TabsContent value="overview" className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -599,6 +716,7 @@ export default function App() {
                               return (
                                 <div
                                   key={lesson.id}
+                                  data-lesson-id={lesson.id}
                                   className="flex items-start gap-3 rounded-lg border border-border/60 bg-card/40 p-3 transition hover:border-accent/50"
                                 >
                                   <Checkbox
@@ -632,7 +750,10 @@ export default function App() {
                                           size="sm"
                                           variant="outline"
                                           className="h-7 px-2 text-xs"
-                                          onClick={() => setLessonGuideView({ lesson, week, stage, guide })}
+                                          onClick={() => {
+                                            setLessonGuideView({ lesson, week, stage, guide })
+                                            setLastStudiedLessonId(lesson.id)
+                                          }}
                                         >
                                           主题讲解
                                         </Button>
@@ -641,7 +762,10 @@ export default function App() {
                                         size="sm"
                                         variant="outline"
                                         className="h-7 px-2 text-xs"
-                                        onClick={() => setLessonQuizView({ lesson, week, stage })}
+                                        onClick={() => {
+                                          setLessonQuizView({ lesson, week, stage })
+                                          setLastStudiedLessonId(lesson.id)
+                                        }}
                                       >
                                         课时测验
                                       </Button>
@@ -858,6 +982,7 @@ export default function App() {
               )}
             </Card>
           </TabsContent>
+          </SwipeContainer>
         </Tabs>
       </div>
 
@@ -883,6 +1008,9 @@ export default function App() {
       {lessonGuideView ? (
         <LessonGuideModal view={lessonGuideView} onClose={() => setLessonGuideView(null)} />
       ) : null}
+
+      <ScrollToTop />
     </div>
+    </AppShell>
   )
 }

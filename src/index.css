@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 @layer base {
+  /* iOS Safe Area Support */
+  :root {
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --bottom-nav-height: 4rem;
+  }
+
+  /* Prevent iOS bounce/overscroll */
+  html {
+    overscroll-behavior: none;
+  }
 
   :root {
     /* Solarized Light palette (Default) */
@@ -195,4 +208,67 @@
 
 .glass-card {
   @apply bg-card/80 border border-border shadow-glow backdrop-blur;
+}
+
+/* Mobile-optimized glass card */
+.glass-card-mobile {
+  @apply bg-card/90 border border-border shadow-lg backdrop-blur-xl;
+}
+
+@layer utilities {
+  /* Safe area padding utilities */
+  .pt-safe {
+    padding-top: var(--safe-area-inset-top);
+  }
+  .pb-safe {
+    padding-bottom: var(--safe-area-inset-bottom);
+  }
+  .pl-safe {
+    padding-left: var(--safe-area-inset-left);
+  }
+  .pr-safe {
+    padding-right: var(--safe-area-inset-right);
+  }
+
+  /* Bottom nav offset for content */
+  .mb-bottom-nav {
+    margin-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom));
+  }
+  .pb-bottom-nav {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-inset-bottom));
+  }
+
+  /* Touch feedback */
+  .touch-feedback {
+    @apply active:scale-95 active:opacity-80 transition-transform duration-100;
+  }
+
+  /* Smooth scrolling for iOS momentum */
+  .scroll-smooth-touch {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Sheet modal handle */
+.sheet-handle {
+  @apply w-10 h-1 bg-muted-foreground/30 rounded-full mx-auto;
+}
+
+/* Bottom navigation active indicator */
+.bottom-nav-item {
+  @apply relative transition-colors duration-150;
+}
+.bottom-nav-item[data-active="true"]::after {
+  content: '';
+  @apply absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary;
 }
