@@ -24,9 +24,9 @@ export const developmentAntiPatternsStages: Stage[] = [
             title: "反模式的定义与三法则",
             detail: "建立反模式识别的基本概念，区分反模式与一般坏习惯。",
             resources: [
-              { title: "AntiPatterns.com - Definition", url: "https://antipatterns.com/" },
-              { title: "Refactoring Guru - Anti-Patterns", url: "https://refactoring.guru/design-patterns/anti-patterns" },
-              { title: "IEEE Software: AntiPatterns (Overview)", url: "https://www.computer.org/csdl/magazine/so" },
+              { title: "Anti-pattern - Wikipedia", url: "https://en.wikipedia.org/wiki/Anti-pattern" },
+              { title: "AntiPatterns Book - Wikipedia", url: "https://en.wikipedia.org/wiki/AntiPatterns" },
+              { title: "Software Development AntiPatterns - SourceMaking", url: "https://sourcemaking.com/antipatterns/software-development-antipatterns" },
             ],
           },
           {
