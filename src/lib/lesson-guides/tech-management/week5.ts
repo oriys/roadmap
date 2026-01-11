@@ -5,121 +5,127 @@ export const week5Guides: Record<string, LessonGuide> = {
     "tm-5-1": {
         lessonId: "tm-5-1",
         background: [
-            "【能力模型定义】技术能力模型是对各级别工程师应具备能力的系统化描述。好的能力模型应该覆盖技术深度、系统思维、沟通协作、领导力等多个维度。",
-            "【职级体系设计】典型的工程师职级体系：初级（Junior）→ 中级（Mid）→ 高级（Senior）→ Staff → Principal → Distinguished。每级应有明确的能力期望和影响范围。",
-            "【影响范围递进】《Staff Engineer》指出职级的核心区分在于影响范围：Junior/Mid 影响自己的任务，Senior 影响团队，Staff 影响多个团队，Principal 影响整个组织。",
-            "【Dropbox 案例】Dropbox 的 Engineering Career Framework 是公开的优秀案例，将能力分为：Results、Direction、Talent、Culture 四个维度，每个维度有6个级别的详细描述。",
-            "【双梯制】成熟的技术公司采用双梯制（Dual Ladder）：IC（Individual Contributor）和 Management 两条平行路径，允许工程师在不做管理的情况下获得晋升。"
+            "【Engineering Ladders 框架】Engineering Ladders 提供了一个系统化的能力评估框架，'allows software engineering managers to have meaningful conversations with their direct reports'——帮助管理者与团队成员进行有意义的职业发展对话。",
+            "【五大成长维度】Engineering Ladders 定义了五个关键成长维度：Technology（从采用工具到创造新技术）、System（从增强功能到引领技术卓越）、People（从向他人学习到管理职业和绩效）、Process（从遵循流程到定义团队流程）、Influence（从子系统影响到全社区影响）。",
+            "【Dropbox 能力框架】Dropbox 的职业框架强调它'is not a promotion checklist'——不是晋升清单，而是帮助你理解下一级别的影响力可能是什么样子。成功取决于展示'business impact'而非打勾。框架覆盖 Results、Direction、Talent、Culture 四大支柱。",
+            "【CircleCI 矩阵设计原则】CircleCI 的能力矩阵分配：技术技能占 20%，反馈沟通协作占 40%，领导力占 17%（初级工程师）。他们强调'what makes a good engineer goes far beyond their coding skills'——优秀工程师的定义远超编码能力。",
+            "【多元职业路径】CircleCI 明确支持多元职业路径：'career paths are as diverse as the people that work with us'——拒绝管理是唯一晋升路径的假设。使用主动描述词'does'而非'can do'，确保清晰度。"
         ],
         keyDifficulties: [
-            "【标准模糊】很多能力模型的描述过于抽象，如'展示技术领导力'——什么叫展示？什么叫技术领导力？需要具体行为示例。",
-            "【级别通胀】不同公司的同名职级可能差异很大（Title Inflation），在建立内部体系时需要与市场校准。",
-            "【评估一致性】不同经理对同一标准的理解可能不同，需要定期校准（Calibration）以确保公平性。",
-            "【路径单一】如果只有管理一条晋升路径，会迫使优秀工程师做不适合的角色选择。"
+            "【个人能力不均衡】Engineering Ladders 明确指出'people are usually stronger in some areas and weaker in others'——人们通常在某些领域更强、其他领域较弱。框架应作为对话指南而非晋升清单。",
+            "【晋升时机判断】Engineering Ladders 建议晋升准备度通常需要'performing at the next level consistently for several months'——持续数月在下一级别表现后才能正式晋升。",
+            "【标准一致性】不同管理者对同一标准理解可能不同。CircleCI 强调五大设计原则：Consistency（一致性）、Approachability（可理解性）、Simplicity（简洁性）、Clear language（清晰语言）、Straightforward structure（直观结构）。",
+            "【Title Inflation】不同公司同名职级差异巨大，建立内部体系时需要与市场校准，避免内外期望错位。",
+            "【评估偏见】缺乏校准会导致同样表现被不同经理打出不同分数。研究显示 85% 的员工认为绩效评估不公平，因此考虑离职。"
         ],
         handsOnPath: [
-            "1. 研究案例：阅读 Dropbox、Etsy、CircleCI 等公司公开的 Engineering Ladder",
-            "2. 能力盘点：为你的团队每位成员进行能力盘点，识别优势和发展领域",
-            "3. 期望对齐：与每位团队成员讨论其当前级别的期望和下一级别的差距",
-            "4. 模型设计：如果团队还没有能力模型，起草一个初版与同僚讨论"
+            "研究 Engineering Ladders 的四种职业路径（Developer、Tech Lead、TPM、Engineering Manager），理解各自的独特价值和成长轨迹。",
+            "参考 Dropbox 的四大支柱（Results、Direction、Talent、Culture），为团队设计或评估现有能力模型的完整性。",
+            "为每位团队成员在五大维度（Technology、System、People、Process、Influence）上进行能力盘点，识别优势和发展领域。",
+            "与每位成员讨论当前级别的期望和下一级别的差距，确保使用具体行为示例而非抽象描述。",
+            "审视团队是否有真正的双轨制——IC 和管理路径是否同等受重视？高级 IC 是否获得足够的尊重和发展空间？"
         ],
         selfCheck: [
-            "你能清晰描述团队中每个职级的能力期望吗？",
-            "团队成员是否了解晋升到下一级需要什么？",
-            "你的能力模型是否有具体的行为示例？",
-            "IC 和管理是否有平行的发展路径？",
-            "不同经理对能力标准的理解是否一致？"
+            "你能用具体行为描述每个职级的期望吗？是否避免了'展示技术领导力'这类模糊表述？",
+            "团队成员是否清楚晋升到下一级需要持续展示什么能力？",
+            "你的能力模型是否覆盖了技术之外的沟通、协作、领导力维度？",
+            "IC 和管理路径在团队中是否被同等重视？",
+            "不同管理者对能力标准的理解是否经过校准？"
         ],
         extensions: [
-            "研究 Progression.fyi 网站收集的各公司能力模型",
-            "了解 Radford 等第三方薪酬调研公司的职级对标方法",
-            "学习如何设计公平的晋升评审流程",
-            "阅读《Staff Engineer》了解高级 IC 的能力要求"
+            "深入研究 Progression.fyi 收集的各公司能力模型，寻找适合你团队的参考。",
+            "阅读《Staff Engineer》了解高级 IC 的影响范围如何从团队扩展到多团队再到组织。",
+            "了解 Radford 等第三方职级对标方法，校准内部体系与市场的差距。",
+            "研究如何设计公平透明的晋升评审流程，包括评审委员会组成和标准校准。"
         ],
         sourceUrls: [
+            "https://www.engineeringladders.com/",
             "https://dropbox.github.io/dbx-career-framework/",
-            "https://staffeng.com/book",
-            "https://www.progression.fyi/"
+            "https://circleci.com/blog/why-we-re-designed-our-engineering-career-paths-at-circleci/"
         ]
     },
     "tm-5-2": {
         lessonId: "tm-5-2",
         background: [
-            "【反馈重要性】Gallup 研究表明，经常收到反馈的员工敬业度高3倍。反馈是成长的燃料，缺乏反馈会导致盲点和停滞。",
-            "【Radical Candor】Kim Scott 的框架强调好的反馈需要同时具备'关心个人'和'直接挑战'。只有挑战没有关心是残忍；只有关心没有挑战是有害的。",
-            "【SBI 模型】反馈的结构化方法：Situation（什么情境）→ Behavior（什么行为）→ Impact（什么影响）。避免泛泛而谈如'你做得很好'。",
-            "【教练式辅导】《The Coaching Habit》提出7个核心问题，如'What's on your mind?'（你在想什么？）、'And what else?'（还有呢？）引导对方自主思考。",
-            "【即时反馈】反馈应该及时，不要等到年度评审。Manager Tools 建议在事件发生后24-48小时内给出反馈，记忆最清晰。"
+            "【Radical Candor 核心框架】Kim Scott 的 Radical Candor 建立在两个维度上：Care Personally（关心个人）+ Challenge Directly（直接挑战）。Scott 强调这'is not a license to act like a jerk'也'not an invitation to get creepily personal'——既不是粗鲁的借口，也不是侵犯隐私的许可。",
+            "【四象限模型】Radical Candor 定义四种反馈模式：Radical Candor（关心+挑战，理想状态）、Ruinous Empathy（关心但不挑战，表面善意实则有害）、Obnoxious Aggression（挑战但不关心，损害关系）、Manipulative Insincerity（既不关心也不挑战，最糟糕的状态）。",
+            "【Thanks for the Feedback 三种触发器】Douglas Stone 和 Sheila Heen 识别了阻碍接收反馈的三种触发器：Truth Triggers（认为反馈内容不对）、Relationship Triggers（认为给反馈的人不可信）、Identity Triggers（反馈威胁到自我认知）。",
+            "【GROW 教练模型】John Whitmore 的 GROW 模型：Goal（目标）→ Reality（现实）→ Options（选项）→ Will（意愿）。Whitmore 强调'any dictator can use GROW'——框架本身不够，必须配合情商和真正的倾听。",
+            "【教练的本质】Whitmore 指出教练不只是纠正错误，更是'guiding individuals to realize their potential'——引导个人实现潜力。需要主动倾听、开放式问题和建设性反馈。"
         ],
         keyDifficulties: [
-            "【回避冲突】很多管理者害怕给负面反馈，导致问题积累。需要认识到及时反馈是对员工的尊重。",
-            "【反馈过载】过于频繁或过于详细的反馈可能让人疲惫，需要找到合适的频率和粒度。",
-            "【接受度问题】即使反馈方式正确，接收方也可能防御性反应。需要创造心理安全的环境。",
-            "【教练 vs 告知】教练式辅导需要耐心引导，有时候直接告知更高效。需要判断何时用哪种方式。"
+            "【Ruinous Empathy 陷阱】最常见的反馈失败不是残忍，而是 Ruinous Empathy——因为害怕伤害关系而避免给出必要的建设性反馈，实际上阻碍了对方成长。",
+            "【反馈触发器处理】Stone 和 Heen 指出'triggers can make the conversation about the triggers, rather than about the original feedback'——触发器会让对话偏离轨道。需要识别并重新聚焦到反馈本身。",
+            "【Switchtracking 现象】Thanks for the Feedback 描述的'switchtracks'——双方各自谈论自己关心的问题，形成两个独白而非对话。需要一次处理一个议题。",
+            "【教练 vs 告知的时机】不是所有情况都适合教练式对话。Whitmore 提醒不要机械使用 GROW，需要根据情境判断何时引导、何时直接告知。",
+            "【GROW 的误用】Whitmore 警告不要'follow the model slavishly'——机械套用模型。框架只在情商基础上才有效，需要真正倾听而非走过场。"
         ],
         handsOnPath: [
-            "1. SBI 练习：用 SBI 模型为团队成员准备一条具体的反馈",
-            "2. 教练对话：在下一次1:1中尝试使用'And what else?'问题深入探讨",
-            "3. 反馈请求：主动向团队成员请求对你的反馈，建立双向反馈文化",
-            "4. 阅读《The Coaching Habit》并实践书中的问题框架"
+            "用 Radical Candor 框架审视你最近的反馈：是否同时做到了关心个人和直接挑战？是否落入了 Ruinous Empathy？",
+            "识别一位你一直避免给建设性反馈的团队成员，准备并进行一次 Radical Candor 对话。",
+            "在下次 1:1 中实践 GROW 模型：从对方的目标出发，探索现实，生成选项，确认行动意愿。",
+            "主动向团队成员请求对你的反馈，识别自己的反馈触发器（Truth/Relationship/Identity），练习接收反馈。",
+            "阅读《The Coaching Habit》并实践其核心问题，特别是'And what else?'来深化对话。"
         ],
         selfCheck: [
-            "你最近一次给出建设性反馈是什么时候？",
-            "你的反馈是否具体到行为和影响？",
-            "团队成员是否敢于给你反馈？",
-            "你在1:1中倾听和提问的比例是多少？",
-            "你是否有意识地区分教练和告知两种模式？"
+            "你最近一次给出建设性反馈是什么时候？是否及时，还是累积了很久？",
+            "你的反馈是否具体到情境、行为和影响（SBI 模型）？",
+            "当收到批评性反馈时，你能识别自己的触发器类型吗？",
+            "在 1:1 中，你说话和倾听的比例是多少？是否给对方足够空间？",
+            "你是否有意识地区分何时使用教练式引导、何时直接告知？"
         ],
         extensions: [
-            "学习《Thanks for the Feedback》了解如何接收反馈",
-            "研究 GROW 模型进行结构化教练对话",
-            "了解 Feedforward 作为反馈的补充方法",
-            "学习非暴力沟通（NVC）改善反馈表达"
+            "深入学习《Thanks for the Feedback》，从接收反馈的角度提升能力。",
+            "研究 SBI（Situation-Behavior-Impact）模型，让反馈更具体可执行。",
+            "了解 Feedforward 方法——关注未来改进而非过去错误。",
+            "学习非暴力沟通（NVC）框架，改善反馈的表达方式。"
         ],
         sourceUrls: [
-            "https://www.radicalcandor.com/the-book/",
-            "https://www.amazon.com/Coaching-Habit-Less-Change-Forever/dp/0978440749",
-            "https://www.manager-tools.com/2005/07/giving-effective-feedback"
+            "https://www.radicalcandor.com/",
+            "https://www.stoneandheen.com/thanks-feedback",
+            "https://www.amazon.com/Coaching-Performance-Principles-Practice-Leadership/dp/185788535X"
         ]
     },
     "tm-5-3": {
         lessonId: "tm-5-3",
         background: [
-            "【绩效管理目的】绩效管理不只是年终打分，而是持续的目标对齐、反馈和发展过程。好的绩效管理帮助员工成长，而非只是评判。",
-            "【OKR 框架】Intel 和 Google 推广的 OKR（Objectives and Key Results）将目标分解为可衡量的关键结果，强调对齐和透明。",
-            "【校准会议】Calibration 是确保评估公平的关键机制。多位经理一起讨论各自团队成员的评级，消除个人偏见和标准差异。",
-            "【晋升标准】《An Elegant Puzzle》建议晋升应该是'已经在做下一级工作'的认可，而非对未来潜力的赌注。",
-            "【绩效改进计划】PIP（Performance Improvement Plan）是处理绩效问题的正式机制。应该清晰定义期望、时间框架和支持措施。"
+            "【OKR 起源与定义】John Doerr 在《Measure What Matters》中介绍了 OKR（Objectives and Key Results）。Objective 是'clearly defined goal'，Key Results 是'measurable outcomes that benchmark and monitor the achievement'——目标要鼓舞人心，关键结果要脚踏实地、可衡量。",
+            "【OKR 四大超能力】Doerr 定义 OKR 的四大超能力：Focus and commit to priorities（聚焦优先级）、Align and connect for teamwork（对齐协作）、Track for accountability（追踪问责）、Stretch for amazing results（挑战卓越）。",
+            "【绩效管理革命】HBR 研究显示超过三分之一的美国公司已放弃传统年度评审。问题在于'accountability for past behavior rather than developing talent'——关注过去而非发展人才。约 70% 的跨国公司正转向频繁反馈模式。",
+            "【校准会议的价值】绩效校准是多位经理讨论评级的过程，目的是'find common ground that makes consistent employee performance evaluations possible'——建立一致标准。研究显示 85% 的员工认为评估不公平。",
+            "【偏见识别训练】HBR 实验显示，教授偏见识别后，针对有色人种的负面人格评价从 14% 降至 0%。需要警惕 188 种隐性偏见，包括宽容偏见、确认偏见、近因偏见等。"
         ],
         keyDifficulties: [
-            "【目标量化】很多工程工作难以量化，如何设定可衡量的 Key Results 是挑战。",
-            "【反馈延迟】年度评审周期太长，问题发现时往往已经累积。需要更频繁的检查点。",
-            "【艰难对话】处理绩效不达标的员工需要勇气和技巧，既要直面问题，又要保持尊严。",
-            "【晋升政治】晋升决策可能受到关系和可见度影响，需要建立透明公平的流程。"
+            "【目标量化挑战】很多工程工作难以量化。Doerr 建议每个周期限制 3-5 个 OKR，每个目标绑定 5 个以内的关键结果，确保聚焦而非分散。",
+            "【OKR 与薪酬分离】Doerr 明确建议'OKRs should not be tied to compensation'——OKR 不应与薪酬挂钩，否则会导致保守目标设定。OKR 是工具而非武器。",
+            "【校准会议的偏见风险】HBR 研究警告校准会议可能引入新偏见：锚定效应、首位发言者主导等。需要确保所有声音被听到，用数据驱动讨论。",
+            "【年度评审周期太长】年度评审导致'feedback delays'——问题发现时已累积。需要更频繁的检查点，如季度 OKR 回顾。",
+            "【艰难对话的勇气】处理绩效不达标员工需要勇气和技巧。HBR 指出很多公司用'third way'——季度多维度评估，平衡发展与问责。"
         ],
         handsOnPath: [
-            "1. OKR 设定：与团队成员一起设定下季度的 OKR，确保可衡量",
-            "2. 中期检查：建立月度或季度中期检查机制，不要等到年终",
-            "3. 校准参与：参加或组织一次绩效校准会议",
-            "4. 晋升准备：为有潜力晋升的团队成员制定发展计划"
+            "与团队一起设定下季度 OKR，确保 Objective 鼓舞人心、Key Results 可衡量可验证。检验是否符合'少即是多'原则。",
+            "建立月度或季度中期检查机制，用 CFR（Conversations、Feedback、Recognition）补充 OKR 的持续性。",
+            "参加或组织一次绩效校准会议，观察和改进评估一致性。会前准备数据仪表板，识别异常值。",
+            "为有晋升潜力的团队成员制定发展计划，明确'已经在做下一级工作'的具体表现。",
+            "培训团队识别常见偏见（宽容偏见、确认偏见、近因偏见），在下次评估中有意识规避。"
         ],
         selfCheck: [
-            "团队成员是否清楚知道对他们的绩效期望？",
-            "你是否定期进行绩效对话，而非只在年终？",
-            "晋升决策的标准是否透明公开？",
-            "你是否参与过绩效校准会议？",
-            "处理绩效问题时，你是否及时直面？"
+            "团队的 OKR 是否与薪酬解绑？成员是否敢于设定挑战性目标？",
+            "你是否定期进行绩效对话，而非只在年终？检查点频率是否足够？",
+            "晋升决策的标准是否透明？是基于'已经在做下一级工作'还是对潜力的赌注？",
+            "你的团队是否进行校准会议？不同经理的评估标准是否一致？",
+            "在评估中，你是否警惕了近因偏见——过度重视最近表现而忽视全年贡献？"
         ],
         extensions: [
-            "阅读《Measure What Matters》深入了解 OKR",
-            "研究 Netflix 的 360 度反馈机制",
-            "了解 Continuous Performance Management 的实践",
-            "学习如何进行有效的晋升提名和答辩"
+            "深入阅读《Measure What Matters》，学习 Intel 和 Google 的 OKR 实践案例。",
+            "研究 CFR（Conversations、Feedback、Recognition）作为持续绩效管理的补充工具。",
+            "了解 Netflix 的 360 度反馈机制和'Keeper Test'——如果这个人要离职，你会全力挽留吗？",
+            "学习如何进行有效的晋升提名和答辩，包括收集 360 度证据和准备答辩材料。"
         ],
         sourceUrls: [
             "https://www.amazon.com/Measure-What-Matters-Google-Foundation/dp/0525536221",
-            "https://www.amazon.com/Elegant-Puzzle-Systems-Engineering-Management/dp/1732265186",
-            "https://rework.withgoogle.com/guides/set-goals-with-okrs/steps/introduction/"
+            "https://hbr.org/2016/10/the-performance-management-revolution",
+            "https://lattice.com/articles/the-how-and-why-of-performance-review-calibration"
         ]
     }
 }
@@ -128,439 +134,439 @@ export const week5Quizzes: Record<string, QuizQuestion[]> = {
     "tm-5-1": [
         {
             id: "tm-5-1-q1",
-            question: "技术能力模型应该覆盖哪些维度？",
+            question: "Engineering Ladders 框架的核心目的是什么？",
             options: [
-                "只有技术深度",
-                "技术深度、系统思维、沟通协作、领导力等多个维度",
-                "只有编码能力",
-                "只有管理能力"
+                "提供一个晋升清单让员工打勾完成",
+                "帮助管理者与直接下属进行有意义的职业发展对话",
+                "统一所有公司的职级标准",
+                "替代绩效评估流程"
             ],
             answer: 1,
-            rationale: "好的能力模型应该是多维度的，覆盖技术深度、系统思维、沟通协作、领导力等。"
+            rationale: "Engineering Ladders 的目的是'allows software engineering managers to have meaningful conversations with their direct reports'——帮助进行有意义的职业发展对话，而非作为晋升清单。"
         },
         {
             id: "tm-5-1-q2",
-            question: "根据《Staff Engineer》，职级的核心区分在于什么？",
+            question: "Engineering Ladders 定义的五大成长维度不包括哪个？",
             options: [
-                "工作年限",
-                "影响范围",
-                "代码量",
-                "职位名称"
+                "Technology（技术）",
+                "People（人员）",
+                "Revenue（营收）",
+                "Influence（影响力）"
             ],
-            answer: 1,
-            rationale: "《Staff Engineer》指出职级的核心区分在于影响范围，从个人任务到团队再到整个组织。"
+            answer: 2,
+            rationale: "五大维度是 Technology、System、People、Process、Influence，不包括 Revenue。这些维度覆盖了工程师成长的核心方面。"
         },
         {
             id: "tm-5-1-q3",
-            question: "Dropbox 的 Engineering Career Framework 将能力分为哪四个维度？",
+            question: "Dropbox 职业框架强调成功取决于什么？",
             options: [
-                "Code、Review、Design、Deploy",
-                "Results、Direction、Talent、Culture",
-                "Plan、Do、Check、Act",
-                "技术、沟通、领导、管理"
+                "完成清单上的所有项目",
+                "展示 business impact（业务影响）",
+                "工作年限",
+                "技术证书数量"
             ],
             answer: 1,
-            rationale: "Dropbox 将能力分为 Results、Direction、Talent、Culture 四个维度。"
+            rationale: "Dropbox 强调框架'is not a promotion checklist'，成功取决于展示'business impact'而非打勾。"
         },
         {
             id: "tm-5-1-q4",
-            question: "双梯制（Dual Ladder）的目的是什么？",
+            question: "根据 CircleCI 的能力矩阵，反馈沟通协作占总能力的多少比例？",
             options: [
-                "增加管理岗位",
-                "允许工程师不做管理也能晋升",
-                "减少职级数量",
-                "统一所有人的发展路径"
+                "20%",
+                "30%",
+                "40%",
+                "50%"
             ],
-            answer: 1,
-            rationale: "双梯制提供 IC 和 Management 两条平行路径，允许工程师在不做管理的情况下获得晋升。"
+            answer: 2,
+            rationale: "CircleCI 的矩阵中，反馈、沟通和协作合计占 40%，技术技能只占 20%，体现了软技能的重要性。"
         },
         {
             id: "tm-5-1-q5",
-            question: "Senior 工程师的影响范围通常是什么？",
+            question: "CircleCI 对职业路径的核心理念是什么？",
             options: [
-                "自己的任务",
-                "整个团队",
-                "多个团队",
-                "整个公司"
+                "管理是唯一的高级发展路径",
+                "职业路径与人一样多元",
+                "所有人应该走相同的路径",
+                "技术路径是次要选择"
             ],
             answer: 1,
-            rationale: "Senior 工程师的影响范围通常是整个团队，而 Staff 影响多个团队，Principal 影响组织。"
+            rationale: "CircleCI 明确'career paths are as diverse as the people that work with us'，拒绝管理是唯一晋升路径的假设。"
         },
         {
             id: "tm-5-1-q6",
-            question: "Title Inflation 问题指的是什么？",
+            question: "Engineering Ladders 建议晋升准备度需要什么条件？",
             options: [
-                "职位名称太长",
-                "不同公司同名职级差异很大",
-                "职级数量太多",
-                "晋升太快"
+                "完成特定项目",
+                "持续数月在下一级别表现",
+                "通过晋升考试",
+                "获得所有同事的推荐"
             ],
             answer: 1,
-            rationale: "Title Inflation 指不同公司的同名职级可能差异很大，需要与市场校准。"
+            rationale: "Engineering Ladders 指出晋升准备度需要'performing at the next level consistently for several months'——持续表现而非一次性证明。"
         },
         {
             id: "tm-5-1-q7",
-            question: "为什么能力模型需要具体的行为示例？",
+            question: "Engineering Ladders 关于个人能力分布的观点是什么？",
             options: [
-                "为了增加文档长度",
-                "避免抽象描述导致理解不一致",
-                "满足合规要求",
-                "方便外部对标"
+                "优秀工程师在所有维度都强",
+                "人们通常在某些领域更强、其他领域较弱",
+                "能力分布不重要",
+                "应该只关注最强的领域"
             ],
             answer: 1,
-            rationale: "抽象描述如'展示技术领导力'容易导致理解不一致，需要具体行为示例。"
+            rationale: "Engineering Ladders 指出'people are usually stronger in some areas and weaker in others'，这是正常的，框架应用于对话而非打分。"
         },
         {
             id: "tm-5-1-q8",
-            question: "Calibration 的目的是什么？",
+            question: "Dropbox 框架覆盖的四大支柱是什么？",
             options: [
-                "增加评估次数",
-                "确保不同经理对标准理解一致",
-                "减少晋升名额",
-                "简化评估流程"
+                "Code、Review、Design、Deploy",
+                "Results、Direction、Talent、Culture",
+                "技术、管理、沟通、执行",
+                "Planning、Development、Testing、Release"
             ],
             answer: 1,
-            rationale: "Calibration 确保不同经理对同一标准的理解一致，保证评估的公平性。"
+            rationale: "Dropbox 的四大支柱是 Results（结果）、Direction（方向）、Talent（人才）、Culture（文化）。"
         },
         {
             id: "tm-5-1-q9",
-            question: "如果只有管理一条晋升路径会怎样？",
+            question: "CircleCI 在能力描述中使用什么语言风格？",
             options: [
-                "所有人都能晋升",
-                "优秀工程师被迫做不适合的角色",
-                "晋升更容易",
-                "团队更稳定"
+                "使用'can do'（能做）",
+                "使用'does'（做到）",
+                "使用'might do'（可能做）",
+                "使用'should do'（应该做）"
             ],
             answer: 1,
-            rationale: "单一的管理晋升路径会迫使优秀工程师做不适合的角色选择，可能失去技术人才。"
+            rationale: "CircleCI 使用主动描述词'does'而非'can do'，确保清晰度——是已展示的行为而非潜在能力。"
         },
         {
             id: "tm-5-1-q10",
-            question: "Progression.fyi 网站收集的是什么内容？",
+            question: "CircleCI 强调优秀工程师的定义是什么？",
             options: [
-                "公司财报",
-                "各公司的能力模型和职级体系",
-                "面试题目",
-                "薪资数据"
+                "编码速度最快",
+                "远超编码能力，包括协作反馈沟通",
+                "Bug 最少",
+                "工作时间最长"
             ],
             answer: 1,
-            rationale: "Progression.fyi 收集了各公司公开的能力模型和职级体系，是很好的参考资源。"
+            rationale: "CircleCI 强调'what makes a good engineer goes far beyond their coding skills'——技术能力只是一部分。"
         },
         {
             id: "tm-5-1-q11",
-            question: "典型的工程师职级体系最高级别通常是什么？",
+            question: "研究显示多少比例的员工认为绩效评估不公平？",
             options: [
-                "Senior",
-                "Staff",
-                "Distinguished",
-                "Director"
+                "55%",
+                "65%",
+                "75%",
+                "85%"
             ],
-            answer: 2,
-            rationale: "典型的 IC 职级体系最高是 Distinguished，通常是公司级别的技术权威。"
+            answer: 3,
+            rationale: "研究显示 85% 的员工认为绩效评估不公平，因此考虑离职。这凸显了校准和透明度的重要性。"
         },
         {
             id: "tm-5-1-q12",
-            question: "能力盘点的目的是什么？",
+            question: "CircleCI 能力矩阵设计的五大原则不包括哪个？",
             options: [
-                "决定谁应该被解雇",
-                "识别每位成员的优势和发展领域",
-                "分配年终奖金",
-                "完成 HR 的要求"
+                "一致性（Consistency）",
+                "可理解性（Approachability）",
+                "全面性（Comprehensiveness）",
+                "清晰语言（Clear language）"
             ],
-            answer: 1,
-            rationale: "能力盘点帮助管理者了解团队成员的优势和发展领域，为发展规划提供依据。"
+            answer: 2,
+            rationale: "五大原则是 Consistency、Approachability、Simplicity、Clear language、Straightforward structure，强调简洁而非全面。"
         }
     ],
     "tm-5-2": [
         {
             id: "tm-5-2-q1",
-            question: "根据 Gallup 研究，经常收到反馈的员工敬业度高多少？",
+            question: "Radical Candor 框架的两个核心维度是什么？",
             options: [
-                "1.5倍",
-                "2倍",
-                "3倍",
-                "4倍"
+                "技术能力和管理能力",
+                "关心个人和直接挑战",
+                "正面反馈和负面反馈",
+                "口头沟通和书面沟通"
             ],
-            answer: 2,
-            rationale: "Gallup 研究表明，经常收到反馈的员工敬业度高3倍。"
+            answer: 1,
+            rationale: "Radical Candor 建立在 Care Personally（关心个人）+ Challenge Directly（直接挑战）两个维度上。"
         },
         {
             id: "tm-5-2-q2",
-            question: "Radical Candor 框架强调什么？",
+            question: "Ruinous Empathy 是指什么？",
             options: [
-                "只需要直接挑战",
-                "只需要关心个人",
-                "同时具备关心个人和直接挑战",
-                "既不关心也不挑战"
+                "过度批评导致关系破裂",
+                "关心对方但避免直接挑战，表面善意实则有害",
+                "完全不关心对方",
+                "只关注工作不关注人"
             ],
-            answer: 2,
-            rationale: "Radical Candor 强调好的反馈需要同时具备'关心个人'和'直接挑战'。"
+            answer: 1,
+            rationale: "Ruinous Empathy 是关心但不挑战的象限，表面上善意但实际阻碍了对方成长。"
         },
         {
             id: "tm-5-2-q3",
-            question: "SBI 模型代表什么？",
+            question: "《Thanks for the Feedback》识别的三种反馈触发器不包括哪个？",
             options: [
-                "Strategy-Business-Impact",
-                "Situation-Behavior-Impact",
-                "System-Build-Integrate",
-                "Start-Begin-Implement"
+                "Truth Triggers（真相触发器）",
+                "Relationship Triggers（关系触发器）",
+                "Time Triggers（时间触发器）",
+                "Identity Triggers（身份触发器）"
             ],
-            answer: 1,
-            rationale: "SBI 模型代表 Situation（情境）→ Behavior（行为）→ Impact（影响）。"
+            answer: 2,
+            rationale: "三种触发器是 Truth Triggers、Relationship Triggers、Identity Triggers，没有 Time Triggers。"
         },
         {
             id: "tm-5-2-q4",
-            question: "Manager Tools 建议反馈应该在事件发生后多久内给出？",
+            question: "GROW 模型中的 W 代表什么？",
             options: [
-                "1小时内",
-                "24-48小时内",
-                "一周内",
-                "年终评审时"
+                "Work（工作）",
+                "Will（意愿）",
+                "Win（胜利）",
+                "Way（方式）"
             ],
             answer: 1,
-            rationale: "Manager Tools 建议在事件发生后24-48小时内给出反馈，此时记忆最清晰。"
+            rationale: "Whitmore 明确 W 代表'will'——承诺行动的意愿，而非其他含义。"
         },
         {
             id: "tm-5-2-q5",
-            question: "《The Coaching Habit》提出的核心问题之一是什么？",
+            question: "John Whitmore 关于 GROW 模型使用的警告是什么？",
             options: [
-                "你错在哪里？",
-                "And what else?（还有呢？）",
-                "你应该这样做",
-                "为什么没完成？"
+                "GROW 模型已过时",
+                "任何独裁者都可以使用 GROW——框架本身不够",
+                "GROW 只适用于销售团队",
+                "GROW 应该每次完整走完"
             ],
             answer: 1,
-            rationale: "'And what else?'是《The Coaching Habit》的核心问题之一，帮助深入探讨。"
+            rationale: "Whitmore 警告'any dictator can use GROW'——框架必须配合情商和真正的倾听才有效。"
         },
         {
             id: "tm-5-2-q6",
-            question: "只有关心没有挑战的反馈被称为什么？",
+            question: "Kim Scott 关于 Radical Candor 的澄清是什么？",
             options: [
-                "Radical Candor",
-                "Ruinous Empathy（有害的同理心）",
-                "Obnoxious Aggression",
-                "Manipulative Insincerity"
+                "它是粗鲁的许可证",
+                "它允许侵犯个人隐私",
+                "它既不是粗鲁的借口，也不是侵犯隐私的许可",
+                "它只适用于管理者"
             ],
-            answer: 1,
-            rationale: "只有关心没有挑战被称为 Ruinous Empathy，表面上善意但实际有害。"
+            answer: 2,
+            rationale: "Scott 强调 Radical Candor 'is not a license to act like a jerk'也'not an invitation to get creepily personal'。"
         },
         {
             id: "tm-5-2-q7",
-            question: "为什么很多管理者害怕给负面反馈？",
+            question: "《Thanks for the Feedback》描述的'switchtracks'现象是什么？",
             options: [
-                "公司政策不允许",
-                "害怕冲突和破坏关系",
-                "不知道如何表达",
-                "以上都对"
+                "频繁更换话题",
+                "双方各自谈论自己关心的问题，形成两个独白",
+                "从正面转向负面反馈",
+                "在不同会议间切换"
             ],
-            answer: 3,
-            rationale: "管理者回避负面反馈的原因包括害怕冲突、担心破坏关系、不知道如何表达等。"
+            answer: 1,
+            rationale: "'Switchtracks'是指双方都在谈自己的议题而非对话，需要一次处理一个议题。"
         },
         {
             id: "tm-5-2-q8",
-            question: "教练式辅导和直接告知的区别是什么？",
+            question: "Whitmore 认为教练的本质是什么？",
             options: [
-                "没有区别",
-                "教练引导对方思考，告知直接给出答案",
-                "教练更快，告知更慢",
-                "教练用于正面反馈，告知用于负面反馈"
+                "纠正错误",
+                "引导个人实现潜力",
+                "给出正确答案",
+                "评估绩效"
             ],
             answer: 1,
-            rationale: "教练式辅导通过提问引导对方自主思考，告知则直接给出答案或建议。"
+            rationale: "Whitmore 指出教练是'guiding individuals to realize their potential'——不只是纠正，更是引导实现潜力。"
         },
         {
             id: "tm-5-2-q9",
-            question: "反馈过载的问题是什么？",
+            question: "Identity Triggers 是指什么？",
             options: [
-                "反馈太少",
-                "过于频繁或详细的反馈让人疲惫",
-                "反馈不够具体",
+                "认为反馈内容不对",
+                "认为给反馈的人不可信",
+                "反馈威胁到自我认知",
                 "反馈时机不对"
             ],
-            answer: 1,
-            rationale: "过于频繁或过于详细的反馈可能让人疲惫，需要找到合适的频率和粒度。"
+            answer: 2,
+            rationale: "Identity Triggers 是反馈触及到'我是谁'的核心认知，产生防御反应。"
         },
         {
             id: "tm-5-2-q10",
-            question: "建立双向反馈文化需要什么？",
+            question: "Manipulative Insincerity 在 Radical Candor 框架中是指什么？",
             options: [
-                "只给下属反馈",
-                "只接受上级反馈",
-                "管理者主动请求对自己的反馈",
-                "等待下属主动反馈"
+                "关心且挑战",
+                "关心但不挑战",
+                "挑战但不关心",
+                "既不关心也不挑战"
             ],
-            answer: 2,
-            rationale: "建立双向反馈文化需要管理者主动请求对自己的反馈，以身作则。"
+            answer: 3,
+            rationale: "Manipulative Insincerity 是最糟糕的象限——既不真正关心对方，也不给出直接反馈。"
         },
         {
             id: "tm-5-2-q11",
-            question: "《Thanks for the Feedback》这本书主要讲什么？",
+            question: "Whitmore 关于机械使用 GROW 的警告是什么？",
             options: [
-                "如何给反馈",
-                "如何接收反馈",
-                "如何避免反馈",
-                "如何评估员工"
+                "应该严格按顺序执行",
+                "不要机械套用模型，问题类型比问题本身更重要",
+                "每次都必须完整走完四个步骤",
+                "GROW 应该由 HR 执行"
             ],
             answer: 1,
-            rationale: "《Thanks for the Feedback》专注于如何接收反馈，是对给反馈技巧的补充。"
+            rationale: "Whitmore 警告不要'follow the model slavishly'——框架只是指引问题类型的工具。"
         },
         {
             id: "tm-5-2-q12",
-            question: "GROW 模型用于什么？",
+            question: "Stone 和 Heen 关于反馈触发器的观点是什么？",
             options: [
-                "绩效评估",
-                "结构化教练对话",
-                "项目管理",
-                "招聘面试"
+                "触发器无法被识别",
+                "触发器会让对话偏离原本的反馈内容",
+                "触发器总是有益的",
+                "只有接收者有触发器"
             ],
             answer: 1,
-            rationale: "GROW（Goal-Reality-Options-Will）是进行结构化教练对话的模型。"
+            rationale: "'Triggers can make the conversation about the triggers, rather than about the original feedback'——需要识别并重新聚焦。"
         }
     ],
     "tm-5-3": [
         {
             id: "tm-5-3-q1",
-            question: "绩效管理的真正目的是什么？",
+            question: "John Doerr 定义的 OKR 四大超能力不包括哪个？",
             options: [
-                "年终打分",
-                "持续的目标对齐、反馈和发展",
-                "决定奖金分配",
-                "记录员工表现"
+                "Focus and commit to priorities（聚焦优先级）",
+                "Align and connect for teamwork（对齐协作）",
+                "Compete and win against rivals（竞争取胜）",
+                "Stretch for amazing results（挑战卓越）"
             ],
-            answer: 1,
-            rationale: "绩效管理不只是年终打分，而是持续的目标对齐、反馈和发展过程。"
+            answer: 2,
+            rationale: "四大超能力是 Focus、Align、Track、Stretch，不包括 Compete。OKR 关注内部对齐而非外部竞争。"
         },
         {
             id: "tm-5-3-q2",
-            question: "OKR 代表什么？",
+            question: "Doerr 关于 OKR 与薪酬的建议是什么？",
             options: [
-                "Objectives and Key Requirements",
-                "Objectives and Key Results",
-                "Operations and Key Resources",
-                "Outcomes and Key Responsibilities"
+                "OKR 应该与奖金直接挂钩",
+                "OKR 不应与薪酬挂钩",
+                "只有 Key Results 应该挂钩",
+                "只有管理层的 OKR 应该挂钩"
             ],
             answer: 1,
-            rationale: "OKR 代表 Objectives and Key Results（目标和关键结果）。"
+            rationale: "Doerr 明确建议'OKRs should not be tied to compensation'——否则会导致保守目标设定。"
         },
         {
             id: "tm-5-3-q3",
-            question: "根据《An Elegant Puzzle》，晋升应该是什么的认可？",
+            question: "HBR 研究显示有多少比例的美国公司已放弃传统年度评审？",
             options: [
-                "未来的潜力",
-                "已经在做下一级工作",
-                "工作年限",
-                "人际关系"
+                "约 10%",
+                "超过三分之一",
+                "约一半",
+                "超过 70%"
             ],
             answer: 1,
-            rationale: "《An Elegant Puzzle》建议晋升应该是'已经在做下一级工作'的认可。"
+            rationale: "HBR 研究显示超过三分之一的美国公司已放弃传统年度评审，转向更频繁的反馈模式。"
         },
         {
             id: "tm-5-3-q4",
-            question: "Calibration 会议的作用是什么？",
+            question: "绩效校准会议的核心目的是什么？",
             options: [
-                "增加工作量",
-                "消除个人偏见和标准差异",
-                "减少晋升名额",
-                "简化评估流程"
+                "减少评估次数",
+                "建立一致的评估标准",
+                "增加管理层权力",
+                "简化流程"
             ],
             answer: 1,
-            rationale: "Calibration 是多位经理一起讨论评级，消除个人偏见和标准差异。"
+            rationale: "校准的目的是'find common ground that makes consistent employee performance evaluations possible'——建立一致标准。"
         },
         {
             id: "tm-5-3-q5",
-            question: "PIP 代表什么？",
+            question: "Doerr 建议每个周期应该设定多少个 OKR？",
             options: [
-                "Personal Improvement Program",
-                "Performance Improvement Plan",
-                "Project Implementation Plan",
-                "People Integration Process"
+                "1-2 个",
+                "3-5 个",
+                "6-8 个",
+                "10 个以上"
             ],
             answer: 1,
-            rationale: "PIP 代表 Performance Improvement Plan（绩效改进计划）。"
+            rationale: "Doerr 建议每个周期限制 3-5 个 OKR，每个目标绑定 5 个以内的关键结果，确保聚焦。"
         },
         {
             id: "tm-5-3-q6",
-            question: "年度评审周期太长的问题是什么？",
+            question: "HBR 实验显示偏见识别训练后，针对有色人种的负面人格评价变化如何？",
             options: [
-                "评审太频繁",
-                "问题发现时往往已经累积",
-                "员工太忙",
-                "没有问题"
+                "从 30% 降至 15%",
+                "从 14% 降至 0%",
+                "从 50% 降至 25%",
+                "没有变化"
             ],
             answer: 1,
-            rationale: "年度评审周期太长导致问题发现时往往已经累积，需要更频繁的检查点。"
+            rationale: "HBR 实验显示偏见识别训练后，针对有色人种的负面人格评价从 14% 降至 0%。"
         },
         {
             id: "tm-5-3-q7",
-            question: "OKR 框架最先由哪家公司推广？",
+            question: "传统年度评审的主要问题是什么？",
             options: [
-                "Google",
-                "Intel",
-                "Microsoft",
-                "Amazon"
+                "太频繁",
+                "关注过去而非发展人才",
+                "太简单",
+                "员工参与度太高"
             ],
             answer: 1,
-            rationale: "OKR 最早由 Intel 的 Andy Grove 创立，后被 Google 推广。"
+            rationale: "HBR 指出问题在于'accountability for past behavior rather than developing talent'——关注过去而非发展。"
         },
         {
             id: "tm-5-3-q8",
-            question: "很多工程工作难以设定可衡量目标的原因是什么？",
+            question: "CFR 作为 OKR 的补充工具代表什么？",
             options: [
-                "工程师不配合",
-                "工作性质难以量化",
-                "目标太多",
-                "时间不够"
+                "Code、Feature、Release",
+                "Conversations、Feedback、Recognition",
+                "Clarity、Focus、Results",
+                "Check、Fix、Review"
             ],
             answer: 1,
-            rationale: "很多工程工作如代码质量、技术债务治理等难以直接量化。"
+            rationale: "CFR 代表 Conversations（对话）、Feedback（反馈）、Recognition（认可），是持续绩效管理的工具。"
         },
         {
             id: "tm-5-3-q9",
-            question: "处理绩效不达标员工需要什么？",
+            question: "校准会议可能引入的偏见风险包括什么？",
             options: [
-                "忽视问题",
-                "勇气和技巧，直面问题同时保持尊严",
-                "立即解雇",
-                "降低标准"
+                "过于公平",
+                "锚定效应和首位发言者主导",
+                "评估太少",
+                "时间太长"
             ],
             answer: 1,
-            rationale: "处理绩效问题需要勇气和技巧，既要直面问题，又要保持对方尊严。"
+            rationale: "HBR 警告校准会议可能引入锚定效应、首位发言者主导等新偏见，需要确保所有声音被听到。"
         },
         {
             id: "tm-5-3-q10",
-            question: "《Measure What Matters》这本书主要讲什么？",
+            question: "Doerr 对 Objective 和 Key Results 的区分是什么？",
             options: [
-                "财务管理",
-                "OKR 方法论",
-                "项目管理",
-                "人员招聘"
+                "两者都应该可量化",
+                "Objective 鼓舞人心，Key Results 可衡量可验证",
+                "两者都应该抽象",
+                "Objective 可量化，Key Results 抽象"
             ],
             answer: 1,
-            rationale: "《Measure What Matters》由 John Doerr 撰写，深入介绍 OKR 方法论。"
+            rationale: "Doerr 定义 Objective 是鼓舞人心的目标，Key Results 是'measurable outcomes'——脚踏实地可衡量。"
         },
         {
             id: "tm-5-3-q11",
-            question: "晋升政治化的主要原因是什么？",
+            question: "HBR 描述的'third way'绩效管理方法是什么？",
             options: [
-                "名额太少",
-                "决策受关系和可见度影响，流程不透明",
-                "标准太高",
-                "竞争太激烈"
+                "完全取消评估",
+                "季度多维度评估，平衡发展与问责",
+                "每日评估",
+                "只有年度评估"
             ],
             answer: 1,
-            rationale: "晋升政治化通常是因为决策受到关系和可见度影响，缺乏透明公平的流程。"
+            rationale: "HBR 描述的'third way'是季度在多个维度评估，平衡发展与问责。"
         },
         {
             id: "tm-5-3-q12",
-            question: "PIP 应该包含什么内容？",
+            question: "研究显示需要警惕的 188 种隐性偏见包括哪些？",
             options: [
-                "只有期望",
-                "期望、时间框架和支持措施",
-                "只有惩罚措施",
-                "只有时间框架"
+                "技术偏见、管理偏见、沟通偏见",
+                "宽容偏见、确认偏见、近因偏见",
+                "性别偏见是唯一需要注意的",
+                "偏见无法被识别"
             ],
             answer: 1,
-            rationale: "PIP 应该清晰定义期望、时间框架和支持措施，帮助员工改进。"
+            rationale: "需要警惕宽容偏见（高估相似人）、确认偏见（寻找支持已有观点的信息）、近因偏见（过度重视最近事件）等。"
         }
     ]
 }

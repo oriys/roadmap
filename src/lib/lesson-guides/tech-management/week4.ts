@@ -5,121 +5,127 @@ export const week4Guides: Record<string, LessonGuide> = {
     "tm-4-1": {
         lessonId: "tm-4-1",
         background: [
-            "【招聘漏斗】招聘是一个漏斗过程：从职位需求分析 → 人才画像定义 → 渠道投放 → 简历筛选 → 面试评估 → Offer 发放 → 入职。每个环节的转化率决定最终效果。",
-            "【人才画像】优秀的人才画像不只是技能清单，而是明确'必须有'vs'最好有'的能力、行为特质、文化匹配度。《Who》一书强调：招聘错误的代价是该职位年薪的15倍。",
-            "【渠道策略】不同渠道适合不同人才：内部推荐通常质量最高、成本最低；LinkedIn 适合被动求职者；招聘网站适合主动求职者。多渠道组合是最佳实践。",
-            "【雇主品牌】技术人才市场竞争激烈，雇主品牌影响候选人的应聘意愿。工程博客、开源贡献、技术分享会都是建立雇主品牌的方式。",
-            "【多样性招聘】研究表明多样化团队有更好的创新能力和决策质量。需要有意识地扩大招聘渠道，减少无意识偏见。"
+            "【招聘的核心问题】《Who: The A Method for Hiring》开篇指出：'Hiring is the single biggest problem in business today'——招聘是当今商业中最大的问题。平均一次招聘错误的代价是年薪的 15 倍，包括直接成本、机会成本和团队士气损失。",
+            "【A Method 四步法】Geoff Smart 和 Randy Street 提出系统化的 A Method：1) Scorecard(记分卡)——定义成功标准；2) Source(寻源)——主动建立人才管道；3) Select(甄选)——结构化面试；4) Sell(说服)——成功关闭候选人。这个方法可以将招聘成功率提升到 90%。",
+            "【Scorecard 的三要素】记分卡不同于传统职位描述，它包含：Mission(岗位使命)——用简洁语言描述核心目标；Outcomes(期望成果)——设定足够高但合理的目标来吸引 A 级人才；Competencies(核心能力)——列出候选人需要具备的行为特质和文化契合度。",
+            "【Sourcing 的核心原则】最好的人才来源是推荐而非广告(referrals, not advertising)。Smart 建议在没有招聘需求时就持续建立人才网络，'systematically looking for and identifying potential talents before you actually need them'。",
+            "【Job Description 最佳实践】Will Larson 在讨论 Engineering Executive 招聘时强调：Job Description 应该清晰具体，避免创意标题如'Code Ninja'。包含薪资范围可以减少前期筛选时间，提高候选人满意度和留存率。"
         ],
         keyDifficulties: [
-            "【需求模糊】业务部门往往只说'需要一个高级工程师'，缺乏具体定义。管理者需要追问具体场景和期望产出。",
-            "【标准不一】不同面试官对'优秀'的定义不同，导致评估不一致。需要建立统一的评估框架和校准机制。",
-            "【时间压力】紧急招聘需求容易导致降低标准。'宁缺毋滥'应该是原则，但需要与业务压力平衡。",
-            "【偏见识别】无意识偏见会影响招聘公平性，包括亲和偏见、确认偏见、光环效应等。"
+            "【Who vs What 的思维转变】《Who》的核心理念是：'It's about who not about what'——先有人才再有战略。当你解决了'Who'的问题，'What'的问题会自然解决。但很多管理者仍然本末倒置，先定策略再找人。",
+            "【A Player 的定义难题】A 级人才的定义是'able to achieve the outcomes outlined in the scorecard with at least 90% probability'。但管理者常犯的错误是用模糊标准如'优秀'、'高级'来定义，导致评估不一致。",
+            "【招聘委员会的价值】Will Larson 指出：'Hiring committees are a great mechanism for training hiring managers' judgment on what makes a good candidate'——招聘委员会可以统一评估标准，类似 Amazon 的 Bar Raiser 机制，虽然速度较慢但能保证一致性。",
+            "【薪酬包的长期影响】Larson 警告：'Outsized compensation packages will always create ongoing problems in annual compensation processes'——过高的薪酬包会在后续的年度调薪中造成问题，招聘经理往往只关注当下而忽视长期影响。",
+            "【文化契合 vs 技能匹配】《Who》强调 Cultural misfits affect the bottom line——文化不匹配的人会影响业绩。记分卡需要明确'what it means to be a good fit'，而不是仅关注技术能力。"
         ],
         handsOnPath: [
-            "1. 需求分析：为当前或下一个招聘岗位撰写详细的人才画像，区分'必须有'和'最好有'",
-            "2. 渠道评估：列出目前使用的招聘渠道，分析各渠道的转化率和质量",
-            "3. 雇主品牌：规划一个可以展示团队技术实力的内容（博客、分享会等）",
-            "4. 偏见自查：学习常见的无意识偏见，反思自己的招聘决策是否受其影响"
+            "为当前或下一个招聘岗位创建 Scorecard：明确写出岗位使命(Mission)、3-5 个关键成果(Outcomes)、5-8 个核心能力(Competencies)。确保成果目标足够高以吸引 A 级人才。",
+            "盘点你的推荐网络：列出 10 个可能推荐优秀人才的人脉，主动联系他们建立持续的人才推荐关系，而不是等到有职位空缺时才联系。",
+            "审视当前的 Job Description：对照最佳实践检查是否包含清晰的职责、具体的技术要求、成长机会、薪资范围。删除模糊的创意标题和不必要的要求。",
+            "建立团队的招聘委员会或 Bar Raiser 机制：定义评估标准，确保不同面试官的判断能够得到校准和统一。",
+            "进行 5 Fs 分析：了解目标候选人最看重什么——Fit(角色契合)、Family(家庭因素)、Freedom(自主空间)、Fortune(薪酬)、Fun(工作乐趣)。"
         ],
         selfCheck: [
-            "你能清晰描述下一个招聘岗位的人才画像吗？",
-            "过去一年招聘的转化率（简历→面试→offer→入职）是多少？",
-            "团队的多样性如何？是否有意识地拓展招聘渠道？",
-            "你们的雇主品牌在目标人才群体中的认知度如何？",
-            "面试官是否经过统一培训？评估标准是否一致？"
+            "你能用一句话清晰描述招聘岗位的使命(Mission)吗？不需要进一步解释就能让所有人理解？",
+            "你的 Scorecard 是否设定了足够高的成果目标，能够'scare off B and C Players'同时吸引 A 级人才？",
+            "团队的人才来源中，内部推荐占比是多少？你是否在没有招聘需求时也在持续建立人才网络？",
+            "最近一次招聘决策中，你是否因为时间压力而降低了标准？结果如何？",
+            "你能说出每个候选人在 5 Fs 中最看重什么吗？你在 Offer 阶段是否针对性地展示了优势？"
         ],
         extensions: [
-            "阅读《Who: The A Method for Hiring》了解系统化招聘方法",
-            "研究 Google 的招聘方法论和面试官培训体系",
-            "了解 Blind Hiring 等减少偏见的招聘实践",
-            "学习如何撰写有吸引力的职位描述"
+            "深入阅读《Who: The A Method for Hiring》全书，理解完整的招聘系统包括 Topgrading Interview 等高级技巧。",
+            "研究 Amazon 的 Bar Raiser 机制，了解如何在组织层面保持招聘标准的一致性。",
+            "学习 Vinod Khosla 的 Gene Pool Engineering 理论——根据团队风险而非仅仅是机会来招聘。",
+            "探索 Blind Hiring 实践，了解如何通过隐藏候选人身份信息来减少无意识偏见。"
         ],
         sourceUrls: [
             "https://www.amazon.com/Who-Method-Hiring-Geoff-Smart/dp/0345504194",
-            "https://rework.withgoogle.com/guides/hiring-shape-the-candidate-experience/steps/introduction/",
-            "https://hbr.org/2016/04/how-to-take-the-bias-out-of-interviews"
+            "https://lethain.com/hiring-engineering-executives/",
+            "https://www.lever.co/blog/how-to-write-a-job-description"
         ]
     },
     "tm-4-2": {
         lessonId: "tm-4-2",
         background: [
-            "【面试目的】技术面试的核心目的是预测候选人未来的工作表现。研究表明结构化面试比非结构化面试的预测效度高50%以上。",
-            "【面试类型】常见技术面试类型：1) 算法/编程题——考察问题解决能力；2) 系统设计——考察架构思维；3) 行为面试——考察过往经历和软技能；4) 文化面试——考察价值观匹配。",
-            "【评分标准】Google 的面试方法强调使用统一的评分标准（Rubric），每个维度有明确的1-4分定义，减少主观判断。",
-            "【面试官培训】优秀的面试需要训练。Google 要求新面试官先旁听多场面试，然后在资深面试官陪同下主持，最后独立面试。",
-            "【候选人体验】面试也是候选人评估公司的过程。良好的面试体验（准时、尊重、专业）会提升 Offer 接受率。"
+            "【结构化面试的定义】Google re:Work 定义：'Structured interviewing simply means using the same interviewing methods to assess candidates applying for the same job'——对所有候选人使用相同的问题、相同的评分标准和预定的资格要求。",
+            "【结构化面试的四个组成部分】Google 的方法论包含：1) Vetted Questions——经过验证的高质量问题；2) Comprehensive Feedback——详细的候选人回答记录；3) Standardized Rubrics——所有评估者共享的评分标准；4) Interviewer Training——面试官校准培训。",
+            "【告别脑筋急转弯】Google 曾经使用'How many golf balls would fit inside a 747 airplane?'这类问题，但后来发现：'performance on these kinds of questions is at best a discrete skill that can be improved through practice, eliminating their utility for assessing candidates'——它们无法预测工作表现。",
+            "【Joel Spolsky 的核心原则】《The Guerrilla Guide to Interviewing》提出经典的两条标准：'Smart and Gets Things Done'——聪明且能把事情做成。这是评估候选人的唯一两个重要维度。",
+            "【绝不说 Maybe】Spolsky 强调：'Never say \"Maybe, I can't tell.\" If you can't tell, that means No Hire'——犹豫就意味着不录用。接受一个糟糕的候选人比拒绝一个好候选人的代价大得多。"
         ],
         keyDifficulties: [
-            "【题目设计】设计既能区分候选人水平，又不过度依赖刷题的面试题是挑战。好的题目应该有多层次的解法。",
-            "【时间把控】45-60分钟内完成有效评估需要技巧，既要给候选人足够展示空间，又要覆盖核心考察点。",
-            "【追问技巧】好的追问能深入了解候选人思维过程。'为什么选择这个方案？''还有其他方法吗？''这个方案的缺点是什么？'",
-            "【偏见克服】避免第一印象主导评估，避免因候选人背景相似而加分（亲和偏见）。"
+            "【Blowhard 面试官反模式】Spolsky 警告最糟糕的面试官是 Blowhard——'the kind who blabs the whole time and barely leaves the candidate time to respond'。他们录用所有人因为觉得候选人一定很聪明。面试应该让候选人说话而非面试官表演。",
+            "【Quiz Show 反模式】'Quiz Show Interviewers test trivia knowledge rather than aptitude'——考察琐碎知识而非真实能力。像'What's the difference between varchar and varchar2?'这样的问题毫无意义，因为任何人都可以 Google 到答案。",
+            "【结构化面试的执行难度】Google 承认：'Structured interviews are hard to develop. You have to write them, test them, and make sure interviewers stick to them'——需要编写、测试并确保面试官遵守。还要持续更新以防候选人共享答案。",
+            "【面试官自信过度问题】'Research has shown that structured interviews aren't more frequently used because interviewers everywhere think they're good at interviewing and don't need the help'——面试官普遍认为自己不需要帮助，这是结构化面试推广的最大障碍。",
+            "【多面试官原则】Spolsky 建议：'Always try to have at least six people interview each candidate that gets hired, including at least five who would be peers'——至少 6 人面试，其中 5 人是同级同事。如果 6 人中有 2 人认为不应该录用，就不要录用。"
         ],
         handsOnPath: [
-            "1. 设计面试题：为团队设计一道结构化的技术面试题，包含评分标准和追问清单",
-            "2. 面试校准：与其他面试官一起复盘最近的面试案例，讨论评分差异",
-            "3. 旁听学习：旁听一场资深面试官主持的面试，记录学习要点",
-            "4. 候选人视角：以候选人视角评估当前面试流程的体验"
+            "设计一道结构化面试题：包含初始情景问题和预设的追问，定义差/中/良/优四个等级的回答标准(Rubric)，确保所有面试官理解评分一致。",
+            "实践 Shadow 面试官培训：安排新面试官先旁听 3-5 场面试，然后进行 Reverse Shadow——新面试官主持、资深面试官观察并反馈。",
+            "审计当前面试流程：检查是否使用了 Brainteaser 类问题，是否有面试官主导对话时间过长的 Blowhard 问题，是否有 Quiz Show 式的琐碎知识问题。",
+            "建立面试反馈机制：要求面试官在面试结束后 15 分钟内提交书面反馈，避免印象随时间模糊。使用标准化模板确保反馈可比较。",
+            "进行面试官校准会议(Calibration)：选取真实面试案例，让多位面试官独立评分后讨论差异，统一对'Smart'和'Gets Things Done'的理解。"
         ],
         selfCheck: [
-            "你的技术面试是否有明确的评分标准？",
-            "面试后的反馈是否有结构、可追溯？",
-            "你能在面试中有效引导候选人展示真实能力吗？",
-            "面试官之间的评估结果一致性如何？",
-            "候选人对面试体验的反馈是什么？"
+            "你的技术面试是否对所有候选人使用相同的问题和评分标准？还是每次即兴发挥？",
+            "你在面试中说话的时间占比是多少？是否存在 Blowhard 倾向，让自己说太多？",
+            "最近一次面试中，你是否问了可以 Google 到答案的琐碎知识问题？",
+            "面试后你多久提交反馈？是否在记忆模糊前完成？",
+            "如果 6 个面试官中有 2 个说 No，你们会怎么决定？是否有明确的决策机制？"
         ],
         extensions: [
-            "研究 STAR 方法进行行为面试",
-            "学习系统设计面试的结构化框架",
-            "了解 Google 的 qDroid 面试问题库",
-            "研究 Work Sample Test 作为传统面试的补充"
+            "深入研究 Google re:Work 的完整结构化面试指南，包括如何设计 Behavioral 和 Hypothetical 问题。",
+            "学习 STAR 方法(Situation-Task-Action-Result)进行行为面试，系统性地评估候选人过往经历。",
+            "探索 Work Sample Test 作为传统面试的补充——让候选人完成实际工作样本而非回答假设问题。",
+            "研究 Joel Spolsky 后来的反思——他在 2018 年承认传统面试方法需要更新，建议更多使用实习/学徒制来评估。"
         ],
         sourceUrls: [
-            "https://rework.withgoogle.com/guides/hiring-use-structured-interviewing/steps/introduction/",
-            "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850",
-            "https://hbr.org/2016/04/how-to-take-the-bias-out-of-interviews"
+            "https://www.holloway.com/g/technical-recruiting-hiring",
+            "https://www.joelonsoftware.com/2006/10/25/the-guerrilla-guide-to-interviewing-version-30/",
+            "https://rework.withgoogle.com/guides/hiring-use-structured-interviewing/steps/introduction/"
         ]
     },
     "tm-4-3": {
         lessonId: "tm-4-3",
         background: [
-            "【Offer 设计】有竞争力的 Offer 包含多个要素：基本薪资、股权/期权、签字费、年终奖金、福利待遇。不同候选人的优先级不同，需要了解对方最看重什么。",
-            "【薪酬谈判】《Never Split the Difference》建议：先让对方出价、使用校准问题（'How am I supposed to do that?'）、锚定效应管理。谈判是协作而非对抗。",
-            "【快速决策】优秀候选人往往有多个 Offer，决策窗口短。需要快速完成内部审批流程，及时传达诚意。",
-            "【入职体验】研究表明前90天是新员工最关键的时期。好的入职体验包括：清晰的第一周计划、指定的 Buddy、循序渐进的项目安排。",
-            "【Preboarding】从签约到入职的空档期也需要关注，保持联系、分享团队动态、邀请参加非正式活动可以降低爽约率。"
+            "【The First 90 Days 核心概念】Michael Watkins 在《The First 90 Days》中指出：新员工需要尽快达到'Break-Even Point'——价值创造等于价值消耗的平衡点。这个点大约在入职后 6 个月，而前 90 天的表现决定了能否成功达到。",
+            "【Onboarding 的商业价值】Glassdoor/Brandon Hall Group 研究表明：强大的入职流程可以将新员工留存率提高 82%，生产力提高 70% 以上。但只有 12% 的员工认为他们的组织在入职方面做得好。",
+            "【STARS 模型】Watkins 提出 STARS 框架来诊断新员工面临的情境：Start-up(创业期)、Turnaround(扭转期)、Accelerated Growth(加速成长期)、Realignment(重新调整期)、Sustaining Success(维持成功期)——每种情境需要不同的策略。",
+            "【GitLab 的远程入职实践】作为全球最大的全远程公司(2100+ 员工，60+ 国家)，GitLab 的入职培训包含三个维度：Organizational(组织流程)、Technical(工具熟练)、Social(关系建立)。他们预期入职需要'at least two full weeks'。",
+            "【Preboarding 的重要性】65% 的雇主报告候选人接受 Offer 后在第一天不出现(no-show)。入职前的空档期是关键——需要发送欢迎包、保持联系、分享团队动态来降低爽约率。"
         ],
         keyDifficulties: [
-            "【预算限制】理想的 Offer 可能超出预算，需要在薪酬包的不同组成部分之间灵活调整。",
-            "【竞争压力】当候选人有竞争对手的 Offer 时，如何突出自身优势而非单纯拼薪资。",
-            "【期望管理】新员工入职后的期望与现实差距会导致早期离职，需要在入职前诚实沟通。",
-            "【快速产出压力】希望新员工快速产出的压力可能导致入职培训不足，反而延长适应期。"
+            "【常见过渡陷阱】Watkins 警告几个典型陷阱：'Sticking with what you know'(固守过去经验)、'Falling prey to the action imperative'(过早行动)、'Coming in with the answer'(带着答案入职)、'Neglecting horizontal relationships'(忽视横向关系)。",
+            "【期望与现实差距】研究显示 28% 的人在入职 90 天内离职，主要原因是期望与现实不符。需要在入职前诚实沟通工作内容、团队文化和挑战，而非过度承诺。",
+            "【信息过载问题】Sapling 数据显示平均新员工需要完成 54 项入职任务。任务过多会造成负面体验——Facebook 的'45-minute rule'要求所有系统在新员工到达 45 分钟内可用。",
+            "【远程入职的社交挑战】GitLab 承认：'Remote work can feel isolating without intentional effort'——远程工作容易感到孤立。他们要求每位新员工安排 10 次强制性的 Coffee Chat 与随机同事建立联系。",
+            "【快速产出的压力】管理者常希望新员工快速产出，但过早承担高难度任务反而会延长适应期。GitLab 明确表示：新员工前两周'shouldn't be expected to contribute heavily'。"
         ],
         handsOnPath: [
-            "1. Offer 模板：为不同级别设计标准 Offer 包结构，明确可调整空间",
-            "2. 入职计划：为下一位新员工制定详细的 30-60-90 天入职计划",
-            "3. Buddy 机制：建立新员工 Buddy 配对机制和职责说明",
-            "4. 反馈收集：设计入职后的反馈收集机制（第1周、第1月、第3月）"
+            "设计 30-60-90 天入职计划：第 30 天——理解公司战略、团队目标、建立关键关系；第 60 天——开始小规模贡献、识别改进机会；第 90 天——独立承担项目、提出改进建议。",
+            "建立 Buddy 机制：为每位新员工指定一位非直属经理的 Buddy，明确 Buddy 的职责(解答问题、介绍同事、分享非正式信息)和时间承诺(前两周每天 15 分钟)。",
+            "创建 Preboarding 清单：从签约到入职期间的联系计划，包括发送欢迎邮件、团队成员介绍、设备邮寄、入职前阅读材料等。",
+            "设计入职反馈循环：在第 1 周、第 30 天、第 60 天、第 90 天收集新员工反馈，使用标准化问题如'On a scale of 1-5, how confident are you about your decision to join?'",
+            "建立文档化的入职知识库：参照 GitLab Handbook 的模式，将所有入职信息文档化，让新员工可以'self-sufficient and proactive when looking for answers'。"
         ],
         selfCheck: [
-            "最近一次 Offer 谈判你使用了什么策略？效果如何？",
-            "新员工的第一周体验是否有清晰的安排？",
-            "过去一年新员工的90天留存率是多少？",
-            "你是否了解每个新员工在入职时最看重什么？",
-            "Preboarding 期间你们如何与候选人保持联系？"
+            "新员工的第一周是否有清晰的日程安排？他们是否知道每天要做什么、见谁？",
+            "你能说出最近入职员工在 STARS 模型中属于哪种情境吗？你是否据此调整了入职策略？",
+            "过去一年的 90 天新员工留存率是多少？离职的主要原因是什么？",
+            "Preboarding 期间你们做了什么来保持候选人的参与度？爽约率是多少？",
+            "新员工是否有指定的 Buddy？Buddy 的职责和时间投入是否明确？"
         ],
         extensions: [
-            "阅读《Never Split the Difference》学习谈判技巧",
-            "研究硅谷公司的入职流程最佳实践",
-            "了解不同国家/地区的薪酬结构和法规差异",
-            "学习如何设计有效的 30-60-90 天入职计划"
+            "深入阅读《The First 90 Days》，特别是关于建立联盟、获得早期胜利的章节。",
+            "研究 GitLab 的完整 Handbook-First 文化，了解如何通过文档化实现异步协作和快速入职。",
+            "学习 Google Noogler 项目——Google 如何系统化地帮助新员工在第一年成功。",
+            "探索 Stay Interview 技巧——在新员工考虑离职之前就了解他们的满意度和改进建议。"
         ],
         sourceUrls: [
-            "https://www.amazon.com/Never-Split-Difference-Negotiating-Depended/dp/0062407805",
-            "https://hbr.org/2017/06/your-new-hires-wont-succeed-unless-you-onboard-them-properly",
-            "https://rework.withgoogle.com/guides/hiring-onboard-new-hires-to-google/steps/introduction/"
+            "https://www.glassdoor.com/employers/blog/new-hire-onboarding-best-practices/",
+            "https://www.amazon.com/First-90-Days-Strategies-Expanded/dp/1422188612",
+            "https://about.gitlab.com/company/culture/all-remote/onboarding/"
         ]
     }
 }
@@ -128,439 +134,439 @@ export const week4Quizzes: Record<string, QuizQuestion[]> = {
     "tm-4-1": [
         {
             id: "tm-4-1-q1",
-            question: "根据《Who》一书，招聘错误的代价是该职位年薪的多少倍？",
+            question: "根据《Who: The A Method for Hiring》，招聘错误的代价是该职位年薪的多少倍？",
             options: [
-                "5倍",
-                "10倍",
-                "15倍",
-                "20倍"
+                "5 倍",
+                "10 倍",
+                "15 倍或更多",
+                "2-3 倍"
             ],
             answer: 2,
-            rationale: "《Who》一书强调招聘错误的代价是该职位年薪的15倍，包括直接成本和机会成本。"
+            rationale: "《Who》指出：'The average hiring mistake costs a company $1.5 million or more a year'，大约是年薪的 15 倍，包括直接成本和无数浪费的时间。"
         },
         {
             id: "tm-4-1-q2",
-            question: "人才画像应该区分哪两类能力？",
+            question: "A Method for Hiring 的四个步骤是什么？",
             options: [
-                "技术能力和管理能力",
-                "必须有和最好有",
-                "硬技能和软技能",
-                "当前能力和潜力"
+                "Screen, Interview, Evaluate, Hire",
+                "Scorecard, Source, Select, Sell",
+                "Define, Recruit, Assess, Close",
+                "Plan, Search, Interview, Offer"
             ],
             answer: 1,
-            rationale: "优秀的人才画像需要明确区分'必须有'（必要条件）和'最好有'（加分项）的能力。"
+            rationale: "Smart 和 Street 提出的 A Method 包含四步：Scorecard(记分卡)、Source(寻源)、Select(甄选)、Sell(说服)，可以实现 90% 的招聘成功率。"
         },
         {
             id: "tm-4-1-q3",
-            question: "哪种招聘渠道通常质量最高、成本最低？",
+            question: "根据《Who》，Scorecard 的三个核心组成部分是什么？",
             options: [
-                "招聘网站",
-                "内部推荐",
-                "猎头服务",
-                "校园招聘"
+                "Skills, Experience, Education",
+                "Mission, Outcomes, Competencies",
+                "Requirements, Responsibilities, Benefits",
+                "Goals, Tasks, Metrics"
             ],
             answer: 1,
-            rationale: "内部推荐通常质量最高、成本最低，因为推荐人了解公司文化和候选人能力。"
+            rationale: "Scorecard 包含三个要素：Mission(岗位使命)——简洁描述核心目标；Outcomes(期望成果)——设定足够高的目标；Competencies(核心能力)——行为特质和文化契合度。"
         },
         {
             id: "tm-4-1-q4",
-            question: "以下哪项不是建立雇主品牌的方式？",
+            question: "《Who》认为最好的人才来源是什么？",
             options: [
-                "工程博客",
-                "开源贡献",
-                "高薪挖人",
-                "技术分享会"
+                "招聘网站",
+                "猎头服务",
+                "推荐(Referrals)",
+                "校园招聘"
             ],
             answer: 2,
-            rationale: "高薪挖人不是建立雇主品牌的方式，而工程博客、开源贡献、技术分享会都能展示技术实力。"
+            rationale: "Smart 和 Street 强调：'The best way to find A Players is through referrals, not advertising'——最好的人才来源是推荐而非广告。"
         },
         {
             id: "tm-4-1-q5",
-            question: "多样化团队的优势是什么？",
+            question: "《Who》对 Sourcing 的核心建议是什么？",
             options: [
-                "更低的招聘成本",
-                "更好的创新能力和决策质量",
-                "更高的执行效率",
-                "更低的离职率"
+                "只在有职位空缺时才开始寻找",
+                "在没有招聘需求时就持续建立人才网络",
+                "主要依靠招聘广告",
+                "等候选人主动应聘"
             ],
             answer: 1,
-            rationale: "研究表明多样化团队有更好的创新能力和决策质量，因为不同背景带来不同视角。"
+            rationale: "Sourcing 是关于'systematically looking for and identifying potential talents before you actually need them'——在需要之前就系统性地寻找和识别潜在人才。"
         },
         {
             id: "tm-4-1-q6",
-            question: "招聘漏斗的正确顺序是什么？",
+            question: "Will Larson 认为招聘委员会(Hiring Committee)的主要价值是什么？",
             options: [
-                "简历筛选→职位需求→面试→Offer",
-                "职位需求→人才画像→渠道投放→简历筛选→面试→Offer→入职",
-                "渠道投放→简历筛选→面试→入职",
-                "人才画像→面试→Offer→入职"
+                "加快招聘速度",
+                "降低招聘成本",
+                "培训招聘经理的判断力并统一标准",
+                "减少面试官数量"
             ],
-            answer: 1,
-            rationale: "招聘漏斗从职位需求分析开始，经过人才画像、渠道投放、简历筛选、面试、Offer发放到入职。"
+            answer: 2,
+            rationale: "Larson 指出：'Hiring committees are a great mechanism for training hiring managers' judgment on what makes a good candidate'——招聘委员会可以培训判断力并引入一致的招聘实践。"
         },
         {
             id: "tm-4-1-q7",
-            question: "紧急招聘需求最容易导致什么问题？",
+            question: "《Who》提到候选人选择工作时关注的 5 Fs 不包括？",
             options: [
-                "招聘成本过高",
-                "降低标准",
-                "候选人体验差",
-                "面试流程过长"
+                "Fit(角色契合)",
+                "Family(家庭)",
+                "Fame(名声)",
+                "Freedom(自主空间)"
             ],
-            answer: 1,
-            rationale: "紧急招聘需求容易导致降低标准，应坚持'宁缺毋滥'原则。"
+            answer: 2,
+            rationale: "5 Fs 包括：Fit(角色契合——最重要)、Family(家庭)、Freedom(自主空间)、Fortune(薪酬)、Fun(工作乐趣)，不包括 Fame。"
         },
         {
             id: "tm-4-1-q8",
-            question: "面试官评估不一致的主要原因是什么？",
+            question: "Larson 警告高薪酬包会造成什么长期问题？",
             options: [
-                "候选人表现不稳定",
-                "缺乏统一的评估框架和校准机制",
-                "面试题目太难",
-                "面试时间太短"
+                "招聘速度变慢",
+                "在年度薪酬调整流程中造成持续问题",
+                "候选人期望过高",
+                "团队士气下降"
             ],
             answer: 1,
-            rationale: "不同面试官对'优秀'的定义不同，需要建立统一的评估框架和校准机制。"
+            rationale: "Larson 指出：'Outsized compensation packages will always create ongoing problems in annual compensation processes'——过高的薪酬包会在后续年度调薪中造成问题。"
         },
         {
             id: "tm-4-1-q9",
-            question: "无意识偏见包括以下哪些？",
+            question: "根据《Who》，A 级人才的定义是什么？",
             options: [
-                "只有亲和偏见",
-                "亲和偏见、确认偏见、光环效应等",
-                "只有确认偏见",
-                "只有光环效应"
+                "有最好学历和经验的人",
+                "能以至少 90% 概率达成记分卡成果的人",
+                "薪资要求最高的人",
+                "面试表现最好的人"
             ],
             answer: 1,
-            rationale: "无意识偏见包括亲和偏见（喜欢相似的人）、确认偏见（寻找支持已有判断的证据）、光环效应（一个优点影响整体评价）等。"
+            rationale: "A 级人才的定义是'able to achieve the outcomes outlined in the scorecard with at least 90% probability'——能以至少 90% 概率达成记分卡上的成果。"
         },
         {
             id: "tm-4-1-q10",
-            question: "LinkedIn 最适合招聘哪类人才？",
+            question: "《Who》认为文化不匹配会导致什么？",
             options: [
-                "应届毕业生",
-                "被动求职者",
-                "蓝领工人",
-                "临时工"
+                "只影响团队氛围",
+                "影响业绩底线(bottom line)",
+                "没有实际影响",
+                "只影响离职率"
             ],
             answer: 1,
-            rationale: "LinkedIn 适合接触被动求职者，即那些目前有工作但可能对新机会感兴趣的人才。"
+            rationale: "《Who》明确指出：'Cultural misfits affect the bottom line'——文化不匹配的人会直接影响业绩，因此记分卡需要明确文化契合的定义。"
         },
         {
             id: "tm-4-1-q11",
-            question: "《Who》一书介绍的招聘方法叫什么？",
+            question: "Job Description 最佳实践建议包含什么来提高效率？",
             options: [
-                "B Method",
-                "A Method",
-                "S Method",
-                "T Method"
+                "创意职位标题如'Code Ninja'",
+                "薪资范围",
+                "尽可能多的要求",
+                "公司历史详情"
             ],
             answer: 1,
-            rationale: "《Who》一书介绍的是 A Method for Hiring，强调系统化的招聘方法。"
+            rationale: "最佳实践建议包含薪资范围：'Including transparent salary ranges... helps attract qualified developers who match your budget and skill needs, saving time on unqualified applicants'。"
         },
         {
             id: "tm-4-1-q12",
-            question: "业务部门招聘需求模糊时应该怎么做？",
+            question: "Vinod Khosla 的 Gene Pool Engineering 建议招聘时应该考虑什么？",
             options: [
-                "按照模糊描述开始招聘",
-                "追问具体场景和期望产出",
-                "自己定义人才画像",
-                "等业务部门明确"
+                "只关注团队优势",
+                "同时考虑机会和风险",
+                "只招聘最便宜的人",
+                "只招聘有相同背景的人"
             ],
             answer: 1,
-            rationale: "管理者需要追问具体场景和期望产出，帮助业务部门明确真实需求。"
+            rationale: "Khosla 指出：'It is easy to hire to boost a team's strengths without addressing a team's weaknesses'——应该同时基于机会和风险来招聘，识别团队的五大风险并找到能解决这些风险的人才。"
         }
     ],
     "tm-4-2": [
         {
             id: "tm-4-2-q1",
-            question: "结构化面试比非结构化面试的预测效度高多少？",
+            question: "Google 对结构化面试的定义是什么？",
             options: [
-                "10%",
-                "30%",
-                "50%以上",
-                "100%"
+                "使用最难的技术问题",
+                "对所有候选人使用相同的面试方法",
+                "只进行技术面试",
+                "由多人同时面试"
             ],
-            answer: 2,
-            rationale: "研究表明结构化面试比非结构化面试的预测效度高50%以上。"
+            answer: 1,
+            rationale: "Google 定义：'Structured interviewing simply means using the same interviewing methods to assess candidates applying for the same job'——对同一岗位的所有候选人使用相同的面试方法。"
         },
         {
             id: "tm-4-2-q2",
-            question: "技术面试的核心目的是什么？",
+            question: "Joel Spolsky 评估候选人的两个核心标准是什么？",
             options: [
-                "考察候选人的知识储备",
-                "预测候选人未来的工作表现",
-                "测试候选人的抗压能力",
-                "了解候选人的薪资期望"
+                "Technical Skills and Experience",
+                "Smart and Gets Things Done",
+                "Culture Fit and Potential",
+                "Education and Communication"
             ],
             answer: 1,
-            rationale: "技术面试的核心目的是预测候选人未来的工作表现，而非单纯考察知识。"
+            rationale: "Spolsky 提出经典的两条标准：'Smart and Gets Things Done'——聪明且能把事情做成，这是评估候选人的唯一两个重要维度。"
         },
         {
             id: "tm-4-2-q3",
-            question: "Google 面试的评分标准分为几级？",
+            question: "Google 为什么放弃了脑筋急转弯问题？",
             options: [
-                "3级",
-                "4级",
-                "5级",
-                "10级"
+                "候选人不喜欢",
+                "太容易回答",
+                "无法预测工作表现，只是可以通过练习提高的技能",
+                "花费时间太长"
             ],
-            answer: 1,
-            rationale: "Google 的面试方法使用1-4分的评分标准（Rubric），每个维度有明确定义。"
+            answer: 2,
+            rationale: "Google 发现：'performance on these kinds of questions is at best a discrete skill that can be improved through practice, eliminating their utility for assessing candidates'——这类问题无法预测工作表现。"
         },
         {
             id: "tm-4-2-q4",
-            question: "行为面试主要考察什么？",
+            question: "Spolsky 描述的 Blowhard 面试官是什么？",
             options: [
-                "算法能力",
-                "系统设计能力",
-                "过往经历和软技能",
-                "编程速度"
+                "问太多技术问题的面试官",
+                "整场面试自己说话、几乎不给候选人回应时间的面试官",
+                "态度恶劣的面试官",
+                "迟到的面试官"
             ],
-            answer: 2,
-            rationale: "行为面试通过了解候选人过往经历来考察软技能和工作方式。"
+            answer: 1,
+            rationale: "Spolsky 警告 Blowhard 是最糟糕的面试官：'the kind who blabs the whole time and barely leaves the candidate time to respond'——他们录用所有人因为没给候选人展示的机会。"
         },
         {
             id: "tm-4-2-q5",
-            question: "Google 要求新面试官如何培训？",
+            question: "Spolsky 对'Maybe, I can't tell'的建议是什么？",
             options: [
-                "直接开始面试",
-                "先旁听、再陪同主持、最后独立面试",
-                "观看视频培训",
-                "阅读面试手册"
+                "进行更多面试",
+                "询问其他面试官意见",
+                "这意味着 No Hire",
+                "给候选人第二次机会"
             ],
-            answer: 1,
-            rationale: "Google 要求新面试官先旁听多场面试，然后在资深面试官陪同下主持，最后独立面试。"
+            answer: 2,
+            rationale: "Spolsky 强调：'Never say \"Maybe, I can't tell.\" If you can't tell, that means No Hire'——犹豫就意味着不录用。"
         },
         {
             id: "tm-4-2-q6",
-            question: "好的技术面试题应该有什么特点？",
+            question: "Google 结构化面试的四个组成部分不包括？",
             options: [
-                "只有一个标准答案",
-                "有多层次的解法",
-                "尽可能难",
-                "依赖刷题经验"
+                "Vetted Questions(经过验证的问题)",
+                "Standardized Rubrics(标准化评分标准)",
+                "Brain Teasers(脑筋急转弯)",
+                "Interviewer Training(面试官培训)"
             ],
-            answer: 1,
-            rationale: "好的题目应该有多层次的解法，既能区分候选人水平，又不过度依赖刷题。"
+            answer: 2,
+            rationale: "Google 的四个组成部分是：Vetted Questions、Comprehensive Feedback、Standardized Rubrics、Interviewer Training——明确不包括 Brain Teasers。"
         },
         {
             id: "tm-4-2-q7",
-            question: "以下哪个不是好的面试追问？",
+            question: "Spolsky 建议每个候选人应该由多少人面试？",
             options: [
-                "为什么选择这个方案？",
-                "还有其他方法吗？",
-                "这个方案的缺点是什么？",
-                "你不觉得这个方案很差吗？"
+                "2-3 人",
+                "4-5 人",
+                "至少 6 人，其中 5 人是同级同事",
+                "越多越好"
             ],
-            answer: 3,
-            rationale: "好的追问是开放性的，帮助了解思维过程，而不是引导性或否定性的问题。"
+            answer: 2,
+            rationale: "Spolsky 建议：'Always try to have at least six people interview each candidate that gets hired, including at least five who would be peers'——防止一个人被骗过。"
         },
         {
             id: "tm-4-2-q8",
-            question: "候选人体验为什么重要？",
+            question: "根据 Spolsky，如果 6 个面试官中有 2 个说 No，应该怎么决定？",
             options: [
-                "只影响公司形象",
-                "会影响 Offer 接受率",
-                "与招聘质量无关",
-                "只在大公司重要"
+                "按多数意见录用",
+                "让更高级别的人决定",
+                "不录用(Don't hire them)",
+                "进行加面"
             ],
-            answer: 1,
-            rationale: "面试也是候选人评估公司的过程，良好的体验会提升 Offer 接受率。"
+            answer: 2,
+            rationale: "Spolsky 明确：'If even two of the six interviewers think a person is not worth hiring, don't hire them'——如果 6 人中有 2 人反对，就不应该录用。"
         },
         {
             id: "tm-4-2-q9",
-            question: "亲和偏见在面试中表现为什么？",
+            question: "Quiz Show Interviewer 反模式是指什么？",
             options: [
-                "喜欢技术能力强的候选人",
-                "因候选人背景相似而加分",
-                "偏好外向的候选人",
-                "倾向于雇用年轻人"
+                "问太多问题",
+                "考察琐碎知识而非真实能力",
+                "让候选人相互竞争",
+                "使用记分系统"
             ],
             answer: 1,
-            rationale: "亲和偏见是指面试官倾向于给与自己背景相似的候选人更高评价。"
+            rationale: "Spolsky 批评 Quiz Show Interviewers：'test trivia knowledge rather than aptitude'——如'What's the difference between varchar and varchar2?'这类可以 Google 到答案的问题毫无意义。"
         },
         {
             id: "tm-4-2-q10",
-            question: "系统设计面试主要考察什么能力？",
+            question: "Google 研究发现结构化面试相比非结构化面试有什么优势？",
             options: [
-                "编码速度",
-                "架构思维",
-                "算法知识",
-                "沟通能力"
+                "更快完成",
+                "更能预测候选人表现、减少偏见、提升候选人体验",
+                "成本更低",
+                "面试官更喜欢"
             ],
             answer: 1,
-            rationale: "系统设计面试主要考察候选人的架构思维和解决复杂问题的能力。"
+            rationale: "Google 报告：'standardized interviews supported by rubrics improve predictive validity, reduce bias, and make the hiring experience more positive for candidates'——提升预测效度、减少偏见、改善体验。"
         },
         {
             id: "tm-4-2-q11",
-            question: "STAR 方法用于什么类型的面试？",
+            question: "Google 的面试官校准(Calibration)是指什么？",
             options: [
-                "算法面试",
-                "行为面试",
-                "系统设计面试",
-                "编程测试"
+                "统一面试问题",
+                "确保面试官对什么是好/中/差回答有一致的理解",
+                "调整薪资范围",
+                "安排面试时间"
             ],
             answer: 1,
-            rationale: "STAR（Situation-Task-Action-Result）方法是进行结构化行为面试的框架。"
+            rationale: "Google 解释：'Calibration across interviewers is one of the most important ways to ensure valid ratings'——通过练习确保面试官对评分有一致的参照框架。"
         },
         {
             id: "tm-4-2-q12",
-            question: "一场有效的技术面试通常需要多长时间？",
+            question: "Spolsky 在 2018 年对传统面试方法的反思是什么？",
             options: [
-                "15-30分钟",
-                "45-60分钟",
-                "90-120分钟",
-                "没有时间限制"
+                "传统方法仍然最好",
+                "应该更多使用实习/学徒制来评估",
+                "应该增加更多技术问题",
+                "应该完全取消面试"
             ],
             answer: 1,
-            rationale: "45-60分钟是技术面试的常见时长，需要在有限时间内完成有效评估。"
+            rationale: "Spolsky 承认：'For 2018, I think you need a better system... it's probably going to be more like an apprenticeship or an internship'——传统面试方法需要更新，更多使用实习来评估候选人。"
         }
     ],
     "tm-4-3": [
         {
             id: "tm-4-3-q1",
-            question: "有竞争力的 Offer 包含哪些要素？",
+            question: "根据《The First 90 Days》，Break-Even Point 是什么？",
             options: [
-                "只有基本薪资",
-                "基本薪资、股权/期权、签字费、奖金、福利",
-                "只有薪资和股权",
-                "只有薪资和福利"
+                "完成所有入职培训的时间点",
+                "价值创造等于价值消耗的平衡点",
+                "通过试用期的时间点",
+                "获得第一次晋升的时间点"
             ],
             answer: 1,
-            rationale: "有竞争力的 Offer 包含多个要素：基本薪资、股权/期权、签字费、年终奖金、福利待遇。"
+            rationale: "Watkins 定义 Break-Even Point 为'how fast can you get to a point where your value created equals the value you have consumed'——大约在入职后 6 个月达到。"
         },
         {
             id: "tm-4-3-q2",
-            question: "《Never Split the Difference》建议谈判时应该怎么做？",
+            question: "Glassdoor/Brandon Hall Group 研究显示强大的入职流程可以将新员工留存率提高多少？",
             options: [
-                "先报出你的价格",
-                "先让对方出价",
-                "坚持不让步",
-                "直接接受对方条件"
+                "25%",
+                "50%",
+                "82%",
+                "95%"
             ],
-            answer: 1,
-            rationale: "《Never Split the Difference》建议先让对方出价，这样可以了解对方底线并避免过早锚定。"
+            answer: 2,
+            rationale: "研究表明：'a strong onboarding process improved new hire retention by 82%'——强大的入职流程可以将留存率提高 82%，生产力提高 70% 以上。"
         },
         {
             id: "tm-4-3-q3",
-            question: "研究表明新员工最关键的时期是多久？",
+            question: "《The First 90 Days》提到的 STARS 模型代表什么？",
             options: [
-                "第一周",
-                "前30天",
-                "前90天",
-                "第一年"
+                "五种面试类型",
+                "五种新员工面临的情境类型",
+                "五个绩效评估维度",
+                "五种领导风格"
             ],
-            answer: 2,
-            rationale: "研究表明前90天是新员工最关键的时期，决定了长期留存和绩效。"
+            answer: 1,
+            rationale: "STARS 代表五种情境：Start-up(创业期)、Turnaround(扭转期)、Accelerated Growth(加速成长期)、Realignment(重新调整期)、Sustaining Success(维持成功期)。"
         },
         {
             id: "tm-4-3-q4",
-            question: "Preboarding 是什么？",
+            question: "GitLab 预期新员工入职培训需要多长时间？",
             options: [
-                "入职前培训",
-                "从签约到入职的空档期管理",
-                "入职后的试用期",
-                "面试准备阶段"
+                "一周",
+                "至少两整周，第三周进行团队特定培训",
+                "一个月",
+                "三个月"
             ],
             answer: 1,
-            rationale: "Preboarding 是从签约到入职的空档期，需要保持联系以降低爽约率。"
+            rationale: "GitLab 表示入职培训需要'at least two full weeks, with the third week designated for team-specific onboarding'——前两周不应期望新员工大量贡献。"
         },
         {
             id: "tm-4-3-q5",
-            question: "好的入职体验不包括以下哪项？",
+            question: "Watkins 提到的常见过渡陷阱不包括？",
             options: [
-                "清晰的第一周计划",
-                "指定的 Buddy",
-                "立即承担高难度项目",
-                "循序渐进的项目安排"
+                "固守过去经验(Sticking with what you know)",
+                "过早行动(Falling prey to the action imperative)",
+                "慢慢适应(Taking time to adapt)",
+                "带着答案入职(Coming in with the answer)"
             ],
             answer: 2,
-            rationale: "好的入职体验应该循序渐进，而非立即承担高难度项目。"
+            rationale: "常见陷阱包括：固守过去经验、过早行动、带着答案入职、忽视横向关系——'慢慢适应'实际上是建议的做法，不是陷阱。"
         },
         {
             id: "tm-4-3-q6",
-            question: "优秀候选人的决策窗口通常怎样？",
+            question: "研究显示多少比例的雇主报告候选人接受 Offer 后不出现？",
             options: [
-                "很长，可以慢慢考虑",
-                "很短，需要快速响应",
-                "无所谓时间",
-                "取决于薪资高低"
+                "25%",
+                "45%",
+                "65%",
+                "85%"
             ],
-            answer: 1,
-            rationale: "优秀候选人往往有多个 Offer，决策窗口短，需要快速完成内部审批和传达诚意。"
+            answer: 2,
+            rationale: "数据显示：'65% of employers say candidates have accepted positions at their companies only to no-show on their first day of work'——Preboarding 至关重要。"
         },
         {
             id: "tm-4-3-q7",
-            question: "当候选人有竞争对手 Offer 时应该怎么做？",
+            question: "GitLab 为解决远程工作孤立感采取了什么措施？",
             options: [
-                "只关注提高薪资",
-                "突出自身优势而非单纯拼薪资",
-                "放弃这个候选人",
-                "诋毁竞争对手"
+                "每周全员视频会议",
+                "要求每位新员工安排 10 次强制性 Coffee Chat",
+                "每月线下团建",
+                "每天早会"
             ],
             answer: 1,
-            rationale: "应该突出自身优势（团队、项目、发展空间等），而非单纯拼薪资。"
+            rationale: "GitLab 承认远程工作容易孤立，因此'arranges ten mandatory coffee chats for new employees that pair them up with a random colleague'——建立社交连接。"
         },
         {
             id: "tm-4-3-q8",
-            question: "30-60-90天入职计划的目的是什么？",
+            question: "Facebook 的'45-minute rule'是什么？",
             options: [
-                "考核新员工绩效",
-                "帮助新员工循序渐进地适应和产出",
-                "减少培训成本",
-                "尽快完成试用期"
+                "面试不超过 45 分钟",
+                "新员工到达 45 分钟内可以开始工作(系统已准备好)",
+                "每天工作会议不超过 45 分钟",
+                "午休时间为 45 分钟"
             ],
             answer: 1,
-            rationale: "30-60-90天计划帮助新员工循序渐进地了解公司、熟悉工作、开始产出。"
+            rationale: "Facebook 的规则意味着：'all new employees can begin to work within 45 minutes of arriving because all of their systems and devices have been set up before they report'——减少入职阻力。"
         },
         {
             id: "tm-4-3-q9",
-            question: "Buddy 机制的作用是什么？",
+            question: "根据统计，多少比例的员工认为他们的组织在入职方面做得好？",
             options: [
-                "监督新员工工作",
-                "帮助新员工快速融入团队和了解环境",
-                "评估新员工表现",
-                "分配工作任务"
+                "12%",
+                "35%",
+                "55%",
+                "75%"
             ],
-            answer: 1,
-            rationale: "Buddy 帮助新员工快速融入团队、了解环境、解答日常问题，不是监督角色。"
+            answer: 0,
+            rationale: "数据显示：'A mere 12% of employees agree their organization does a good job of onboarding new employees'——这表明大多数组织的入职流程有很大改进空间。"
         },
         {
             id: "tm-4-3-q10",
-            question: "新员工入职后期望与现实差距会导致什么？",
+            question: "研究显示多少比例的人在入职 90 天内离职？",
             options: [
-                "更高的绩效",
-                "早期离职",
-                "更强的动力",
-                "更快的晋升"
+                "10%",
+                "28%",
+                "45%",
+                "60%"
             ],
             answer: 1,
-            rationale: "期望与现实的差距会导致早期离职，需要在入职前诚实沟通。"
+            rationale: "统计显示：'28% of people leave their new jobs within 90 days of starting'——主要原因是期望与现实不符，强调了诚实沟通的重要性。"
         },
         {
             id: "tm-4-3-q11",
-            question: "校准问题在谈判中的作用是什么？",
+            question: "GitLab Handbook-First 文化的主要优势不包括？",
             options: [
-                "直接拒绝对方",
-                "引导对方思考解决方案",
-                "表达不满",
-                "拖延时间"
+                "更快的入职速度",
+                "增强的透明度",
+                "减少文档工作量",
+                "提高的效率(自助式答案)"
             ],
-            answer: 1,
-            rationale: "校准问题如'How am I supposed to do that?'可以引导对方思考解决方案，而不是直接对抗。"
+            answer: 2,
+            rationale: "Handbook-First 的优势包括：更快入职、增强透明度、提高效率——但实际上需要更多而非更少的文档工作来维护 2700+ 页的手册。"
         },
         {
             id: "tm-4-3-q12",
-            question: "《Never Split the Difference》的作者是谁？",
+            question: "Gallup 研究发现有'exceptional'入职体验的员工有什么特点？",
             options: [
-                "Andy Grove",
-                "Chris Voss",
-                "Simon Sinek",
-                "Kim Scott"
+                "薪资要求更高",
+                "对组织极度满意的可能性是其他人的 2.6 倍",
+                "离职率更高",
+                "绩效没有明显差异"
             ],
             answer: 1,
-            rationale: "《Never Split the Difference》由前 FBI 首席谈判专家 Chris Voss 撰写。"
+            rationale: "Gallup 发现：'employees who reported exceptional onboarding experiences were 2.6 times more likely to be extremely satisfied with their organization'——入职体验直接影响满意度。"
         }
     ]
 }
