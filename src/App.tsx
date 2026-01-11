@@ -12,9 +12,11 @@ import {
   ListChecks,
   RefreshCw,
   Search,
+  SearchX,
   ShieldCheck,
   Sparkles,
   Trophy,
+  X,
 } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -33,6 +35,7 @@ import { AppShell } from "@/components/layout/AppShell"
 import { SwipeContainer } from "@/components/mobile/SwipeContainer"
 import { ScrollToTop } from "@/components/mobile/ScrollToTop"
 import { useIsMobile } from "@/hooks/useMediaQuery"
+import { useDebounce } from "@/hooks/useDebounce"
 import { getLessonGuide } from "@/lib/lesson-guides/by-roadmap"
 import { roadmapTotals } from "@/lib/roadmap-totals"
 import { displayTopicTitle } from "@/lib/topic-title"
@@ -131,9 +134,29 @@ export default function App() {
   )
   const [selectedCategory, setSelectedCategory] = React.useState<RoadmapCategory>("all")
   const [searchQuery, setSearchQuery] = React.useState("")
+  const debouncedSearchQuery = useDebounce(searchQuery, 200)
   const [tab, setTab] = React.useState("overview")
   const [knowledgeStage, setKnowledgeStage] = React.useState(initial.roadmap.knowledgeCards[0]?.id || "")
   const [resourceView, setResourceView] = React.useState<ResourceContext | null>(null)
+
+  // 缓存过滤后的路线列表和统计数据
+  const filteredRoadmaps = React.useMemo(() => {
+    const query = debouncedSearchQuery.trim()
+    return ROADMAP_LIST.filter((roadmap) => {
+      const matchesCategory = selectedCategory === "all" || CATEGORY_MAP[roadmap.id] === selectedCategory
+      const matchesSearch = !query || matchAnyPinyin(
+        [roadmap.title, roadmap.label, roadmap.description],
+        query
+      )
+      return matchesCategory && matchesSearch
+    }).map((roadmap) => {
+      const totals = roadmapTotals(roadmap.stages)
+      const summary = loadProgressSummary(roadmap)
+      const percent = totals.lessons === 0 ? 0 : Math.round((summary.completed / totals.lessons) * 100)
+      const suggestion = roadmap.suggestion(percent)
+      return { roadmap, totals, summary, percent, suggestion }
+    })
+  }, [debouncedSearchQuery, selectedCategory])
 
   const totalLessons = React.useMemo(
     () =>
@@ -457,8 +480,17 @@ export default function App() {
                 placeholder="搜索课程..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="清除搜索"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
               {ROADMAP_CATEGORIES.map((cat) => (
@@ -476,21 +508,8 @@ export default function App() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {ROADMAP_LIST.filter((roadmap) => {
-              const matchesCategory = selectedCategory === "all" || CATEGORY_MAP[roadmap.id] === selectedCategory
-              const query = searchQuery.trim()
-              const matchesSearch = !query || matchAnyPinyin(
-                [roadmap.title, roadmap.label, roadmap.description],
-                query
-              )
-              return matchesCategory && matchesSearch
-            }).map((roadmap) => {
-              const totals = roadmapTotals(roadmap.stages)
-              const summary = loadProgressSummary(roadmap)
-              const percent = totals.lessons === 0 ? 0 : Math.round((summary.completed / totals.lessons) * 100)
-              const roadmapSuggestion = roadmap.suggestion(percent)
-              return (
-                <Card key={roadmap.id} className="glass-card p-6 flex flex-col animate-fade-in">
+            {filteredRoadmaps.map(({ roadmap, totals, summary, percent, suggestion }) => (
+                <Card key={roadmap.id} className="glass-card p-6 flex flex-col animate-fade-in transition-all duration-200 hover:shadow-lg hover:-translate-y-1 hover:border-primary/30">
                   <div className="flex flex-wrap gap-2 items-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     <Badge variant="secondary" className="bg-secondary/70 text-xs">
                       Live
@@ -526,7 +545,7 @@ export default function App() {
                     </div>
                     <Progress value={percent} />
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2 min-h-[40px]">{roadmapSuggestion}</p>
+                  <p className="text-sm text-muted-foreground mt-2 min-h-[40px]">{suggestion}</p>
                   <div className="flex flex-wrap gap-3 mt-4">
                     <Button onClick={() => openRoadmap(roadmap.id, "overview", true, summary.completed > 0)} className="gap-2">
                       <ArrowUpRight className="h-4 w-4" />
@@ -538,8 +557,27 @@ export default function App() {
                     </Button>
                   </div>
                 </Card>
-              )
-            })}
+              ))}
+            {filteredRoadmaps.length === 0 && (
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-center animate-fade-in">
+                <SearchX className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                <p className="text-lg font-medium text-muted-foreground">未找到匹配的学习路线</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  {searchQuery ? `没有与"${searchQuery}"相关的结果` : "当前分类下暂无路线"}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setSelectedCategory("all")
+                  }}
+                >
+                  清除筛选条件
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
