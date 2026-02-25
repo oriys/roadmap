@@ -18,6 +18,14 @@ import { microservicesPatternsLessonQuizzes } from "./lesson-guides/microservice
 import { multiTenantLessonQuizzes } from "./lesson-guides/multi-tenant"
 import { cloudDesignPatternsLessonQuizzes } from "./lesson-guides/cloud-design-patterns"
 import { pulsarLessonQuizzes } from "./lesson-guides/pulsar"
+import { locksLessonQuizzes } from "./lesson-guides/locks"
+import { serverlessLessonQuizzes } from "./lesson-guides/serverless"
+import { grpcLessonQuizzes } from "./lesson-guides/grpc"
+import { developmentAntiPatternsLessonQuizzes } from "./lesson-guides/development-anti-patterns"
+import { techManagementLessonQuizzes } from "./lesson-guides/tech-management"
+import { blockchainLessonQuizzes } from "./lesson-guides/blockchain"
+import { ctoLessonQuizzes } from "./lesson-guides/cto"
+import { technicalWriterLessonQuizzes } from "./lesson-guides/technical-writer"
 import type { QuizQuestion } from "./quizzes/types"
 
 export type { QuizQuestion }
@@ -43,4 +51,12 @@ export const customLessonQuizzes: Record<string, QuizQuestion[]> = {
   ...multiTenantLessonQuizzes,
   ...cloudDesignPatternsLessonQuizzes,
   ...pulsarLessonQuizzes,
+  ...locksLessonQuizzes,
+  ...serverlessLessonQuizzes,
+  ...grpcLessonQuizzes,
+  ...developmentAntiPatternsLessonQuizzes,
+  ...techManagementLessonQuizzes,
+  ...technicalWriterLessonQuizzes,
+  ...ctoLessonQuizzes,
+  ...blockchainLessonQuizzes,
 }

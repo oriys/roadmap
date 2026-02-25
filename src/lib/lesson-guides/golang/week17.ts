@@ -45,12 +45,18 @@ export const week17Guides: Record<string, LessonGuide> = {
 
 export const week17Quizzes: Record<string, QuizQuestion[]> = {
     "go-w17-1": [
-        { id: "go-w17-1-q1", question: "Cobra 的主要用途是什么？", options: ["Web 框架", "CLI 命令行工具框架", "数据库 ORM", "日志库"], answer: 1, rationale: "Cobra 是最流行的 Go CLI 框架，用于构建命令行工具。" }
+        { id: "go-w17-1-q1", question: "Cobra 的主要用途是什么？", options: ["Web 框架", "CLI 命令行工具框架", "数据库 ORM", "日志库"], answer: 1, rationale: "Cobra 是最流行的 Go CLI 框架，用于构建命令行工具。" },
+        { id: "go-w17-1-q2", question: "Bubbletea 用于构建什么类型的应用？", options: ["Web 应用", "终端用户界面（TUI）", "桌面应用", "移动应用"], answer: 1, rationale: "Bubbletea 基于 Elm 架构，用于构建交互式终端用户界面。" },
+        { id: "go-w17-1-q3", question: "Cobra 中子命令是通过什么方式组织的？", options: ["文件夹结构", "AddCommand 方法添加到父命令", "配置文件", "环境变量"], answer: 1, rationale: "Cobra 使用 AddCommand 方法将子命令添加到父命令，形成命令树。" }
     ],
     "go-w17-2": [
-        { id: "go-w17-2-q1", question: "GORM 是什么类型的库？", options: ["HTTP 客户端", "ORM 对象关系映射", "日志库", "测试框架"], answer: 1, rationale: "GORM 是 Go 的全功能 ORM 库，用于数据库操作。" }
+        { id: "go-w17-2-q1", question: "GORM 是什么类型的库？", options: ["HTTP 客户端", "ORM 对象关系映射", "日志库", "测试框架"], answer: 1, rationale: "GORM 是 Go 的全功能 ORM 库，用于数据库操作。" },
+        { id: "go-w17-2-q2", question: "pgx 相比 database/sql 的优势是什么？", options: ["更简单", "更好的 PostgreSQL 原生特性支持", "支持更多数据库", "无需连接池"], answer: 1, rationale: "pgx 是 PostgreSQL 专用驱动，提供更好的类型支持和性能。" },
+        { id: "go-w17-2-q3", question: "使用 ORM 和原生 SQL 驱动各适合什么场景？", options: ["ORM 适合所有场景", "ORM 适合 CRUD，复杂查询用原生 SQL", "原生 SQL 已过时", "两者没有区别"], answer: 1, rationale: "ORM 简化常见 CRUD 操作，复杂查询和高性能场景更适合原生 SQL。" }
     ],
     "go-w17-3": [
-        { id: "go-w17-3-q1", question: "Zap 日志库的主要特点是什么？", options: ["最简单", "高性能结构化日志", "官方库", "无依赖"], answer: 1, rationale: "Zap 是 Uber 开源的高性能结构化日志库。" }
+        { id: "go-w17-3-q1", question: "Zap 日志库的主要特点是什么？", options: ["最简单", "高性能结构化日志", "官方库", "无依赖"], answer: 1, rationale: "Zap 是 Uber 开源的高性能结构化日志库。" },
+        { id: "go-w17-3-q2", question: "结构化日志相比传统日志的优势是什么？", options: ["更短", "可被机器解析，便于搜索和分析", "更美观", "更快"], answer: 1, rationale: "结构化日志以 JSON 等格式输出，便于日志聚合系统搜索和分析。" },
+        { id: "go-w17-3-q3", question: "Melody 库用于处理什么协议？", options: ["HTTP", "WebSocket", "gRPC", "TCP"], answer: 1, rationale: "Melody 是一个 WebSocket 框架，简化了 WebSocket 连接管理和消息广播。" }
     ]
 }

@@ -70,6 +70,8 @@ export const week9Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w9-3-q2", question: "什么情况应该使用 panic？", options: ["所有错误", "不可恢复的严重错误", "网络错误", "文件未找到"], answer: 1, rationale: "panic 用于不可恢复的情况，正常错误应该用 error 返回值。" }
     ],
     "go-w9-4": [
-        { id: "go-w9-4-q1", question: "什么是哨兵错误？", options: ["运行时错误", "预定义的可比较错误值", "panic", "nil"], answer: 1, rationale: "哨兵错误是预定义的错误变量，如 io.EOF、sql.ErrNoRows。" }
+        { id: "go-w9-4-q1", question: "什么是哨兵错误？", options: ["运行时错误", "预定义的可比较错误值", "panic", "nil"], answer: 1, rationale: "哨兵错误是预定义的错误变量，如 io.EOF、sql.ErrNoRows。" },
+        { id: "go-w9-4-q2", question: "如何检查错误是否为特定的哨兵错误？", options: ["err == sentinel", "errors.Is(err, sentinel)", "err.Match(sentinel)", "reflect.DeepEqual(err, sentinel)"], answer: 1, rationale: "errors.Is 会遍历错误链检查是否包含目标哨兵错误。" },
+        { id: "go-w9-4-q3", question: "以下哪个是 Go 标准库中的哨兵错误？", options: ["errors.New(\"EOF\")", "io.EOF", "fmt.Error", "os.Panic"], answer: 1, rationale: "io.EOF 是标准库中最常见的哨兵错误，表示输入流结束。" }
     ]
 }

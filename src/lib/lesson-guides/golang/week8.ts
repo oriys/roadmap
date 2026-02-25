@@ -53,6 +53,8 @@ export const week8Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w8-2-q2", question: "constraints.Ordered 约束包含什么类型？", options: ["只有整数", "支持 < > 比较的类型", "所有类型", "只有字符串"], answer: 1, rationale: "Ordered 约束包含所有支持 < > <= >= 比较运算符的类型。" }
     ],
     "go-w8-3": [
-        { id: "go-w8-3-q1", question: "什么场景更适合用接口而非泛型？", options: ["类型安全容器", "编译时类型检查", "运行时多态行为", "算法实现"], answer: 2, rationale: "需要运行时多态行为时用接口，编译时类型安全用泛型。" }
+        { id: "go-w8-3-q1", question: "什么场景更适合用接口而非泛型？", options: ["类型安全容器", "编译时类型检查", "运行时多态行为", "算法实现"], answer: 2, rationale: "需要运行时多态行为时用接口，编译时类型安全用泛型。" },
+        { id: "go-w8-3-q2", question: "过度使用泛型可能导致什么问题？", options: ["运行时 panic", "代码更简洁", "编译时间增加和二进制膨胀", "内存泄漏"], answer: 2, rationale: "泛型实例化会增加编译时间，并可能导致二进制文件体积增大。" },
+        { id: "go-w8-3-q3", question: "Go 官方对泛型使用的建议是什么？", options: ["尽量多用泛型", "优先考虑接口，泛型用于容器和算法", "完全避免泛型", "只在测试中使用泛型"], answer: 1, rationale: "Go 官方建议优先考虑接口，泛型主要用于类型安全的容器和通用算法。" }
     ]
 }

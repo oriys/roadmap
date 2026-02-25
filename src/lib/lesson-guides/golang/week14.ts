@@ -58,15 +58,23 @@ export const week14Guides: Record<string, LessonGuide> = {
 
 export const week14Quizzes: Record<string, QuizQuestion[]> = {
     "go-w14-1": [
-        { id: "go-w14-1-q1", question: "io.Reader 接口有几个方法？", options: ["0个", "1个：Read", "2个", "3个"], answer: 1, rationale: "io.Reader 只有一个 Read(p []byte) (n int, err error) 方法。" }
+        { id: "go-w14-1-q1", question: "io.Reader 接口有几个方法？", options: ["0个", "1个：Read", "2个", "3个"], answer: 1, rationale: "io.Reader 只有一个 Read(p []byte) (n int, err error) 方法。" },
+        { id: "go-w14-1-q2", question: "bufio.Scanner 的默认分隔方式是什么？", options: ["按字节", "按行", "按单词", "按段落"], answer: 1, rationale: "bufio.Scanner 默认使用 ScanLines，按行分割输入。" },
+        { id: "go-w14-1-q3", question: "打开文件后必须做什么？", options: ["立即读取", "defer f.Close() 确保关闭", "设置权限", "写入日志"], answer: 1, rationale: "打开文件后必须 defer Close 确保资源释放，避免文件描述符泄漏。" }
     ],
     "go-w14-2": [
-        { id: "go-w14-2-q1", question: "json.Unmarshal 将 JSON 数字默认解码为什么类型？", options: ["int", "int64", "float64", "string"], answer: 2, rationale: "JSON 数字没有整数/浮点区分，Go 默认解码为 float64。" }
+        { id: "go-w14-2-q1", question: "json.Unmarshal 将 JSON 数字默认解码为什么类型？", options: ["int", "int64", "float64", "string"], answer: 2, rationale: "JSON 数字没有整数/浮点区分，Go 默认解码为 float64。" },
+        { id: "go-w14-2-q2", question: "结构体字段的 json tag 有什么作用？", options: ["设置默认值", "指定 JSON 键名和序列化选项", "限制类型", "加密字段"], answer: 1, rationale: "json tag 如 `json:\"name,omitempty\"` 用于指定 JSON 键名和控制序列化行为。" },
+        { id: "go-w14-2-q3", question: "json.NewDecoder 相比 json.Unmarshal 的优势是什么？", options: ["更快", "支持流式解码，适合大数据", "语法更简单", "支持更多格式"], answer: 1, rationale: "json.NewDecoder 支持从 io.Reader 流式解码，适合处理大文件或网络流。" }
     ],
     "go-w14-3": [
-        { id: "go-w14-3-q1", question: "Go 时间格式化使用什么参考时间？", options: ["2000-01-01", "2006-01-02 15:04:05", "1970-01-01", "YYYY-MM-DD"], answer: 1, rationale: "Go 使用 2006-01-02 15:04:05 作为参考时间，每个数字是固定的。" }
+        { id: "go-w14-3-q1", question: "Go 时间格式化使用什么参考时间？", options: ["2000-01-01", "2006-01-02 15:04:05", "1970-01-01", "YYYY-MM-DD"], answer: 1, rationale: "Go 使用 2006-01-02 15:04:05 作为参考时间，每个数字是固定的。" },
+        { id: "go-w14-3-q2", question: "slog 包是 Go 哪个版本引入的标准日志库？", options: ["Go 1.18", "Go 1.21", "Go 1.0", "Go 1.16"], answer: 1, rationale: "slog 是 Go 1.21 引入的结构化日志包，支持 JSON 和文本输出。" },
+        { id: "go-w14-3-q3", question: "regexp.MustCompile 和 regexp.Compile 的区别是什么？", options: ["没有区别", "MustCompile 在正则无效时 panic", "Compile 更快", "MustCompile 不缓存"], answer: 1, rationale: "MustCompile 在正则表达式无效时直接 panic，适合编译时已知的正则。" }
     ],
     "go-w14-4": [
-        { id: "go-w14-4-q1", question: "go:embed 指令的作用是什么？", options: ["动态加载文件", "编译时嵌入文件到二进制", "压缩文件", "加密文件"], answer: 1, rationale: "//go:embed 在编译时将文件内容嵌入到二进制中。" }
+        { id: "go-w14-4-q1", question: "go:embed 指令的作用是什么？", options: ["动态加载文件", "编译时嵌入文件到二进制", "压缩文件", "加密文件"], answer: 1, rationale: "//go:embed 在编译时将文件内容嵌入到二进制中。" },
+        { id: "go-w14-4-q2", question: "flag 包解析命令行参数后需要调用什么函数？", options: ["flag.Run()", "flag.Parse()", "flag.Execute()", "flag.Init()"], answer: 1, rationale: "定义完所有 flag 后必须调用 flag.Parse() 来解析命令行参数。" },
+        { id: "go-w14-4-q3", question: "go:embed 可以嵌入哪些类型的变量？", options: ["只有 string", "string、[]byte 和 embed.FS", "任意类型", "只有 []byte"], answer: 1, rationale: "go:embed 支持嵌入到 string、[]byte 和 embed.FS 三种类型的变量中。" }
     ]
 }

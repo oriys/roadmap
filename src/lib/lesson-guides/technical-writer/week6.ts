@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week6Guides: Record<string, LessonGuide> = {
     "tw-w6-1": {
@@ -176,4 +177,159 @@ export const week6Guides: Record<string, LessonGuide> = {
             "https://docs.github.com/en/actions"
         ]
     }
+}
+
+export const week6Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w6-1": [
+        {
+            id: "tw-w6-1-q1",
+            question: "Google 建议的风格指南参考优先级顺序是什么？",
+            options: [
+                "Microsoft Style Guide > Google Style Guide > 项目特定指南",
+                "项目特定指南 > Google Style Guide > 第三方来源（Merriam-Webster、Chicago Manual）",
+                "Chicago Manual > Google Style Guide > 项目特定指南",
+                "所有风格指南优先级相同"
+            ],
+            answer: 1,
+            rationale: "Google 建议的优先级：项目特定指南 > Google Style Guide > 第三方来源（Merriam-Webster 拼写、Chicago Manual 通用写作、Microsoft Style Guide 技术内容）。"
+        },
+        {
+            id: "tw-w6-1-q2",
+            question: "Microsoft 风格指南的核心哲学是什么？",
+            options: [
+                "用最专业的术语展示技术深度",
+                "'Make every word matter'——每个词都应有意义，风格应温暖放松、简洁清晰、乐于助人",
+                "严格遵循学术写作规范",
+                "尽可能使用被动语态保持客观"
+            ],
+            answer: 1,
+            rationale: "Microsoft 核心哲学：'Make every word matter'——每个词都应有意义。风格应温暖放松（warm and relaxed）、简洁清晰（crisp and clear）、乐于助人（ready to lend a hand）。"
+        },
+        {
+            id: "tw-w6-1-q3",
+            question: "为什么术语表（Glossary）是风格指南的核心组件？",
+            options: [
+                "因为术语表可以自动翻译文档",
+                "因为术语表统一命名、大小写规则、缩写定义，确保同一概念使用相同术语",
+                "因为术语表是法律合规要求",
+                "因为术语表可以替代文档搜索功能"
+            ],
+            answer: 1,
+            rationale: "术语表统一命名、大小写规则、缩写定义。同一个概念必须在整个文档中使用相同的术语，术语不一致会让用户困惑。"
+        }
+    ],
+    "tw-w6-2": [
+        {
+            id: "tw-w6-2-q1",
+            question: "W3C 定义的网页可访问性涵盖哪些残障类型？",
+            options: [
+                "只涵盖视觉障碍",
+                "听觉、认知、神经、身体、言语和视觉六大类障碍",
+                "只涵盖身体和视觉障碍",
+                "只涵盖听觉和言语障碍"
+            ],
+            answer: 1,
+            rationale: "W3C 可访问性涉及六大类：听觉、认知、神经、身体、言语和视觉障碍。但受益群体远不止残障人士，还包括老龄人群、临时性残障患者等。"
+        },
+        {
+            id: "tw-w6-2-q2",
+            question: "以下哪个是 ableist 语言的正确替换？",
+            options: [
+                "将'review'替换为'sanity-check'",
+                "将'sanity-check'替换为'final check for completeness'",
+                "将'allowlist'替换为'whitelist'",
+                "将'person-hours'替换为'man-hours'"
+            ],
+            answer: 1,
+            rationale: "应搜索并替换 ableist 语言：用'final check for completeness'替代'sanity-check'，用'unresponsive'替代'blind to'，使用包容性语言。"
+        },
+        {
+            id: "tw-w6-2-q3",
+            question: "Google 对已建立的非包容行业术语（如 whitelist）的处理建议是什么？",
+            options: [
+                "继续使用原术语不做改变",
+                "首次提及时在括号中说明，然后全文使用包容性替代词如 allowlist",
+                "完全删除相关内容",
+                "在文档末尾统一说明"
+            ],
+            answer: 1,
+            rationale: "Google 建议：对于'whitelist'等已建立的非包容术语，首次提及时在括号中说明，然后全文使用包容性替代词如'allowlist'。"
+        }
+    ],
+    "tw-w6-3": [
+        {
+            id: "tw-w6-3-q1",
+            question: "Google 建议在面向国际化的写作中应避免什么？",
+            options: [
+                "使用列表和表格",
+                "使用俚语、习语、幽默和文化特定表达",
+                "使用代码示例",
+                "使用简单的词汇"
+            ],
+            answer: 1,
+            rationale: "Google 要求避免 colloquialisms（如'ballpark figure'）、idioms、slang 和 humor——这些文化特定表达难以翻译，容易造成误解。"
+        },
+        {
+            id: "tw-w6-3-q2",
+            question: "为什么文档写作中应保留关系代词（that、which）？",
+            options: [
+                "因为这样可以增加词数",
+                "因为省略关系代词会导致翻译时句法结构不明确、产生歧义",
+                "因为语法规则要求必须使用",
+                "因为搜索引擎更容易索引"
+            ],
+            answer: 1,
+            rationale: "Google 要求包含'that'、'which'等关系代词以防止歧义——翻译时需要明确的句法结构，省略会导致多种理解。"
+        },
+        {
+            id: "tw-w6-3-q3",
+            question: "术语不一致对翻译成本有什么影响？",
+            options: [
+                "没有影响",
+                "会大幅增加翻译成本",
+                "会降低翻译成本因为译者可以自由选择",
+                "只影响机器翻译不影响人工翻译"
+            ],
+            answer: 1,
+            rationale: "Google 明确指出：'Inconsistency in terminology and phrasing can greatly increase translation costs'——术语不一致会大幅增加翻译成本。"
+        }
+    ],
+    "tw-w6-4": [
+        {
+            id: "tw-w6-4-q1",
+            question: "Vale 工具的核心定位是什么？",
+            options: [
+                "一个 Markdown 格式化工具",
+                "将编辑风格指南付诸实践的开源命令行工具，完全离线运行",
+                "一个代码编译器",
+                "一个在线文档协作平台"
+            ],
+            answer: 1,
+            rationale: "Vale 是开源命令行工具，将编辑风格指南付诸实践——'Your style, our editor'。完全离线运行，确保内容永不发送到远程服务器。"
+        },
+        {
+            id: "tw-w6-4-q2",
+            question: "markdownlint 实现了多少条内置规则？",
+            options: [
+                "约 10 条",
+                "约 30 条",
+                "60 多条，覆盖标题结构、间距、代码块、链接、表格等",
+                "超过 200 条"
+            ],
+            answer: 2,
+            rationale: "markdownlint 实现了 60+ 条内置规则（MD001-MD060），覆盖标题结构、间距、代码块、链接、表格等格式问题。"
+        },
+        {
+            id: "tw-w6-4-q3",
+            question: "在 CI 中集成文档质量检查时，规则配置的关键挑战是什么？",
+            options: [
+                "CI 工具不支持文档检查",
+                "规则太严格产生大量误报，太宽松则失去意义，需根据团队情况逐步调整",
+                "文档检查会大幅增加构建时间",
+                "只有付费工具才支持 CI 集成"
+            ],
+            answer: 1,
+            rationale: "规则配置的关键挑战在平衡：规则太严格产生大量误报，太宽松则失去意义。需要根据团队情况逐步调整，从核心规则开始。"
+        }
+    ]
 }

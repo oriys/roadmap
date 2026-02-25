@@ -62,12 +62,18 @@ export const week18Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w18-1-q2", question: "golangci-lint 是什么？", options: ["单一 linter", "集成多个 linter 的工具", "格式化工具", "测试框架"], answer: 1, rationale: "golangci-lint 集成了多个 linter，提供统一的配置和运行方式。" }
     ],
     "go-w18-2": [
-        { id: "go-w18-2-q1", question: "pprof 用于什么？", options: ["代码格式化", "CPU 和内存性能分析", "测试", "部署"], answer: 1, rationale: "pprof 是 Go 的性能分析工具，用于 CPU 和内存分析。" }
+        { id: "go-w18-2-q1", question: "pprof 用于什么？", options: ["代码格式化", "CPU 和内存性能分析", "测试", "部署"], answer: 1, rationale: "pprof 是 Go 的性能分析工具，用于 CPU 和内存分析。" },
+        { id: "go-w18-2-q2", question: "如何在 Web 服务中启用 pprof？", options: ["手动编写", "导入 net/http/pprof 包", "安装第三方工具", "修改编译参数"], answer: 1, rationale: "导入 _ \"net/http/pprof\" 自动注册分析端点到默认 HTTP 服务。" },
+        { id: "go-w18-2-q3", question: "go tool trace 用于分析什么？", options: ["代码覆盖率", "goroutine 调度和执行时间线", "内存泄漏", "依赖关系"], answer: 1, rationale: "trace 工具可视化 goroutine 的调度、网络和系统调用时间线。" }
     ],
     "go-w18-3": [
-        { id: "go-w18-3-q1", question: "govulncheck 检查什么？", options: ["代码风格", "已知安全漏洞", "性能问题", "内存泄漏"], answer: 1, rationale: "govulncheck 扫描代码中使用的依赖是否有已知安全漏洞。" }
+        { id: "go-w18-3-q1", question: "govulncheck 检查什么？", options: ["代码风格", "已知安全漏洞", "性能问题", "内存泄漏"], answer: 1, rationale: "govulncheck 扫描代码中使用的依赖是否有已知安全漏洞。" },
+        { id: "go-w18-3-q2", question: "构建标签（build tags）的作用是什么？", options: ["版本控制", "条件编译，控制文件是否参与编译", "代码加密", "性能优化"], answer: 1, rationale: "构建标签用于条件编译，根据平台或自定义条件决定文件是否编译。" },
+        { id: "go-w18-3-q3", question: "go generate 的作用是什么？", options: ["生成随机数", "运行代码中的 //go:generate 指令", "自动修复错误", "生成文档"], answer: 1, rationale: "go generate 扫描并执行源码中的 //go:generate 注释指令来生成代码。" }
     ],
     "go-w18-4": [
-        { id: "go-w18-4-q1", question: "如何交叉编译到 Linux/amd64？", options: ["go build -os linux", "GOOS=linux GOARCH=amd64 go build", "go cross linux", "不支持"], answer: 1, rationale: "使用环境变量 GOOS 和 GOARCH 控制交叉编译目标平台。" }
+        { id: "go-w18-4-q1", question: "如何交叉编译到 Linux/amd64？", options: ["go build -os linux", "GOOS=linux GOARCH=amd64 go build", "go cross linux", "不支持"], answer: 1, rationale: "使用环境变量 GOOS 和 GOARCH 控制交叉编译目标平台。" },
+        { id: "go-w18-4-q2", question: "Go 程序的 Docker 镜像推荐使用什么基础镜像？", options: ["ubuntu:latest", "scratch 或 alpine 最小镜像", "node:latest", "golang:latest"], answer: 1, rationale: "Go 编译为静态二进制，可使用 scratch 或 alpine 构建最小镜像。" },
+        { id: "go-w18-4-q3", question: "CGO 的主要用途和风险是什么？", options: ["纯 Go 功能", "调用 C 代码但失去交叉编译便利性", "加速编译", "自动测试"], answer: 1, rationale: "CGO 允许 Go 调用 C 代码，但会引入 C 依赖并使交叉编译复杂化。" }
     ]
 }

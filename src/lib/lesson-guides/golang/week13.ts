@@ -45,10 +45,14 @@ export const week13Guides: Record<string, LessonGuide> = {
 
 export const week13Quizzes: Record<string, QuizQuestion[]> = {
     "go-w13-1": [
-        { id: "go-w13-1-q1", question: "fan-out 模式的特点是什么？", options: ["单一 worker", "多个 goroutine 从同一 channel 读取任务", "串行处理", "无 channel"], answer: 1, rationale: "fan-out 让多个 goroutine 从同一任务 channel 获取工作并行处理。" }
+        { id: "go-w13-1-q1", question: "fan-out 模式的特点是什么？", options: ["单一 worker", "多个 goroutine 从同一 channel 读取任务", "串行处理", "无 channel"], answer: 1, rationale: "fan-out 让多个 goroutine 从同一任务 channel 获取工作并行处理。" },
+        { id: "go-w13-1-q2", question: "fan-in 模式的作用是什么？", options: ["分发任务", "将多个 channel 的结果合并到一个 channel", "创建 goroutine", "关闭 channel"], answer: 1, rationale: "fan-in 将多个 goroutine 的输出合并到一个 channel 中统一处理。" },
+        { id: "go-w13-1-q3", question: "fan-in 通常使用什么来合并多个 channel？", options: ["for 循环", "select 语句或 sync.WaitGroup", "mutex", "全局变量"], answer: 1, rationale: "fan-in 通常使用 select 监听多个 channel，或用 WaitGroup 协调合并。" }
     ],
     "go-w13-2": [
-        { id: "go-w13-2-q1", question: "pipeline 模式中阶段如何连接？", options: ["函数调用", "通过 channel 连接", "共享内存", "HTTP 请求"], answer: 1, rationale: "pipeline 的每个阶段是 goroutine，通过 channel 连接传递数据。" }
+        { id: "go-w13-2-q1", question: "pipeline 模式中阶段如何连接？", options: ["函数调用", "通过 channel 连接", "共享内存", "HTTP 请求"], answer: 1, rationale: "pipeline 的每个阶段是 goroutine，通过 channel 连接传递数据。" },
+        { id: "go-w13-2-q2", question: "pipeline 中某个阶段失败时如何通知其他阶段？", options: ["panic", "通过关闭 done channel 或 context 取消", "忽略", "重启程序"], answer: 1, rationale: "通常通过关闭 done channel 或 context.Cancel 来通知其他阶段停止。" },
+        { id: "go-w13-2-q3", question: "pipeline 模式的每个阶段通常是什么？", options: ["一个文件", "一个接收输入 channel 并返回输出 channel 的函数", "一个 HTTP 服务", "一个数据库查询"], answer: 1, rationale: "每个 pipeline 阶段是一个函数，接收输入 channel，处理数据后通过输出 channel 传递。" }
     ],
     "go-w13-3": [
         { id: "go-w13-3-q1", question: "如何启用 Go 的竞态检测？", options: ["go detect -race", "go run/build/test -race", "go vet -race", "自动启用"], answer: 1, rationale: "使用 -race 标志启用竞态检测器：go run -race, go build -race, go test -race。" },

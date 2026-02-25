@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week5Guides: Record<string, LessonGuide> = {
     "tw-w5-1": {
@@ -167,4 +168,159 @@ export const week5Guides: Record<string, LessonGuide> = {
             "https://podcast.writethedocs.org/2020/07/19/episode-30-documentation-templates/"
         ]
     }
+}
+
+export const week5Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w5-1": [
+        {
+            id: "tw-w5-1-q1",
+            question: "Diátaxis 框架中，Tutorial 的核心目标是什么？",
+            options: [
+                "让用户快速完成任务",
+                "在导师指导下的学习体验，目标是让学习者获得技能",
+                "提供完整的 API 参考信息",
+                "解释系统设计决策的原因"
+            ],
+            answer: 1,
+            rationale: "Diátaxis 定义：Tutorial 是'在导师指导下的学习体验，始终以学习为导向'——目标是获得技能而非完成任务。"
+        },
+        {
+            id: "tw-w5-1-q2",
+            question: "Tutorial 写作中最常犯的错误是什么？",
+            options: [
+                "步骤太少，内容太简单",
+                "解释太多，偏离了让学习者'做'的目标",
+                "使用了太多代码示例",
+                "没有提供足够的替代方案"
+            ],
+            answer: 1,
+            rationale: "教程写作者常犯的错误是解释太多。教程的目标是让学习者'做'，而非'理解'。长解释应链接到 Explanation 文档。"
+        },
+        {
+            id: "tw-w5-1-q3",
+            question: "Diátaxis 认为 Tutorial 为什么必须做到'完美可靠性'？",
+            options: [
+                "因为教程通常用于认证考试",
+                "因为教程必须每次都能成功运行，无法像真实教师那样在现场纠正错误",
+                "因为教程会被翻译成多种语言",
+                "因为教程是唯一会被完整阅读的文档"
+            ],
+            answer: 1,
+            rationale: "Diátaxis：教程必须激发信心——它必须每次都能成功运行，无法像真实教师那样在现场纠正错误，因此可靠性至关重要。"
+        }
+    ],
+    "tw-w5-2": [
+        {
+            id: "tw-w5-2-q1",
+            question: "Diátaxis 中 How-to 与 Tutorial 的关键区别是什么？",
+            options: [
+                "How-to 更长更详细",
+                "Tutorial 面向不知道要什么的学习者，How-to 面向有明确目标的用户",
+                "How-to 只有文字没有代码",
+                "Tutorial 是在线文档，How-to 是 PDF"
+            ],
+            answer: 1,
+            rationale: "Tutorial 面向学习者（不知道要什么），How-to 面向有目标的用户（知道要什么）。如同食谱——读者知道想做什么菜，只需要步骤。"
+        },
+        {
+            id: "tw-w5-2-q2",
+            question: "Microsoft 建议 How-to 的步骤数量应控制在多少步以内？",
+            options: [
+                "不超过 3 步",
+                "不超过 7 步，最好更少",
+                "不超过 15 步",
+                "没有数量限制"
+            ],
+            answer: 1,
+            rationale: "Microsoft 建议'限制在 7 步以内，最好更少'——尽量在同一屏幕显示所有步骤，减少用户的认知负担。"
+        },
+        {
+            id: "tw-w5-2-q3",
+            question: "Google 的'动作优先原则'要求步骤式说明如何排列信息？",
+            options: [
+                "先讲背景知识再给操作步骤",
+                "先陈述动作再陈述结果，先给位置/上下文再给动作",
+                "按字母顺序排列所有步骤",
+                "先展示结果截图再给操作步骤"
+            ],
+            answer: 1,
+            rationale: "Google：'State the action first and the result second'——先陈述动作，再陈述结果。先给位置/上下文，再给动作；先给目标，再给动作。"
+        }
+    ],
+    "tw-w5-3": [
+        {
+            id: "tw-w5-3-q1",
+            question: "Diátaxis 对 Reference 文档的核心写作要求是什么？",
+            options: [
+                "提供详细的教学和解释",
+                "采用中立的表述方式，仅描述不指导",
+                "用故事性的叙述吸引读者",
+                "重点展示最佳实践和设计模式"
+            ],
+            answer: 1,
+            rationale: "Diátaxis 要求 Reference 文档'纯粹描述'而非解释，采用中立的表述方式，避免混入教学、说明或个人观点，确保准确性、精确性和完整性。"
+        },
+        {
+            id: "tw-w5-3-q2",
+            question: "Google 规范中，Reference 文档的方法描述应使用什么动词形式？",
+            options: [
+                "祈使语气（Create、List、Get）",
+                "第三人称单数现在时（Creates、Lists、Gets）",
+                "过去时态（Created、Listed、Got）",
+                "进行时态（Creating、Listing、Getting）"
+            ],
+            answer: 1,
+            rationale: "Google 规范要求描述方法时使用第三人称单数现在时（Creates、Lists、Gets），而非祈使语气——这更准确地反映方法的功能。"
+        },
+        {
+            id: "tw-w5-3-q3",
+            question: "为什么 Reference 文档的一致性比叙述性更重要？",
+            options: [
+                "因为 Reference 文档需要被翻译成多种语言",
+                "因为 Reference 很少被阅读常被查阅，用户期待标准化格式以快速找到信息",
+                "因为 Reference 文档通常由多人同时编写",
+                "因为搜索引擎偏好格式一致的页面"
+            ],
+            answer: 1,
+            rationale: "Reference 很少被阅读，常被查阅——用户在工作时快速参考。结构比叙述更重要，如同营养信息标签，用户期待标准化、可信赖的事实陈述。"
+        }
+    ],
+    "tw-w5-4": [
+        {
+            id: "tw-w5-4-q1",
+            question: "Diátaxis 中 Explanation 文档的核心特征是什么？",
+            options: [
+                "提供步骤式的操作指南",
+                "允许反思的论述性处理，以理解为导向，采用比其他类型更宽阔的视角",
+                "精确描述 API 参数和返回值",
+                "从零开始教会用户使用功能"
+            ],
+            answer: 1,
+            rationale: "Diátaxis：Explanation 是'允许反思的论述性处理'，以理解为导向。它采用比 Tutorial、How-to、Reference 更宽阔的视角，将主题放在更大的背景下讨论。"
+        },
+        {
+            id: "tw-w5-4-q2",
+            question: "Explanation 文档的标题应该使用什么格式？",
+            options: [
+                "祈使句（如'配置认证'）",
+                "疑问句（如'如何配置认证？'）",
+                "名词短语（如'认证架构'）",
+                "动词短语（如'使用认证功能'）"
+            ],
+            answer: 2,
+            rationale: "Google 建议概念性文档使用名词短语标题——'认证架构'而非'如何配置认证'，这清楚表明文档的目的是解释而非指导。"
+        },
+        {
+            id: "tw-w5-4-q3",
+            question: "为什么说没有 Explanation 文档，从业者的知识会'松散、碎片化和脆弱'？",
+            options: [
+                "因为 Explanation 包含所有 API 参数的描述",
+                "因为 Explanation 创造知识的凝聚力，将片段连接成整体，建立心智模型",
+                "因为 Explanation 是唯一包含代码示例的文档类型",
+                "因为没有 Explanation 用户无法安装软件"
+            ],
+            answer: 1,
+            rationale: "Diátaxis 指出：没有 Explanation，从业者的知识会'松散、碎片化和脆弱'——Explanation 创造知识的凝聚力，将片段连接成整体。"
+        }
+    ]
 }

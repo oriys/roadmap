@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week7Guides: Record<string, LessonGuide> = {
     "tw-w7-1": {
@@ -170,4 +171,159 @@ export const week7Guides: Record<string, LessonGuide> = {
             "https://vercel.com/docs"
         ]
     }
+}
+
+export const week7Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w7-1": [
+        {
+            id: "tw-w7-1-q1",
+            question: "Nielsen Norman Group 如何定义信息架构（Information Architecture）？",
+            options: [
+                "设计网页的视觉样式和配色",
+                "组织、结构化和标注内容的实践",
+                "编写代码的架构设计模式",
+                "用户界面的交互设计方法"
+            ],
+            answer: 1,
+            rationale: "Nielsen Norman Group 定义：信息架构是'组织、结构化和标注内容的实践'——设计产品结构的基础工作。"
+        },
+        {
+            id: "tw-w7-1-q2",
+            question: "Google 对链接文本的规范要求是什么？",
+            options: [
+                "链接文本应使用'点击此处'以提高辨识度",
+                "使用准确反映目标内容的简短短语，不使用'此文档'、'点击此处'等模糊用语",
+                "链接文本越长越好以提供更多上下文",
+                "链接文本应该与周围文字完全相同"
+            ],
+            answer: 1,
+            rationale: "Google 要求不使用'此文档、此文章或点击此处等短语'——使用准确反映目标内容的简短短语，让链接独立有意义。"
+        },
+        {
+            id: "tw-w7-1-q3",
+            question: "文档站点的信息层级通常建议不超过几层？",
+            options: [
+                "不超过 1 层",
+                "不超过 3 层",
+                "不超过 7 层",
+                "没有层级限制"
+            ],
+            answer: 1,
+            rationale: "信息层级通常建议不超过 3 层，太深用户会迷失。网站可采用扁平或深层次的信息层级，各有优缺点。"
+        }
+    ],
+    "tw-w7-2": [
+        {
+            id: "tw-w7-2-q1",
+            question: "Keep a Changelog 的核心原则是什么？",
+            options: [
+                "Changelog 应该自动从 Git log 生成",
+                "Changelog 是为人类编写的，不是 git log 的复制粘贴",
+                "Changelog 只需要记录 bug 修复",
+                "Changelog 应该尽可能详细"
+            ],
+            answer: 1,
+            rationale: "Keep a Changelog 核心原则：'Changelogs are for humans, not machines'——变更日志是为人类编写的精选变更记录，不是 Git commit log 的导出。"
+        },
+        {
+            id: "tw-w7-2-q2",
+            question: "语义化版本（SemVer）中 MAJOR.MINOR.PATCH 各代表什么？",
+            options: [
+                "主版本=新功能，次版本=bug修复，补丁=文档更新",
+                "主版本=不兼容变更，次版本=向后兼容的新功能，补丁=向后兼容的 bug 修复",
+                "主版本=发布年份，次版本=发布月份，补丁=发布日",
+                "三个数字含义由项目自行定义"
+            ],
+            answer: 1,
+            rationale: "SemVer 规范：主版本=不兼容变更，次版本=向后兼容的新功能，补丁=向后兼容的 bug 修复。"
+        },
+        {
+            id: "tw-w7-2-q3",
+            question: "Keep a Changelog 推荐的日期格式是什么？",
+            options: [
+                "MM/DD/YYYY",
+                "YYYY-MM-DD（ISO 8601 标准）",
+                "DD-MM-YYYY",
+                "Month Day, Year"
+            ],
+            answer: 1,
+            rationale: "Keep a Changelog 推荐 ISO 8601 格式（YYYY-MM-DD），避免 MM/DD/YYYY 或 DD/MM/YYYY 的地区歧义。"
+        }
+    ],
+    "tw-w7-3": [
+        {
+            id: "tw-w7-3-q1",
+            question: "文档指标中，为什么不能仅依靠停留时间来判断文档质量？",
+            options: [
+                "因为停留时间无法被准确测量",
+                "因为停留时间长可能是用户认真阅读，也可能是用户困惑，需结合多个指标理解",
+                "因为停留时间与文档质量完全无关",
+                "因为隐私法规禁止收集停留时间数据"
+            ],
+            answer: 1,
+            rationale: "停留时间长可能是用户认真阅读，也可能是用户困惑。需要结合多个指标和定性反馈理解，避免单一指标误导决策。"
+        },
+        {
+            id: "tw-w7-3-q2",
+            question: "NPS（Net Promoter Score）调查的最佳实践是什么？",
+            options: [
+                "每天发送调查以获取最多数据",
+                "每 90-180 天进行一次关系调查，问卷保持 2-6 个问题",
+                "只在用户注册时进行一次调查",
+                "每次用户访问页面都弹出调查"
+            ],
+            answer: 1,
+            rationale: "NPS 调查最佳实践：每 90-180 天进行一次关系调查，避免过于频繁导致用户疲劳。问卷保持 2-6 个问题，最佳是 3 个问题。"
+        },
+        {
+            id: "tw-w7-3-q3",
+            question: "反馈闭环（Feedback Loop）的完整流程是什么？",
+            options: [
+                "收集反馈 → 存档 → 忽略",
+                "收集反馈 → 分类优先级 → 改进文档 → 验证效果 → 再次收集",
+                "收集反馈 → 直接转发给工程师",
+                "收集反馈 → 发布到社交媒体"
+            ],
+            answer: 1,
+            rationale: "完整的反馈闭环：收集反馈 → 分类优先级 → 改进文档 → 验证效果 → 再次收集。没有闭环的反馈收集是浪费用户时间。"
+        }
+    ],
+    "tw-w7-4": [
+        {
+            id: "tw-w7-4-q1",
+            question: "DocsOps 的核心理念是什么？",
+            options: [
+                "文档只需要手动更新和发布",
+                "将 DevOps 实践应用于文档：自动化构建、测试、部署，减少手动操作",
+                "文档和代码应该分开管理",
+                "只有专业运维人员才能发布文档"
+            ],
+            answer: 1,
+            rationale: "DocsOps 将 DevOps 实践应用于文档：自动化构建、测试、部署，减少手动操作和沟通成本。文档与代码享有同等的 CI/CD 待遇。"
+        },
+        {
+            id: "tw-w7-4-q2",
+            question: "Preview Deployments（预览部署）的核心价值是什么？",
+            options: [
+                "让开发者可以在本地测试代码",
+                "每个 PR 自动生成预览 URL，审查者无需本地构建即可看到实际渲染效果",
+                "加快生产环境的部署速度",
+                "减少服务器的存储成本"
+            ],
+            answer: 1,
+            rationale: "Preview Deployments 的核心价值：每个 PR 自动生成预览 URL，审查者无需本地构建即可看到实际渲染效果，在正式发布前分享进展。"
+        },
+        {
+            id: "tw-w7-4-q3",
+            question: "Instant Rollback（即时回滚）功能的意义是什么？",
+            options: [
+                "可以撤销代码提交",
+                "支持即时回滚到之前的部署，让团队敢于频繁发布，出问题时能立即恢复",
+                "自动修复部署中的错误",
+                "将文档回退到上一个 Git 版本"
+            ],
+            answer: 1,
+            rationale: "Instant Rollback 支持即时回滚到之前的部署——'swift recovery from production incidents'，让团队敢于频繁发布，出问题时能立即恢复。"
+        }
+    ]
 }

@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week4Guides: Record<string, LessonGuide> = {
     "tw-w4-1": {
@@ -167,4 +168,159 @@ export const week4Guides: Record<string, LessonGuide> = {
             "https://click.palletsprojects.com/"
         ]
     }
+}
+
+export const week4Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w4-1": [
+        {
+            id: "tw-w4-1-q1",
+            question: "RFC 7807 Problem Details 标准中，哪个字段是错误响应的主标识符？",
+            options: [
+                "title（人可读摘要）",
+                "type（问题类型 URI）",
+                "status（HTTP 状态码）",
+                "detail（具体说明）"
+            ],
+            answer: 1,
+            rationale: "RFC 7807 明确：'Consumers MUST use the type string as the primary identifier'——type 是主标识符（问题类型 URI），title 是辅助的人可读摘要。"
+        },
+        {
+            id: "tw-w4-1-q2",
+            question: "Google 规范中，API 方法描述的动词选择规则是什么？",
+            options: [
+                "统一使用'Execute'开头",
+                "操作并返回数据用动作动词，布尔 getter 用'Checks whether...'，其他 getter 用'Gets the...'",
+                "所有方法都用名词描述",
+                "使用被动语态描述方法"
+            ],
+            answer: 1,
+            rationale: "Google 规范：操作并返回数据用动作动词开头；布尔 getter 用'Checks whether...'；其他 getter 用'Gets the...'；无返回值用'Sets'/'Updates'/'Deletes'等。"
+        },
+        {
+            id: "tw-w4-1-q3",
+            question: "弃用（Deprecation）API 时，文档必须包含什么关键信息？",
+            options: [
+                "只需标记为'已弃用'即可",
+                "必须告知用户应使用的替代方案，并说明首次弃用的版本",
+                "需要解释弃用的技术原因",
+                "需要删除相关文档"
+            ],
+            answer: 1,
+            rationale: "Google 规范要求弃用时必须'告知用户应使用何种替代方案'，说明首次弃用的版本，仅第一句出现在摘要中。"
+        }
+    ],
+    "tw-w4-2": [
+        {
+            id: "tw-w4-2-q1",
+            question: "OpenAPI 规范的核心定位是什么？",
+            options: [
+                "一种编程语言",
+                "定义了标准的、与编程语言无关的 HTTP API 接口描述",
+                "一种数据库查询语言",
+                "一种文档模板格式"
+            ],
+            answer: 1,
+            rationale: "OAS 官方定义：OpenAPI Specification 定义了'标准的、与编程语言无关的 HTTP API 接口描述'，让人类和机器都能理解 API 能力，无需访问源码。"
+        },
+        {
+            id: "tw-w4-2-q2",
+            question: "OpenAPI 中 components/schemas 的作用是什么？",
+            options: [
+                "定义 API 的安全认证方式",
+                "定义可复用的数据模型，避免在多个端点中重复定义",
+                "定义 API 的服务器地址",
+                "定义 API 的版本号"
+            ],
+            answer: 1,
+            rationale: "components/schemas 用于定义可复用的数据模型（如 User、Error），通过 $ref 在多个端点中引用，避免重复定义，遵循 DRY 原则。"
+        },
+        {
+            id: "tw-w4-2-q3",
+            question: "Design-First 工作流在 API 开发中意味着什么？",
+            options: [
+                "先设计 UI 界面再开发 API",
+                "先写 OpenAPI 定义，再自动生成服务器骨架和客户端库",
+                "先写代码再生成文档",
+                "先进行用户测试再设计 API"
+            ],
+            answer: 1,
+            rationale: "Design-First 工作流：先写 OpenAPI 定义，自动生成服务器骨架和客户端库——API 定义成为'单一真相来源'（Single Source of Truth）。"
+        }
+    ],
+    "tw-w4-3": [
+        {
+            id: "tw-w4-3-q1",
+            question: "Microsoft 对代码示例的首要原则是什么？",
+            options: [
+                "代码示例应该展示所有可能的功能",
+                "代码示例应解决开发者实际问题，而非仅仅演示功能",
+                "代码示例应该尽可能复杂以展示技术深度",
+                "代码示例只需要展示语法正确即可"
+            ],
+            answer: 1,
+            rationale: "Microsoft 强调：代码示例应'address real problems developers are trying to solve'——解决开发者实际问题，而非仅仅演示功能。"
+        },
+        {
+            id: "tw-w4-3-q2",
+            question: "Google 规范中，代码块里的省略部分应该如何表示？",
+            options: [
+                "使用省略号字符 ... 或 …",
+                "使用语言特定的注释表示（如 // ...），且包含省略的代码块不应可点击复制",
+                "直接删除省略的部分不做标记",
+                "使用 TODO 注释标记"
+            ],
+            answer: 1,
+            rationale: "Google 规范：用语言特定的注释表示省略（如 // ...），不使用省略号字符（...或…）；包含省略的代码块不应设为可点击复制。"
+        },
+        {
+            id: "tw-w4-3-q3",
+            question: "为什么代码示例在发布前必须编译和测试？",
+            options: [
+                "为了统计代码覆盖率",
+                "确保示例实际可运行，避免用户复制后无法执行",
+                "为了生成性能报告",
+                "为了检查代码风格是否统一"
+            ],
+            answer: 1,
+            rationale: "Microsoft 明确：'Always compile and test code before publishing'——发布前必须编译和测试，确保示例实际可运行，这是代码文档可信度的基础。"
+        }
+    ],
+    "tw-w4-4": [
+        {
+            id: "tw-w4-4-q1",
+            question: "GNU 命令行标准中，短选项和长选项的格式分别是什么？",
+            options: [
+                "短选项用 / ，长选项用 //",
+                "短选项用单破折号（-v），长选项用双破折号（--verbose）",
+                "短选项用 @ ，长选项用 @@",
+                "没有格式区分"
+            ],
+            answer: 1,
+            rationale: "GNU 命令行标准规定：短选项用单破折号（-v）、长选项用双破折号（--verbose）、选项可以有参数、选项顺序通常不敏感。"
+        },
+        {
+            id: "tw-w4-4-q2",
+            question: "CLI 文档中退出码（Exit Code）的文档化为什么重要？",
+            options: [
+                "因为退出码影响命令的执行速度",
+                "因为退出码对脚本自动化至关重要，用户需要据此判断命令执行结果",
+                "因为退出码是 CLI 工具的唯一输出",
+                "因为不同操作系统的退出码不同"
+            ],
+            answer: 1,
+            rationale: "不同退出码代表不同结果（0 成功、非 0 失败的具体类型），用户需要在脚本中使用退出码判断执行结果——这对自动化至关重要。"
+        },
+        {
+            id: "tw-w4-4-q3",
+            question: "CLI 配置方式的优先级规则通常是什么？",
+            options: [
+                "配置文件 > 环境变量 > 命令行参数",
+                "命令行参数 > 环境变量 > 配置文件",
+                "环境变量 > 命令行参数 > 配置文件",
+                "三者优先级相同"
+            ],
+            answer: 1,
+            rationale: "CLI 配置优先级通常为：命令行参数 > 环境变量 > 配置文件。多种配置方式的交互需要在文档中清晰说明。"
+        }
+    ]
 }

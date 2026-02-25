@@ -53,6 +53,8 @@ export const week12Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w12-2-q2", question: "context.WithTimeout 的作用是什么？", options: ["无限等待", "创建带超时的 Context", "取消所有 Context", "延迟执行"], answer: 1, rationale: "WithTimeout 创建一个超时后自动取消的 Context。" }
     ],
     "go-w12-3": [
-        { id: "go-w12-3-q1", question: "Worker Pool 模式的主要优点是什么？", options: ["更简单", "控制并发度避免资源耗尽", "更快", "无需 channel"], answer: 1, rationale: "Worker Pool 通过固定数量的 worker 控制并发度。" }
+        { id: "go-w12-3-q1", question: "Worker Pool 模式的主要优点是什么？", options: ["更简单", "控制并发度避免资源耗尽", "更快", "无需 channel"], answer: 1, rationale: "Worker Pool 通过固定数量的 worker 控制并发度。" },
+        { id: "go-w12-3-q2", question: "Worker Pool 中任务通常通过什么分发给 worker？", options: ["共享变量", "channel", "HTTP 请求", "文件系统"], answer: 1, rationale: "Worker Pool 使用 channel 分发任务，每个 worker 从 channel 中获取任务执行。" },
+        { id: "go-w12-3-q3", question: "如何等待所有 worker 完成任务？", options: ["time.Sleep", "sync.WaitGroup", "channel 计数", "os.Exit"], answer: 1, rationale: "通常使用 sync.WaitGroup 等待所有 worker goroutine 完成。" }
     ]
 }

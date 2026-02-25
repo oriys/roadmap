@@ -23,6 +23,11 @@ import { investmentGuides } from "@/lib/lesson-guides/investment"
 import { pulsarGuides } from "@/lib/lesson-guides/pulsar"
 import { locksGuides } from "@/lib/lesson-guides/locks"
 import { serverlessGuides } from "@/lib/lesson-guides/serverless"
+import { grpcGuides } from "@/lib/lesson-guides/grpc"
+import { developmentAntiPatternsGuides } from "@/lib/lesson-guides/development-anti-patterns"
+import { techManagementGuides } from "@/lib/lesson-guides/tech-management"
+import { blockchainGuides } from "@/lib/lesson-guides/blockchain"
+import { ctoGuides } from "@/lib/lesson-guides/cto"
 
 type LessonGuideMap = Record<string, LessonGuide>
 
@@ -49,6 +54,11 @@ const LESSON_GUIDES_BY_ROADMAP_ID: Partial<Record<RoadmapId, LessonGuideMap>> = 
   pulsar: pulsarGuides,
   locks: locksGuides,
   serverless: serverlessGuides,
+  grpc: grpcGuides,
+  "development-anti-patterns": developmentAntiPatternsGuides,
+  "tech-management": techManagementGuides,
+  blockchain: blockchainGuides,
+  cto: ctoGuides,
 }
 
 export function getLessonGuide(roadmapId: RoadmapId, lessonId: string): LessonGuide | undefined {

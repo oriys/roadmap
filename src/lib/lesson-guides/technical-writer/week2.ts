@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week2Guides: Record<string, LessonGuide> = {
     "tw-w2-1": {
@@ -165,4 +166,159 @@ export const week2Guides: Record<string, LessonGuide> = {
             "https://www.writethedocs.org/guide/index.html"
         ]
     }
+}
+
+export const week2Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w2-1": [
+        {
+            id: "tw-w2-1-q1",
+            question: "CommonMark 相比原始 Markdown 规范解决了什么核心问题？",
+            options: [
+                "增加了更多语法功能",
+                "提供了严格的规范和测试套件，解决不同解析器行为不一致的问题",
+                "让 Markdown 支持 HTML 嵌入",
+                "简化了 Markdown 的语法规则"
+            ],
+            answer: 1,
+            rationale: "原始 Markdown 规范存在大量歧义，导致不同解析器行为不一致。CommonMark（2014 年启动）提供了严格的规范和测试套件，解决了'同一文档不同平台渲染不同'的问题。"
+        },
+        {
+            id: "tw-w2-1-q2",
+            question: "GitHub Flavored Markdown (GFM) 在 CommonMark 基础上扩展了哪些功能？",
+            options: [
+                "LaTeX 公式、视频嵌入、幻灯片",
+                "表格、任务列表、删除线、代码高亮、自动链接",
+                "页面布局、CSS 样式、JavaScript 交互",
+                "数据库查询、API 调用、图表生成"
+            ],
+            answer: 1,
+            rationale: "GFM 在 CommonMark 基础上扩展了表格（| col1 | col2 |）、任务列表（- [ ]）、删除线（~~text~~）、代码高亮（```language）和自动链接等功能。"
+        },
+        {
+            id: "tw-w2-1-q3",
+            question: "文档模板的核心价值是什么？",
+            options: [
+                "限制作者的创造力，确保文档风格统一",
+                "沉淀最佳实践，确保一致性，让作者聚焦内容而非格式",
+                "减少文档的数量和长度",
+                "让非技术人员也能写出专业文档"
+            ],
+            answer: 1,
+            rationale: "模板不是限制创造力，而是沉淀最佳实践。Quickstart、How-to、API Reference 各有固定结构，模板确保一致性，降低认知负荷，让作者聚焦内容。"
+        }
+    ],
+    "tw-w2-2": [
+        {
+            id: "tw-w2-2-q1",
+            question: "Docs as Code 哲学的核心主张是什么？",
+            options: [
+                "文档必须由程序员编写",
+                "用与代码相同的工具管理文档：版本控制、纯文本标记、代码审查、自动化测试",
+                "文档应该嵌入在代码注释中",
+                "文档和代码应该放在不同的仓库管理"
+            ],
+            answer: 1,
+            rationale: "Write the Docs 定义：Docs as Code 指'用与代码相同的工具写文档'——版本控制（Git）、纯文本标记语言、代码审查、自动化测试。"
+        },
+        {
+            id: "tw-w2-2-q2",
+            question: "GitHub Draft PR 的正确使用场景是什么？",
+            options: [
+                "用于正式请求代码审查",
+                "用于分享进行中的工作以获取早期反馈，而非正式请求审查",
+                "用于紧急修复生产问题",
+                "用于合并不需要审查的小改动"
+            ],
+            answer: 1,
+            rationale: "Draft PR 阻止合并且不自动通知代码所有者——适合分享进行中的工作（WIP）以获取早期反馈。转为 ready-for-review 才触发通知。"
+        },
+        {
+            id: "tw-w2-2-q3",
+            question: "文档 PR 的粒度建议遵循什么原则？",
+            options: [
+                "一个 PR 包含尽可能多的改动以减少管理成本",
+                "按'一个主题一个 PR'组织，保持在可审查范围内",
+                "每个文件一个 PR，确保最小粒度",
+                "按时间周期合并所有改动到一个 PR"
+            ],
+            answer: 1,
+            rationale: "PR 太大难以审查（reviewer fatigue），太小增加管理成本。文档 PR 建议按'一个主题一个 PR'组织，保持 Files changed 在可审查范围内。"
+        }
+    ],
+    "tw-w2-3": [
+        {
+            id: "tw-w2-3-q1",
+            question: "静态站点生成器（SSG）的核心价值是什么？",
+            options: [
+                "提供动态的数据库驱动网站",
+                "将 Markdown 转换为静态 HTML，构建时生成所有页面，加载速度快且易于托管",
+                "提供实时协作编辑功能",
+                "自动生成 API 文档"
+            ],
+            answer: 1,
+            rationale: "SSG 将 Markdown 文件转换为可部署的静态 HTML 网站——构建时生成所有页面，部署后无需服务器端处理，加载速度快且易于托管。"
+        },
+        {
+            id: "tw-w2-3-q2",
+            question: "Docusaurus 遵循的 PRPL 性能优化策略包含哪些步骤？",
+            options: [
+                "Plan、Review、Publish、Launch",
+                "Push（推送关键资源）、Render（渲染初始路由）、Pre-cache（预缓存）、Lazy-load（懒加载）",
+                "Parse、Run、Process、Link",
+                "Prepare、Release、Promote、Log"
+            ],
+            answer: 1,
+            rationale: "Docusaurus 遵循 PRPL 模式：Push（推送关键资源）、Render（渲染初始路由）、Pre-cache（预缓存剩余路由）、Lazy-load（懒加载按需路由），确保页面加载快速。"
+        },
+        {
+            id: "tw-w2-3-q3",
+            question: "在 SSG 工具选型中，VitePress 的主要特点是什么？",
+            options: [
+                "基于 React，功能最丰富",
+                "基于 Python，配置最简单",
+                "由 Vite 驱动，支持在 Markdown 中使用 Vue 语法和组件",
+                "支持最多的插件生态系统"
+            ],
+            answer: 2,
+            rationale: "VitePress 是 Vue 生态的文档生成器，由 Vite 驱动——'Instant server start, lightning fast hot updates'，支持在 Markdown 中直接使用 Vue 语法和组件。"
+        }
+    ],
+    "tw-w2-4": [
+        {
+            id: "tw-w2-4-q1",
+            question: "Keep a Changelog 定义的变更日志（Changelog）与 Git commit log 有什么本质区别？",
+            options: [
+                "Changelog 只记录 bug 修复",
+                "Changelog 是为人类编写的精选变更记录，不是 Git commit log 的导出",
+                "Changelog 和 Git log 是同一回事",
+                "Changelog 由 CI/CD 自动生成"
+            ],
+            answer: 1,
+            rationale: "Keep a Changelog 明确：Changelog 是'为人类编写的精选、按时间排列的显著变更列表'——不是 Git commit log 的导出，需要人工筛选和组织。"
+        },
+        {
+            id: "tw-w2-4-q2",
+            question: "Keep a Changelog 标准的变更类型分为哪六类？",
+            options: [
+                "Bug、Feature、Hotfix、Release、Deploy、Rollback",
+                "Added、Changed、Deprecated、Removed、Fixed、Security",
+                "Create、Update、Delete、Merge、Revert、Tag",
+                "Major、Minor、Patch、Alpha、Beta、RC"
+            ],
+            answer: 1,
+            rationale: "Keep a Changelog 标准分类为六种：Added（新功能）、Changed（修改）、Deprecated（弃用预告）、Removed（已移除）、Fixed（修复）、Security（安全补丁）。"
+        },
+        {
+            id: "tw-w2-4-q3",
+            question: "CONTRIBUTING.md 应该覆盖哪三个核心问题？",
+            options: [
+                "项目历史、技术架构、未来规划",
+                "如何开始（环境设置）、代码/文档规范、提交流程（PR 流程）",
+                "团队成员、会议时间、沟通工具",
+                "版本号、发布日期、下载链接"
+            ],
+            answer: 1,
+            rationale: "CONTRIBUTING 的粒度把控需要覆盖三个核心问题：如何开始（环境设置）、代码/文档规范（风格指南）、提交流程（PR 流程），保持简洁但完整。"
+        }
+    ]
 }

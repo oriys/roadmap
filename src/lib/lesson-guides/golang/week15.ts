@@ -62,10 +62,14 @@ export const week15Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w15-1-q2", question: "测试函数的命名规则是什么？", options: ["test_xxx", "TestXxx", "xxx_test", "任意"], answer: 1, rationale: "测试函数必须以 Test 开头，后跟大写字母。" }
     ],
     "go-w15-2": [
-        { id: "go-w15-2-q1", question: "表驱动测试的主要优点是什么？", options: ["更快", "数据与逻辑分离，易于添加用例", "自动生成", "无需断言"], answer: 1, rationale: "表驱动测试将测试数据组织在表格中，逻辑只写一次。" }
+        { id: "go-w15-2-q1", question: "表驱动测试的主要优点是什么？", options: ["更快", "数据与逻辑分离，易于添加用例", "自动生成", "无需断言"], answer: 1, rationale: "表驱动测试将测试数据组织在表格中，逻辑只写一次。" },
+        { id: "go-w15-2-q2", question: "t.Run 的作用是什么？", options: ["运行整个测试套件", "创建命名子测试", "跳过测试", "并行执行"], answer: 1, rationale: "t.Run 创建命名子测试，便于独立运行和定位失败用例。" },
+        { id: "go-w15-2-q3", question: "如何只运行某个子测试？", options: ["不支持", "go test -run TestFunc/子测试名", "go test -sub 子测试名", "go test -only 子测试名"], answer: 1, rationale: "使用 -run 标志加上 / 分隔的子测试名来运行特定子测试。" }
     ],
     "go-w15-3": [
-        { id: "go-w15-3-q1", question: "httptest.NewRecorder 的作用是什么？", options: ["发送请求", "记录 HTTP 响应用于测试", "启动服务器", "Mock 数据库"], answer: 1, rationale: "ResponseRecorder 实现 ResponseWriter，记录响应内容用于断言。" }
+        { id: "go-w15-3-q1", question: "httptest.NewRecorder 的作用是什么？", options: ["发送请求", "记录 HTTP 响应用于测试", "启动服务器", "Mock 数据库"], answer: 1, rationale: "ResponseRecorder 实现 ResponseWriter，记录响应内容用于断言。" },
+        { id: "go-w15-3-q2", question: "Go 中如何 Mock 依赖？", options: ["使用反射", "定义接口并传入 Mock 实现", "修改源码", "使用全局变量"], answer: 1, rationale: "Go 通过定义接口来解耦依赖，测试时传入实现该接口的 Mock 结构体。" },
+        { id: "go-w15-3-q3", question: "httptest.NewServer 的作用是什么？", options: ["部署生产服务器", "创建本地测试 HTTP 服务器", "Mock DNS", "代理请求"], answer: 1, rationale: "httptest.NewServer 创建一个真实的本地 HTTP 服务器，用于集成测试。" }
     ],
     "go-w15-4": [
         { id: "go-w15-4-q1", question: "基准测试函数以什么开头？", options: ["Test", "Benchmark", "Perf", "Speed"], answer: 1, rationale: "基准测试函数必须以 Benchmark 开头，参数为 *testing.B。" },

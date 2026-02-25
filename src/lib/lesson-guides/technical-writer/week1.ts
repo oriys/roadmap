@@ -1,4 +1,5 @@
 import type { LessonGuide } from "../types"
+import type { QuizQuestion } from "@/lib/types"
 
 export const week1Guides: Record<string, LessonGuide> = {
     "tw-w1-1": {
@@ -170,4 +171,159 @@ export const week1Guides: Record<string, LessonGuide> = {
             "https://www.writethedocs.org/guide/writing/style-guides/"
         ]
     }
+}
+
+export const week1Quizzes: Record<string, QuizQuestion[]> = {
+    "tw-w1-1": [
+        {
+            id: "tw-w1-1-q1",
+            question: "Diátaxis 框架将技术文档分为哪四种类型？",
+            options: [
+                "FAQ、README、API 文档、博客",
+                "Tutorials、How-to Guides、Reference、Explanation",
+                "入门指南、进阶指南、高级指南、专家指南",
+                "用户手册、开发手册、运维手册、测试手册"
+            ],
+            answer: 1,
+            rationale: "Diátaxis 框架基于'行动 vs 认知'和'获取 vs 应用'两个正交维度，将文档分为 Tutorials（学习态）、How-to Guides（执行态）、Reference（查询态）和 Explanation（理解态）四种类型。"
+        },
+        {
+            id: "tw-w1-1-q2",
+            question: "Google Technical Writing 提出的文档质量核心公式是什么？",
+            options: [
+                "质量 = 内容数量 × 更新频率",
+                "质量 = 读者需要的知识 − 读者已有的知识",
+                "质量 = 技术深度 + 语言优美度",
+                "质量 = 覆盖的功能数 / 文档页数"
+            ],
+            answer: 1,
+            rationale: "Google Technical Writing 给出文档质量公式：Good documentation = Knowledge audience needs − Knowledge audience already has，即文档需要填补的'知识鸿沟'。"
+        },
+        {
+            id: "tw-w1-1-q3",
+            question: "为什么 FAQ 被认为是文档反模式？",
+            options: [
+                "因为 FAQ 太短，无法解答复杂问题",
+                "因为 FAQ 容易过时、内容散乱、难以检索，且问题往往来自作者想象",
+                "因为 FAQ 只适用于内部文档",
+                "因为 FAQ 需要太多技术知识才能编写"
+            ],
+            answer: 1,
+            rationale: "FAQ 是最常见的文档反模式——它看似解决问题，实则是'快速修复'的借口。FAQ 容易过时、内容散乱、难以检索，应将其系统化为 How-to 或 Troubleshooting 文档。"
+        }
+    ],
+    "tw-w1-2": [
+        {
+            id: "tw-w1-2-q1",
+            question: "什么是'弹性用户'（The Elastic User）反模式？",
+            options: [
+                "用户对文档要求太高",
+                "团队将'用户'无限拉伸以适应任何设计决策，而非使用具体的 Persona",
+                "用户频繁切换使用的文档类型",
+                "用户在不同设备上阅读文档"
+            ],
+            answer: 1,
+            rationale: "当团队说'用户会喜欢这个功能'时，这个'用户'往往被无限拉伸以适应任何设计决策。解决方法是用具名的 Persona 替代模糊的'用户'。"
+        },
+        {
+            id: "tw-w1-2-q2",
+            question: "Google 建议从哪三个维度定义文档受众？",
+            options: [
+                "年龄、职业、教育程度",
+                "角色（Role）、与主题的距离（Proximity）、时间因素（Time）",
+                "技术水平、语言能力、阅读习惯",
+                "行业、公司规模、团队人数"
+            ],
+            answer: 1,
+            rationale: "Google 建议从三个维度定义受众：角色（如软件工程师/产品经理）、与主题的距离（对相关领域的熟悉度）、时间因素（知识是否因长期未用而衰退）。"
+        },
+        {
+            id: "tw-w1-2-q3",
+            question: "'知识诅咒'（Curse of Knowledge）的核心问题是什么？",
+            options: [
+                "专家知道太多信息，无法做出简洁的文档",
+                "专家忘记了曾经不知道，无意识地引用隐性知识",
+                "专家不愿意分享知识给其他人",
+                "专家使用的工具太过复杂"
+            ],
+            answer: 1,
+            rationale: "专家的问题不是'知道太多'，而是'忘记了曾经不知道'。他们无意识地引用隐性知识，创造出新手脑中'文件未找到'的状态。"
+        }
+    ],
+    "tw-w1-3": [
+        {
+            id: "tw-w1-3-q1",
+            question: "'Every Page is Page One' 原则要求文档页面具备什么特性？",
+            options: [
+                "每个页面都必须包含完整的产品介绍",
+                "每个页面必须自包含，有足够上下文让用户理解当前位置",
+                "每个页面都必须从第一页开始阅读",
+                "每个页面必须包含所有相关功能的说明"
+            ],
+            answer: 1,
+            rationale: "假设用户可能通过搜索直接降落在任何页面，每个页面必须自包含：有足够的上下文让用户理解当前位置，有链接获取前置知识，不依赖'从头读到尾'的假设。"
+        },
+        {
+            id: "tw-w1-3-q2",
+            question: "Diátaxis 框架中，Tutorial 和 How-to 最本质的区别是什么？",
+            options: [
+                "Tutorial 更长，How-to 更短",
+                "Tutorial 服务于'学习态'用户，How-to 服务于'执行态'用户",
+                "Tutorial 面向初学者，How-to 面向专家",
+                "Tutorial 有代码示例，How-to 没有"
+            ],
+            answer: 1,
+            rationale: "Tutorial 服务于学习态用户（我不知道怎么做），How-to 服务于执行态用户（我知道我要什么，告诉我怎么做）。Tutorial 可以重复和绕路，How-to 必须直接高效。"
+        },
+        {
+            id: "tw-w1-3-q3",
+            question: "Reference 文档的组织结构应该遵循什么原则？",
+            options: [
+                "按照字母顺序排列所有内容",
+                "镜像产品本身的结构",
+                "按照使用频率从高到低排列",
+                "按照开发时间线排列"
+            ],
+            answer: 1,
+            rationale: "Diátaxis 指出 Reference 文档的组织结构应该'mirror the structure of the product'——API 文档的层级应对应 API 的层级，配置文档的结构应对应配置系统的结构。"
+        }
+    ],
+    "tw-w1-4": [
+        {
+            id: "tw-w1-4-q1",
+            question: "在技术写作中，主动语态相比被动语态的核心优势是什么？",
+            options: [
+                "主动语态的句子更长更详细",
+                "主动语态明确'谁做了什么'，减少解析负担，信息密度更高",
+                "主动语态更适合学术论文写作",
+                "主动语态在翻译时更节省成本"
+            ],
+            answer: 1,
+            rationale: "主动语态明确'谁做了什么'（who does what），减少解析负担。例如'The system deletes the file'比'The file is deleted by the system'更直接、信息密度更高。"
+        },
+        {
+            id: "tw-w1-4-q2",
+            question: "Google Style Guide 对风格规则与清晰性冲突的态度是什么？",
+            options: [
+                "严格遵循规则，不允许例外",
+                "清晰性和一致性优先于严格遵循规则",
+                "每次冲突都需要团队投票决定",
+                "优先考虑规则的完整性"
+            ],
+            answer: 1,
+            rationale: "Google Style Guide 明确：'Break any of these rules sooner than say anything outright barbarous'——清晰性和一致性优先于严格遵循规则。当规则与可读性冲突时，选择可读性。"
+        },
+        {
+            id: "tw-w1-4-q3",
+            question: "为什么同一个概念必须在文档中使用相同的术语？",
+            options: [
+                "为了减少文档的字数",
+                "因为术语不一致会让用户怀疑是否在说同一件事，增加认知负荷",
+                "因为搜索引擎要求关键词统一",
+                "因为翻译软件无法处理同义词"
+            ],
+            answer: 1,
+            rationale: "同一个概念必须使用相同的术语——'click/tap/select'选一个并坚持。术语不一致会让用户怀疑是否在说同一件事，增加不必要的认知负荷。"
+        }
+    ]
 }

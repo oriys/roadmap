@@ -53,6 +53,8 @@ export const week10Quizzes: Record<string, QuizQuestion[]> = {
         { id: "go-w10-2-q2", question: "Go 允许循环导入吗？", options: ["允许", "不允许", "只允许 main 包", "取决于编译器"], answer: 1, rationale: "Go 不允许循环导入，需要通过接口或重构解决。" }
     ],
     "go-w10-3": [
-        { id: "go-w10-3-q1", question: "v2+ 版本的模块需要什么特殊处理？", options: ["无需处理", "导入路径需要包含 /v2", "只能本地使用", "需要付费"], answer: 1, rationale: "主版本 2 及以上需要修改导入路径添加 /v2 后缀。" }
+        { id: "go-w10-3-q1", question: "v2+ 版本的模块需要什么特殊处理？", options: ["无需处理", "导入路径需要包含 /v2", "只能本地使用", "需要付费"], answer: 1, rationale: "主版本 2 及以上需要修改导入路径添加 /v2 后缀。" },
+        { id: "go-w10-3-q2", question: "如何引入第三方依赖包？", options: ["手动下载源码", "go get 命令", "pip install", "npm install"], answer: 1, rationale: "使用 go get 命令下载并添加第三方依赖到 go.mod 文件中。" },
+        { id: "go-w10-3-q3", question: "发布 Go 模块需要将代码托管在哪里？", options: ["只能在 GitHub", "任何 Git 仓库且路径匹配模块路径", "Go 官方仓库", "npm registry"], answer: 1, rationale: "Go 模块可以托管在任何 Git 仓库，只要模块路径与仓库地址匹配。" }
     ]
 }
