@@ -48,6 +48,9 @@ export type RoadmapId =
   | "tech-management"
   | "serverless"
   | "development-anti-patterns"
+  | "redis"
+  | "docker"
+  | "cicd"
 
 export type RoadmapCategory =
   | "all"

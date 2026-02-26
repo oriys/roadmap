@@ -37,6 +37,9 @@ import { locksRoadmap } from "./locks"
 import { techManagementRoadmap } from "./tech-management"
 import { serverlessRoadmap } from "./serverless"
 import { developmentAntiPatternsRoadmap } from "./development-anti-patterns"
+import { redisRoadmap } from "./redis"
+import { dockerRoadmap } from "./docker"
+import { cicdRoadmap } from "./cicd"
 import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
@@ -78,6 +81,9 @@ export * from "./locks"
 export * from "./tech-management"
 export * from "./serverless"
 export * from "./development-anti-patterns"
+export * from "./redis"
+export * from "./docker"
+export * from "./cicd"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -119,6 +125,9 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   "tech-management": techManagementRoadmap,
   serverless: serverlessRoadmap,
   "development-anti-patterns": developmentAntiPatternsRoadmap,
+  redis: redisRoadmap,
+  docker: dockerRoadmap,
+  cicd: cicdRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -161,6 +170,9 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   techManagementRoadmap,
   serverlessRoadmap,
   developmentAntiPatternsRoadmap,
+  redisRoadmap,
+  dockerRoadmap,
+  cicdRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
 
@@ -215,6 +227,9 @@ export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
   "technical-writer": "career",
   "tech-management": "career",
   "development-anti-patterns": "system-design",
+  redis: "backend",
+  docker: "devops",
+  cicd: "devops",
   // Other
   blockchain: "other",
   "data-structures-algorithms": "other",
