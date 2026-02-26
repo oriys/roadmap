@@ -11,6 +11,7 @@ export const golangStages: Stage[] = [
         id: "go-w1",
         title: "第 1 周：环境搭建与第一个程序",
         summary: "安装 Go 环境，理解 go 命令工具链，编写并运行 Hello World。",
+        overview: "本周是 Go 语言学习的起点，重点搭建开发环境并熟悉基本的工具链和程序结构。",
         keyPoints: [
           "安装 Go 并配置 GOPATH/GOROOT。",
           "理解 go run、go build、go install 等核心命令。",
@@ -68,6 +69,7 @@ export const golangStages: Stage[] = [
         id: "go-w2",
         title: "第 2 周：变量、常量与基本数据类型",
         summary: "掌握变量声明方式、常量定义、零值概念以及基本数据类型。",
+        overview: "变量和类型是所有程序的基石，本周将系统学习 Go 独特的声明语法和零值机制。",
         keyPoints: [
           "区分 var 与 := 短声明语法。",
           "理解 Go 的零值机制。",
@@ -140,6 +142,7 @@ export const golangStages: Stage[] = [
         id: "go-w3",
         title: "第 3 周：复合数据类型",
         summary: "掌握数组、切片、Map 和结构体等复合类型的使用。",
+        overview: "复合类型让你能组织和管理更复杂的数据，切片和 Map 是 Go 中最常用的数据结构。",
         keyPoints: [
           "区分数组（固定长度）与切片（动态长度）。",
           "理解切片的容量增长机制。",
@@ -205,6 +208,7 @@ export const golangStages: Stage[] = [
         id: "go-w4",
         title: "第 4 周：条件语句与循环",
         summary: "学习 if、switch 条件判断以及 for 循环的各种用法。",
+        overview: "Go 的流程控制语法简洁而强大，只用 for 一种循环就能覆盖所有迭代场景。",
         keyPoints: [
           "Go 只有 for 一种循环关键字。",
           "switch 默认不需要 break，使用 fallthrough 继续执行。",
@@ -262,6 +266,7 @@ export const golangStages: Stage[] = [
         id: "go-w5",
         title: "第 5 周：函数基础",
         summary: "掌握函数定义、多返回值、可变参数、匿名函数和闭包。",
+        overview: "函数是 Go 的一等公民，多返回值和闭包是编写惯用 Go 代码的关键特性。",
         keyPoints: [
           "Go 函数支持多返回值。",
           "可变参数函数使用 ...T 语法。",
@@ -319,6 +324,7 @@ export const golangStages: Stage[] = [
         id: "go-w6",
         title: "第 6 周：指针与内存管理",
         summary: "掌握指针的使用场景，理解 Go 的内存管理和垃圾回收。",
+        overview: "理解指针和内存模型有助于写出高效代码，Go 的垃圾回收让你无需手动管理内存。",
         keyPoints: [
           "指针用于避免大结构体的复制和实现修改。",
           "Go 有垃圾回收，无需手动释放内存。",
@@ -384,6 +390,7 @@ export const golangStages: Stage[] = [
         id: "go-w7",
         title: "第 7 周：方法与接口",
         summary: "学习方法定义、接收者类型选择以及接口的隐式实现。",
+        overview: "接口是 Go 实现多态的核心机制，隐式实现让代码解耦更加自然灵活。",
         keyPoints: [
           "方法是带接收者的函数。",
           "接口是方法签名的集合，隐式实现。",
@@ -441,6 +448,7 @@ export const golangStages: Stage[] = [
         id: "go-w8",
         title: "第 8 周：泛型编程",
         summary: "学习 Go 1.18+ 引入的泛型，理解类型参数和约束。",
+        overview: "泛型是 Go 1.18 的重大新特性，让你编写类型安全的通用函数和数据结构。",
         keyPoints: [
           "泛型允许编写类型安全的通用代码。",
           "类型约束定义类型参数的能力。",
@@ -498,6 +506,7 @@ export const golangStages: Stage[] = [
         id: "go-w9",
         title: "第 9 周：错误处理",
         summary: "掌握 Go 的错误处理哲学和最佳实践，理解 panic/recover。",
+        overview: "Go 将错误视为普通值，通过显式返回值处理错误是其核心设计哲学之一。",
         keyPoints: [
           "Go 使用返回值而非异常处理错误。",
           "使用 errors.Is/As 进行错误检查和类型断言。",
@@ -578,6 +587,7 @@ export const golangStages: Stage[] = [
         id: "go-w10",
         title: "第 10 周：模块与包管理",
         summary: "学习 Go Modules、包导入规则和依赖管理。",
+        overview: "模块和包管理是组织大型项目的基础，Go Modules 提供了简洁可靠的依赖管理方案。",
         keyPoints: [
           "Go Modules 是官方的依赖管理方案。",
           "理解 go.mod 和 go.sum 的作用。",
@@ -643,6 +653,7 @@ export const golangStages: Stage[] = [
         id: "go-w11",
         title: "第 11 周：Goroutines 与 Channels",
         summary: "学习 Goroutine 的创建、Channel 的使用以及基本的并发模式。",
+        overview: "并发是 Go 的核心优势，Goroutine 和 Channel 构成了其独特的 CSP 并发模型。",
         keyPoints: [
           "Goroutine 是轻量级的并发执行单元。",
           "Channel 是 Goroutine 之间的通信机制。",
@@ -700,6 +711,7 @@ export const golangStages: Stage[] = [
         id: "go-w12",
         title: "第 12 周：同步原语与 Context",
         summary: "学习 sync 包的同步原语和 context 包的取消/超时机制。",
+        overview: "在实际并发场景中，同步原语和 Context 是控制 Goroutine 生命周期的必备工具。",
         keyPoints: [
           "sync.Mutex 用于保护共享资源。",
           "sync.WaitGroup 用于等待多个 Goroutine 完成。",
@@ -1882,6 +1894,126 @@ export const golangExamQuestions: QuizQuestion[] = [
     ],
     answer: 2,
     rationale: "Go 1.18 引入泛型，any 是 interface{} 的别名；泛型可用于函数和类型；支持类型推断。",
+  },
+  {
+    id: "go-q11",
+    question: "以下哪种类型在 Go 中是引用类型？",
+    options: [
+      "数组（[3]int）",
+      "结构体（struct）",
+      "切片（[]int）",
+      "整数（int）",
+    ],
+    answer: 2,
+    rationale: "切片、Map 和 Channel 是引用类型，赋值和传参时不会复制底层数据；数组和结构体是值类型。",
+  },
+  {
+    id: "go-q12",
+    question: "关于 Go 的 init 函数，以下哪项描述是正确的？",
+    options: [
+      "每个包只能有一个 init 函数",
+      "init 函数可以有参数和返回值",
+      "init 函数在 main 函数之前自动执行",
+      "init 函数可以被其他函数显式调用",
+    ],
+    answer: 2,
+    rationale: "init 函数在包被导入时自动执行，先于 main；同一包可以有多个 init，不能有参数和返回值，不可被显式调用。",
+  },
+  {
+    id: "go-q13",
+    question: "以下哪种方式可以正确地遍历 map 的所有键值对？",
+    options: [
+      "for i := 0; i < len(m); i++ { m[i] }",
+      "for k, v := range m { ... }",
+      "m.forEach(func(k, v) { ... })",
+      "while k, v := m.next() { ... }",
+    ],
+    answer: 1,
+    rationale: "Go 使用 for range 遍历 map，每次迭代返回键和值；map 的遍历顺序是随机的。",
+  },
+  {
+    id: "go-q14",
+    question: "关于 Go 的 select 语句，以下哪项描述是正确的？",
+    options: [
+      "select 只能监听一个 Channel",
+      "select 中多个 case 同时就绪时会随机选择一个执行",
+      "select 不支持 default 分支",
+      "select 只能用于发送操作，不能用于接收",
+    ],
+    answer: 1,
+    rationale: "select 可以同时监听多个 Channel 操作，当多个 case 都就绪时会随机选择一个执行，支持 default 实现非阻塞操作。",
+  },
+  {
+    id: "go-q15",
+    question: "以下哪个是 Go 中正确的类型断言写法？",
+    options: [
+      "(string)value",
+      "value.(string)",
+      "value as string",
+      "string(value)",
+    ],
+    answer: 1,
+    rationale: "Go 的类型断言语法是 value.(Type)，用于从接口值中提取具体类型；string(value) 是类型转换而非断言。",
+  },
+  {
+    id: "go-q16",
+    question: "关于 Go 的 struct 嵌入，以下哪项描述是正确的？",
+    options: [
+      "嵌入等同于面向对象语言中的继承",
+      "嵌入的字段不能被外层结构体的方法访问",
+      "嵌入的类型的方法会被提升到外层结构体",
+      "Go 结构体不支持匿名嵌入",
+    ],
+    answer: 2,
+    rationale: "嵌入类型的方法和字段会被提升到外层结构体，可以直接访问；这是组合而非继承。",
+  },
+  {
+    id: "go-q17",
+    question: "以下哪项关于 Go 的 goroutine 描述是错误的？",
+    options: [
+      "goroutine 的初始栈大小通常为几 KB",
+      "goroutine 由 Go 运行时调度，而非操作系统",
+      "goroutine 的栈大小是固定的，无法动态增长",
+      "可以同时运行成千上万个 goroutine",
+    ],
+    answer: 2,
+    rationale: "goroutine 的栈是动态增长和收缩的，初始约 2-8 KB，可按需扩展到 GB 级别。",
+  },
+  {
+    id: "go-q18",
+    question: "以下哪个表驱动测试的写法是 Go 推荐的惯用模式？",
+    options: [
+      "为每个测试用例编写单独的 Test 函数",
+      "使用 t.Run 配合测试用例切片进行子测试",
+      "使用全局变量存储测试结果",
+      "在 init 函数中执行测试逻辑",
+    ],
+    answer: 1,
+    rationale: "表驱动测试配合 t.Run 是 Go 推荐的测试模式，方便组织用例、并行执行和定位失败。",
+  },
+  {
+    id: "go-q19",
+    question: "关于 Go Modules，以下哪项描述是错误的？",
+    options: [
+      "go.mod 文件定义模块路径和依赖版本",
+      "go.sum 文件记录依赖的校验和",
+      "go mod tidy 会清理未使用的依赖",
+      "Go Modules 要求所有代码必须放在 GOPATH 下",
+    ],
+    answer: 3,
+    rationale: "Go Modules 的设计目的之一就是摆脱 GOPATH 的限制，项目可以放在任意目录下。",
+  },
+  {
+    id: "go-q20",
+    question: "关于 context.Context，以下哪项是正确的？",
+    options: [
+      "Context 可以用来传递大量业务数据",
+      "Context 的 Value 方法是类型安全的",
+      "Context 主要用于传递取消信号、截止时间和请求范围的值",
+      "Context 一旦创建就不能派生子 Context",
+    ],
+    answer: 2,
+    rationale: "Context 主要用于跨 API 边界传递取消信号、超时和少量请求范围的值；不应用于传递大量业务数据。",
   },
 ]
 

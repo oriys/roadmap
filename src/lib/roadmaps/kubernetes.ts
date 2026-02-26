@@ -22,6 +22,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w1-1",
                         title: "Linux 进程隔离：用 Namespaces 划定边界",
                         detail: "深入理解 Namespaces（PID、Network、Mount）如何制造“隔离的假象”。",
+                        keyPoints: [
+                            "Linux 提供 8 种 Namespace（PID/Net/Mount/UTS/IPC/User/Cgroup/Time），每种隔离一类资源视图。",
+                            "容器本质上是共享内核的隔离进程，hostPID/hostNetwork 等配置会打破隔离边界。",
+                            "使用 unshare/nsenter 命令可以手动创建和进入 Namespace，辅助排查容器问题。",
+                        ],
                         resources: [
                             { title: "namespaces man7", url: "https://man7.org/linux/man-pages/man7/namespaces.7.html" },
                             { title: "Linux namespaces 指南", url: "https://docs.kernel.org/admin-guide/namespaces/index.html" },
@@ -32,6 +37,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w1-2",
                         title: "Cgroups 资源治理：CPU/内存限额与调度",
                         detail: "详解 Cgroups（v1/v2）如何限制 CPU 和内存使用。",
+                        keyPoints: [
+                            "Cgroups v1 按控制器（cpu/memory/blkio）独立挂载，v2 采用统一层级树简化管理。",
+                            "CPU 限制通过 CFS 配额（cpu.cfs_period/quota）实现，超额进程会被节流（throttled）。",
+                            "内存超限触发 OOM Killer，理解 oom_score_adj 与 K8s QoS 等级的对应关系。",
+                        ],
                         resources: [
                             { title: "cgroup v2 内核文档", url: "https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html" },
                             { title: "cgroups man7", url: "https://man7.org/linux/man-pages/man7/cgroups.7.html" },
@@ -42,6 +52,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w1-3",
                         title: "镜像分层与联合文件系统：OverlayFS 解剖",
                         detail: "剖析 Overlay2 存储驱动与 Copy-on-Write 机制。",
+                        keyPoints: [
+                            "OverlayFS 将 lowerdir（只读层）与 upperdir（可写层）合并为统一视图，实现镜像共享。",
+                            "Copy-on-Write 机制：首次写入时才从只读层复制文件到可写层，减少存储占用。",
+                            "层数过多或大文件频繁修改会导致写放大，生产中应控制 Dockerfile 指令数量。",
+                        ],
                         resources: [
                             { title: "Docker OverlayFS 驱动", url: "https://docs.docker.com/engine/storage/drivers/overlayfs-driver/" },
                             { title: "Linux overlayfs 内核文档", url: "https://docs.kernel.org/filesystems/overlayfs.html" },
@@ -52,6 +67,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w1-4",
                         title: "容器网络入门：veth/bridge/iptables 数据路径",
                         detail: "虚拟网桥、Veth Pair 与 iptables 在容器通信中的作用。",
+                        keyPoints: [
+                            "Veth Pair 是成对的虚拟网卡，一端在容器 Net Namespace 内，另一端挂到宿主机 Bridge 上。",
+                            "Docker 默认通过 docker0 网桥 + iptables NAT 规则实现容器间通信与端口映射。",
+                            "tcpdump 抓包定位：在 veth/bridge/eth0 不同位置抓包可精准判断丢包环节。",
+                        ],
                         resources: [
                             { title: "Docker Bridge 网络", url: "https://docs.docker.com/engine/network/drivers/bridge/" },
                             { title: "veth(4) man7", url: "https://man7.org/linux/man-pages/man4/veth.4.html" },
@@ -75,6 +95,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w2-1",
                         title: "Docker 架构链路：CLI → Daemon → containerd → runc",
                         detail: "Docker CLI、Daemon、Containerd 与 Runc 的关系。",
+                        keyPoints: [
+                            "Docker CLI 通过 REST API 与 Daemon 通信，Daemon 再调用 containerd 管理容器生命周期。",
+                            "containerd 负责镜像拉取/存储与容器运行，runc 是最终创建容器进程的 OCI 实现。",
+                            "理解 shim 进程的作用：解耦 containerd 与容器进程，允许 containerd 重启不影响运行中的容器。",
+                        ],
                         resources: [
                             { title: "Docker 官方概览", url: "https://docs.docker.com/get-started/docker-overview/" },
                             { title: "containerd 架构", url: "https://github.com/containerd/containerd/blob/main/docs/PLUGINS.md" },
@@ -85,6 +110,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w2-2",
                         title: "Dockerfile 工程化：多阶段构建与镜像瘦身",
                         detail: "多阶段构建、镜像瘦身与层缓存优化。",
+                        keyPoints: [
+                            "多阶段构建将编译与运行分离，只将最终产物 COPY 到精简 base 镜像，大幅减小体积。",
+                            "层缓存策略：将变化频率低的指令（如依赖安装）放在前面，提高构建缓存命中率。",
+                            "使用 .dockerignore 排除不必要文件，减少构建上下文传输时间与镜像层污染。",
+                        ],
                         resources: [
                             { title: "多阶段构建", url: "https://docs.docker.com/build/building/multi-stage/" },
                             { title: "Dockerfile 工程化：多阶段构建与镜像瘦身", url: "https://docs.docker.com/build/building/best-practices/" },
@@ -95,6 +125,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w2-3",
                         title: "容器运行时演进：从 dockershim 到 CRI 生态",
                         detail: "为何 K8s 移除 Docker Shim？Containerd 与 CRI-O 的区别。",
+                        keyPoints: [
+                            "Docker Shim 是 Kubelet 与 Docker Daemon 之间的适配层，移除后直接通过 CRI 对接运行时。",
+                            "Containerd 功能全面（镜像管理+容器运行），CRI-O 更轻量专注于 Kubernetes CRI 场景。",
+                            "移除 Docker Shim 不影响镜像格式（OCI 兼容），只改变了 Kubelet 调用运行时的路径。",
+                        ],
                         resources: [
                             { title: "Dockershim FAQ（K8s 官方）", url: "https://kubernetes.io/blog/2020/12/02/dockershim-faq/" },
                             { title: "CRI-O 官方文档", url: "https://cri-o.io/" },
@@ -105,6 +140,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w2-4",
                         title: "OCI 标准全景：Image/Runtime/Distribution 互操作",
                         detail: "Image Spec & Runtime Spec 的意义与生态影响。",
+                        keyPoints: [
+                            "OCI Image Spec 定义镜像格式（manifest/config/layers），确保跨工具链兼容。",
+                            "OCI Runtime Spec 定义容器运行时接口（config.json），runc/crun/youki 均遵循此规范。",
+                            "Distribution Spec 规范镜像仓库 API，使 Docker Hub/Harbor/ECR 等可互换使用。",
+                        ],
                         resources: [
                             { title: "OCI Runtime Spec", url: "https://github.com/opencontainers/runtime-spec" },
                             { title: "OCI Image Spec", url: "https://github.com/opencontainers/image-spec" },
@@ -130,6 +170,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w3-1",
                         title: "K8s 核心架构：组件职责与调和循环",
                         detail: "控制平面（API Server、Etcd、Scheduler）与工作节点（Kubelet、Kube-proxy）。",
+                        keyPoints: [
+                            "API Server 是集群唯一入口，所有组件通过它读写 etcd；Scheduler 负责 Pod 到节点的分配。",
+                            "Controller Manager 内置多种控制器（Deployment/ReplicaSet/Job 等），持续调和期望状态。",
+                            "Kubelet 负责节点上 Pod 的生命周期管理，Kube-proxy 维护 Service 的网络规则（iptables/IPVS）。",
+                        ],
                         resources: [
                             { title: "Kubernetes 组件概览", url: "https://kubernetes.io/docs/concepts/overview/components/" },
                             { title: "What is Kubernetes?", url: "https://kubernetes.io/docs/concepts/overview/" },
@@ -143,6 +188,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w3-2",
                         title: "集群搭建实战：kubeadm/minikube/kind 验证链路",
                         detail: "Kubeadm 或 Minikube/Kind 的快速集群搭建，并部署第一个应用验证链路。",
+                        keyPoints: [
+                            "Minikube/Kind 适合本地学习与 CI 测试，kubeadm 适合生产级多节点集群搭建。",
+                            "集群搭建后用 kubectl run/expose 部署并暴露第一个应用，验证端到端链路。",
+                            "HA 拓扑需要多控制平面节点 + 外部 etcd 或堆叠 etcd，防止单点故障。",
+                        ],
                         resources: [
                             { title: "kubeadm 创建集群", url: "https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/" },
                             { title: "minikube 快速开始", url: "https://minikube.sigs.k8s.io/docs/start/" },
@@ -157,6 +207,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w3-3",
                         title: "声明式 API 与 YAML：期望状态到调和的路径",
                         detail: "期望状态 vs 实际状态，理解 Reconciliation Loop。",
+                        keyPoints: [
+                            "声明式 API 的核心：用户声明期望状态（spec），控制器持续将实际状态（status）调和至一致。",
+                            "kubectl apply 是声明式操作（三方合并），kubectl create/replace 是命令式操作，生产中优先用 apply。",
+                            "Finalizer 机制允许控制器在资源删除前执行清理逻辑，防止孤儿资源。",
+                        ],
                         resources: [
                             { title: "Kubernetes 对象", url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/" },
                             { title: "声明式配置", url: "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/" },
@@ -167,6 +222,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w3-4",
                         title: "Pod 生命周期：探针、重启策略与常见故障",
                         detail: "Init Containers、Liveness/Readiness Probe 与 CrashLoopBackOff 排查。",
+                        keyPoints: [
+                            "Init Containers 按顺序执行，全部成功后主容器才启动，适合依赖检查和数据初始化。",
+                            "Liveness 探针失败会重启容器，Readiness 探针失败会摘除 Service 端点，Startup 探针保护慢启动应用。",
+                            "CrashLoopBackOff 排查路径：kubectl describe 看事件 → kubectl logs 看日志 → 检查探针/资源配置。",
+                        ],
                         resources: [
                             { title: "Pod 生命周期：探针、重启策略与常见故障", url: "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/" },
                             { title: "探针配置", url: "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" },
@@ -198,6 +258,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w4-1",
                         title: "控制器模式：Deployment/Job 的发布与回滚",
                         detail: "Deployment/ReplicaSet 的滚动更新与回滚，以及 Job/CronJob 批处理控制器。",
+                        keyPoints: [
+                            "Deployment 通过 maxSurge/maxUnavailable 控制滚动更新节奏，revision 历史支持快速回滚。",
+                            "Job 保证任务至少成功运行指定次数（completions），CronJob 按 cron 表达式周期触发 Job。",
+                            "使用 kubectl rollout status/history/undo 管理发布过程，配合探针确保零停机。",
+                        ],
                         resources: [
                             { title: "Deployment 官方文档", url: "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" },
                             { title: "Job", url: "https://kubernetes.io/docs/concepts/workloads/controllers/job/" },
@@ -210,6 +275,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w4-2",
                         title: "Service 服务发现：ClusterIP/NodePort/LoadBalancer 路径",
                         detail: "ClusterIP、NodePort、LoadBalancer 的实现原理。",
+                        keyPoints: [
+                            "ClusterIP 是默认类型，仅集群内部可达；NodePort 在每个节点开放固定端口对外暴露。",
+                            "LoadBalancer 依赖云厂商实现，自动创建外部负载均衡器并分配公网 IP。",
+                            "Kube-proxy 通过 iptables 或 IPVS 模式维护 Service 到 Pod 的转发规则。",
+                        ],
                         resources: [
                             { title: "Service 类型", url: "https://kubernetes.io/docs/concepts/services-networking/service/" },
                             { title: "kube-proxy 模式", url: "https://kubernetes.io/docs/concepts/services-networking/service/#kube-proxy-iptables-vs-ipvs" },
@@ -220,6 +290,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w4-3",
                         title: "Ingress 与入口控制器：路由、TLS 与常见 4xx/5xx",
                         detail: "Nginx Ingress Controller 与域名路由规则。",
+                        keyPoints: [
+                            "Ingress 是 L7 路由规则定义，需要搭配 Ingress Controller（如 Nginx/Traefik）才能生效。",
+                            "支持基于 Host 和 Path 的路由、TLS 终止、以及 Annotation 扩展高级功能。",
+                            "常见 404 排查：确认 Ingress Class 匹配、后端 Service/端口正确、Pod 就绪。",
+                        ],
                         resources: [
                             { title: "Ingress 概念", url: "https://kubernetes.io/docs/concepts/services-networking/ingress/" },
                             { title: "Ingress-NGINX 文档", url: "https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/" },
@@ -230,6 +305,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w4-4",
                         title: "资源治理：requests/limits 与配额模型落地",
                         detail: "Requests/Limits 与 QoS 资源治理，配合 Namespace/ResourceQuota/LimitRange 做多租户配额。",
+                        keyPoints: [
+                            "Requests 影响调度决策（节点是否有足够资源），Limits 是运行时硬上限（超限被 throttle/OOM）。",
+                            "QoS 等级：Guaranteed（requests=limits）> Burstable > BestEffort，OOM 时低优先级先被杀。",
+                            "ResourceQuota 限制 Namespace 总量，LimitRange 设置单个 Pod/容器的默认值与上下限。",
+                        ],
                         resources: [
                             { title: "管理容器资源（Requests/Limits/QoS）", url: "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" },
                             { title: "ResourceQuota / LimitRange", url: "https://kubernetes.io/docs/concepts/policy/resource-quotas/" },
@@ -254,6 +334,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w5-1",
                         title: "配置解耦：ConfigMap/Secret 安全注入与滚动更新",
                         detail: "ConfigMap & Secret 的注入方式（Env vs Volume）。",
+                        keyPoints: [
+                            "环境变量注入简单但不支持热更新，Volume 挂载方式可在 ConfigMap 更新后自动同步（有延迟）。",
+                            "Secret 默认 base64 编码（非加密），生产中应启用 etcd 加密或使用外部密钥管理（Vault）。",
+                            "immutable ConfigMap/Secret 一旦设置不可修改，减少意外变更风险并降低 API Server 监听负载。",
+                        ],
                         resources: [
                             { title: "ConfigMap", url: "https://kubernetes.io/docs/concepts/configuration/configmap/" },
                             { title: "Secret", url: "https://kubernetes.io/docs/concepts/configuration/secret/" },
@@ -264,6 +349,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w5-2",
                         title: "持久化存储基础：PV/PVC 生命周期与权限",
                         detail: "PV 与 PVC 的绑定生命周期。",
+                        keyPoints: [
+                            "PV 生命周期：Provisioning → Binding → Using → Releasing → Reclaiming（Retain/Delete/Recycle）。",
+                            "访问模式（RWO/ROX/RWX）决定 PV 能被几个节点以何种方式挂载，不同存储后端支持不同模式。",
+                            "PVC 通过 storageClassName/capacity/accessModes 匹配 PV，未匹配时 PVC 保持 Pending 状态。",
+                        ],
                         resources: [
                             { title: "Persistent Volumes", url: "https://kubernetes.io/docs/concepts/storage/persistent-volumes/" },
                             { title: "卷生命周期", url: "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#claims-as-volumes" },
@@ -274,6 +364,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w5-3",
                         title: "动态供给：StorageClass + CSI 的按需扩容与快照",
                         detail: "StorageClass 与 CSI 插件机制。",
+                        keyPoints: [
+                            "StorageClass 定义动态供给策略（provisioner/参数/回收策略），PVC 引用后自动创建 PV。",
+                            "CSI（Container Storage Interface）标准化存储插件，支持快照、扩容、拓扑感知等高级功能。",
+                            "设置 default StorageClass 后，未指定 storageClassName 的 PVC 会自动使用默认类。",
+                        ],
                         resources: [
                             { title: "StorageClass", url: "https://kubernetes.io/docs/concepts/storage/storage-classes/" },
                             { title: "CSI 卷", url: "https://kubernetes.io/docs/concepts/storage/volumes/#csi" },
@@ -284,6 +379,11 @@ export const kubernetesStages: Stage[] = [
                         id: "w5-4",
                         title: "有状态应用：StatefulSet 稳定身份与存储绑定",
                         detail: "StatefulSet 特性与 Headless Service。",
+                        keyPoints: [
+                            "StatefulSet 为每个 Pod 分配稳定的网络标识（pod-0/pod-1）和独立的 PVC，重启后保持不变。",
+                            "Headless Service（clusterIP: None）为每个 Pod 创建独立 DNS 记录，支持有状态服务的点对点通信。",
+                            "StatefulSet 按序号顺序创建/删除 Pod，适合需要有序启动的分布式系统（如数据库集群）。",
+                        ],
                         resources: [
                             { title: "StatefulSet", url: "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/" },
                             { title: "Headless Service", url: "https://kubernetes.io/docs/concepts/services-networking/service/#headless-services" },
@@ -716,7 +816,7 @@ export const kubernetesStages: Stage[] = [
                     {
                         id: "w13-3",
                         title: "Istio 流量治理：金丝雀、熔断与故障注入",
-                        detail: "灰度发布、断路器、故障注入。",
+                        detail: "通过 VirtualService/DestinationRule 实现灰度发布、断路器熔断与故障注入，验证服务韧性。",
                         resources: [
                             { title: "Istio 流量管理", url: "https://istio.io/latest/docs/concepts/traffic-management/" },
                             { title: "故障注入示例", url: "https://istio.io/latest/docs/tasks/traffic-management/fault-injection/" },
@@ -1067,6 +1167,126 @@ export const kubernetesExamQuestions: QuizQuestion[] = [
         options: ["减少镜像体积", "提升 Pod 启动速度", "确保镜像来源可信、内容未被篡改，阻断供应链攻击", "自动生成 Helm Chart"],
         answer: 2,
         rationale: "签名与准入校验能在供应链环节阻挡恶意镜像进入集群。",
+    },
+    {
+        id: "q11",
+        question: "Linux Namespace 的作用是？",
+        options: [
+            "限制进程的 CPU 和内存使用量",
+            "为进程提供隔离的视图（PID/网络/挂载点等），使其看不到宿主机或其他容器的资源",
+            "提供持久化存储给容器",
+            "管理容器镜像的分层结构",
+        ],
+        answer: 1,
+        rationale: "Namespace 负责隔离可见性，Cgroups 负责资源限额，二者配合构成容器的基础。",
+    },
+    {
+        id: "q12",
+        question: "PV/PVC 的绑定关系描述正确的是？",
+        options: [
+            "一个 PVC 可以同时绑定多个 PV",
+            "PV 和 PVC 是一对一绑定，PVC 按容量和访问模式匹配合适的 PV",
+            "PVC 创建后会自动创建一个同名 PV",
+            "PV 只能在 default 命名空间中使用",
+        ],
+        answer: 1,
+        rationale: "PV 是集群级别资源，PVC 按请求的容量/accessMode 与之一对一绑定。",
+    },
+    {
+        id: "q13",
+        question: "RBAC 中 Role 与 ClusterRole 的区别是？",
+        options: [
+            "Role 适用于整个集群，ClusterRole 只在单个命名空间有效",
+            "Role 限定在单个命名空间，ClusterRole 可作用于集群范围的资源",
+            "二者完全相同，只是名称不同",
+            "ClusterRole 不支持绑定到 ServiceAccount",
+        ],
+        answer: 1,
+        rationale: "Role 是 namespace 级别的权限定义，ClusterRole 可跨命名空间或管理集群级资源。",
+    },
+    {
+        id: "q14",
+        question: "Terraform 的 State 文件的主要作用是？",
+        options: [
+            "存放 Terraform 的安装配置",
+            "记录基础设施当前状态，以便 Plan/Apply 时对比差异并做增量变更",
+            "替代 .tf 文件存放 HCL 代码",
+            "仅用于回滚操作",
+        ],
+        answer: 1,
+        rationale: "State 记录实际资源与配置的映射，Terraform 据此计算 diff 并执行最小变更。",
+    },
+    {
+        id: "q15",
+        question: "ArgoCD 中 Self-Heal 功能的含义是？",
+        options: [
+            "自动修复代码中的 Bug",
+            "当集群中资源被手动修改偏离 Git 期望状态时，自动恢复到 Git 定义的状态",
+            "自动升级 ArgoCD 版本",
+            "自动扩容集群节点",
+        ],
+        answer: 1,
+        rationale: "Self-Heal 会监测实际状态与 Git 的偏差，并自动调和回期望状态。",
+    },
+    {
+        id: "q16",
+        question: "PromQL 中 rate() 函数的作用是？",
+        options: [
+            "返回指标的绝对值",
+            "计算 Counter 类型指标在给定时间范围内的每秒平均增长率",
+            "将指标从 Gauge 转换为 Histogram",
+            "对指标做字符串格式化",
+        ],
+        answer: 1,
+        rationale: "rate() 适用于 Counter 指标，计算指定区间内的每秒增长速率，是 PromQL 最常用的函数之一。",
+    },
+    {
+        id: "q17",
+        question: "Loki 与 Elasticsearch 在日志存储上的核心差异是？",
+        options: [
+            "Loki 对日志内容全文索引，Elasticsearch 只索引标签",
+            "Loki 只索引标签（labels）不索引日志内容，存储成本更低",
+            "二者完全相同，只是 API 不同",
+            "Loki 只能存储结构化日志",
+        ],
+        answer: 1,
+        rationale: "Loki 通过只索引标签降低存储开销，查询时再对日志内容做过滤。",
+    },
+    {
+        id: "q18",
+        question: "Knative Serving 的 Scale-to-Zero 意味着？",
+        options: [
+            "删除所有集群节点",
+            "当没有流量时自动将 Pod 副本数缩到 0，有请求时再冷启动",
+            "将容器的 CPU limits 设为 0",
+            "关闭 Knative 控制平面",
+        ],
+        answer: 1,
+        rationale: "Scale-to-Zero 在无流量时释放资源，首次请求到达时触发冷启动创建 Pod。",
+    },
+    {
+        id: "q19",
+        question: "etcd 备份恢复在 CKA 考试中的关键步骤是？",
+        options: [
+            "只需重启 API Server 即可恢复",
+            "使用 etcdctl snapshot save 备份，snapshot restore 恢复到新数据目录并更新 etcd 配置",
+            "直接复制 /var/lib/etcd 目录即可",
+            "通过 kubectl apply 重新提交所有 YAML",
+        ],
+        answer: 1,
+        rationale: "etcdctl snapshot save/restore 是标准流程，恢复后需指向新数据目录并重启 etcd。",
+    },
+    {
+        id: "q20",
+        question: "Taints 与 Tolerations 的协作方式是？",
+        options: [
+            "Taint 标记在 Pod 上，Toleration 标记在节点上",
+            "Taint 标记在节点上表示排斥，Pod 必须带有匹配的 Toleration 才能被调度到该节点",
+            "二者用于配置持久卷绑定",
+            "Toleration 会自动移除节点上的 Taint",
+        ],
+        answer: 1,
+        rationale: "Taint 是节点的排斥标记，Pod 需要声明对应的 Toleration 才能「容忍」该 Taint 并被调度上去。",
     },
 ]
 

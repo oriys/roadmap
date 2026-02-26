@@ -11,6 +11,7 @@ export const blockchainStages: Stage[] = [
         id: "bc-w1",
         title: "第 1 周：区块链工作原理",
         summary: "认识区块、链式结构、节点角色与共识需求。",
+        overview: "本周从区块链的核心数据结构入手，理解区块如何通过哈希链接保证不可篡改，并认识不同节点角色与共识机制的基本思路。",
         keyPoints: [
           "区块由交易与状态根组成，通过哈希指针连接形成不可篡改链。",
           "全节点、轻节点、验证节点在安全性和资源消耗上各有侧重。",
@@ -21,6 +22,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w1-1",
             title: "区块链数据结构",
             detail: "理解区块头、Merkle Tree 与链式哈希的防篡改能力。",
+            keyPoints: [
+              "区块头包含前块哈希、时间戳、难度与 Merkle 根，构成链式完整性的基础。",
+              "Merkle Tree 将交易逐层哈希汇总，支持 O(log n) 的交易存在性证明。",
+              "任意交易被篡改都会导致 Merkle 根变化，从而使后续所有区块哈希失效。",
+            ],
             resources: [
               { title: "Bitcoin Whitepaper", url: "https://bitcoin.org/bitcoin.pdf" },
               { title: "roadmap.sh: Blockchain", url: "https://roadmap.sh/blockchain" },
@@ -31,6 +37,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w1-2",
             title: "共识与节点角色",
             detail: "了解 PoW、PoS 的基本思路与区块生产/验证流程。",
+            keyPoints: [
+              "PoW 通过算力竞争选择出块者，安全性取决于全网算力成本。",
+              "PoS 以经济质押替代算力消耗，验证者作恶将被罚没质押资产。",
+              "全节点独立验证所有交易，轻节点仅校验区块头以降低资源开销。",
+            ],
             resources: [
               { title: "Ethereum PoS Intro", url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/" },
               { title: "PoW Explained", url: "https://en.bitcoin.it/wiki/Proof_of_work" },
@@ -43,11 +54,17 @@ export const blockchainStages: Stage[] = [
         id: "bc-w2",
         title: "第 2 周：密码学基石",
         summary: "掌握公私钥、数字签名与地址生成方式。",
+        overview: "深入密码学原语，理解椭圆曲线签名、哈希函数如何保障链上身份与交易安全，并学习钱包生成与助记词管理的最佳实践。",
         lessons: [
           {
             id: "bc-w2-1",
             title: "公钥密码与哈希",
             detail: "理解椭圆曲线、哈希函数与随机数对安全性的影响。",
+            keyPoints: [
+              "椭圆曲线密码学（ECC）以较短密钥提供与 RSA 同等的安全强度。",
+              "哈希函数的抗碰撞性与单向性是区块链数据完整性的核心保障。",
+              "签名过程中随机数复用或可预测会直接导致私钥泄露。",
+            ],
             resources: [
               { title: "ECDSA Overview", url: "https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm" },
               { title: "SHA-256", url: "https://en.wikipedia.org/wiki/SHA-2" },
@@ -58,6 +75,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w2-2",
             title: "地址与钱包安全",
             detail: "学习助记词、HD Wallet 与常见攻击面。",
+            keyPoints: [
+              "BIP-39 助记词从熵值派生 12/24 个单词，是恢复钱包的唯一凭证。",
+              "HD Wallet（BIP-32）从单一种子派生无限密钥对，方便管理多地址。",
+              "常见攻击面包括钓鱼网站、剪贴板劫持与恶意浏览器扩展。",
+            ],
             resources: [
               { title: "BIP-39", url: "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki" },
               { title: "HD Wallets", url: "https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki" },
@@ -78,11 +100,17 @@ export const blockchainStages: Stage[] = [
         id: "bc-w3",
         title: "第 3 周：Solidity 入门",
         summary: "认识 EVM 模型、合约结构与常见数据类型。",
+        overview: "从 EVM 执行模型开始，学习 Solidity 语法、存储布局与 gas 机制，并通过 Hardhat 或 Foundry 完成首个合约的编写与测试。",
         lessons: [
           {
             id: "bc-w3-1",
             title: "EVM 与 Solidity 基础",
             detail: "了解 gas、存储布局与事件日志。",
+            keyPoints: [
+              "EVM 按指令收取 gas 费用，存储操作（SSTORE）是最昂贵的指令之一。",
+              "合约存储采用 256 位槽位寻址，变量打包可节省存储成本。",
+              "事件日志（Event）写入区块但不占合约存储，常用于链下数据索引。",
+            ],
             resources: [
               { title: "Solidity Docs", url: "https://docs.soliditylang.org/en/latest/" },
               { title: "Ethereum Developer Docs", url: "https://ethereum.org/en/developers/docs/" },
@@ -93,6 +121,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w3-2",
             title: "合约测试与调试",
             detail: "使用 Hardhat/Foundry 编写单测并阅读执行痕迹。",
+            keyPoints: [
+              "Hardhat 基于 JavaScript/TypeScript，生态插件丰富，适合全栈开发者。",
+              "Foundry 使用 Solidity 编写测试，执行速度快且支持模糊测试。",
+              "执行痕迹（trace）可逐步跟踪合约调用与状态变化，定位 bug 根因。",
+            ],
             resources: [
               { title: "Hardhat Guide", url: "https://hardhat.org/tutorial" },
               { title: "Foundry Book", url: "https://book.getfoundry.sh/" },
@@ -105,11 +138,17 @@ export const blockchainStages: Stage[] = [
         id: "bc-w4",
         title: "第 4 周：安全与最佳实践",
         summary: "避免常见漏洞，掌握升级与权限治理。",
+        overview: "聚焦智能合约安全，识别重入、溢出等常见漏洞并掌握防御策略，同时学习代理升级模式与多签权限治理方案。",
         lessons: [
           {
             id: "bc-w4-1",
             title: "常见安全漏洞",
             detail: "重入、整数溢出、前置运行与随机性攻击的防护策略。",
+            keyPoints: [
+              "重入攻击利用外部调用回调修改状态，应遵循 Checks-Effects-Interactions 模式。",
+              "Solidity 0.8+ 内置溢出检查，但 unchecked 块中仍需手动验证。",
+              "链上随机数可被矿工/验证者操纵，关键场景应使用 VRF 等可验证随机源。",
+            ],
             resources: [
               { title: "SWC Registry", url: "https://swcregistry.io/" },
               { title: "OpenZeppelin Security", url: "https://docs.openzeppelin.com/contracts/5.x/security-considerations" },
@@ -120,6 +159,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w4-2",
             title: "合约升级与权限",
             detail: "理解代理模式、角色控制与多签治理。",
+            keyPoints: [
+              "透明代理通过 delegatecall 分离存储与逻辑，升级时仅替换逻辑合约地址。",
+              "基于角色的访问控制（RBAC）可细粒度管理合约敏感操作的权限。",
+              "多签钱包要求 M-of-N 签名才能执行关键操作，降低单点失控风险。",
+            ],
             resources: [
               { title: "OpenZeppelin Upgrades", url: "https://docs.openzeppelin.com/upgrades-plugins/1.x/" },
               { title: "Multisig Basics", url: "https://gnosis-safe.io/" },
@@ -140,11 +184,17 @@ export const blockchainStages: Stage[] = [
         id: "bc-w5",
         title: "第 5 周：节点与基础设施",
         summary: "搭建 RPC/归档节点，理解索引与数据服务。",
+        overview: "学习生产环境中节点的部署、监控与备份策略，并掌握链上事件订阅与索引服务的数据同步方案。",
         lessons: [
           {
             id: "bc-w5-1",
             title: "节点部署与监控",
             detail: "选择全节点/轻节点方案，配置日志、告警与备份。",
+            keyPoints: [
+              "全节点存储完整状态，归档节点保留所有历史，需权衡磁盘与查询需求。",
+              "Prometheus + Grafana 可监控节点同步状态、对等节点数与内存使用。",
+              "定期备份链数据与密钥文件，并验证恢复流程的可用性。",
+            ],
             resources: [
               { title: "Geth Docs", url: "https://geth.ethereum.org/docs" },
               { title: "Erigon", url: "https://github.com/ledgerwatch/erigon" },
@@ -155,6 +205,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w5-2",
             title: "事件订阅与索引",
             detail: "使用日志订阅、Graph Indexer 或自建 ETL 拉链业务数据。",
+            keyPoints: [
+              "WebSocket 订阅可实时接收新区块与事件日志，适合低延迟场景。",
+              "The Graph 提供去中心化索引，通过 GraphQL 查询链上结构化数据。",
+              "自建 ETL 管道灵活度最高，但需自行处理重组（reorg）与数据一致性。",
+            ],
             resources: [
               { title: "The Graph Docs", url: "https://thegraph.com/docs/" },
               { title: "Ethers.js Filters", url: "https://docs.ethers.org/v6/api/contract/#Contract-on" },
@@ -167,11 +222,17 @@ export const blockchainStages: Stage[] = [
         id: "bc-w6",
         title: "第 6 周：合规、安全与多链",
         summary: "做好密钥托管、审计与跨链集成。",
+        overview: "关注生产级安全运维，涵盖密钥托管方案选型、合规审计流程，以及 Rollup 与跨链桥的信任模型与集成实践。",
         lessons: [
           {
             id: "bc-w6-1",
             title: "合规与密钥托管",
             detail: "评估自托管 HSM、第三方托管与权限隔离。",
+            keyPoints: [
+              "HSM 将私钥存储在硬件安全模块中，签名操作不暴露密钥材料。",
+              "第三方托管服务提供保险与合规支持，但引入了对服务商的信任依赖。",
+              "权限隔离应遵循最小权限原则，热钱包与冷钱包分离管理。",
+            ],
             resources: [
               { title: "CIS Controls", url: "https://www.cisecurity.org/controls/cis-controls-list" },
               { title: "AWS KMS", url: "https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" },
@@ -182,6 +243,11 @@ export const blockchainStages: Stage[] = [
             id: "bc-w6-2",
             title: "跨链与 Layer2",
             detail: "理解 Rollup 安全模型与跨链桥的信任假设。",
+            keyPoints: [
+              "Optimistic Rollup 乐观执行交易，依赖挑战期内的欺诈证明保障安全。",
+              "ZK Rollup 通过零知识证明在链上验证批量交易的有效性，无需挑战期。",
+              "跨链桥的安全性取决于验证者集合与资金托管机制，需审慎评估信任假设。",
+            ],
             resources: [
               { title: "Optimistic Rollups", url: "https://ethereum.org/en/developers/docs/scaling/optimistic-rollups/" },
               { title: "Bridges Overview", url: "https://vitalik.ca/general/2021/01/05/rollup.html" },
@@ -238,6 +304,50 @@ export const blockchainKnowledgeCards: KnowledgeCard[] = [
       "Rollup 与 L1 的结算延迟会影响用户体验与资金流动。",
     ],
     practice: "选择一条常用跨链桥，写出其信任模型与可能的攻击面。",
+  },
+  {
+    id: "bc-k5",
+    title: "Gas 优化策略",
+    summary: "降低合约执行成本的常用技巧。",
+    points: [
+      "将多个小变量打包到同一存储槽位（slot packing）可减少 SSTORE 次数。",
+      "优先使用 calldata 而非 memory 传递只读参数以节省复制开销。",
+      "用 mapping 替代数组遍历，避免线性查找导致的 gas 爆炸。",
+    ],
+    practice: "对一个示例 ERC-20 合约进行 gas 优化，记录优化前后的 gas 消耗对比。",
+  },
+  {
+    id: "bc-k6",
+    title: "DeFi 核心概念",
+    summary: "理解去中心化金融的基础构件。",
+    points: [
+      "AMM 使用恒定乘积公式自动定价，无需订单簿即可提供流动性。",
+      "借贷协议通过超额抵押与清算机制维护偿付能力。",
+      "闪电贷利用交易原子性实现无抵押借款，失败则整笔交易回滚。",
+    ],
+    practice: "分析一个 AMM 协议的流动性池，计算滑点对大额交易的影响。",
+  },
+  {
+    id: "bc-k7",
+    title: "智能合约设计模式",
+    summary: "可复用的合约架构与编码范式。",
+    points: [
+      "工厂模式通过合约动态创建子合约，适用于批量部署同类实例。",
+      "状态机模式将合约生命周期划分为阶段，限制各阶段可调用的函数。",
+      "Pull Payment 模式让接收方主动提款，避免 push 转账失败导致整体回滚。",
+    ],
+    practice: "使用工厂模式实现一个简易 NFT 集合部署器，并编写测试验证。",
+  },
+  {
+    id: "bc-k8",
+    title: "区块链测试策略",
+    summary: "构建可靠的合约质量保障体系。",
+    points: [
+      "单元测试覆盖核心逻辑与边界条件，模糊测试用于发现意外输入的漏洞。",
+      "分叉测试（fork testing）可在本地复现主网状态，验证与已部署合约的交互。",
+      "形式化验证通过数学证明合约属性，适用于高价值或高风险场景。",
+    ],
+    practice: "为一个简单的质押合约编写单元测试与模糊测试，确保边界条件覆盖。",
   },
 ]
 

@@ -59,6 +59,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w2-1",
             title: "应用与数据库剖析",
             detail: "定位热点函数与慢 SQL，优先解决最高占比的耗时与锁等待。",
+            keyPoints: [
+              "使用火焰图定位 On-CPU 热点，宽帧即高耗时函数。",
+              "慢 SQL 优先看 EXPLAIN 执行计划，关注全表扫描与锁等待。",
+              "按耗时占比排序优化，优先解决 Top-3 热点。",
+            ],
             resources: [
               { title: "Flame Graphs", url: "http://www.brendangregg.com/flamegraphs.html" },
               { title: "PostgreSQL EXPLAIN", url: "https://www.postgresql.org/docs/current/using-explain.html" },
@@ -69,6 +74,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w2-2",
             title: "容量与负载模式分析",
             detail: "识别突刺流量和长尾请求，规划水平扩展与队列削峰方案。",
+            keyPoints: [
+              "用 Little's Law 估算在途请求数，评估当前容量是否充足。",
+              "区分突刺流量与持续高负载，分别用限流和扩容应对。",
+              "长尾请求往往由 GC、锁竞争或下游慢调用引起，需分层排查。",
+            ],
             resources: [
               { title: "AWS Builders' Library: Timeouts", url: "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/" },
               { title: "Nginx Rate Limiting", url: "https://blog.nginx.org/blog/rate-limiting-nginx" },
@@ -79,6 +89,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w2-3",
             title: "系统级资源指标与 GC 调优",
             detail: "观测上下文切换、Steal Time、GC 停顿等系统级指标，定位运行时与内核层面的性能瓶颈。",
+            keyPoints: [
+              "USE 方法：对每种资源检查利用率、饱和度与错误数。",
+              "GC 停顿是 P99 延迟毛刺的常见来源，需关注 Full GC 频率。",
+              "Steal Time 偏高说明宿主机超卖，需与基础设施团队协调。",
+            ],
             resources: [
               { title: "Brendan Gregg: USE Method", url: "https://www.brendangregg.com/usemethod.html" },
               { title: "Linux perf Examples", url: "https://www.brendangregg.com/perf.html" },
@@ -146,6 +161,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w4-1",
             title: "异步与背压",
             detail: "在高并发场景下使用异步 I/O、连接池和背压机制保护下游。",
+            keyPoints: [
+              "异步非阻塞模型适合 I/O 密集场景，减少线程上下文切换。",
+              "背压通过反馈信号控制生产者速率，防止缓冲区溢出和 OOM。",
+              "连接池需设置合理上限和空闲超时，避免资源泄漏。",
+            ],
             resources: [
               { title: "Backpressure Explained", url: "https://reactivemanifesto.org/glossary#Back-Pressure" },
               { title: "Go net/http Tuning", url: "https://pkg.go.dev/net/http#Server" },
@@ -156,6 +176,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w4-2",
             title: "序列化与传输优化",
             detail: "选择高效的协议与序列化格式，控制负载大小与压缩策略。",
+            keyPoints: [
+              "Protobuf 等二进制格式比 JSON 体积小且序列化更快。",
+              "HTTP/2 多路复用减少连接数，头部压缩节省带宽。",
+              "大响应体使用流式或分页返回，避免单次传输过大。",
+            ],
             resources: [
               { title: "gRPC Performance Best Practices", url: "https://grpc.io/docs/guides/performance/" },
               { title: "HTTP/2 vs HTTP/3", url: "https://developer.fastly.com/learning/concepts/http2-http3/" },
@@ -166,6 +191,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w4-3",
             title: "TCP 调优与 TLS 优化",
             detail: "调优 TCP 缓冲区、文件描述符限制，优化 TLS 握手与会话复用减少网络延迟。",
+            keyPoints: [
+              "调整 TCP 缓冲区大小和 backlog 参数匹配高并发需求。",
+              "TLS 1.3 减少握手往返，开启会话复用降低延迟。",
+              "检查文件描述符 ulimit，不足时连接会被拒绝。",
+            ],
             resources: [
               { title: "Linux TCP Tuning", url: "https://www.kernel.org/doc/html/latest/networking/ip-sysctl.html" },
               { title: "TLS 1.3 Overview", url: "https://blog.cloudflare.com/rfc-8446-aka-tls-1-3/" },
@@ -191,6 +221,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w5-1",
             title: "超时、重试与熔断配置",
             detail: "配置合理的超时、指数退避重试与熔断，避免放大故障。",
+            keyPoints: [
+              "每个下游调用都必须设置超时，无超时等于无保护。",
+              "使用带抖动的指数退避重试，避免重试风暴压垮下游。",
+              "熔断器在错误率超阈值时快速失败，定期半开探测恢复。",
+            ],
             resources: [
               { title: "Istio: Outlier Detection", url: "https://istio.io/latest/docs/tasks/traffic-management/istio-handbook/fault-injection/" },
               { title: "Netflix Hystrix Patterns", url: "https://martinfowler.com/bliki/CircuitBreaker.html" },
@@ -201,6 +236,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w5-2",
             title: "服务降级与缓存兜底",
             detail: "设计灰度降级、只读模式或静态缓存兜底，优先保障核心路径。",
+            keyPoints: [
+              "定义降级矩阵：明确哪些功能可关闭、哪些必须兜底。",
+              "缓存兜底返回陈旧数据优于直接报错，提升用户体验。",
+              "通过 Feature Flag 实现秒级降级切换，无需重新部署。",
+            ],
             resources: [
               { title: "Serving Stale Cache", url: "https://cloudflare.com/learning/cdn/glossary/what-is-serve-stale/" },
               { title: "Feature Flags", url: "https://martinfowler.com/articles/feature-toggles.html" },
@@ -211,6 +251,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w5-3",
             title: "HPA 与自动弹性伸缩",
             detail: "配置 Kubernetes HPA 和 KEDA 实现基于指标的自动扩缩容，处理冷启动与缩容震荡。",
+            keyPoints: [
+              "HPA 扩容有延迟（采集 + 调度 + 启动），预测性伸缩可提前准备。",
+              "设置缩容稳定窗口防止流量波动导致频繁缩扩震荡。",
+              "KEDA 支持自定义指标（如队列深度），比 CPU/内存更贴近业务。",
+            ],
             resources: [
               { title: "Kubernetes HPA Walkthrough", url: "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" },
               { title: "KEDA 官方文档", url: "https://keda.sh/docs/latest/" },
@@ -228,6 +273,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w6-1",
             title: "容量评估与压测",
             detail: "设计逐步升压的压测场景，结合监控评估安全容量与扩容阈值。",
+            keyPoints: [
+              "阶梯式升压逐步加载，观察吞吐拐点与饱和资源。",
+              "压测需模拟真实流量模式，包括读写比例和热点分布。",
+              "记录安全容量水位线，作为扩容决策和发布审批依据。",
+            ],
             resources: [
               { title: "k6 Load Testing", url: "https://k6.io/docs/" },
               { title: "Locust Patterns", url: "https://docs.locust.io/en/stable/writing-a-locustfile.html" },
@@ -238,6 +288,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w6-2",
             title: "性能回归与发布守护",
             detail: "在 CI/CD 中加入性能基线测试与错误预算守护，避免回归上线。",
+            keyPoints: [
+              "在 CI 中运行基准测试，延迟退化超阈值则阻断发布。",
+              "错误预算消耗过快时冻结功能发布，优先修复性能问题。",
+              "灰度发布配合指标对比，及时回滚性能劣化的版本。",
+            ],
             resources: [
               { title: "GitHub Actions + k6", url: "https://github.com/grafana/k6-action" },
               { title: "Canary Releases", url: "https://sre.google/sre-book/handling-overload/" },
@@ -248,6 +303,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w6-3",
             title: "FinOps 基础与成本意识",
             detail: "建立单位成本指标，将性能优化与云成本节省关联，理解 Right-Sizing 与 Spot 实例策略。",
+            keyPoints: [
+              "建立单位成本指标（如每千次请求成本），量化优化收益。",
+              "Right-Sizing 定期审查实例规格，避免过度配置浪费。",
+              "Spot/抢占式实例适合无状态可中断任务，节省 60-90% 成本。",
+            ],
             resources: [
               { title: "FinOps Framework", url: "https://www.finops.org/framework/" },
               { title: "AWS Cost Explorer", url: "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/" },
@@ -606,6 +666,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w13-1",
             title: "eBPF 内核级可观测",
             detail: "掌握 bpftrace、BCC 工具进行系统调用追踪和性能分析，构建内核级可观测性。",
+            keyPoints: [
+              "eBPF 在内核态安全运行用户程序，无需修改内核或加载模块。",
+              "bpftrace 单行脚本可快速追踪系统调用、文件 I/O 和网络延迟。",
+              "BCC 工具集（biosnoop、tcplife 等）覆盖常见性能排查场景。",
+            ],
             resources: [
               { title: "eBPF.io", url: "https://ebpf.io/" },
               { title: "bpftrace", url: "https://github.com/iovisor/bpftrace" },
@@ -615,6 +680,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w13-2",
             title: "XDP 网络加速",
             detail: "使用 XDP 在网卡驱动层处理数据包，实现高速 DDoS 防护和负载均衡。",
+            keyPoints: [
+              "XDP 在驱动层处理数据包，绕过内核网络栈，吞吐可达数百万 pps。",
+              "适用于 DDoS 过滤、负载均衡等需要极高包处理速率的场景。",
+              "XDP 程序需通过 verifier 验证安全性，确保不会崩溃内核。",
+            ],
             resources: [
               { title: "XDP Tutorial", url: "https://github.com/xdp-project/xdp-tutorial" },
               { title: "Katran", url: "https://github.com/facebookincubator/katran" },
@@ -624,6 +694,11 @@ export const backendPerformanceStages: Stage[] = [
             id: "bp-w13-3",
             title: "服务网格性能优化",
             detail: "理解 Sidecar 开销，优化 Istio/Envoy 配置，探索 Sidecar-less 模式。",
+            keyPoints: [
+              "Sidecar 代理增加约 1-3ms 延迟和额外内存，需评估收益与开销。",
+              "优化 Envoy 的连接池、重试策略和日志级别降低资源消耗。",
+              "Cilium 等 Sidecar-less 方案用 eBPF 替代代理，减少延迟开销。",
+            ],
             resources: [
               { title: "Istio Performance", url: "https://istio.io/latest/docs/ops/deployment/performance-and-scalability/" },
               { title: "Cilium Service Mesh", url: "https://cilium.io/blog/2021/12/01/cilium-service-mesh-beta/" },
@@ -854,6 +929,61 @@ export const backendPerformanceKnowledgeCards: KnowledgeCard[] = [
       "定期演练：故障注入、扩容/缩容回归和灰度策略。",
     ],
     practice: "为下游依赖添加熔断 + 退避重试，并在预发布环境注入故障验证。",
+  },
+  {
+    id: "bp-concurrency",
+    title: "并发模型",
+    summary: "选择合适的并发模型与 I/O 策略是高吞吐系统的核心。",
+    points: [
+      "区分 CPU 密集与 I/O 密集场景，分别选用线程池与异步事件循环。",
+      "连接池大小遵循经验公式 (CPU × 2) + 磁盘数，过大反而增加上下文切换。",
+      "背压机制防止消费者被压垮，关键路径需限流与队列削峰协同。",
+    ],
+    practice: "对一个 I/O 密集型接口分别用同步线程和异步非阻塞实现，压测对比吞吐与延迟。",
+  },
+  {
+    id: "bp-database",
+    title: "数据库调优",
+    summary: "索引、查询计划与连接管理是后端数据库性能的三大支柱。",
+    points: [
+      "所有慢查询先用 EXPLAIN ANALYZE 审查执行计划，避免全表扫描。",
+      "合理使用覆盖索引减少回表，但索引过多会拖慢写入。",
+      "事务尽量短小，避免长事务持有锁导致连接池耗尽。",
+    ],
+    practice: "找出系统中最慢的 3 条 SQL，用 EXPLAIN 分析并添加或调整索引，记录优化前后的延迟。",
+  },
+  {
+    id: "bp-profiling",
+    title: "性能剖析",
+    summary: "用数据驱动优化：先剖析再动手，避免过早优化。",
+    points: [
+      "火焰图宽度 = CPU 占比，优先优化最宽的栈帧。",
+      "区分 On-CPU 与 Off-CPU 分析：前者找计算热点，后者找等待瓶颈。",
+      "每次优化前后都用相同负载剖析，量化收益并防止回归。",
+    ],
+    practice: "用 pprof 或 async-profiler 对关键接口生成火焰图，定位 Top-3 热点并尝试优化。",
+  },
+  {
+    id: "bp-capacity",
+    title: "容量规划",
+    summary: "通过压测、建模和监控实现可预测的容量管理。",
+    points: [
+      "使用 Little's Law（L = λW）估算在途请求数，确定线程/连接资源。",
+      "分阶段升压而非一次性打满，观察各组件的饱和点与拐点。",
+      "将容量数据纳入发布审批，超出安全水位的变更需扩容后再上线。",
+    ],
+    practice: "用 k6 对核心 API 进行阶梯式压测，记录吞吐拐点和对应的 CPU/内存/连接数。",
+  },
+  {
+    id: "bp-serialization",
+    title: "序列化与传输",
+    summary: "选择高效的编码与传输协议，减少带宽与 CPU 开销。",
+    points: [
+      "Protobuf/FlatBuffers 比 JSON 体积小 3-10 倍且解析更快。",
+      "启用 HTTP/2 多路复用与头部压缩，减少连接数与握手开销。",
+      "大负载使用流式传输或分页，避免单次响应过大导致超时。",
+    ],
+    practice: "将一个高频 JSON 接口改为 Protobuf，对比序列化耗时和网络传输体积。",
   },
 ]
 

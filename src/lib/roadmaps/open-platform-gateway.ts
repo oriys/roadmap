@@ -52,6 +52,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w2-1",
             title: "基础路由与健康监测",
             detail: "配置北向入口、服务发现与健康检查，确保核心路径可用。",
+            keyPoints: [
+              "路由规则应支持路径、Header、查询参数等多维匹配。",
+              "健康检查分主动（探针）和被动（错误率）两种模式。",
+              "服务发现需与注册中心集成，支持动态上下线。",
+            ],
             resources: [
               { title: "Envoy Getting Started", url: "https://www.envoyproxy.io/docs/envoy/latest/start/start" },
               { title: "Kong Gateway Quickstart", url: "https://docs.konghq.com/gateway/latest/get-started/" },
@@ -61,6 +66,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w2-2",
             title: "认证与授权接入",
             detail: "集成 OAuth2.0/OIDC 或内部 Token 体系，实现统一认证与最小权限。",
+            keyPoints: [
+              "OAuth2 客户端凭证模式适合机器到机器的后台调用。",
+              "Token 应包含 scope 信息，实现最小权限控制。",
+              "Token 刷新与吊销机制需考虑分布式场景下的一致性。",
+            ],
             resources: [
               { title: "OAuth 2.0 RFC", url: "https://datatracker.ietf.org/doc/html/rfc6749" },
               { title: "OIDC Core", url: "https://openid.net/specs/openid-connect-core-1_0.html" },
@@ -99,6 +109,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w3-2",
             title: "多层限流与降级",
             detail: "结合连接数、QPS、并发与突发限流策略，提供熔断与静态兜底。",
+            keyPoints: [
+              "限流维度：连接数、QPS、并发请求数、突发窗口。",
+              "令牌桶适合平滑限流，滑动窗口适合精确计数。",
+              "熔断状态机：Closed → Open → Half-Open，需配置恢复探测。",
+            ],
             resources: [
               { title: "Rate Limiting Strategies", url: "https://cloud.google.com/architecture/rate-limiting-strategies-techniques" },
               { title: "Envoy Rate Limit", url: "https://www.envoyproxy.io/docs/envoy/latest/configuration/other_features/global_rate_limit" },
@@ -115,6 +130,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w4-1",
             title: "日志与审计模型",
             detail: "定义审计字段、追踪 ID、脱敏规则与留存策略。",
+            keyPoints: [
+              "审计日志需包含 traceId、keyId、调用结果、耗时。",
+              "敏感字段（手机号、身份证、密钥）必须脱敏后存储。",
+              "留存策略需满足监管要求（如 180 天或更长）。",
+            ],
             resources: [
               { title: "Audit Logging", url: "https://cloud.google.com/architecture/best-practices-for-audit-logging" },
               { title: "OpenTelemetry", url: "https://opentelemetry.io/docs/" },
@@ -124,6 +144,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w4-2",
             title: "指标、追踪与告警",
             detail: "采集延迟、错误率、饱和度四黄金指标，配置 SLO 告警。",
+            keyPoints: [
+              "四黄金指标：延迟、流量、错误率、饱和度。",
+              "SLO 定义需与合作方 SLA 对齐，设置错误预算。",
+              "告警需分级（P0-P3），配置升级路径与抑制规则。",
+            ],
             resources: [
               { title: "SRE Golden Signals", url: "https://sre.google/sre-book/monitoring-distributed-systems/" },
               { title: "Prometheus Alerting", url: "https://prometheus.io/docs/alerting/latest/overview/" },
@@ -148,6 +173,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w5-1",
             title: "入驻与凭证管理",
             detail: "提供申请、审批、沙箱试用、凭证轮换与吊销机制。",
+            keyPoints: [
+              "凭证生命周期：创建 → 激活 → 轮换 → 吊销。",
+              "自动化轮换降低密钥泄露风险，建议 90 天周期。",
+              "沙箱环境应提供与生产一致的 API 行为，但隔离数据。",
+            ],
             resources: [
               { title: "API Key Rotation", url: "https://cloud.google.com/api-keys/docs/rotating-api-keys" },
               { title: "Developer Portal Patterns", url: "https://learn.microsoft.com/azure/api-management/api-management-howto-portal-customization" },
@@ -157,6 +187,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w5-2",
             title: "配额与分级运营",
             detail: "按合作方等级设置配额、特性开关与 SLA，支持数据看板回馈。",
+            keyPoints: [
+              "配额维度：QPS、日调用量、并发数，区分硬限制与软限制。",
+              "分级运营：基础/高级/战略合作方对应不同配额与 SLA。",
+              "配额消耗需实时可观测，提供自助查询看板。",
+            ],
             resources: [
               { title: "Usage Quotas", url: "https://cloud.google.com/docs/quota" },
               { title: "Feature Flag Guide", url: "https://launchdarkly.com/blog/feature-flags-ultimate-guide/" },
@@ -173,6 +208,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w6-1",
             title: "版本兼容与弃用",
             detail: "设计版本策略、兼容期、弃用公告与迁移指南。",
+            keyPoints: [
+              "版本策略：URL 路径版本（/v1/）或 Header 版本各有优劣。",
+              "弃用需提前 2-3 个月公告，提供迁移指南与兼容窗口。",
+              "监控旧版本调用量，确认迁移完成后再下线。",
+            ],
             resources: [
               { title: "API Versioning", url: "https://google.aip.dev/181" },
               { title: "Deprecation Playbook", url: "https://stripe.com/blog/api-versioning" },
@@ -182,6 +222,11 @@ export const openGatewayStages: Stage[] = [
             id: "gateway-w6-2",
             title: "灰度发布与回滚预案",
             detail: "结合流量切分、canary、shadow 与快速回滚预案，实现低风险发布。",
+            keyPoints: [
+              "灰度策略：按合作方 ID、流量百分比或区域维度切分。",
+              "canary 需对比关键指标（错误率、延迟）自动决策。",
+              "回滚预案应包含一键脚本、数据兼容性检查与通知机制。",
+            ],
             resources: [
               { title: "Canary Releases", url: "https://martinfowler.com/bliki/CanaryRelease.html" },
               { title: "Shadow Traffic", url: "https://www.nginx.com/blog/testing-microservices-production/" },
@@ -237,6 +282,39 @@ export const openGatewayKnowledgeCards: KnowledgeCard[] = [
       "告警应覆盖网关层、下游依赖与业务异常模式",
     ],
     practice: "为核心路径接入 OpenTelemetry，打通日志与追踪 ID，构建 4xx/5xx 告警。",
+  },
+  {
+    id: "gateway-card-versioning",
+    title: "版本治理",
+    summary: "API 版本治理是开放平台长期运营的基础。",
+    points: [
+      "版本策略需提前规划，避免后期被迫破坏性变更",
+      "弃用流程：公告 → 迁移窗口 → 监控调用量 → 下线",
+      "向后兼容是默认原则，新增字段不应破坏现有消费者",
+    ],
+    practice: "为一个现有 API 设计 v2 版本，制定兼容期与迁移指南。",
+  },
+  {
+    id: "gateway-card-ratelimit",
+    title: "限流策略设计",
+    summary: "多层限流是保护系统稳定性的核心手段。",
+    points: [
+      "令牌桶适合平滑限流，滑动窗口适合精确计数场景",
+      "限流维度：全局 → 合作方 → 接口 → 用户，逐层细化",
+      "超限响应需包含 Retry-After 头和可追踪的错误码",
+    ],
+    practice: "实现一个支持多维度（key + 接口）的滑动窗口限流器。",
+  },
+  {
+    id: "gateway-card-canary",
+    title: "灰度发布",
+    summary: "灰度发布降低变更风险，确保新版本平滑上线。",
+    points: [
+      "灰度维度：合作方 ID、流量百分比、地域、特性标签",
+      "关键指标对比：错误率、延迟 p99、业务成功率",
+      "回滚需要一键脚本和自动触发条件（如错误率 > 阈值）",
+    ],
+    practice: "为一次网关配置变更设计灰度方案，包含切流步骤与回滚脚本。",
   },
 ]
 
@@ -296,6 +374,90 @@ export const openGatewayExamQuestions: QuizQuestion[] = [
     options: ["提升缓存命中率", "隔离下游故障并快速回退", "减少日志量", "避免鉴权执行"],
     answer: 1,
     rationale: "熔断可以在下游异常时快速失败或返回兜底，避免故障扩散并保护系统。",
+  },
+  {
+    id: "gateway-q9",
+    question: "令牌桶算法相比固定窗口计数器的优势是？",
+    options: ["实现更简单", "能平滑处理突发流量", "消耗更少内存", "不需要时钟同步"],
+    answer: 1,
+    rationale: "令牌桶允许一定的突发流量同时保持平均速率限制，更适合真实流量模式。",
+  },
+  {
+    id: "gateway-q10",
+    question: "开放平台的凭证轮换建议周期是？",
+    options: ["每年一次", "永不轮换", "90 天或更短", "仅在泄露后轮换"],
+    answer: 2,
+    rationale: "定期轮换（如 90 天）可降低凭证泄露的影响窗口，是安全最佳实践。",
+  },
+  {
+    id: "gateway-q11",
+    question: "网关的路由匹配优先级通常如何设计？",
+    options: ["随机匹配", "精确匹配 > 前缀匹配 > 通配符匹配", "按配置文件顺序", "最短路径优先"],
+    answer: 1,
+    rationale: "精确匹配优先级最高，避免通配符规则意外覆盖特定路由。",
+  },
+  {
+    id: "gateway-q12",
+    question: "当开放 API 需要传递用户身份给下游服务时，最安全的做法是？",
+    options: ["在 URL 中传递用户 ID", "网关验证 Token 后将用户信息注入内部 Header", "让下游服务自行验证外部 Token", "使用 Cookie 传递"],
+    answer: 1,
+    rationale: "网关统一验证后注入内部 Header，下游服务信任网关，避免 Token 泄露到内部网络。",
+  },
+  {
+    id: "gateway-q13",
+    question: "Shadow Traffic 测试的核心价值是？",
+    options: ["减少测试环境成本", "用真实流量验证新版本而不影响用户", "提升缓存命中率", "降低网关延迟"],
+    answer: 1,
+    rationale: "影子流量将真实请求复制到新版本，验证兼容性和性能而不影响生产响应。",
+  },
+  {
+    id: "gateway-q14",
+    question: "网关日志脱敏的基本原则是？",
+    options: ["记录所有原始数据便于排障", "敏感字段（手机号/身份证/密钥）必须脱敏，traceId 保留完整", "不记录任何请求数据", "只在测试环境脱敏"],
+    answer: 1,
+    rationale: "脱敏保护用户隐私，保留 traceId 等非敏感字段确保可追踪性。",
+  },
+  {
+    id: "gateway-q15",
+    question: "开放平台的 SLA 设计应基于？",
+    options: ["网关自身的最大理论吞吐", "端到端路径中最弱环节的能力", "竞品的 SLA 水平", "合作方的期望值"],
+    answer: 1,
+    rationale: "SLA 不能超过最弱环节的能力，需要端到端评估后制定可承诺的目标。",
+  },
+  {
+    id: "gateway-q16",
+    question: "API 响应中包含 Retry-After 头的作用是？",
+    options: ["通知客户端缓存时间", "告知被限流的客户端何时可以重试", "指示服务端重启时间", "设置 Token 过期时间"],
+    answer: 1,
+    rationale: "Retry-After 帮助被限流的客户端合理安排重试，避免无效请求浪费资源。",
+  },
+  {
+    id: "gateway-q17",
+    question: "开放平台的开发者门户应提供的核心功能是？",
+    options: ["只提供 API 文档", "自助注册、沙箱调试、凭证管理、用量看板与文档", "仅提供 SDK 下载", "只展示公告信息"],
+    answer: 1,
+    rationale: "开发者门户应提供完整的自助式体验，降低接入门槛和运营成本。",
+  },
+  {
+    id: "gateway-q18",
+    question: "当网关需要处理 Webhook 回调时，关键考虑是？",
+    options: ["同步等待下游处理完成", "异步投递、签名验证、幂等处理与重试机制", "不做任何验证直接转发", "限制回调频率为每分钟一次"],
+    answer: 1,
+    rationale: "Webhook 需要异步处理、签名验证防篡改、幂等处理防重复、失败重试保证可靠性。",
+  },
+  {
+    id: "gateway-q19",
+    question: "分布式限流相比单机限流的核心挑战是？",
+    options: ["配置更复杂", "需要跨节点同步计数状态，存在一致性与延迟权衡", "消耗更多 CPU", "不支持突发流量"],
+    answer: 1,
+    rationale: "分布式限流需要跨节点协调（如 Redis 计数），存在一致性与性能的权衡。",
+  },
+  {
+    id: "gateway-q20",
+    question: "网关的协议转换能力主要用于？",
+    options: ["加密所有流量", "将外部 REST/gRPC 请求转换为内部服务能理解的协议", "压缩响应体", "缓存静态资源"],
+    answer: 1,
+    rationale: "协议转换让外部调用者使用标准协议，内部服务可使用最适合的协议，网关充当适配层。",
   },
 ]
 

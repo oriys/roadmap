@@ -11,6 +11,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w1",
         title: "第 1 周：Lambda 表达式与函数式接口",
         summary: "理解 Lambda 语法，掌握函数式接口和方法引用，迈入函数式编程世界。",
+        overview: "本周学习 Java 8 最核心的语言革新——Lambda 表达式与函数式接口，理解方法引用的四种形式，为后续 Stream API 和函数式编程打下基础。",
         keyPoints: [
           "Lambda 表达式是匿名函数的简洁表示。",
           "函数式接口只有一个抽象方法，用 @FunctionalInterface 标注。",
@@ -70,6 +71,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w2",
         title: "第 2 周：Stream API 核心操作",
         summary: "掌握 Stream 的创建、中间操作和终端操作，实现声明式数据处理。",
+        overview: "本周深入学习 Stream API，掌握数据流的创建方式、惰性中间操作与终端操作的区别，以及并行流的使用场景和注意事项。",
         keyPoints: [
           "Stream 是数据管道，支持链式调用。",
           "中间操作是惰性的，终端操作触发执行。",
@@ -130,6 +132,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w3",
         title: "第 3 周：Optional 与空值处理",
         summary: "使用 Optional 优雅处理空值，避免 NullPointerException。",
+        overview: "本周学习 Optional 容器类的创建与链式操作，掌握在 API 设计中正确使用 Optional 的最佳实践，避免常见的反模式。",
         keyPoints: [
           "Optional 是一个容器，可能包含值也可能为空。",
           "使用 Optional 明确表达可能缺失的返回值。",
@@ -190,6 +193,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w4",
         title: "第 4 周：新日期时间 API 与接口默认方法",
         summary: "掌握 java.time 包的日期时间处理，理解接口默认方法和静态方法。",
+        overview: "本周学习 Java 8 全新的日期时间 API，包括本地与时区日期时间的处理、格式化方式，以及接口默认方法对 API 演进的支撑作用。",
         keyPoints: [
           "java.time 取代旧的 Date/Calendar，线程安全且不可变。",
           "LocalDate、LocalTime、LocalDateTime 处理本地日期时间。",
@@ -258,6 +262,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w5",
         title: "第 5 周：Java 9 模块系统",
         summary: "理解 Java 平台模块系统（JPMS），实现代码的强封装和可靠配置。",
+        overview: "本周学习 Java 9 引入的模块系统，理解 module-info.java 的声明语法和模块间的依赖管理，以及 JShell 和集合工厂方法等便利特性。",
         keyPoints: [
           "模块是包的容器，通过 module-info.java 声明。",
           "exports 导出包，requires 声明依赖。",
@@ -318,6 +323,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w6",
         title: "第 6 周：Java 10-11 语法增强",
         summary: "掌握 var 局部变量类型推断和 Java 11 字符串、文件增强。",
+        overview: "本周学习 Java 10 的 var 类型推断机制和适用场景，以及 Java 11 新增的字符串与文件处理增强方法，提升日常编码效率。",
         keyPoints: [
           "var 简化局部变量声明，类型由编译器推断。",
           "Java 11 是 LTS 版本，广泛用于生产环境。",
@@ -378,6 +384,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w7",
         title: "第 7 周：HTTP Client API",
         summary: "掌握 Java 11 标准化的 HTTP Client，支持 HTTP/2 和异步请求。",
+        overview: "本周学习 Java 11 正式引入的 HTTP Client API，掌握同步与异步请求的发送方式、HTTP/2 协议支持，以及超时和认证等高级配置。",
         keyPoints: [
           "新 HTTP Client 取代 HttpURLConnection。",
           "支持 HTTP/1.1 和 HTTP/2 协议。",
@@ -446,6 +453,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w8",
         title: "第 8 周：Switch 表达式与 Text Blocks",
         summary: "使用新的 Switch 表达式语法和多行字符串 Text Blocks。",
+        overview: "本周学习 Java 12-14 引入的 Switch 表达式和 Text Blocks 语法糖，以及 Helpful NullPointerExceptions 等开发体验改进。",
         keyPoints: [
           "Switch 表达式使用箭头语法，无需 break。",
           "yield 在 Switch 块中返回值。",
@@ -506,6 +514,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w9",
         title: "第 9 周：Records 记录类",
         summary: "使用 Records 创建不可变数据载体，减少样板代码。",
+        overview: "本周学习 Java 16 正式引入的 Record 类，掌握其声明语法、自动生成成员、紧凑构造器，以及在 DTO 和值对象中的实际应用。",
         keyPoints: [
           "Record 是不可变的数据载体类。",
           "自动生成构造器、getter、equals、hashCode、toString。",
@@ -566,6 +575,7 @@ export const javaFeaturesStages: Stage[] = [
         id: "jf-w10",
         title: "第 10 周：Sealed Classes 密封类",
         summary: "使用 Sealed Classes 控制类层次结构，实现受限继承。",
+        overview: "本周学习 Java 17 引入的 Sealed Classes，理解如何通过 permits 限制继承层次，并结合 Pattern Matching 实现穷尽性检查。",
         keyPoints: [
           "sealed 类限制哪些类可以继承它。",
           "permits 子句列出允许的子类。",
@@ -575,7 +585,7 @@ export const javaFeaturesStages: Stage[] = [
           {
             id: "jf-w10-1",
             title: "Sealed Classes 基础",
-            detail: "理解密封类的动机和声明语法。",
+            detail: "理解密封类的设计动机、声明语法和使用规则。",
             keyPoints: [
               "sealed class Shape permits Circle, Rectangle {}。",
               "子类必须在 permits 中列出。",
@@ -1330,6 +1340,102 @@ export const javaFeaturesExamQuestions: QuizQuestion[] = [
     ],
     answer: 1,
     rationale: "ScopedValue 的值不可变，在作用域结束后自动清理。这避免了 ThreadLocal 常见的内存泄漏问题，且与虚拟线程配合更高效（虚拟线程可能有百万级别）。",
+  },
+  {
+    id: "jf-q13",
+    question: "以下哪个是 Java 8 中 Stream.collect(Collectors.toList()) 的正确替代写法（Java 16+）？",
+    options: [
+      "stream.asList()",
+      "stream.toList()",
+      "stream.collectToList()",
+      "stream.listOf()",
+    ],
+    answer: 1,
+    rationale: "Java 16 在 Stream 接口上新增了 toList() 方法，直接返回不可修改的 List，无需传入 Collector。注意返回的 List 不允许 null 元素且不可变。",
+  },
+  {
+    id: "jf-q14",
+    question: "Text Blocks 中，哪个转义序列用于阻止行末自动换行？",
+    options: [
+      "\\n",
+      "\\t",
+      "\\s",
+      "\\（反斜杠在行尾）",
+    ],
+    answer: 3,
+    rationale: "在 Text Blocks 中，行末的反斜杠 \\ 会阻止自动插入换行符，使当前行与下一行拼接。\\s 用于保留尾部空格。",
+  },
+  {
+    id: "jf-q15",
+    question: "关于 Record 的紧凑构造器（compact constructor），以下说法哪个是正确的？",
+    options: [
+      "紧凑构造器必须显式赋值所有组件字段",
+      "紧凑构造器不能有参数列表，在结尾自动赋值",
+      "紧凑构造器可以修改组件的类型",
+      "紧凑构造器只能用于嵌套 Record",
+    ],
+    answer: 1,
+    rationale: "紧凑构造器省略参数列表，在构造器体末尾编译器自动插入对组件字段的赋值。开发者可以在构造器体中对参数进行校验和规范化处理。",
+  },
+  {
+    id: "jf-q16",
+    question: "以下哪个不是 Java 11 String 类新增的方法？",
+    options: [
+      "isBlank()",
+      "strip()",
+      "lines()",
+      "chars()",
+    ],
+    answer: 3,
+    rationale: "chars() 方法是 Java 9 引入的 CharSequence 方法。isBlank()、strip()、lines() 以及 repeat() 都是 Java 11 新增的 String 方法。",
+  },
+  {
+    id: "jf-q17",
+    question: "在 Switch 模式匹配中，null case 应该如何处理？",
+    options: [
+      "null 值会自动匹配 default 分支",
+      "必须使用 case null -> 显式处理",
+      "null 值会抛出编译错误",
+      "null 值总是被忽略",
+    ],
+    answer: 1,
+    rationale: "Java 21 的 Pattern Matching for Switch 允许使用 case null -> 显式匹配 null 值。如果没有显式的 null 分支，null 输入会抛出 NullPointerException。",
+  },
+  {
+    id: "jf-q18",
+    question: "关于 Java 8 的 Stream.flatMap()，以下哪个描述是正确的？",
+    options: [
+      "将 Stream 中的每个元素映射为一个值",
+      "将嵌套的 Stream 展平为单层 Stream",
+      "只能用于基本类型 Stream",
+      "flatMap 是终端操作",
+    ],
+    answer: 1,
+    rationale: "flatMap 将每个元素映射为一个 Stream，然后将所有生成的 Stream 展平合并为一个 Stream。它是中间操作，常用于处理嵌套集合结构。",
+  },
+  {
+    id: "jf-q19",
+    question: "关于 HttpClient（Java 11），以下哪个说法是正确的？",
+    options: [
+      "HttpClient 实例是可变的，不能复用",
+      "默认使用 HTTP/1.0 协议",
+      "HttpClient 是线程安全的，可在多线程间共享",
+      "每次请求必须创建新的 HttpClient 实例",
+    ],
+    answer: 2,
+    rationale: "HttpClient 是不可变且线程安全的，推荐创建一个实例在多线程间复用。它默认使用 HTTP/2，当服务器不支持时自动降级为 HTTP/1.1。",
+  },
+  {
+    id: "jf-q20",
+    question: "关于 Java 8 方法引用，String::toLowerCase 属于哪种类型？",
+    options: [
+      "静态方法引用",
+      "特定对象的实例方法引用",
+      "任意对象的实例方法引用",
+      "构造方法引用",
+    ],
+    answer: 2,
+    rationale: "String::toLowerCase 是「任意对象的实例方法引用」，等价于 (String s) -> s.toLowerCase()。第一个参数作为方法调用的目标对象。这与 instance::method 形式的特定对象引用不同。",
   },
 ]
 
