@@ -57,6 +57,10 @@ export type RoadmapId =
   | "kafka"
   | "rust"
   | "nginx"
+  | "english"
+  | "psychology"
+  | "financial-planning"
+  | "writing"
 
 export type RoadmapCategory =
   | "all"

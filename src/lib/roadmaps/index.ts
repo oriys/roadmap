@@ -46,6 +46,10 @@ import { reactRoadmap } from "./react"
 import { kafkaRoadmap } from "./kafka"
 import { rustRoadmap } from "./rust"
 import { nginxRoadmap } from "./nginx"
+import { englishRoadmap } from "./english"
+import { psychologyRoadmap } from "./psychology"
+import { financialPlanningRoadmap } from "./financial-planning"
+import { writingRoadmap } from "./writing"
 import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
@@ -94,6 +98,10 @@ export * from "./network-protocol"
 export * from "./elasticsearch"
 export * from "./rust"
 export * from "./nginx"
+export * from "./english"
+export * from "./psychology"
+export * from "./financial-planning"
+export * from "./writing"
 export * from "./react"
 export * from "./kafka"
 
@@ -146,6 +154,10 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   nginx: nginxRoadmap,
   react: reactRoadmap,
   rust: rustRoadmap,
+  english: englishRoadmap,
+  psychology: psychologyRoadmap,
+  "financial-planning": financialPlanningRoadmap,
+  writing: writingRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -197,6 +209,10 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   rustRoadmap,
   nginxRoadmap,
   reactRoadmap,
+  englishRoadmap,
+  psychologyRoadmap,
+  financialPlanningRoadmap,
+  writingRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
 
@@ -265,4 +281,8 @@ export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
   investment: "other",
   "home-buying": "other",
   react: "other",
+  english: "other",
+  psychology: "other",
+  "financial-planning": "other",
+  writing: "other",
 }
