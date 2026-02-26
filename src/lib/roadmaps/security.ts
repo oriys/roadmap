@@ -14,6 +14,7 @@ export const securityStages: Stage[] = [
         id: "security-w1",
         title: "第 1 周：安全原则与威胁建模",
         summary: "理解信息安全核心原则，掌握威胁建模方法。",
+        overview: "本周学习信息安全核心原则 CIA 三元组、STRIDE 威胁建模方法以及纵深防御安全架构设计。",
         keyPoints: [
           "CIA 三元组是信息安全的基础框架。",
           "威胁建模在设计阶段识别安全风险。",
@@ -55,7 +56,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w1-3",
             title: "纵深防御与安全架构",
-            detail: "设计多层次的安全防护体系。",
+            detail: "通过纵深防御、最小权限和安全默认等原则设计多层次安全防护体系。",
             keyPoints: [
               "纵深防御：多层安全控制，单一失效不导致完全失陷。",
               "最小权限：只授予完成任务所需的最小权限。",
@@ -74,6 +75,7 @@ export const securityStages: Stage[] = [
         id: "security-w2",
         title: "第 2 周：密码学基础",
         summary: "理解现代密码学原理与常用加密技术。",
+        overview: "本周深入理解对称与非对称加密原理、哈希与消息认证机制，以及 PKI 和 TLS 协议。",
         keyPoints: [
           "对称加密速度快，适合大量数据加密。",
           "非对称加密用于密钥交换和数字签名。",
@@ -134,6 +136,7 @@ export const securityStages: Stage[] = [
         id: "security-w3",
         title: "第 3 周：安全开发生命周期",
         summary: "将安全融入软件开发全生命周期。",
+        overview: "本周学习如何将安全融入软件开发全流程，包括 SDL、DevSecOps 实践和安全编码标准。",
         keyPoints: [
           "Shift-Left 将安全前移到开发早期。",
           "DevSecOps 在 DevOps 中集成安全实践。",
@@ -143,7 +146,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w3-1",
             title: "SDL 与 Shift-Left Security",
-            detail: "在开发早期引入安全实践。",
+            detail: "将安全活动前移到软件开发生命周期的设计和编码阶段，降低修复成本。",
             keyPoints: [
               "SDL（Security Development Lifecycle）：微软提出的安全开发框架。",
               "Shift-Left：安全测试前移，越早发现越低成本。",
@@ -175,7 +178,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w3-3",
             title: "安全编码标准",
-            detail: "遵循安全编码最佳实践。",
+            detail: "遵循 OWASP 和 CERT 安全编码标准，从源头避免常见安全缺陷。",
             keyPoints: [
               "OWASP 安全编码指南：语言无关的安全实践。",
               "CWE：常见弱点枚举，分类安全缺陷。",
@@ -206,6 +209,7 @@ export const securityStages: Stage[] = [
         id: "security-w4",
         title: "第 4 周：OWASP Top 10:2025",
         summary: "深入理解 OWASP Top 10:2025 Web 应用安全风险。",
+        overview: "本周深入分析 OWASP Top 10:2025 的关键安全风险，涵盖访问控制、供应链安全和密码学失败。",
         keyPoints: [
           "Broken Access Control 连续多年位居榜首。",
           "Software Supply Chain Failures 是 2025 新增类别。",
@@ -247,7 +251,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w4-3",
             title: "密码学失败与其他风险",
-            detail: "避免密码学相关的安全问题。",
+            detail: "识别和防范弱加密、明文传输、密钥泄露等常见密码学安全问题。",
             keyPoints: [
               "Cryptographic Failures（A04）：弱加密、明文传输、密钥泄露。",
               "Insecure Design（A06）：缺乏威胁建模、安全设计。",
@@ -266,6 +270,7 @@ export const securityStages: Stage[] = [
         id: "security-w5",
         title: "第 5 周：安全编码实践",
         summary: "掌握防御性编程与安全编码技术。",
+        overview: "本周掌握防御性编程技术，包括输入验证与净化、输出编码与 XSS 防护，以及错误处理与日志安全。",
         keyPoints: [
           "输入验证是第一道防线。",
           "输出编码防止注入攻击。",
@@ -275,7 +280,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w5-1",
             title: "输入验证与净化",
-            detail: "正确处理所有外部输入。",
+            detail: "对所有外部输入进行白名单验证和规范化处理，防止注入攻击。",
             keyPoints: [
               "永不信任用户输入：所有外部数据都是不可信的。",
               "白名单验证：只允许已知合法的输入。",
@@ -291,7 +296,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w5-2",
             title: "输出编码与 XSS 防护",
-            detail: "防止跨站脚本攻击。",
+            detail: "通过上下文编码、CSP 策略和 HttpOnly Cookie 防止跨站脚本攻击。",
             keyPoints: [
               "上下文编码：HTML、JavaScript、URL、CSS 各有编码方式。",
               "Content Security Policy（CSP）：限制脚本执行来源。",
@@ -307,7 +312,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w5-3",
             title: "错误处理与日志安全",
-            detail: "安全地处理错误和记录日志。",
+            detail: "安全地处理错误信息并规范记录日志，避免泄露敏感数据和日志注入。",
             keyPoints: [
               "错误消息：对用户友好，对开发者详细（分离）。",
               "不泄露敏感信息：堆栈跟踪、数据库错误、内部路径。",
@@ -326,6 +331,7 @@ export const securityStages: Stage[] = [
         id: "security-w6",
         title: "第 6 周：API 安全",
         summary: "保护 REST API 和微服务安全。",
+        overview: "本周学习保护 REST API 和微服务的安全技术，涵盖 OAuth 2.1、JWT 安全和 API 网关。",
         keyPoints: [
           "OAuth 2.1 是 API 授权的事实标准。",
           "JWT 需要正确使用才能保证安全。",
@@ -335,7 +341,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w6-1",
             title: "OAuth 2.1 与 OpenID Connect",
-            detail: "实现安全的 API 授权。",
+            detail: "基于 OAuth 2.1 和 OpenID Connect 实现安全可靠的 API 授权与身份认证。",
             keyPoints: [
               "OAuth 2.1：合并最佳实践，废弃不安全的流程。",
               "Authorization Code + PKCE：推荐的授权流程。",
@@ -398,6 +404,7 @@ export const securityStages: Stage[] = [
         id: "security-w7",
         title: "第 7 周：认证机制",
         summary: "理解现代身份认证技术与最佳实践。",
+        overview: "本周探索现代身份认证技术，包括多因素认证、Passkeys/WebAuthn 无密码认证和企业级 SSO。",
         keyPoints: [
           "多因素认证显著降低账户被盗风险。",
           "Passkeys 是密码的安全替代方案。",
@@ -407,7 +414,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w7-1",
             title: "多因素认证（MFA）",
-            detail: "实现多因素认证提升账户安全。",
+            detail: "结合知识、持有和生物特征等多种认证因素，显著提升账户安全性。",
             keyPoints: [
               "认证因素：知识、持有、固有（生物特征）。",
               "TOTP：基于时间的一次性密码，Google Authenticator。",
@@ -439,7 +446,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w7-3",
             title: "单点登录（SSO）",
-            detail: "实现企业级单点登录。",
+            detail: "基于 SAML 2.0 和 OIDC 协议实现企业级单点登录，统一身份管理。",
             keyPoints: [
               "SSO：一次登录，访问多个应用。",
               "SAML 2.0：企业 SSO 标准，XML 格式。",
@@ -458,6 +465,7 @@ export const securityStages: Stage[] = [
         id: "security-w8",
         title: "第 8 周：授权模型",
         summary: "设计和实现细粒度访问控制。",
+        overview: "本周学习设计和实现细粒度访问控制，涵盖 RBAC、ABAC 授权模型和策略引擎。",
         keyPoints: [
           "RBAC 基于角色，简单但可能角色爆炸。",
           "ABAC 基于属性，灵活但复杂。",
@@ -483,7 +491,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w8-2",
             title: "策略引擎（OPA/Cedar）",
-            detail: "使用策略引擎实现细粒度授权。",
+            detail: "使用 OPA 或 Cedar 等策略引擎将授权逻辑外部化，实现细粒度访问控制。",
             keyPoints: [
               "OPA（Open Policy Agent）：通用策略引擎，Rego 语言。",
               "Cedar：AWS 开源策略语言，声明式。",
@@ -499,7 +507,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w8-3",
             title: "权限边界与最小权限",
-            detail: "实施最小权限原则。",
+            detail: "通过权限边界、即时访问和定期审计等机制严格实施最小权限原则。",
             keyPoints: [
               "最小权限：只授予完成任务所需的权限。",
               "权限边界：限制可授予的最大权限。",
@@ -518,6 +526,7 @@ export const securityStages: Stage[] = [
         id: "security-w9",
         title: "第 9 周：零信任架构",
         summary: "设计和实施零信任安全模型。",
+        overview: "本周深入理解零信任安全模型，学习 ZTNA 网络访问控制和零信任实施路径规划。",
         keyPoints: [
           "零信任核心：永不信任，始终验证。",
           "NIST SP 800-207 是零信任的权威指南。",
@@ -543,7 +552,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w9-2",
             title: "零信任网络访问（ZTNA）",
-            detail: "实现基于身份的网络访问。",
+            detail: "使用 ZTNA 替代传统 VPN，基于身份和上下文实现细粒度网络访问控制。",
             keyPoints: [
               "ZTNA：替代 VPN，基于身份和上下文。",
               "软件定义边界（SDP）：隐藏基础设施。",
@@ -559,7 +568,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w9-3",
             title: "零信任实施路径",
-            detail: "规划和实施零信任转型。",
+            detail: "基于 CISA 成熟度模型，从高价值资产开始渐进式规划和实施零信任转型。",
             keyPoints: [
               "成熟度模型：CISA 零信任成熟度模型。",
               "优先级：身份 → 设备 → 网络 → 应用 → 数据。",
@@ -590,6 +599,7 @@ export const securityStages: Stage[] = [
         id: "security-w10",
         title: "第 10 周：容器安全",
         summary: "保护容器镜像和运行时安全。",
+        overview: "本周学习容器安全全生命周期保护，包括镜像安全扫描、运行时威胁检测和安全最佳实践。",
         keyPoints: [
           "容器镜像扫描发现已知漏洞。",
           "运行时保护检测异常行为。",
@@ -599,7 +609,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w10-1",
             title: "镜像安全与扫描",
-            detail: "构建安全的容器镜像。",
+            detail: "使用最小化基础镜像、漏洞扫描和镜像签名构建安全可信的容器镜像。",
             keyPoints: [
               "最小化镜像：distroless、scratch、Alpine。",
               "漏洞扫描：Trivy、Grype、Clair。",
@@ -615,7 +625,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w10-2",
             title: "运行时安全",
-            detail: "检测和防止容器运行时威胁。",
+            detail: "使用 Falco、Seccomp 和强制访问控制检测和防止容器运行时安全威胁。",
             keyPoints: [
               "Falco：云原生运行时威胁检测。",
               "Seccomp：限制系统调用。",
@@ -631,7 +641,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w10-3",
             title: "容器安全最佳实践",
-            detail: "全面的容器安全策略。",
+            detail: "从非 root 运行、资源限制到网络隔离和密钥管理，建立全面的容器安全策略。",
             keyPoints: [
               "非 root 运行：容器内不使用 root 用户。",
               "资源限制：CPU、内存限制防止 DoS。",
@@ -719,7 +729,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w12-1",
             title: "mTLS 与服务身份",
-            detail: "实现零信任的服务间通信。",
+            detail: "通过 mTLS 和 SPIFFE 服务身份标准实现零信任的服务间加密通信。",
             keyPoints: [
               "mTLS：双向 TLS，服务间相互认证。",
               "SPIFFE/SPIRE：服务身份标准。",
@@ -779,7 +789,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w13-1",
             title: "云 IAM 最佳实践",
-            detail: "安全配置云身份和访问管理。",
+            detail: "使用最小权限策略、临时凭证和工作负载身份安全配置云 IAM。",
             keyPoints: [
               "最小权限：使用细粒度策略。",
               "避免长期凭证：使用临时凭证和角色。",
@@ -795,7 +805,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w13-2",
             title: "云安全态势管理（CSPM）",
-            detail: "自动化云安全配置检查。",
+            detail: "使用 CSPM 工具持续评估云配置合规性，自动化检测安全配置偏差。",
             keyPoints: [
               "CSPM：持续评估云配置合规性。",
               "CIS Benchmarks：云平台安全基线。",
@@ -811,7 +821,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w13-3",
             title: "云原生安全服务",
-            detail: "利用云厂商安全服务。",
+            detail: "充分利用 AWS、GCP 和 Azure 原生安全服务实现深度安全防护。",
             keyPoints: [
               "AWS：GuardDuty、Security Hub、Inspector。",
               "GCP：Security Command Center、Binary Authorization。",
@@ -851,7 +861,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w14-1",
             title: "SAST 静态应用安全测试",
-            detail: "在编译前分析源代码安全问题。",
+            detail: "使用 Semgrep、CodeQL 等 SAST 工具在编译前静态分析源代码中的安全缺陷。",
             keyPoints: [
               "SAST：分析源代码，发现安全缺陷。",
               "工具：Semgrep、SonarQube、CodeQL。",
@@ -867,7 +877,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w14-2",
             title: "SCA 软件组成分析",
-            detail: "管理开源依赖风险。",
+            detail: "使用 SCA 工具识别开源依赖中的已知漏洞，管理许可证合规风险。",
             keyPoints: [
               "SCA：识别依赖中的已知漏洞。",
               "工具：Snyk、Dependabot、Renovate。",
@@ -883,7 +893,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w14-3",
             title: "SBOM 与供应链安全",
-            detail: "建立软件供应链可见性。",
+            detail: "通过 SBOM、SLSA 框架和签名验证建立完整的软件供应链可见性。",
             keyPoints: [
               "SBOM：软件物料清单，列出所有组件。",
               "格式：SPDX、CycloneDX。",
@@ -911,7 +921,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w15-1",
             title: "DAST 动态应用安全测试",
-            detail: "测试运行中应用的安全漏洞。",
+            detail: "使用 DAST 工具从外部黑盒视角测试运行中应用的安全漏洞。",
             keyPoints: [
               "DAST：黑盒测试，模拟攻击者行为。",
               "工具：OWASP ZAP、Burp Suite、Nuclei。",
@@ -927,7 +937,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w15-2",
             title: "渗透测试方法论",
-            detail: "系统性地进行安全测试。",
+            detail: "遵循 PTES 和 OWASP 测试指南，系统性地进行渗透测试与攻防演练。",
             keyPoints: [
               "PTES：渗透测试执行标准。",
               "OWASP Testing Guide：Web 应用测试指南。",
@@ -943,7 +953,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w15-3",
             title: "漏洞管理与披露",
-            detail: "管理发现的漏洞和负责任披露。",
+            detail: "建立漏洞管理全流程，包括发现、评估、修复、验证和负责任披露。",
             keyPoints: [
               "漏洞管理：发现、评估、修复、验证。",
               "优先级：CVSS、业务影响、可利用性。",
@@ -971,7 +981,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w16-1",
             title: "CI/CD 安全集成",
-            detail: "在流水线中集成安全检查。",
+            detail: "在 CI/CD 流水线各阶段集成安全门禁和自动化安全检查。",
             keyPoints: [
               "安全门禁：阻止高危漏洞合并或部署。",
               "分阶段扫描：commit、PR、build、deploy。",
@@ -987,7 +997,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w16-2",
             title: "Policy as Code",
-            detail: "将安全策略编码化。",
+            detail: "使用 OPA、Conftest 等工具将安全策略编码化，实现版本控制和自动执行。",
             keyPoints: [
               "OPA/Gatekeeper：Kubernetes 准入控制。",
               "Conftest：测试配置文件合规性。",
@@ -1043,7 +1053,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w17-1",
             title: "SIEM 与日志分析",
-            detail: "集中管理和分析安全日志。",
+            detail: "使用 SIEM 平台集中收集、标准化和分析来自各系统的安全日志。",
             keyPoints: [
               "SIEM：安全信息和事件管理。",
               "日志源：应用、系统、网络、云服务。",
@@ -1059,7 +1069,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w17-2",
             title: "威胁检测与狩猎",
-            detail: "主动发现安全威胁。",
+            detail: "通过检测规则、威胁情报和假设驱动的威胁狩猎主动发现安全威胁。",
             keyPoints: [
               "检测规则：Sigma、YARA、Suricata。",
               "威胁情报：IOC、TTP、ATT&CK。",
@@ -1075,7 +1085,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w17-3",
             title: "事件响应",
-            detail: "有效响应安全事件。",
+            detail: "遵循准备、检测、遏制、根除、恢复和总结六阶段流程有效响应安全事件。",
             keyPoints: [
               "IR 流程：准备、检测、遏制、根除、恢复、总结。",
               "事件分类：严重性、影响范围。",
@@ -1103,7 +1113,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w18-1",
             title: "安全框架与标准",
-            detail: "采用行业安全框架和标准。",
+            detail: "采用 ISO 27001、NIST CSF 和 CIS Controls 等行业安全框架指导安全管理。",
             keyPoints: [
               "ISO 27001：信息安全管理体系。",
               "NIST CSF：网络安全框架（识别、保护、检测、响应、恢复）。",
@@ -1119,7 +1129,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w18-2",
             title: "隐私与数据保护",
-            detail: "遵守数据保护法规。",
+            detail: "遵守 GDPR 等数据保护法规，在系统设计中内置隐私保护机制。",
             keyPoints: [
               "GDPR：欧盟通用数据保护条例。",
               "隐私设计：在系统设计中内置隐私保护。",
@@ -1135,7 +1145,7 @@ export const securityStages: Stage[] = [
           {
             id: "security-w18-3",
             title: "安全策略与治理",
-            detail: "建立安全治理体系。",
+            detail: "建立涵盖安全策略、意识培训、风险管理和度量指标的安全治理体系。",
             keyPoints: [
               "安全策略：组织层面的安全要求。",
               "安全意识培训：全员安全意识。",

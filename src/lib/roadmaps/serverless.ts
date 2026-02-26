@@ -23,6 +23,11 @@ export const serverlessStages: Stage[] = [
                         id: "w1-1",
                         title: "Serverless 定义与价值：从服务器到函数",
                         detail: "理解 Serverless 的核心理念：开发者只关注业务代码，基础设施由云平台全托管。",
+                        keyPoints: [
+                            "核心价值：无需管理服务器，自动伸缩（从 0 到数千并发），按调用次数和执行时间计费。",
+                            "适用场景：事件驱动处理、API 后端、定时任务、数据流处理等间歇性或突发性工作负载。",
+                            "局限性：冷启动延迟、执行时间限制（15 分钟）、有状态操作需要外部存储支持。",
+                        ],
                         resources: [
                             { title: "AWS Serverless 概览", url: "https://aws.amazon.com/serverless/" },
                             { title: "Serverless 计算完整指南", url: "https://www.serverless.com/learn/overview/" },
@@ -43,6 +48,11 @@ export const serverlessStages: Stage[] = [
                         id: "w1-3",
                         title: "事件驱动架构：异步解耦与事件流",
                         detail: "掌握事件驱动架构的核心思想：事件源、事件总线、消费者的解耦模式。",
+                        keyPoints: [
+                            "事件源多样性：S3 文件上传、DynamoDB 数据变更、API Gateway 请求、定时调度等都可触发 Lambda。",
+                            "异步解耦：事件生产者和消费者互不感知，通过事件总线（EventBridge）路由和过滤事件。",
+                            "最终一致性：事件驱动天然异步，系统状态通过事件传播达到最终一致，需接受短暂的不一致窗口。",
+                        ],
                         resources: [
                             { title: "AWS 事件驱动架构", url: "https://docs.aws.amazon.com/wellarchitected/latest/serverless-applications-lens/event-driven-architectures.html" },
                             { title: "Serverless Land - 事件驱动架构", url: "https://serverlessland.com/event-driven-architecture" },
@@ -139,6 +149,11 @@ export const serverlessStages: Stage[] = [
                         id: "w3-1",
                         title: "API Gateway 入门：REST API vs HTTP API",
                         detail: "理解两种 API 类型的功能差异，选择合适的 API 类型构建 HTTP 端点。",
+                        keyPoints: [
+                            "REST API：功能丰富，支持请求验证、模型转换、缓存、使用计划和 API Key，适合复杂 API 管理。",
+                            "HTTP API：延迟更低、成本降低约 70%，支持 JWT 授权和 CORS，适合简单的 Lambda 代理场景。",
+                            "选择标准：需要高级功能（缓存、转换、WAF 集成）选 REST API，追求低成本和低延迟选 HTTP API。",
+                        ],
                         resources: [
                             { title: "API Gateway REST API", url: "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-rest-api.html" },
                             { title: "API Gateway HTTP API", url: "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html" },
@@ -159,6 +174,11 @@ export const serverlessStages: Stage[] = [
                         id: "w3-3",
                         title: "事件源触发：S3、SQS、SNS、EventBridge",
                         detail: "配置常见 AWS 服务作为 Lambda 事件源，理解推送与拉取模式。",
+                        keyPoints: [
+                            "推送模式：S3、SNS、API Gateway 直接调用 Lambda，事件源主动推送，Lambda 被动响应。",
+                            "拉取模式：SQS、DynamoDB Streams、Kinesis 由 Lambda 服务轮询拉取，批量处理提高效率。",
+                            "事件过滤：配置 Event Source Mapping 过滤器，仅处理符合条件的事件，减少无效调用和成本。",
+                        ],
                         resources: [
                             { title: "Lambda 与 S3", url: "https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html" },
                             { title: "Lambda 与 SQS", url: "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html" },
@@ -193,6 +213,11 @@ export const serverlessStages: Stage[] = [
                         id: "w4-1",
                         title: "DynamoDB 基础：Serverless 数据库的核心概念",
                         detail: "理解 DynamoDB 的分区键、排序键、容量模式与 Serverless 场景的适配。",
+                        keyPoints: [
+                            "分区键设计：选择高基数字段作为分区键，确保数据均匀分布避免热分区。",
+                            "单表设计：利用分区键和排序键的组合，在一张表中存储多种实体类型，减少跨表查询。",
+                            "按需容量模式：自动适应流量变化，无需预估读写吞吐量，适合流量不可预测的 Serverless 应用。",
+                        ],
                         resources: [
                             { title: "DynamoDB 核心概念", url: "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html" },
                             { title: "DynamoDB 入门", url: "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStartedDynamoDB.html" },
@@ -213,6 +238,11 @@ export const serverlessStages: Stage[] = [
                         id: "w4-3",
                         title: "DynamoDB Streams：数据变更的实时触发",
                         detail: "配置 DynamoDB Streams 触发 Lambda，实现数据变更的实时响应与处理。",
+                        keyPoints: [
+                            "Streams 类型：支持 NEW_IMAGE、OLD_IMAGE、NEW_AND_OLD_IMAGES 和 KEYS_ONLY 四种视图类型。",
+                            "实时响应：数据变更后毫秒级触发 Lambda，适合实时索引同步、通知推送、审计日志等场景。",
+                            "批量处理：Lambda 一次接收一批 Stream 记录，通过 BatchSize 和 MaximumBatchingWindow 控制批次。",
+                        ],
                         resources: [
                             { title: "DynamoDB Streams 与 Lambda", url: "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.Lambda.html" },
                             { title: "Streams Lambda 教程", url: "https://docs.aws.amazon.com/lambda/latest/dg/with-ddb-example.html" },
@@ -247,6 +277,11 @@ export const serverlessStages: Stage[] = [
                         id: "w5-1",
                         title: "Step Functions 入门：状态机与 ASL",
                         detail: "理解 Step Functions 的核心概念，学习 Amazon States Language (ASL) 定义状态机。",
+                        keyPoints: [
+                            "状态机模型：用 JSON 格式的 ASL 定义状态、转换和错误处理，可视化编排复杂工作流。",
+                            "与直接编排对比：相比 Lambda 内部串联调用，Step Functions 提供持久化状态、可视化和内置重试。",
+                            "计费模型：Standard 按状态转换次数计费，Express 按请求数和执行时长计费，选择影响成本。",
+                        ],
                         resources: [
                             { title: "Step Functions 概览", url: "https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" },
                             { title: "Step Functions 入门", url: "https://aws.amazon.com/step-functions/getting-started/" },
@@ -267,6 +302,11 @@ export const serverlessStages: Stage[] = [
                         id: "w5-3",
                         title: "错误处理：Retry、Catch 与 Saga 模式",
                         detail: "配置状态机的错误处理策略，实现自动重试与补偿回滚。",
+                        keyPoints: [
+                            "Retry 配置：指定可重试的错误类型、最大重试次数、退避间隔和退避倍率，自动处理临时故障。",
+                            "Catch 降级：重试耗尽后转移到 Catch 指定的降级状态，执行补偿逻辑或记录错误。",
+                            "Saga 模式：利用 Catch + 补偿 Lambda 实现分布式事务回滚，每一步失败都触发前序步骤的撤销。",
+                        ],
                         resources: [
                             { title: "错误处理", url: "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html" },
                             { title: "Saga 模式示例", url: "https://docs.aws.amazon.com/step-functions/latest/dg/sample-saga-pattern.html" },
@@ -425,6 +465,11 @@ export const serverlessStages: Stage[] = [
                         id: "w8-1",
                         title: "冷启动深度剖析：Init Duration 的组成",
                         detail: "分解冷启动的各个阶段，识别优化瓶颈与改进方向。",
+                        keyPoints: [
+                            "Init Duration 构成：运行时初始化 + 扩展初始化 + 函数代码初始化（依赖加载、全局变量初始化）。",
+                            "语言影响：Python/Node.js 冷启动通常 <200ms，Java/.NET 可能 >1s，选择运行时影响冷启动表现。",
+                            "优化方向：减少部署包大小、精简依赖、将初始化逻辑移到 Handler 外部（复用执行环境）。",
+                        ],
                         resources: [
                             { title: "理解冷启动", url: "https://aws.amazon.com/blogs/compute/understanding-and-remediating-cold-starts-an-aws-lambda-perspective/" },
                             { title: "执行环境生命周期", url: "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html" },
@@ -455,6 +500,11 @@ export const serverlessStages: Stage[] = [
                         id: "w8-4",
                         title: "代码级优化：依赖精简与初始化策略",
                         detail: "优化函数代码与依赖，减少 Init 时间，提升整体性能。",
+                        keyPoints: [
+                            "依赖精简：只打包实际使用的模块，使用 Tree Shaking 或 esbuild 减少包体积。",
+                            "初始化外置：将数据库连接、SDK 客户端初始化放在 Handler 之外，利用执行环境复用避免重复初始化。",
+                            "Power Tuning：使用 Lambda Power Tuning 工具自动测试不同内存配置，找到性价比最优的内存值。",
+                        ],
                         resources: [
                             { title: "Lambda 最佳实践", url: "https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" },
                             { title: "Lambda Power Tuning", url: "https://github.com/alexcasalboni/aws-lambda-power-tuning" },
@@ -479,6 +529,11 @@ export const serverlessStages: Stage[] = [
                         id: "w9-1",
                         title: "CloudWatch Metrics：核心指标监控",
                         detail: "理解 Lambda 核心指标的含义，配置告警与仪表板。",
+                        keyPoints: [
+                            "核心指标：Invocations（调用次数）、Duration（执行时长）、Errors（错误数）、Throttles（限流次数）。",
+                            "告警配置：为 Errors 和 Throttles 设置 CloudWatch Alarm，超过阈值时通过 SNS 发送通知。",
+                            "自定义指标：使用 EMF（Embedded Metric Format）在日志中嵌入自定义业务指标，无需额外 API 调用。",
+                        ],
                         resources: [
                             { title: "Lambda 指标", url: "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html" },
                             { title: "CloudWatch 告警", url: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html" },
@@ -499,6 +554,11 @@ export const serverlessStages: Stage[] = [
                         id: "w9-3",
                         title: "AWS X-Ray：分布式追踪与性能分析",
                         detail: "为 Lambda 启用 X-Ray 追踪，分析跨服务调用链路。",
+                        keyPoints: [
+                            "追踪启用：在 Lambda 配置中开启 Active Tracing，自动记录函数调用的 Segment 和 Subsegment。",
+                            "服务地图：X-Ray 自动生成服务调用关系图，直观展示请求在各服务间的流转和延迟分布。",
+                            "性能分析：通过 Trace 详情查看每个外部调用（DynamoDB、S3、HTTP）的耗时，定位性能瓶颈。",
+                        ],
                         resources: [
                             { title: "Lambda 与 X-Ray", url: "https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html" },
                             { title: "X-Ray 概念", url: "https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html" },

@@ -14,6 +14,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w1",
         title: "第 1 周：JVM 规范与架构",
         summary: "理解 JVM 规范定义与整体架构组成。",
+        overview: "本周从 JVM 规范入手，理解 JVM 作为抽象计算机的定义，包括 class 文件格式、指令集和运行时数据区等核心概念，并掌握 JVM 整体架构中类加载子系统、运行时数据区和执行引擎三大模块的职责与协作关系。",
         keyPoints: [
           "JVM 规范定义了抽象机器，具体实现可以不同。",
           "JVM 由类加载子系统、运行时数据区、执行引擎组成。",
@@ -74,6 +75,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w2",
         title: "第 2 周：JVM 实现对比",
         summary: "了解主流 JVM 实现的特点与选型。",
+        overview: "本周对比主流 JVM 实现——HotSpot、OpenJ9 和 GraalVM，了解各自的架构设计、性能特点和适用场景，帮助在实际项目中做出合理的 JVM 选型决策。",
         keyPoints: [
           "HotSpot 是最广泛使用的 JVM 实现。",
           "OpenJ9 注重低内存占用和快速启动。",
@@ -146,6 +148,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w3",
         title: "第 3 周：类加载过程",
         summary: "理解类的加载、链接、初始化完整过程。",
+        overview: "本周深入类加载机制的三个阶段：加载阶段读取二进制数据并创建 Class 对象，链接阶段完成验证、准备和解析，初始化阶段执行静态代码块，理解每个阶段的触发时机与内部细节。",
         keyPoints: [
           "类加载分为加载、链接、初始化三个阶段。",
           "链接包括验证、准备、解析三个步骤。",
@@ -206,6 +209,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w4",
         title: "第 4 周：类加载器",
         summary: "掌握类加载器层次结构与双亲委派模型。",
+        overview: "本周学习 JVM 类加载器的层次体系，包括启动类加载器、扩展类加载器和应用类加载器的职责划分，深入理解双亲委派模型的工作原理以及打破委派的实际场景。",
         keyPoints: [
           "双亲委派模型保证类的唯一性和安全性。",
           "自定义类加载器可实现热部署、隔离等特性。",
@@ -278,6 +282,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w5",
         title: "第 5 周：Class 文件与字节码",
         summary: "深入理解 class 文件结构与字节码指令。",
+        overview: "本周剖析 class 文件的二进制结构，包括魔数、常量池、字段表和方法表等组成部分，学习 JVM 字节码指令的分类与语义，并通过 javap 等工具实践字节码的反编译与分析。",
         keyPoints: [
           "class 文件是 JVM 的通用输入格式。",
           "字节码指令是 JVM 的汇编语言。",
@@ -319,7 +324,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w5-3",
             title: "字节码分析工具",
-            detail: "使用工具分析和理解字节码。",
+            detail: "使用 javap、JBE 等工具反编译和分析字节码指令。",
             keyPoints: [
               "javap -c：反汇编 class 文件。",
               "javap -v：显示详细信息包括常量池。",
@@ -338,6 +343,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w6",
         title: "第 6 周：执行引擎",
         summary: "理解解释执行与即时编译的工作原理。",
+        overview: "本周理解 JVM 执行引擎的核心工作原理，包括解释器如何逐条执行字节码、JIT 编译器如何将热点代码编译为本地机器码，以及方法调用中 invokevirtual 等不同调用指令的分派机制。",
         keyPoints: [
           "解释器逐条执行字节码，启动快但运行慢。",
           "JIT 编译器将热点代码编译为本地代码。",
@@ -347,7 +353,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w6-1",
             title: "解释执行",
-            detail: "理解字节码解释器的工作方式。",
+            detail: "理解字节码解释器逐条执行指令的工作方式与性能特点。",
             keyPoints: [
               "解释器：逐条读取并执行字节码指令。",
               "模板解释器：使用预编译的本地代码模板。",
@@ -411,6 +417,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w7",
         title: "第 7 周：内存区域",
         summary: "理解 JVM 各内存区域的作用与特点。",
+        overview: "本周全面学习 JVM 运行时数据区的各个内存区域，包括堆内存的分代结构与对象分配、虚拟机栈的栈帧组成与方法执行，以及方法区和 Metaspace 中类元数据的存储管理。",
         keyPoints: [
           "堆是对象存储的主要区域，由 GC 管理。",
           "栈是线程私有的，存储栈帧。",
@@ -420,7 +427,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w7-1",
             title: "堆内存",
-            detail: "理解堆的结构与对象分配策略。",
+            detail: "理解堆内存的分代结构、对象分配策略与垃圾回收的关系。",
             keyPoints: [
               "堆是所有线程共享的内存区域。",
               "新生代：Eden + Survivor，存放新对象。",
@@ -436,7 +443,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w7-2",
             title: "虚拟机栈",
-            detail: "理解栈帧的结构与方法执行。",
+            detail: "理解虚拟机栈帧中局部变量表、操作数栈与方法执行的关系。",
             keyPoints: [
               "每个线程有独立的虚拟机栈。",
               "栈帧：局部变量表、操作数栈、动态链接、返回地址。",
@@ -452,7 +459,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w7-3",
             title: "方法区与 Metaspace",
-            detail: "理解类元数据的存储区域。",
+            detail: "理解方法区与 Metaspace 中类元数据的存储方式与内存管理。",
             keyPoints: [
               "方法区存储类结构、常量池、静态变量。",
               "Java 8 前：永久代（PermGen），堆的一部分。",
@@ -471,6 +478,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w8",
         title: "第 8 周：对象内存布局",
         summary: "理解对象在堆中的存储结构。",
+        overview: "本周深入对象在堆中的内存布局，学习对象头中 Mark Word 和类型指针的结构，理解压缩指针如何节省内存空间，以及 TLAB 等对象分配优化策略的工作原理。",
         keyPoints: [
           "对象由对象头、实例数据、对齐填充组成。",
           "对象头包含 Mark Word 和类型指针。",
@@ -480,7 +488,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w8-1",
             title: "对象头结构",
-            detail: "理解对象头的组成与作用。",
+            detail: "理解对象头中 Mark Word 与类型指针的组成结构与运行时作用。",
             keyPoints: [
               "Mark Word：存储哈希码、GC 年龄、锁状态。",
               "类型指针：指向类元数据，确定对象类型。",
@@ -496,7 +504,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w8-2",
             title: "指针压缩",
-            detail: "理解压缩指针的原理与配置。",
+            detail: "理解压缩指针通过偏移编码减少内存占用的原理与配置方式。",
             keyPoints: [
               "CompressedOops：压缩普通对象指针。",
               "32 位指针 + 位移实现 32GB 堆寻址。",
@@ -543,6 +551,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w9",
         title: "第 9 周：JMM 基础",
         summary: "理解 Java 内存模型的核心概念。",
+        overview: "本周学习 Java 内存模型（JMM）的核心概念，理解主内存与工作内存的抽象关系，掌握 happens-before 规则如何保证多线程环境下的内存可见性与指令有序性。",
         keyPoints: [
           "JMM 定义了多线程环境下的内存可见性规则。",
           "主内存与工作内存是 JMM 的抽象概念。",
@@ -603,6 +612,7 @@ export const jvmStages: Stage[] = [
         id: "jvm-w10",
         title: "第 10 周：同步原语",
         summary: "掌握 volatile、synchronized 与锁优化。",
+        overview: "本周深入学习 JVM 同步原语的实现机制，包括 volatile 的内存屏障语义、synchronized 的 Monitor 实现原理，以及偏向锁、轻量级锁、自旋锁等 JVM 锁优化技术。",
         keyPoints: [
           "volatile 保证可见性和有序性，不保证原子性。",
           "synchronized 保证原子性、可见性、有序性。",
@@ -644,7 +654,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w10-3",
             title: "锁优化",
-            detail: "理解 JVM 的锁优化技术。",
+            detail: "理解 JVM 中偏向锁、轻量级锁、自旋锁等锁优化技术的原理。",
             keyPoints: [
               "偏向锁：单线程访问时消除同步。",
               "轻量级锁：CAS 操作替代互斥量。",
@@ -760,7 +770,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w12-2",
             title: "记忆集与卡表",
-            detail: "理解跨代引用的追踪机制。",
+            detail: "理解记忆集与卡表如何高效追踪跨代引用避免全堆扫描。",
             keyPoints: [
               "跨代引用问题：老年代对象引用新生代对象。",
               "记忆集（Remembered Set）：记录跨代引用。",
@@ -964,7 +974,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w15-2",
             title: "编译级别",
-            detail: "理解分层编译的五个级别。",
+            detail: "理解分层编译从解释执行到完全优化编译的五个级别与触发条件。",
             keyPoints: [
               "Level 0：解释执行。",
               "Level 1：C1 编译，无 profiling。",
@@ -1009,7 +1019,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w16-1",
             title: "方法内联",
-            detail: "理解方法内联的原理与限制。",
+            detail: "理解方法内联消除调用开销的原理、触发条件与字节码大小限制。",
             keyPoints: [
               "内联：将方法调用替换为方法体。",
               "消除调用开销，支持进一步优化。",
@@ -1025,7 +1035,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w16-2",
             title: "逃逸分析与优化",
-            detail: "理解逃逸分析及相关优化。",
+            detail: "理解逃逸分析如何判断对象作用域并实现栈上分配与标量替换。",
             keyPoints: [
               "逃逸分析：判断对象是否逃逸出方法或线程。",
               "栈上分配：不逃逸对象在栈上分配，减少 GC。",
@@ -1113,7 +1123,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w17-3",
             title: "火焰图分析",
-            detail: "使用火焰图可视化性能数据。",
+            detail: "使用火焰图可视化 CPU 与内存分配热点，快速定位性能瓶颈。",
             keyPoints: [
               "火焰图：X 轴是方法调用，Y 轴是调用深度。",
               "宽度代表采样占比，越宽越热。",
@@ -1157,7 +1167,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w18-2",
             title: "线程转储分析",
-            detail: "使用线程转储诊断线程问题。",
+            detail: "使用线程转储分析死锁、线程阻塞与高 CPU 占用等并发问题。",
             keyPoints: [
               "获取方式：jstack、jcmd Thread.print、kill -3。",
               "线程状态：RUNNABLE、BLOCKED、WAITING、TIMED_WAITING。",
@@ -1229,7 +1239,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w19-2",
             title: "GC 参数",
-            detail: "掌握垃圾收集器的配置参数。",
+            detail: "掌握不同垃圾收集器的选择策略与核心调优参数的配置方法。",
             keyPoints: [
               "-XX:+UseG1GC/-XX:+UseZGC/-XX:+UseShenandoahGC。",
               "G1GC：-XX:MaxGCPauseMillis、-XX:G1HeapRegionSize。",
@@ -1305,7 +1315,7 @@ export const jvmStages: Stage[] = [
           {
             id: "jvm-w20-3",
             title: "容器环境调优",
-            detail: "在容器环境中调优 JVM。",
+            detail: "在 Docker 和 Kubernetes 容器环境中正确配置和调优 JVM 资源。",
             keyPoints: [
               "-XX:+UseContainerSupport：容器感知（默认启用）。",
               "-XX:MaxRAMPercentage：基于容器内存设置堆大小。",

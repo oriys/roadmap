@@ -11,6 +11,7 @@ export const pythonStages: Stage[] = [
         id: "py-w1",
         title: "第 1 周：环境搭建与第一个程序",
         summary: "安装 Python 环境，理解解释器工作原理，编写 Hello World。",
+        overview: "本周从零开始搭建 Python 开发环境，了解 CPython 解释器的工作方式，通过交互式 REPL 和脚本模式编写第一个程序。",
         keyPoints: [
           "安装 Python 3.11+ 并配置环境变量。",
           "理解 Python 解释器与交互式环境（REPL）。",
@@ -68,6 +69,7 @@ export const pythonStages: Stage[] = [
         id: "py-w2",
         title: "第 2 周：变量与基本数据类型",
         summary: "掌握变量定义、动态类型、数值、字符串和布尔类型。",
+        overview: "本周学习 Python 的动态类型系统，掌握整数、浮点数、字符串和布尔值的特性与操作，理解变量作为对象引用的本质。",
         keyPoints: [
           "Python 是动态类型语言，变量无需声明类型。",
           "理解 int、float、str、bool 基本类型。",
@@ -140,6 +142,7 @@ export const pythonStages: Stage[] = [
         id: "py-w3",
         title: "第 3 周：控制流与输入输出",
         summary: "学习条件判断、循环语句和用户输入输出。",
+        overview: "本周掌握 if/elif/else 条件分支、for 和 while 循环控制流，学习 input() 获取用户输入与格式化输出的常用方法。",
         keyPoints: [
           "掌握 if/elif/else 条件判断。",
           "理解 for 和 while 两种循环。",
@@ -220,6 +223,7 @@ export const pythonStages: Stage[] = [
         id: "py-w4",
         title: "第 4 周：列表与元组",
         summary: "深入学习列表和元组的使用方法和区别。",
+        overview: "本周深入列表的增删改查与切片操作，理解元组的不可变特性，掌握列表推导式和常用的排序与遍历技巧。",
         keyPoints: [
           "列表是可变序列，元组是不可变序列。",
           "掌握列表推导式（List Comprehension）。",
@@ -292,6 +296,7 @@ export const pythonStages: Stage[] = [
         id: "py-w5",
         title: "第 5 周：字典与集合",
         summary: "掌握字典和集合的使用场景和操作方法。",
+        overview: "本周学习字典的键值对操作与常用方法，掌握集合的去重和数学运算功能，理解哈希表在底层的实现原理。",
         keyPoints: [
           "字典是键值对映射，集合是无序不重复元素。",
           "理解哈希表原理和可哈希性要求。",
@@ -331,7 +336,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w5-3",
             title: "集合操作",
-            detail: "使用集合进行去重和集合运算。",
+            detail: "使用 set 集合进行元素去重，掌握交集、并集、差集等集合运算操作。",
             keyPoints: [
               "使用 set() 或 {} 创建集合（空集合必须用 set()）。",
               "支持交集 &、并集 |、差集 -、对称差 ^。",
@@ -364,6 +369,7 @@ export const pythonStages: Stage[] = [
         id: "py-w6",
         title: "第 6 周：函数基础",
         summary: "掌握函数定义、参数传递和作用域规则。",
+        overview: "本周系统学习函数的定义与调用，掌握位置参数、关键字参数、默认值和可变参数，理解 LEGB 作用域查找规则。",
         keyPoints: [
           "理解函数定义和调用语法。",
           "掌握位置参数、关键字参数、默认参数。",
@@ -444,6 +450,7 @@ export const pythonStages: Stage[] = [
         id: "py-w7",
         title: "第 7 周：类与对象基础",
         summary: "学习类的定义、实例化和属性访问。",
+        overview: "本周进入面向对象编程，学习使用 class 定义类、__init__ 初始化实例，掌握实例属性和类属性的区别与访问方式。",
         keyPoints: [
           "理解类和实例的关系。",
           "掌握 __init__ 构造方法。",
@@ -516,6 +523,7 @@ export const pythonStages: Stage[] = [
         id: "py-w8",
         title: "第 8 周：继承与多态",
         summary: "学习继承机制、方法重写和多态实现。",
+        overview: "本周深入继承与多态，学习单继承与多继承的使用方式、super() 调用父类方法、MRO 解析顺序，以及鸭子类型的多态理念。",
         keyPoints: [
           "理解单继承和多继承。",
           "掌握 super() 调用父类方法。",
@@ -588,6 +596,7 @@ export const pythonStages: Stage[] = [
         id: "py-w9",
         title: "第 9 周：魔术方法与属性控制",
         summary: "学习特殊方法和属性访问控制机制。",
+        overview: "本周学习 __str__、__repr__、__eq__ 等魔术方法定制对象行为，掌握 property 装饰器和描述符实现属性访问控制。",
         keyPoints: [
           "理解 __str__、__repr__ 等常用魔术方法。",
           "掌握 @property 装饰器。",
@@ -668,6 +677,7 @@ export const pythonStages: Stage[] = [
         id: "py-w10",
         title: "第 10 周：文件操作",
         summary: "学习文件读写、路径处理和序列化。",
+        overview: "本周学习使用 open() 和 with 语句进行文件读写，掌握 pathlib 的路径操作，以及 JSON 和 pickle 的序列化与反序列化。",
         keyPoints: [
           "使用 open() 和 with 语句处理文件。",
           "掌握 pathlib 模块的现代路径操作。",
@@ -901,7 +911,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w13-1",
             title: "装饰器基础",
-            detail: "理解装饰器语法和工作原理。",
+            detail: "理解 @decorator 语法糖背后的函数包装原理与执行时机。",
             keyPoints: [
               "@decorator 是 func = decorator(func) 的语法糖。",
               "装饰器接收函数并返回新函数。",
@@ -916,7 +926,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w13-2",
             title: "带参数的装饰器",
-            detail: "创建可配置的装饰器工厂。",
+            detail: "创建接受参数的装饰器工厂，实现可配置的函数增强功能。",
             keyPoints: [
               "装饰器工厂返回装饰器。",
               "@decorator(args) 先调用工厂再应用装饰器。",
@@ -1148,7 +1158,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w16-2",
             title: "datetime 模块",
-            detail: "处理日期、时间和时区。",
+            detail: "使用 datetime 和 zoneinfo 模块处理日期、时间、时区转换和时间差计算。",
             keyPoints: [
               "datetime.now() 获取当前时间。",
               "timedelta 表示时间差。",
@@ -1330,7 +1340,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w18-4",
             title: "concurrent.futures",
-            detail: "使用高级接口简化并发编程。",
+            detail: "使用 ThreadPoolExecutor 和 ProcessPoolExecutor 高级接口简化并发任务编排。",
             keyPoints: [
               "ThreadPoolExecutor 管理线程池。",
               "ProcessPoolExecutor 管理进程池。",
@@ -1387,7 +1397,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w19-3",
             title: "异步 I/O",
-            detail: "使用异步网络和文件 I/O。",
+            detail: "使用 asyncio 和 aiohttp 实现异步网络请求，使用 aiofiles 进行异步文件 I/O。",
             keyPoints: [
               "asyncio.open_connection() 异步 TCP 连接。",
               "aiohttp 是流行的异步 HTTP 客户端。",
@@ -1714,7 +1724,7 @@ export const pythonStages: Stage[] = [
           {
             id: "py-w23-4",
             title: "数据分析",
-            detail: "进行分组、聚合和数据透视。",
+            detail: "使用 groupby 进行分组聚合，使用 pivot_table 创建数据透视表并合并数据集。",
             keyPoints: [
               "groupby 分组聚合。",
               "pivot_table 创建数据透视表。",

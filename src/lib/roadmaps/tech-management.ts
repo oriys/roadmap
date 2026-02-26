@@ -730,7 +730,7 @@ export const techManagementStages: Stage[] = [
           {
             id: "tm-11-3",
             title: "建立学习型组织",
-            detail: "培养持续学习和改进的组织文化",
+            detail: "培养持续学习和改进的组织文化，通过知识共享与复盘机制推动团队不断进化",
             overview: "学习型组织能够快速适应变化，持续创新。",
             keyPoints: [
               "学习型组织特征",

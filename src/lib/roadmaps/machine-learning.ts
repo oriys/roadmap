@@ -11,6 +11,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w1",
         title: "第 1 周：数学基础",
         summary: "理解线性代数、微积分与概率统计在机器学习中的核心作用。",
+        overview: "本周打牢数学基础，学习向量与矩阵运算、梯度与偏导数的直觉理解，以及概率分布和贝叶斯定理在模型推断中的应用。",
         keyPoints: [
           "矩阵运算、特征值分解与奇异值分解是降维和优化的数学基础。",
           "梯度和偏导数是理解反向传播和优化算法的关键。",
@@ -63,6 +64,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w2",
         title: "第 2 周：Python 数据科学栈",
         summary: "熟练使用 NumPy、Pandas、Matplotlib 进行数据处理与可视化。",
+        overview: "本周掌握 NumPy 的向量化运算、Pandas 的数据清洗与聚合操作，以及 Matplotlib/Seaborn 的数据可视化技巧，构建高效的数据分析工作流。",
         keyPoints: [
           "NumPy 的向量化操作比原生 Python 循环快数十倍。",
           "Pandas DataFrame 是表格数据清洗与分析的利器。",
@@ -123,6 +125,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w3",
         title: "第 3 周：监督学习 - 回归",
         summary: "从线性回归出发，理解损失函数、正则化与模型评估。",
+        overview: "本周从线性回归模型出发，理解均方误差损失函数和梯度下降优化过程，学习 L1/L2 正则化防止过拟合，并掌握交叉验证评估方法。",
         keyPoints: [
           "线性回归通过最小化 MSE 学习权重，是理解梯度下降的最佳起点。",
           "L1/L2 正则化防止过拟合，Lasso 还能实现特征选择。",
@@ -133,6 +136,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w3-1",
             title: "线性回归原理",
             detail: "理解最小二乘法、梯度下降与正规方程。",
+            keyPoints: [
+              "最小二乘法通过最小化预测值与真实值的平方误差拟合模型",
+              "梯度下降通过迭代更新参数沿损失函数负梯度方向优化",
+              "正规方程可直接求解析解，但在高维数据时计算成本较高",
+            ],
             resources: [
               { title: "Scikit-learn 线性模型", url: "https://scikit-learn.org/stable/modules/linear_model.html" },
               { title: "Andrew Ng 机器学习课程", url: "https://www.coursera.org/learn/machine-learning" },
@@ -143,6 +151,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w3-2",
             title: "正则化技术",
             detail: "掌握 Ridge、Lasso 与 Elastic Net 的原理与选择。",
+            keyPoints: [
+              "L2 正则化（Ridge）缩小参数值，防止过拟合但不产生稀疏解",
+              "L1 正则化（Lasso）可将部分参数压缩为零，实现特征选择",
+              "Elastic Net 结合 L1 和 L2 优势，适用于高维相关特征场景",
+            ],
             resources: [
               { title: "Regularization 详解", url: "https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression-and-classification" },
               { title: "L1 vs L2 正则化", url: "https://towardsdatascience.com/l1-and-l2-regularization-methods-ce25e7fc831c" },
@@ -153,6 +166,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w3-3",
             title: "多项式与非线性回归",
             detail: "学习特征变换扩展线性模型的表达能力。",
+            keyPoints: [
+              "多项式特征将输入变量扩展为高次项，捕捉非线性关系",
+              "模型复杂度过高导致过拟合，过低导致欠拟合（偏差-方差权衡）",
+              "交叉验证帮助选择最优多项式阶数，平衡拟合与泛化能力",
+            ],
             resources: [
               { title: "Polynomial Features", url: "https://scikit-learn.org/stable/modules/preprocessing.html#generating-polynomial-features" },
               { title: "Bias-Variance Tradeoff", url: "https://www.cs.cornell.edu/courses/cs4780/2018fa/lectures/lecturenote12.html" },
@@ -163,6 +181,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w3-4",
             title: "模型评估与交叉验证",
             detail: "使用交叉验证避免过拟合，正确评估泛化性能。",
+            keyPoints: [
+              "K 折交叉验证将数据分为 K 份，轮流验证以获得稳健的性能估计",
+              "MSE、MAE、R² 是回归任务常用的评估指标",
+              "数据泄露（data leakage）是模型评估中最常见的陷阱之一",
+            ],
             resources: [
               { title: "Cross-validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html" },
               { title: "Metrics for Regression", url: "https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics" },
@@ -175,6 +198,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w4",
         title: "第 4 周：监督学习 - 分类",
         summary: "掌握分类算法全貌，从逻辑回归到集成方法。",
+        overview: "本周系统学习逻辑回归、决策树、SVM 等分类算法，深入理解 Bagging 和 Boosting 集成策略，掌握混淆矩阵与 ROC 曲线等评估指标。",
         keyPoints: [
           "逻辑回归通过 Sigmoid 输出概率，交叉熵作为损失函数。",
           "决策树易解释但易过拟合，集成方法显著提升性能。",
@@ -185,6 +209,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w4-1",
             title: "逻辑回归",
             detail: "理解 Sigmoid 函数、交叉熵损失与多分类扩展。",
+            keyPoints: [
+              "Sigmoid 函数将线性输出映射到 [0,1] 概率区间",
+              "交叉熵损失衡量预测概率分布与真实标签之间的差异",
+              "Softmax 回归将逻辑回归扩展到多分类问题",
+            ],
             resources: [
               { title: "Scikit-learn 逻辑回归", url: "https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression" },
               { title: "StatQuest 逻辑回归", url: "https://www.youtube.com/watch?v=yIYKR4sgzI8" },
@@ -195,6 +224,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w4-2",
             title: "决策树与随机森林",
             detail: "学习信息增益、基尼系数与 Bagging 思想。",
+            keyPoints: [
+              "决策树通过信息增益或基尼系数选择最优特征进行分裂",
+              "随机森林通过 Bagging 和随机特征子集降低过拟合风险",
+              "特征重要性评分帮助理解模型决策依据和数据特征",
+            ],
             resources: [
               { title: "Decision Trees", url: "https://scikit-learn.org/stable/modules/tree.html" },
               { title: "Random Forest", url: "https://scikit-learn.org/stable/modules/ensemble.html#random-forests" },
@@ -205,6 +239,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w4-3",
             title: "梯度提升树",
             detail: "掌握 GBDT、XGBoost、LightGBM 的原理与调参。",
+            keyPoints: [
+              "梯度提升通过逐步添加弱学习器拟合残差来构建强模型",
+              "XGBoost 引入正则化项和列采样，有效防止过拟合",
+              "LightGBM 使用直方图算法和叶子优先策略加速训练",
+            ],
             resources: [
               { title: "XGBoost 文档", url: "https://xgboost.readthedocs.io/en/latest/" },
               { title: "LightGBM 文档", url: "https://lightgbm.readthedocs.io/en/latest/" },
@@ -215,6 +254,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w4-4",
             title: "分类评估指标",
             detail: "理解混淆矩阵、精确率、召回率、F1 与 ROC-AUC。",
+            keyPoints: [
+              "混淆矩阵展示真正例、假正例、真负例和假负例的分布",
+              "精确率关注预测为正的准确性，召回率关注实际为正的覆盖率",
+              "ROC-AUC 衡量模型在不同阈值下的综合分类能力",
+            ],
             resources: [
               { title: "Classification Metrics", url: "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics" },
               { title: "ROC Curve 详解", url: "https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc" },
@@ -227,6 +271,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w5",
         title: "第 5 周：无监督学习与特征工程",
         summary: "探索聚类、降维算法与实用的特征工程技术。",
+        overview: "本周学习 K-Means、DBSCAN 等聚类算法和 PCA、t-SNE 等降维方法，同时掌握特征编码、缺失值处理和特征选择等实用工程技术。",
         keyPoints: [
           "K-Means 简单高效但对初始化敏感，DBSCAN 能发现任意形状簇。",
           "PCA 通过正交变换实现线性降维，t-SNE/UMAP 适合可视化。",
@@ -237,6 +282,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w5-1",
             title: "聚类算法",
             detail: "掌握 K-Means、层次聚类、DBSCAN 的原理与选择。",
+            keyPoints: [
+              "K-Means 迭代更新聚类中心，需预先指定簇数 K",
+              "DBSCAN 基于密度发现任意形状簇，自动识别噪声点",
+              "轮廓系数和肘部法则是评估聚类质量的常用方法",
+            ],
             resources: [
               { title: "Scikit-learn Clustering", url: "https://scikit-learn.org/stable/modules/clustering.html" },
               { title: "K-Means 详解", url: "https://stanford.edu/~cpiech/cs221/handouts/kmeans.html" },
@@ -247,6 +297,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w5-2",
             title: "降维技术",
             detail: "理解 PCA、t-SNE、UMAP 的原理与应用场景。",
+            keyPoints: [
+              "PCA 通过正交变换找到最大方差方向，实现线性降维",
+              "t-SNE 保留局部结构，适合高维数据的二维可视化",
+              "UMAP 兼顾局部与全局结构，速度比 t-SNE 更快",
+            ],
             resources: [
               { title: "PCA 详解", url: "https://scikit-learn.org/stable/modules/decomposition.html#pca" },
               { title: "t-SNE 论文", url: "https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" },
@@ -257,6 +312,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w5-3",
             title: "特征工程实践",
             detail: "学习缺失值处理、编码、缩放与特征选择。",
+            keyPoints: [
+              "缺失值可通过均值填充、插值或模型预测等方式处理",
+              "类别特征需要独热编码或目标编码转换为数值表示",
+              "特征缩放（标准化/归一化）对距离敏感的算法至关重要",
+            ],
             resources: [
               { title: "Scikit-learn 预处理", url: "https://scikit-learn.org/stable/modules/preprocessing.html" },
               { title: "Feature Engineering 书", url: "https://www.oreilly.com/library/view/feature-engineering-for/9781491953235/" },
@@ -267,6 +327,11 @@ export const machineLearningStages: Stage[] = [
             id: "ml-w5-4",
             title: "Pipeline 与 AutoML",
             detail: "构建可复用的机器学习流水线，了解自动化 ML。",
+            keyPoints: [
+              "Pipeline 将预处理和模型训练封装为可复用的端到端流程",
+              "GridSearchCV 和 RandomizedSearchCV 自动搜索最优超参数",
+              "AutoML 工具自动选择模型和超参数，降低机器学习门槛",
+            ],
             resources: [
               { title: "Scikit-learn Pipeline", url: "https://scikit-learn.org/stable/modules/compose.html" },
               { title: "Auto-sklearn", url: "https://automl.github.io/auto-sklearn/master/" },
@@ -287,6 +352,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w6",
         title: "第 6 周：神经网络基础",
         summary: "理解神经网络的构建模块与训练原理。",
+        overview: "本周从感知机到多层网络，理解激活函数、前向传播和反向传播的数学原理，学习使用 PyTorch 搭建和训练第一个神经网络模型。",
         keyPoints: [
           "神经网络本质是通过非线性激活函数堆叠的可微分函数。",
           "反向传播通过链式法则高效计算梯度。",
@@ -339,6 +405,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w7",
         title: "第 7 周：计算机视觉",
         summary: "使用卷积神经网络解决图像分类、检测与分割任务。",
+        overview: "本周学习卷积层、池化层和特征图的工作原理，掌握 ResNet 等经典架构的设计思想，并实践图像分类、目标检测和语义分割任务。",
         keyPoints: [
           "卷积层通过局部感受野和参数共享高效提取空间特征。",
           "迁移学习利用预训练模型显著降低数据需求。",
@@ -391,6 +458,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w8",
         title: "第 8 周：自然语言处理",
         summary: "从词向量到 Transformer，掌握 NLP 核心技术。",
+        overview: "本周从 Word2Vec 词向量表示出发，学习 RNN/LSTM 序列建模，重点掌握 Transformer 自注意力机制和 BERT/GPT 等预训练模型的微调方法。",
         keyPoints: [
           "词嵌入将离散词汇映射到连续向量空间，捕捉语义关系。",
           "Transformer 通过自注意力机制实现并行化和长距离依赖建模。",
@@ -451,6 +519,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w9",
         title: "第 9 周：模型部署与服务化",
         summary: "学习模型导出、API 服务与容器化部署。",
+        overview: "本周学习将训练好的模型导出为 ONNX 等格式，使用 FastAPI/Flask 构建推理服务，并通过 Docker 容器化实现可复现的部署流程。",
         keyPoints: [
           "ONNX 提供跨框架的模型格式，便于部署与优化。",
           "模型服务需要考虑延迟、吞吐量与资源利用率平衡。",
@@ -503,6 +572,7 @@ export const machineLearningStages: Stage[] = [
         id: "ml-w10",
         title: "第 10 周：MLOps 工程化",
         summary: "建立实验管理、持续训练与模型监控体系。",
+        overview: "本周学习使用 MLflow/W&B 进行实验跟踪与模型版本管理，构建自动化训练流水线，并建立数据漂移检测与模型性能监控体系。",
         keyPoints: [
           "实验跟踪是可重复研究的基础，记录代码、数据与超参。",
           "持续训练 (CT) 确保模型随数据分布变化自动更新。",

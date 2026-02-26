@@ -23,6 +23,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-1-1",
             title: "反模式的定义与三法则",
             detail: "建立反模式识别的基本概念，区分反模式与一般坏习惯。",
+            keyPoints: [
+              "反模式是反复出现的、初看有效但长期有害的解决方案。",
+              "三法则要求至少在三个独立场景中被观察到才能称为反模式。",
+              "识别反模式的前提是了解对应的正向模式与替代方案。",
+            ],
             resources: [
               { title: "Anti-pattern - Wikipedia", url: "https://en.wikipedia.org/wiki/Anti-pattern" },
               { title: "AntiPatterns Book - Wikipedia", url: "https://en.wikipedia.org/wiki/AntiPatterns" },
@@ -33,6 +38,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-1-2",
             title: "反模式形成机制与组织因素",
             detail: "分析时间压力、需求膨胀与治理缺位如何催生反模式。",
+            keyPoints: [
+              "时间压力是反模式最常见的催化剂，迫使团队选择短期方案。",
+              "需求膨胀与范围蔓延会加速技术债的隐性积累。",
+              "组织治理缺位导致技术决策缺乏一致性与长期视角。",
+            ],
             resources: [
               { title: "Martin Fowler - Technical Debt", url: "https://martinfowler.com/bliki/TechnicalDebt.html" },
               { title: "Software Design Smells", url: "https://martinfowler.com/bliki/CodeSmell.html" },
@@ -57,6 +67,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-2-1",
             title: "面条代码与拷贝粘贴编程",
             detail: "识别控制流纠缠、重复逻辑的危害与治理方向。",
+            keyPoints: [
+              "面条代码的核心特征是控制流高度纠缠，难以追踪执行路径。",
+              "拷贝粘贴编程会造成修改时的同步遗漏与逻辑分歧。",
+              "提取方法与模板方法是治理重复逻辑的主要重构手段。",
+            ],
             resources: [
               { title: "Refactoring - Extract Method", url: "https://refactoring.com/catalog/extractMethod.html" },
               { title: "Martin Fowler - Refactoring", url: "https://martinfowler.com/books/refactoring.html" },
@@ -67,6 +82,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-2-2",
             title: "魔数、死代码与船锚",
             detail: "理解隐式常量与遗留冗余如何造成不可控风险。",
+            keyPoints: [
+              "魔数隐藏了业务含义，增加代码理解与维护的认知成本。",
+              "死代码与船锚占用注意力资源，降低代码库信噪比。",
+              "定期清理未使用代码是保持代码库健康的基本纪律。",
+            ],
             resources: [
               { title: "Clean Code - Meaningful Names", url: "https://learning.oreilly.com/library/view/clean-code/9780136083238/" },
               { title: "Refactoring - Dead Code", url: "https://martinfowler.com/bliki/DeadCode.html" },
@@ -109,6 +129,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-3-1",
             title: "上帝对象与大泥球",
             detail: "识别职责过载与结构坍塌的信号，建立拆分策略。",
+            keyPoints: [
+              "上帝对象违反单一职责原则，承载过多不相关逻辑。",
+              "大泥球缺乏可辨识的内部结构，修改任何部分都可能引发连锁反应。",
+              "提取类与划分限界上下文是拆解巨型对象的核心策略。",
+            ],
             resources: [
               { title: "Single Responsibility Principle", url: "https://martinfowler.com/bliki/SingleResponsibilityPrinciple.html" },
               { title: "Big Ball of Mud", url: "http://www.laputan.org/mud/" },
@@ -119,6 +144,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-3-2",
             title: "烟囱式系统与组织孤岛",
             detail: "理解组织结构如何塑造架构，以及如何建立跨团队标准。",
+            keyPoints: [
+              "烟囱式系统导致功能重复建设与数据无法跨系统流通。",
+              "康威定律表明组织沟通结构会直接映射到系统架构。",
+              "建立平台团队与共享标准是打破孤岛的有效路径。",
+            ],
             resources: [
               { title: "Conway's Law", url: "https://martinfowler.com/bliki/ConwaysLaw.html" },
               { title: "Team Topologies", url: "https://teamtopologies.com/" },
@@ -205,6 +235,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-5-1",
             title: "分布式单体与共享数据库",
             detail: "识别服务边界失衡与数据耦合带来的部署风险。",
+            keyPoints: [
+              "分布式单体保留了单体的耦合缺点，又增加了分布式的复杂度。",
+              "共享数据库破坏服务自治，使独立部署变得不可能。",
+              "每服务独立数据库模式是实现服务自治的基础。",
+            ],
             resources: [
               { title: "Microservices Adoption Antipatterns", url: "https://microservices.io/microservices/antipatterns/-/the/series/2019/06/18/microservices-adoption-antipatterns.html" },
               { title: "Monolith to Microservices", url: "https://martinfowler.com/books/monolith-to-microservices.html" },
@@ -215,6 +250,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-5-2",
             title: "喋喋不休的微服务",
             detail: "评估 API 颗粒度与通信开销，建立聚合与缓存策略。",
+            keyPoints: [
+              "过细的 API 颗粒度导致大量跨网络调用与延迟叠加。",
+              "BFF 模式可以聚合后端调用，减少前端的网络往返。",
+              "批量请求与本地缓存是降低服务间通信开销的关键手段。",
+            ],
             resources: [
               { title: "gRPC vs REST Considerations", url: "https://grpc.io/docs/what-is-grpc/introduction/" },
               { title: "Designing Data-Intensive Applications", url: "https://dataintensive.net/" },
@@ -249,6 +289,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-6-1",
             title: "信任悖论与验证缺失",
             detail: "建立 AI 生成代码的审计与测试闭环。",
+            keyPoints: [
+              "AI 生成代码的表面正确性容易让开发者放松审查标准。",
+              "必须对 AI 产出建立与人工代码同等严格的测试与审计流程。",
+              "代码评审应特别关注 AI 生成代码中的安全漏洞与边界条件。",
+            ],
             resources: [
               { title: "OWASP Code Review Guide", url: "https://owasp.org/www-project-code-review-guide/" },
               { title: "Secure Coding Guidelines", url: "https://cheatsheetseries.owasp.org/" },
@@ -301,6 +346,11 @@ export const developmentAntiPatternsStages: Stage[] = [
             id: "ap-7-1",
             title: "检测与预防机制",
             detail: "建立代码异味检测、评审清单与工程实践闭环。",
+            keyPoints: [
+              "静态分析工具能自动识别常见代码异味与反模式信号。",
+              "结构化评审清单确保代码审查覆盖关键质量维度。",
+              "将反模式检测集成到 CI/CD 流水线可实现持续防御。",
+            ],
             resources: [
               { title: "SonarQube", url: "https://www.sonarsource.com/products/sonarqube/" },
               { title: "ESLint", url: "https://eslint.org/" },
@@ -356,6 +406,61 @@ export const developmentAntiPatternsKnowledgeCards: KnowledgeCard[] = [
       "文化：持续改进与风险透明。",
     ],
     practice: "为团队设计一份反模式治理清单（含检测项与行动项）。",
+  },
+  {
+    id: "code-smells",
+    title: "代码异味分类",
+    summary: "识别与分类常见代码级反模式信号。",
+    points: [
+      "结构异味：面条代码、上帝方法、深层嵌套。",
+      "冗余异味：拷贝粘贴、死代码、船锚代码。",
+      "命名异味：魔数、含义模糊的变量与函数名。",
+    ],
+    practice: "对一个 500 行以上的文件进行代码异味审计，列出至少 5 项改进点。",
+  },
+  {
+    id: "arch-decay",
+    title: "架构腐化预防",
+    summary: "识别架构退化的早期信号并建立防线。",
+    points: [
+      "依赖方向违规与循环依赖是架构腐化的首要信号。",
+      "模块边界模糊导致变更影响范围不可控。",
+      "定期架构适应度函数评估可量化腐化程度。",
+    ],
+    practice: "绘制项目模块依赖图，标记所有违反分层约束的依赖箭头。",
+  },
+  {
+    id: "ai-risks",
+    title: "AI 辅助开发风险",
+    summary: "理解生成式 AI 在开发流程中引入的新型风险。",
+    points: [
+      "AI 生成代码可能包含隐蔽的安全漏洞与许可证冲突。",
+      "过度依赖 AI 会削弱开发者的设计判断力与调试能力。",
+      "缺乏溯源机制使 AI 产出的质量责任难以界定。",
+    ],
+    practice: "审查一段 AI 生成的代码，标注其中的安全风险与逻辑缺陷。",
+  },
+  {
+    id: "refactoring",
+    title: "重构策略与手段",
+    summary: "掌握从局部到系统级的渐进式重构方法。",
+    points: [
+      "提取方法与提取类是消除代码级反模式的基础操作。",
+      "绞杀者模式允许在不中断服务的前提下逐步替换遗留系统。",
+      "重构必须配合充分的测试覆盖，避免引入回归缺陷。",
+    ],
+    practice: "选择一个上帝类，使用提取类手法将其拆分为 3 个职责清晰的模块。",
+  },
+  {
+    id: "org-culture",
+    title: "组织文化与反模式",
+    summary: "理解组织文化如何催生或抑制反模式。",
+    points: [
+      "缺乏心理安全感的团队倾向于隐藏技术债而非暴露问题。",
+      "英雄文化鼓励个人救火而非系统性预防。",
+      "定期回顾与透明度机制是建立改进文化的基石。",
+    ],
+    practice: "设计一次团队回顾会议议程，专门聚焦反模式识别与改进承诺。",
   },
 ]
 

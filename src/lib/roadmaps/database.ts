@@ -14,6 +14,7 @@ export const databaseStages: Stage[] = [
         id: "db-w1",
         title: "第 1 周：关系型数据库基础",
         summary: "理解关系模型、SQL 语言与事务特性。",
+        overview: "本周介绍关系型数据库的理论基础，涵盖关系模型、SQL 语言分类、事务的 ACID 特性，以及四种隔离级别对并发控制的影响。",
         keyPoints: [
           "关系模型是数据库的理论基础，表是核心抽象。",
           "ACID 特性保证事务的可靠性。",
@@ -54,7 +55,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w1-3",
             title: "隔离级别与并发控制",
-            detail: "理解不同隔离级别与并发问题。",
+            detail: "理解四种事务隔离级别的差异，分析脏读、不可重复读与幻读等并发问题。",
             keyPoints: [
               "读未提交（Read Uncommitted）：可能脏读。",
               "读已提交（Read Committed）：可能不可重复读。",
@@ -73,6 +74,7 @@ export const databaseStages: Stage[] = [
         id: "db-w2",
         title: "第 2 周：数据库设计",
         summary: "掌握数据库范式、索引原理与查询优化。",
+        overview: "本周深入数据库设计核心，学习范式化与反范式化的取舍，理解 B+Tree、Hash 等索引结构的原理，并掌握通过执行计划分析和优化查询的方法。",
         keyPoints: [
           "范式减少冗余，反范式提高读取性能。",
           "索引是查询优化的核心，但会增加写入开销。",
@@ -114,7 +116,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w2-3",
             title: "查询优化与执行计划",
-            detail: "使用执行计划分析和优化查询。",
+            detail: "通过 EXPLAIN 分析查询执行计划，识别全表扫描等性能瓶颈并进行优化。",
             keyPoints: [
               "EXPLAIN 显示查询执行计划。",
               "关注扫描类型：Seq Scan vs Index Scan。",
@@ -133,6 +135,7 @@ export const databaseStages: Stage[] = [
         id: "db-w3",
         title: "第 3 周：数据库架构",
         summary: "掌握复制、分片与连接管理。",
+        overview: "本周学习数据库分布式架构的关键技术，包括主从复制与读写分离、水平与垂直分片策略，以及连接池与负载均衡的配置与管理。",
         keyPoints: [
           "主从复制实现读写分离和高可用。",
           "分库分表解决单库容量和性能瓶颈。",
@@ -157,7 +160,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w3-2",
             title: "分库分表策略",
-            detail: "设计水平和垂直分片方案。",
+            detail: "设计水平分表与垂直分库策略，选择合适的分片键实现数据均匀分布。",
             keyPoints: [
               "垂直分库：按业务拆分，不同业务不同库。",
               "水平分表：按规则拆分数据到多个表/库。",
@@ -203,6 +206,7 @@ export const databaseStages: Stage[] = [
         id: "db-w4",
         title: "第 4 周：PostgreSQL 架构",
         summary: "理解 PostgreSQL 的进程模型、内存结构与存储机制。",
+        overview: "本周深入 PostgreSQL 内部架构，了解多进程模型与共享内存管理、WAL 日志的写入与恢复机制，以及 MVCC 多版本并发控制的实现原理。",
         keyPoints: [
           "PostgreSQL 采用多进程架构，每个连接一个进程。",
           "WAL（Write-Ahead Logging）保证数据持久性。",
@@ -263,6 +267,7 @@ export const databaseStages: Stage[] = [
         id: "db-w5",
         title: "第 5 周：PostgreSQL 17 新特性",
         summary: "掌握 PostgreSQL 17 的重要新功能。",
+        overview: "本周聚焦 PostgreSQL 17 的重要新特性，包括 SQL/JSON 标准函数、pg_basebackup 增量备份，以及逻辑复制槽在高可用场景的 Failover 支持。",
         keyPoints: [
           "JSON_TABLE 将 JSON 数据转换为关系表。",
           "增量备份减少备份时间和存储空间。",
@@ -288,7 +293,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w5-2",
             title: "增量备份（pg_basebackup）",
-            detail: "使用增量备份减少备份开销。",
+            detail: "使用 pg_basebackup 增量备份与 pg_combinebackup 合并，减少备份时间与存储开销。",
             keyPoints: [
               "pg_basebackup 支持增量备份。",
               "pg_combinebackup 合并增量备份。",
@@ -323,6 +328,7 @@ export const databaseStages: Stage[] = [
         id: "db-w6",
         title: "第 6 周：PostgreSQL 高级特性",
         summary: "掌握分区表、扩展生态与全文搜索。",
+        overview: "本周探索 PostgreSQL 高级特性，学习范围、列表和哈希分区表的使用，了解 PostGIS 和 pg_vector 等扩展生态，并掌握内置全文搜索功能。",
         keyPoints: [
           "分区表按规则将大表拆分为小表。",
           "PostgreSQL 扩展生态丰富，如 PostGIS、pg_vector。",
@@ -332,7 +338,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w6-1",
             title: "分区表与继承",
-            detail: "使用分区表管理大规模数据。",
+            detail: "使用范围、列表和哈希分区策略管理大规模数据，通过分区裁剪提升查询性能。",
             keyPoints: [
               "范围分区：按时间、ID 范围分区。",
               "列表分区：按离散值分区。",
@@ -383,6 +389,7 @@ export const databaseStages: Stage[] = [
         id: "db-w7",
         title: "第 7 周：PostgreSQL 性能调优",
         summary: "掌握 PostgreSQL 性能分析与调优技术。",
+        overview: "本周专注于 PostgreSQL 性能调优，深入分析 EXPLAIN 执行计划，理解 VACUUM 与自动清理机制，并根据工作负载调整关键配置参数。",
         keyPoints: [
           "EXPLAIN ANALYZE 是性能分析的核心工具。",
           "VACUUM 清理死元组，维护表健康。",
@@ -455,6 +462,7 @@ export const databaseStages: Stage[] = [
         id: "db-w8",
         title: "第 8 周：MySQL 架构",
         summary: "理解 InnoDB 存储引擎的架构与工作原理。",
+        overview: "本周深入 MySQL InnoDB 存储引擎，理解其 B+Tree 聚簇索引架构、Buffer Pool 与 Change Buffer 等内存结构，以及 redo log 和 undo log 的崩溃恢复机制。",
         keyPoints: [
           "InnoDB 是 MySQL 默认存储引擎，支持事务和外键。",
           "Buffer Pool 是性能的关键，缓存数据和索引。",
@@ -515,6 +523,7 @@ export const databaseStages: Stage[] = [
         id: "db-w9",
         title: "第 9 周：MySQL 复制与高可用",
         summary: "掌握 MySQL 复制机制与高可用方案。",
+        overview: "本周学习 MySQL 高可用方案，涵盖基于 binlog 和 GTID 的主从复制、Paxos 协议的组复制，以及 InnoDB Cluster 的部署与自动故障转移。",
         keyPoints: [
           "GTID 简化复制管理，支持自动故障转移。",
           "组复制提供多主高可用能力。",
@@ -540,7 +549,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w9-2",
             title: "组复制（Group Replication）",
-            detail: "使用组复制实现多主高可用。",
+            detail: "基于 Paxos 协议的组复制机制，实现多主写入与自动故障检测的高可用架构。",
             keyPoints: [
               "Paxos 协议：保证数据一致性。",
               "单主模式：自动选举主节点。",
@@ -575,6 +584,7 @@ export const databaseStages: Stage[] = [
         id: "db-w10",
         title: "第 10 周：MySQL 性能调优",
         summary: "掌握 MySQL 查询优化与性能调优。",
+        overview: "本周掌握 MySQL 性能调优实践，包括复合索引与覆盖索引的设计策略、慢查询日志的分析定位，以及连接管理与线程池的并发优化。",
         keyPoints: [
           "索引设计是 MySQL 性能的关键。",
           "慢查询日志帮助定位性能问题。",
@@ -584,7 +594,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w10-1",
             title: "索引优化与覆盖索引",
-            detail: "设计高效的索引策略。",
+            detail: "设计高效的复合索引与覆盖索引策略，利用最左前缀原则和索引下推优化查询。",
             keyPoints: [
               "最左前缀原则：复合索引从左到右匹配。",
               "覆盖索引：索引包含所有查询列。",
@@ -600,7 +610,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w10-2",
             title: "慢查询分析",
-            detail: "使用慢查询日志定位性能问题。",
+            detail: "启用慢查询日志并使用分析工具定位性能瓶颈，结合执行计划优化慢查询。",
             keyPoints: [
               "slow_query_log：启用慢查询日志。",
               "long_query_time：定义慢查询阈值。",
@@ -984,7 +994,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w16-2",
             title: "搜索相关性调优",
-            detail: "提升搜索结果的相关性和质量。",
+            detail: "利用 BM25 评分算法、Boosting 权重调整和自定义评分函数提升搜索相关性。",
             keyPoints: [
               "TF-IDF 与 BM25：相关性评分算法。",
               "Boosting：提升特定字段或查询的权重。",
@@ -1056,7 +1066,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w17-2",
             title: "InfluxDB / TimescaleDB",
-            detail: "了解主流时序数据库的特点。",
+            detail: "对比 InfluxDB、TimescaleDB 和 Prometheus 等主流时序数据库的架构特点与适用场景。",
             keyPoints: [
               "InfluxDB：专用时序数据库，Flux 查询语言。",
               "TimescaleDB：PostgreSQL 扩展，SQL 兼容。",
@@ -1072,7 +1082,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w17-3",
             title: "降采样与数据保留",
-            detail: "管理时序数据的存储成本。",
+            detail: "通过降采样聚合历史数据、配置数据保留策略和分层存储来管理时序数据的存储成本。",
             keyPoints: [
               "降采样：聚合历史数据，减少存储。",
               "数据保留策略：自动删除过期数据。",
@@ -1116,7 +1126,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w18-2",
             title: "多模数据库趋势",
-            detail: "了解多模数据库的发展趋势。",
+            detail: "了解多模数据库的发展趋势，分析一站式数据平台与专用数据库的选型权衡。",
             keyPoints: [
               "PostgreSQL：关系 + JSON + 向量 + 全文。",
               "Redis 8：KV + JSON + 时序 + 向量。",
@@ -1132,7 +1142,7 @@ export const databaseStages: Stage[] = [
           {
             id: "db-w18-3",
             title: "数据库选型决策",
-            detail: "根据需求选择合适的数据库。",
+            detail: "综合数据模型、一致性需求、扩展性和运维成本等因素，选择最适合业务场景的数据库。",
             keyPoints: [
               "数据模型：关系、文档、KV、图、时序。",
               "一致性需求：强一致 vs 最终一致。",

@@ -23,6 +23,11 @@ export const locksStages: Stage[] = [
                         id: "w1-1",
                         title: "进程、线程与协程：并发模型的演进",
                         detail: "理解操作系统如何调度执行单元，进程隔离的代价，线程共享内存的便利与风险，以及协程的用户态调度优势。",
+                        keyPoints: [
+                            "进程拥有独立地址空间，切换开销大但隔离性强；线程共享地址空间，切换快但需同步。",
+                            "协程（goroutine/coroutine）在用户态调度，避免内核态切换开销，支持百万级并发。",
+                            "并发模型的选择取决于隔离需求、通信方式和性能要求。",
+                        ],
                         resources: [
                             { title: "Operating Systems: Three Easy Pieces - Concurrency", url: "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf" },
                             { title: "The Linux Kernel - Processes", url: "https://www.kernel.org/doc/html/latest/admin-guide/mm/concepts.html" },
@@ -33,6 +38,11 @@ export const locksStages: Stage[] = [
                         id: "w1-2",
                         title: "临界区与竞态条件：数据竞争的根源",
                         detail: "多线程同时读写共享变量会导致不可预测的结果。通过银行转账、计数器递增等经典案例，理解竞态条件的危害。",
+                        keyPoints: [
+                            "竞态条件（Race Condition）的本质是非原子的「检查-操作」序列被并发打断。",
+                            "数据竞争（Data Race）是竞态条件的子集：两个线程同时访问同一内存且至少一个是写操作。",
+                            "工具检测是发现数据竞争的关键：Go race detector、ThreadSanitizer 可在运行时捕获。",
+                        ],
                         resources: [
                             { title: "CWE-362: Race Condition", url: "https://cwe.mitre.org/data/definitions/362.html" },
                             { title: "Data Race Detector (Go)", url: "https://go.dev/doc/articles/race_detector" },
@@ -43,6 +53,11 @@ export const locksStages: Stage[] = [
                         id: "w1-3",
                         title: "内存可见性与 Happens-Before 关系",
                         detail: "CPU 缓存、编译器重排序、指令乱序执行都可能导致线程看到「过期」数据。理解 Java/Go/C++ 的内存模型与 happens-before 规则。",
+                        keyPoints: [
+                            "每个 CPU 核心有独立缓存（L1/L2），写入可能不会立即对其他核心可见。",
+                            "Happens-before 是内存模型的核心抽象：如果 A happens-before B，则 A 的效果对 B 可见。",
+                            "volatile（Java）、atomic（C++/Go）通过内存屏障建立 happens-before 关系。",
+                        ],
                         resources: [
                             { title: "The Java Memory Model", url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html#jls-17.4" },
                             { title: "The Go Memory Model", url: "https://go.dev/ref/mem" },
@@ -53,6 +68,11 @@ export const locksStages: Stage[] = [
                         id: "w1-4",
                         title: "原子操作与内存屏障：硬件层面的保障",
                         detail: "现代 CPU 提供 CAS、LL/SC 等原子指令，内存屏障确保操作顺序。这是所有高级同步原语的基础。",
+                        keyPoints: [
+                            "CAS（Compare-And-Swap）是最常用的原子指令，x86 用 CMPXCHG，ARM 用 LL/SC 对实现。",
+                            "内存屏障分为读屏障、写屏障和全屏障，防止 CPU 和编译器对指令重排序。",
+                            "原子操作是锁、信号量、无锁数据结构等所有同步机制的底层基石。",
+                        ],
                         resources: [
                             { title: "std::atomic (C++ Reference)", url: "https://en.cppreference.com/w/cpp/atomic/atomic" },
                             { title: "java.util.concurrent.atomic (Java)", url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/package-summary.html" },
@@ -77,6 +97,11 @@ export const locksStages: Stage[] = [
                         id: "w2-1",
                         title: "互斥锁（Mutex）：排他访问的基石",
                         detail: "从 Peterson 算法到 Futex，理解互斥锁如何保证互斥性。探讨公平锁 vs 非公平锁、可重入锁的设计。",
+                        keyPoints: [
+                            "Futex（Fast Userspace Mutex）结合用户态自旋与内核态阻塞，是 Linux 互斥锁的核心实现。",
+                            "公平锁按申请顺序授予锁，避免饥饿但吞吐量较低；非公平锁允许插队，吞吐量更高。",
+                            "可重入锁允许同一线程多次获取同一把锁而不死锁，需维护持有计数。",
+                        ],
                         resources: [
                             { title: "pthread_mutex (POSIX)", url: "https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html" },
                             { title: "sync.Mutex (Go)", url: "https://pkg.go.dev/sync#Mutex" },
@@ -87,6 +112,11 @@ export const locksStages: Stage[] = [
                         id: "w2-2",
                         title: "读写锁（RWLock）：读多写少的优化",
                         detail: "允许并发读取但独占写入。理解读者优先 vs 写者优先策略，以及写饥饿问题。",
+                        keyPoints: [
+                            "读锁（共享锁）允许多个读者同时持有；写锁（排他锁）要求独占访问。",
+                            "读者优先策略可能导致写者饥饿；写者优先策略可能导致读者等待时间增加。",
+                            "读写锁适合读写比例悬殊的场景，若写操作频繁则退化为互斥锁甚至更差。",
+                        ],
                         resources: [
                             { title: "sync.RWMutex (Go)", url: "https://pkg.go.dev/sync#RWMutex" },
                             { title: "ReentrantReadWriteLock (Java)", url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/ReentrantReadWriteLock.html" },
@@ -97,6 +127,11 @@ export const locksStages: Stage[] = [
                         id: "w2-3",
                         title: "自旋锁与混合锁：忙等待的权衡",
                         detail: "自旋锁在等待时不让出 CPU，适合持锁时间极短的场景。现代锁常采用先自旋后阻塞的混合策略。",
+                        keyPoints: [
+                            "自旋锁在持锁时间小于两次上下文切换的开销时更高效。",
+                            "混合锁（Adaptive Lock）先自旋若干次，超时后再进入内核阻塞等待。",
+                            "在单核 CPU 上使用自旋锁无意义，因为持锁线程无法在自旋线程运行时释放锁。",
+                        ],
                         resources: [
                             { title: "Spinlock (Linux Kernel)", url: "https://www.kernel.org/doc/html/latest/locking/spinlocks.html" },
                             { title: "Adaptive Spinning (JVM)", url: "https://wiki.openjdk.org/display/HotSpot/Synchronization" },
@@ -131,6 +166,11 @@ export const locksStages: Stage[] = [
                         id: "w3-1",
                         title: "死锁的四个必要条件与经典案例",
                         detail: "哲学家就餐问题是死锁的经典模型。理解互斥、占有等待、非抢占、循环等待如何共同导致死锁。",
+                        keyPoints: [
+                            "四个必要条件缺一不可：互斥、占有等待、非抢占、循环等待同时成立才会死锁。",
+                            "哲学家就餐问题中每人先拿左叉再拿右叉，形成循环等待导致死锁。",
+                            "破坏任意一个条件即可预防死锁，如统一锁的获取顺序可破坏循环等待。",
+                        ],
                         resources: [
                             { title: "Deadlock (Wikipedia)", url: "https://en.wikipedia.org/wiki/Deadlock" },
                             { title: "Dining Philosophers Problem", url: "https://en.wikipedia.org/wiki/Dining_philosophers_problem" },
@@ -141,6 +181,11 @@ export const locksStages: Stage[] = [
                         id: "w3-2",
                         title: "死锁预防与避免：银行家算法",
                         detail: "通过破坏死锁的必要条件来预防，或使用银行家算法动态避免不安全状态。理解安全状态与资源分配图。",
+                        keyPoints: [
+                            "银行家算法在每次资源请求前模拟分配，检查系统是否仍处于安全状态。",
+                            "安全状态意味着存在至少一种调度顺序让所有进程都能完成。",
+                            "实际工程中银行家算法开销较大，更常用锁排序和超时机制来预防死锁。",
+                        ],
                         resources: [
                             { title: "Banker's Algorithm (Wikipedia)", url: "https://en.wikipedia.org/wiki/Banker%27s_algorithm" },
                             { title: "Deadlock Prevention (GeeksforGeeks)", url: "https://www.geeksforgeeks.org/deadlock-prevention/" },
@@ -193,6 +238,11 @@ export const locksStages: Stage[] = [
                         id: "w4-1",
                         title: "synchronized 与内置锁优化",
                         detail: "synchronized 是 Java 最基础的同步机制。理解监视器锁、偏向锁、轻量级锁、重量级锁的升级过程。",
+                        keyPoints: [
+                            "JVM 对 synchronized 做了三级优化：偏向锁→轻量级锁→重量级锁，按竞争程度升级。",
+                            "偏向锁假设只有一个线程访问，无竞争时几乎零开销；出现竞争则撤销升级。",
+                            "synchronized 的 monitor 关联对象头的 Mark Word，通过 CAS 实现锁状态转换。",
+                        ],
                         resources: [
                             { title: "Intrinsic Locks and Synchronization (Oracle)", url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html" },
                             { title: "Biased Locking (JVM)", url: "https://wiki.openjdk.org/display/HotSpot/Synchronization" },
@@ -203,6 +253,11 @@ export const locksStages: Stage[] = [
                         id: "w4-2",
                         title: "ReentrantLock：灵活的显式锁",
                         detail: "ReentrantLock 提供了 synchronized 所缺少的特性：可中断获取、超时获取、公平模式、多条件变量。",
+                        keyPoints: [
+                            "lockInterruptibly() 允许等待锁时响应中断，避免线程无限阻塞。",
+                            "tryLock(timeout) 支持超时获取锁，适合需要快速失败的场景。",
+                            "ReentrantLock 基于 AQS（AbstractQueuedSynchronizer）实现，理解 AQS 是掌握 Java 并发的关键。",
+                        ],
                         resources: [
                             { title: "ReentrantLock (Java SE 21)", url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html" },
                             { title: "Lock Objects (Oracle Tutorial)", url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/newlocks.html" },
@@ -247,6 +302,11 @@ export const locksStages: Stage[] = [
                         id: "w5-1",
                         title: "sync.Mutex 与 sync.RWMutex 实践",
                         detail: "Go 的 Mutex 简洁高效但不支持重入。RWMutex 适合读多写少场景。理解锁的正确使用模式与常见错误。",
+                        keyPoints: [
+                            "Go 的 Mutex 不可重入，同一 goroutine 重复 Lock() 会直接死锁。",
+                            "惯用模式是 mu.Lock(); defer mu.Unlock()，确保异常路径也能释放锁。",
+                            "RWMutex 的写锁会等待所有已持有的读锁释放，读锁过多时写操作可能饥饿。",
+                        ],
                         resources: [
                             { title: "sync.Mutex (Go)", url: "https://pkg.go.dev/sync#Mutex" },
                             { title: "sync.RWMutex (Go)", url: "https://pkg.go.dev/sync#RWMutex" },
@@ -257,6 +317,11 @@ export const locksStages: Stage[] = [
                         id: "w5-2",
                         title: "WaitGroup、Once 与并发编排",
                         detail: "WaitGroup 等待多个 goroutine 完成；Once 确保初始化只执行一次。掌握 goroutine 生命周期管理。",
+                        keyPoints: [
+                            "WaitGroup.Add() 必须在 goroutine 启动前调用，否则可能在 Wait() 之前来不及注册。",
+                            "sync.Once 保证函数只执行一次，即使多个 goroutine 同时调用，适合懒初始化。",
+                            "goroutine 泄漏是常见问题，必须确保每个 goroutine 有明确的退出条件。",
+                        ],
                         resources: [
                             { title: "sync.WaitGroup (Go)", url: "https://pkg.go.dev/sync#WaitGroup" },
                             { title: "sync.Once (Go)", url: "https://pkg.go.dev/sync#Once" },
@@ -301,6 +366,11 @@ export const locksStages: Stage[] = [
                         id: "w6-1",
                         title: "CAS 原理与无锁编程基础",
                         detail: "CAS 是无锁编程的核心：比较并交换，失败则重试。理解 CAS loop 模式与其局限性。",
+                        keyPoints: [
+                            "CAS loop 模式：读取旧值→计算新值→CAS 尝试更新→失败则重试，直到成功。",
+                            "高竞争下 CAS 重试次数增多，性能可能不如锁；需评估竞争程度再选择方案。",
+                            "无锁（Lock-Free）保证至少一个线程能进展，但不保证所有线程都能进展（非 Wait-Free）。",
+                        ],
                         resources: [
                             { title: "Compare-and-swap (Wikipedia)", url: "https://en.wikipedia.org/wiki/Compare-and-swap" },
                             { title: "Lock-Free Programming (Baeldung)", url: "https://www.baeldung.com/lock-free-programming" },
@@ -311,6 +381,11 @@ export const locksStages: Stage[] = [
                         id: "w6-2",
                         title: "ABA 问题与解决方案",
                         detail: "ABA 问题是 CAS 的经典陷阱。理解问题场景，学习版本号（AtomicStampedReference）与标记引用等解决方案。",
+                        keyPoints: [
+                            "ABA 问题在无锁栈/队列中尤为危险：节点被回收又重新分配到同一地址。",
+                            "AtomicStampedReference 为每次 CAS 附加一个单调递增的版本号，彻底避免 ABA。",
+                            "Hazard Pointer 是另一种方案，通过延迟回收确保被引用的节点不会被复用。",
+                        ],
                         resources: [
                             { title: "ABA Problem (Wikipedia)", url: "https://en.wikipedia.org/wiki/ABA_problem" },
                             { title: "AtomicStampedReference (Java)", url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/AtomicStampedReference.html" },
@@ -363,6 +438,11 @@ export const locksStages: Stage[] = [
                         id: "w7-1",
                         title: "ACID 与事务基础",
                         detail: "事务是数据库操作的逻辑单元，ACID 确保其正确性。理解 commit/rollback、事务日志（WAL）与崩溃恢复。",
+                        keyPoints: [
+                            "WAL（Write-Ahead Logging）先写日志再写数据，崩溃后通过重放日志恢复一致状态。",
+                            "原子性通过 undo log 实现回滚，持久性通过 redo log 保证已提交数据不丢失。",
+                            "事务应尽量短小，长事务会持有锁时间过长并消耗大量 MVCC 版本资源。",
+                        ],
                         resources: [
                             { title: "ACID (Wikipedia)", url: "https://en.wikipedia.org/wiki/ACID" },
                             { title: "PostgreSQL Transactions", url: "https://www.postgresql.org/docs/current/tutorial-transactions.html" },
@@ -417,6 +497,11 @@ export const locksStages: Stage[] = [
                         id: "w8-1",
                         title: "行锁、页锁与表锁",
                         detail: "不同粒度的锁在并发度与开销间权衡。理解 InnoDB 行锁、MyISAM 表锁、锁升级等概念。",
+                        keyPoints: [
+                            "InnoDB 默认使用行锁，通过索引定位记录；无索引查询会退化为表锁。",
+                            "MyISAM 只支持表锁，适合读密集但不适合高并发写入场景。",
+                            "锁升级（Lock Escalation）是数据库在行锁过多时自动升级为表锁以减少开销。",
+                        ],
                         resources: [
                             { title: "PostgreSQL Explicit Locking", url: "https://www.postgresql.org/docs/current/explicit-locking.html" },
                             { title: "MySQL InnoDB Locking", url: "https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html" },
@@ -479,6 +564,11 @@ export const locksStages: Stage[] = [
                         id: "w9-1",
                         title: "Redis 分布式锁基础",
                         detail: "使用 SET NX PX 实现分布式锁。理解锁的获取、释放、原子性保证与常见陷阱。",
+                        keyPoints: [
+                            "SET key value NX PX milliseconds 原子完成「仅当 key 不存在时设置并附加过期时间」。",
+                            "释放锁必须用 Lua 脚本原子地检查 value 再删除，防止误删其他客户端的锁。",
+                            "单节点 Redis 锁在主从切换时可能丢失，不适合对正确性要求极高的场景。",
+                        ],
                         resources: [
                             { title: "Distributed Locks with Redis", url: "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/" },
                             { title: "Redis SET Command", url: "https://redis.io/docs/latest/commands/set/" },
@@ -533,6 +623,11 @@ export const locksStages: Stage[] = [
                         id: "w10-1",
                         title: "ZooKeeper 分布式锁",
                         detail: "ZooKeeper 的临时顺序节点天然适合实现分布式锁。理解 Curator 的 InterProcessMutex 实现。",
+                        keyPoints: [
+                            "每个客户端在锁路径下创建临时顺序节点，序号最小者获得锁。",
+                            "未获锁的客户端只监听（watch）前一个序号的节点，避免惊群效应。",
+                            "临时节点在客户端会话断开时自动删除，天然实现锁的自动释放。",
+                        ],
                         resources: [
                             { title: "ZooKeeper Recipes - Locks", url: "https://zookeeper.apache.org/doc/current/recipes.html#sc_recipes_Locks" },
                             { title: "Curator InterProcessMutex", url: "https://curator.apache.org/docs/guides/lock" },
@@ -619,6 +714,50 @@ export const locksKnowledgeCards: KnowledgeCard[] = [
             "Fencing Token 是防止僵尸客户端的关键：锁服务返回单调递增的 token，资源服务拒绝旧 token。",
         ],
         practice: "用 Redis 和 etcd 分别实现分布式锁，模拟网络分区场景对比行为。",
+    },
+    {
+        id: "card5",
+        title: "锁的粒度决定了并发度与复杂度",
+        summary: "锁的粒度越细并发度越高，但管理锁的复杂度和开销也越大。选择合适的锁粒度是并发设计的核心决策。",
+        points: [
+            "粗粒度锁（如全局锁）实现简单但吞吐量低，适合竞争不激烈的场景。",
+            "细粒度锁（如分段锁、行锁）并发度高但容易引入死锁与复杂的锁序问题。",
+            "锁拆分与锁分离（Lock Splitting/Striping）是优化热点锁的常用手段。",
+        ],
+        practice: "将一个全局锁保护的 HashMap 改造为分段锁版本，压测对比吞吐量差异。",
+    },
+    {
+        id: "card6",
+        title: "条件同步是锁的高级应用",
+        summary: "条件变量和 Channel 将锁从互斥工具扩展为协作工具，让线程在满足条件时才继续执行。",
+        points: [
+            "条件变量必须配合互斥锁使用，先获取锁、检查条件、再等待。",
+            "虚假唤醒（Spurious Wakeup）要求等待必须在 while 循环中进行。",
+            "Go 的 Channel 提供了更安全的通信方式，避免了显式锁与条件变量的复杂性。",
+        ],
+        practice: "用条件变量实现一个有界阻塞队列，验证生产者-消费者模式的正确性。",
+    },
+    {
+        id: "card7",
+        title: "锁的性能优化需要量化分析",
+        summary: "锁优化不能靠直觉，需要通过性能剖析工具定位瓶颈，针对性地选择优化策略。",
+        points: [
+            "锁竞争（Lock Contention）是并发瓶颈的常见来源，perf/pprof 可定位热点锁。",
+            "减少持锁时间、缩小临界区、避免在锁内做 I/O 是基本优化原则。",
+            "JVM 的偏向锁、轻量级锁等优化会根据竞争程度自动升级，理解升级路径有助于调优。",
+        ],
+        practice: "使用 Go pprof 或 Java JFR 分析一个高并发服务的锁竞争情况，找出热点锁并优化。",
+    },
+    {
+        id: "card8",
+        title: "分布式锁的可靠性依赖于故障处理",
+        summary: "分布式环境中网络分区、进程崩溃、时钟偏移是常态，锁的正确性取决于故障场景的处理。",
+        points: [
+            "锁必须有过期时间（TTL），否则持有者崩溃会导致锁永远无法释放。",
+            "看门狗续期与 Fencing Token 缺一不可：续期保证业务完成前不丢锁，Token 保证丢锁后不写脏数据。",
+            "监控锁的获取耗时、持有时长、续期失败率是生产环境的必备指标。",
+        ],
+        practice: "为分布式锁服务添加 Prometheus 监控指标，覆盖获取、释放、超时和续期场景。",
     },
 ]
 

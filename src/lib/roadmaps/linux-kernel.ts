@@ -11,6 +11,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w1",
         title: "第 1 周：Linux 系统基础",
         summary: "深入理解 Linux 操作系统的基本概念和用户空间操作。",
+        overview: "本周学习用户态与内核态的区别、系统调用机制和进程的基本概念，熟练掌握 Shell 命令行操作和 Linux 文件系统层次结构。",
         keyPoints: [
           "Linux 的发展历史和开源哲学是理解内核社区文化的基础。",
           "系统调用是用户空间与内核空间通信的唯一桥梁。",
@@ -63,6 +64,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w2",
         title: "第 2 周：C 语言与开发工具",
         summary: "强化 C 语言能力，熟悉内核开发常用的工具链。",
+        overview: "本周强化指针、结构体和内存管理等 C 语言核心技能，学习 GCC、GDB、Make 等开发工具，并搭建内核编译和 QEMU 调试环境。",
         keyPoints: [
           "内核使用 C 语言和少量汇编编写，需要深入理解指针和内存布局。",
           "GCC 扩展和内核宏是阅读内核源码的关键。",
@@ -123,6 +125,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w3",
         title: "第 3 周：进程管理",
         summary: "掌握内核如何管理进程的创建、调度和终止。",
+        overview: "本周深入 task_struct 数据结构，理解 fork/exec/wait 进程生命周期管理，学习 CFS 完全公平调度器的设计原理和进程状态转换机制。",
         keyPoints: [
           "task_struct 是进程的内核表示，包含进程的所有元数据。",
           "CFS（完全公平调度器）是 Linux 默认的进程调度器。",
@@ -133,6 +136,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w3-1",
             title: "task_struct 结构",
             detail: "深入分析进程描述符的关键字段和组织方式。",
+            keyPoints: [
+              "task_struct 包含进程状态、调度信息、内存描述符等核心字段",
+              "进程通过双向链表和 PID 哈希表组织，便于快速查找",
+              "thread_info 结构存储在内核栈底部，用于快速获取当前进程信息",
+            ],
             resources: [
               { title: "task_struct 源码", url: "https://elixir.bootlin.com/linux/latest/source/include/linux/sched.h" },
               { title: "Linux Process Descriptor", url: "https://www.kernel.org/doc/html/latest/scheduler/sched-design-CFS.html" },
@@ -143,6 +151,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w3-2",
             title: "进程调度器",
             detail: "理解 CFS 调度器的设计理念、红黑树和虚拟运行时间。",
+            keyPoints: [
+              "CFS 使用红黑树按虚拟运行时间排序，保证调度公平性",
+              "调度类（sched_class）支持实时、CFS、idle 等多种调度策略",
+              "nice 值和 cgroup 带宽控制影响进程的 CPU 时间分配",
+            ],
             resources: [
               { title: "CFS 调度器设计", url: "https://www.kernel.org/doc/html/latest/scheduler/sched-design-CFS.html" },
               { title: "Scheduling Classes", url: "https://www.kernel.org/doc/html/latest/scheduler/sched-nice-design.html" },
@@ -153,6 +166,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w3-3",
             title: "进程创建与销毁",
             detail: "分析 fork、clone、exit 系统调用的内核实现。",
+            keyPoints: [
+              "fork 通过 Copy-on-Write 机制延迟复制页面，提高创建效率",
+              "clone 系统调用可选择性共享地址空间、文件表等资源",
+              "进程退出时通过 do_exit 释放资源并向父进程发送 SIGCHLD 信号",
+            ],
             resources: [
               { title: "fork 实现", url: "https://elixir.bootlin.com/linux/latest/source/kernel/fork.c" },
               { title: "Copy-on-Write", url: "https://www.kernel.org/doc/html/latest/admin-guide/mm/concepts.html" },
@@ -163,6 +181,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w3-4",
             title: "中断与上下文切换",
             detail: "理解硬件中断处理、软中断和进程切换机制。",
+            keyPoints: [
+              "中断处理分上半部（硬中断快速响应）和下半部（软中断延迟处理）",
+              "上下文切换需要保存/恢复寄存器状态并切换页表基地址",
+              "中断上下文中不能睡眠，只能使用自旋锁进行同步",
+            ],
             resources: [
               { title: "Linux Interrupts", url: "https://0xax.gitbooks.io/linux-insides/content/Interrupts/" },
               { title: "Context Switch", url: "https://www.kernel.org/doc/html/latest/x86/entry_64.html" },
@@ -175,6 +198,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w4",
         title: "第 4 周：内存管理",
         summary: "深入理解 Linux 内存管理子系统的设计与实现。",
+        overview: "本周学习虚拟地址空间布局、页表映射和 TLB 缓存机制，理解伙伴系统和 SLAB 分配器的内存分配策略，以及页面回收与交换机制。",
         keyPoints: [
           "虚拟内存提供进程隔离和按需分页机制。",
           "页表和 TLB 是虚拟地址到物理地址转换的核心硬件支持。",
@@ -185,6 +209,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w4-1",
             title: "虚拟内存与地址空间",
             detail: "掌握进程地址空间布局、mm_struct 和 vm_area_struct。",
+            keyPoints: [
+              "mm_struct 描述进程的完整地址空间，包括代码段、堆、栈等区域",
+              "vm_area_struct 表示一段连续的虚拟内存区域及其权限属性",
+              "内核空间和用户空间通过虚拟地址的高低位区分",
+            ],
             resources: [
               { title: "Memory Management 文档", url: "https://www.kernel.org/doc/html/latest/admin-guide/mm/index.html" },
               { title: "Virtual Memory", url: "https://www.kernel.org/doc/html/latest/mm/index.html" },
@@ -195,6 +224,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w4-2",
             title: "页表与分页机制",
             detail: "理解多级页表、页表项格式和 TLB 管理。",
+            keyPoints: [
+              "Linux 使用四级或五级页表将虚拟地址映射到物理地址",
+              "TLB 缓存页表项以加速地址翻译，刷新 TLB 代价较高",
+              "大页（Huge Pages）减少页表项数量，提高 TLB 命中率",
+            ],
             resources: [
               { title: "Page Tables", url: "https://www.kernel.org/doc/html/latest/mm/page_tables.html" },
               { title: "x86 Paging", url: "https://wiki.osdev.org/Paging" },
@@ -205,6 +239,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w4-3",
             title: "物理内存分配",
             detail: "学习伙伴系统、页帧分配和内存区域 (zones)。",
+            keyPoints: [
+              "伙伴系统按 2 的幂次方分配连续页帧，有效减少外部碎片",
+              "内存区域分为 ZONE_DMA、ZONE_NORMAL 和 ZONE_HIGHMEM 等",
+              "alloc_pages 是页帧分配的核心接口，支持多种 GFP 标志",
+            ],
             resources: [
               { title: "Buddy Allocator", url: "https://www.kernel.org/doc/html/latest/core-api/mm-api.html" },
               { title: "Memory Zones", url: "https://www.kernel.org/doc/html/latest/mm/zone.html" },
@@ -215,6 +254,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w4-4",
             title: "SLAB 分配器",
             detail: "理解 SLAB/SLUB 分配器的设计原理和 kmalloc 实现。",
+            keyPoints: [
+              "SLAB/SLUB 在伙伴系统之上提供小对象的高效分配与缓存",
+              "kmalloc 基于预定义大小的 slab 缓存分配内核内存",
+              "SLUB 是当前默认分配器，通过简化元数据降低内存开销",
+            ],
             resources: [
               { title: "SLUB Allocator", url: "https://www.kernel.org/doc/html/latest/mm/slub.html" },
               { title: "kmalloc 源码", url: "https://elixir.bootlin.com/linux/latest/source/mm/slab.c" },
@@ -227,6 +271,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w5",
         title: "第 5 周：文件系统",
         summary: "掌握 VFS 架构和具体文件系统的实现原理。",
+        overview: "本周学习虚拟文件系统的 inode、dentry 和 superblock 抽象层，理解 ext4 等具体文件系统的磁盘布局，以及页缓存和 I/O 调度机制。",
         keyPoints: [
           "VFS（虚拟文件系统）为所有文件系统提供统一接口。",
           "inode 和 dentry 是 VFS 的核心数据结构。",
@@ -237,6 +282,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w5-1",
             title: "VFS 架构",
             detail: "理解 VFS 的抽象层次、超级块、inode 和 dentry 缓存。",
+            keyPoints: [
+              "超级块（superblock）描述已挂载文件系统的全局信息",
+              "inode 存储文件元数据，dentry 缓存加速路径名到 inode 的查找",
+              "file_operations 结构体定义文件系统的读写等操作接口",
+            ],
             resources: [
               { title: "VFS 文档", url: "https://www.kernel.org/doc/html/latest/filesystems/vfs.html" },
               { title: "VFS 源码", url: "https://elixir.bootlin.com/linux/latest/source/fs/" },
@@ -247,6 +297,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w5-2",
             title: "Ext4 文件系统",
             detail: "深入分析 Ext4 的磁盘布局、日志和扩展属性。",
+            keyPoints: [
+              "Ext4 使用 extent 树替代间接块映射，提高大文件性能",
+              "日志（JBD2）通过写前日志保证文件系统的崩溃一致性",
+              "延迟分配（delayed allocation）优化磁盘空间分配策略",
+            ],
             resources: [
               { title: "Ext4 文档", url: "https://www.kernel.org/doc/html/latest/filesystems/ext4/index.html" },
               { title: "Ext4 Disk Layout", url: "https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout" },
@@ -257,6 +312,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w5-3",
             title: "块层与 I/O 调度",
             detail: "理解 bio 结构、请求队列和 I/O 调度器。",
+            keyPoints: [
+              "bio 结构封装块 I/O 请求，描述内存页与磁盘扇区的映射",
+              "blk-mq 多队列框架利用多核并行处理 I/O 请求",
+              "I/O 调度器（如 mq-deadline、bfq）优化请求排序与合并策略",
+            ],
             resources: [
               { title: "Block Layer", url: "https://www.kernel.org/doc/html/latest/block/index.html" },
               { title: "I/O Schedulers", url: "https://www.kernel.org/doc/html/latest/block/switching-sched.html" },
@@ -267,6 +327,11 @@ export const linuxKernelStages: Stage[] = [
             id: "lk-w5-4",
             title: "页缓存机制",
             detail: "掌握页缓存、回写机制和文件预读。",
+            keyPoints: [
+              "页缓存将磁盘数据缓存到内存，大幅减少重复读取的 I/O 开销",
+              "脏页通过 pdflush/writeback 线程异步回写到磁盘",
+              "预读算法根据访问模式自适应调整预读窗口大小",
+            ],
             resources: [
               { title: "Page Cache", url: "https://www.kernel.org/doc/html/latest/filesystems/caching/fscache.html" },
               { title: "Writeback", url: "https://www.kernel.org/doc/html/latest/admin-guide/mm/writeback.html" },
@@ -287,6 +352,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w6",
         title: "第 6 周：设备驱动",
         summary: "学习 Linux 设备驱动模型和驱动开发基础。",
+        overview: "本周学习 Linux 设备模型中 bus、device、driver 的关系，掌握字符设备驱动的注册与实现流程，并编写一个简单的内核模块进行实践。",
         keyPoints: [
           "Linux 设备模型通过 kobject、device、driver 统一管理设备。",
           "字符设备、块设备和网络设备是三种主要设备类型。",
@@ -339,6 +405,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w7",
         title: "第 7 周：网络协议栈",
         summary: "深入理解 Linux 网络子系统的设计与实现。",
+        overview: "本周学习 sk_buff 数据结构和网络协议栈的分层处理流程，理解 socket 接口的内核实现，以及 Netfilter 框架和数据包收发路径。",
         keyPoints: [
           "sk_buff 是网络数据包在内核中的表示。",
           "Netfilter 框架提供数据包过滤和 NAT 功能。",
@@ -391,6 +458,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w8",
         title: "第 8 周：同步与并发",
         summary: "掌握内核同步原语和并发编程技术。",
+        overview: "本周学习自旋锁、互斥锁、信号量和 RCU 等内核同步原语的适用场景，理解中断上下文与进程上下文的同步差异和死锁预防策略。",
         keyPoints: [
           "内核中禁用抢占和中断是最基本的同步手段。",
           "自旋锁适用于短临界区，互斥锁允许睡眠。",
@@ -451,6 +519,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w9",
         title: "第 9 周：内核调试与追踪",
         summary: "掌握内核调试工具和性能分析技术。",
+        overview: "本周学习 printk、KGDB 和 crash 等内核调试手段，掌握 ftrace、perf 和 eBPF 等追踪与性能分析工具的使用方法。",
         keyPoints: [
           "printk 是最基本但最常用的调试手段。",
           "KGDB 和 QEMU 可以进行源码级内核调试。",
@@ -503,6 +572,7 @@ export const linuxKernelStages: Stage[] = [
         id: "lk-w10",
         title: "第 10 周：内核贡献实践",
         summary: "学习 Linux 内核社区的工作方式和贡献流程。",
+        overview: "本周学习内核代码风格规范、git format-patch 补丁提交流程，理解 MAINTAINERS 文件和邮件列表的社区协作模式。",
         keyPoints: [
           "内核开发遵循严格的编码规范和提交要求。",
           "补丁通过邮件列表提交和审核。",

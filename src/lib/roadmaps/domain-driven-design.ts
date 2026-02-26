@@ -22,6 +22,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w1-1",
                         title: "什么是领域驱动设计",
                         detail: "理解 DDD 的定义、起源与核心价值，以及它与其他设计方法的区别。",
+                        keyPoints: [
+                            "DDD 由 Eric Evans 在 2003 年提出，核心思想是软件设计应以领域模型为中心。",
+                            "DDD 与传统数据驱动设计的区别：关注业务行为和规则，而非仅仅是数据结构。",
+                            "DDD 强调开发团队与领域专家的深度协作，共同构建反映业务本质的模型。",
+                        ],
                         resources: [
                             { title: "Domain-Driven Design Reference（Eric Evans）", url: "https://www.domainlanguage.com/ddd/reference/" },
                             { title: "What is Domain-Driven Design", url: "https://martinfowler.com/bliki/DomainDrivenDesign.html" },
@@ -32,6 +37,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w1-2",
                         title: "软件复杂性与 DDD 的应对之道",
                         detail: "分析软件复杂性的来源，理解 DDD 如何通过领域建模降低认知负担。",
+                        keyPoints: [
+                            "软件复杂性分为本质复杂性（业务固有）和偶然复杂性（技术引入），DDD 主要应对本质复杂性。",
+                            "DDD 通过统一语言和领域模型降低团队认知负担，减少沟通中的信息损失。",
+                            "当业务逻辑散落在各层代码中时，系统变得难以理解和修改——DDD 将逻辑聚焦于领域层。",
+                        ],
                         resources: [
                             { title: "Tackling Complexity in the Heart of Software", url: "https://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215" },
                             { title: "复杂性与软件设计", url: "https://www.infoq.cn/article/complexity-domain-driven-design" },
@@ -42,6 +52,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w1-3",
                         title: "DDD 的适用场景与前提条件",
                         detail: "判断何时应该使用 DDD，以及成功实施 DDD 需要的团队条件和组织支持。",
+                        keyPoints: [
+                            "DDD 最适合业务逻辑复杂、规则多变的系统，简单 CRUD 应用无需引入 DDD。",
+                            "成功实施 DDD 需要领域专家的持续参与和团队对业务的深入理解。",
+                            "组织文化和团队能力是 DDD 成功的前提：需要跨职能协作和持续学习的环境。",
+                        ],
                         resources: [
                             { title: "DDD and Microservices - Microsoft", url: "https://learn.microsoft.com/en-us/azure/architecture/microservices/model/tactical-ddd" },
                             { title: "DDD 的适用性分析", url: "https://blog.cleancoder.com/uncle-bob/2016/01/04/ALittleArchitecture.html" },
@@ -52,6 +67,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w1-4",
                         title: "战略设计与战术设计概览",
                         detail: "建立 DDD 的整体知识地图，理解战略设计和战术设计的关系与分工。",
+                        keyPoints: [
+                            "战略设计关注系统宏观划分：限界上下文、上下文映射、子域识别等。",
+                            "战术设计关注代码级实现：实体、值对象、聚合、仓储、领域事件等模式。",
+                            "先战略后战术：先理清业务边界和关系，再深入每个边界内的代码实现。",
+                        ],
                         resources: [
                             { title: "Strategic vs Tactical DDD", url: "https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis" },
                             { title: "DDD 知识体系", url: "https://github.com/ddd-crew/free-ddd-learning-resources" },
@@ -75,6 +95,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w2-1",
                         title: "领域与问题空间分析",
                         detail: "理解领域的定义，学习如何与领域专家协作探索问题空间。",
+                        keyPoints: [
+                            "领域是软件要解决的业务问题空间，包含业务规则、流程和知识。",
+                            "问题空间分析需要与领域专家协作，使用事件风暴等工具探索业务全貌。",
+                            "区分问题空间和解决方案空间：先理解要解决什么问题，再决定如何实现。",
+                        ],
                         resources: [
                             { title: "Understanding the Domain", url: "https://www.domainlanguage.com/ddd/reference/" },
                             { title: "Problem Space vs Solution Space", url: "https://thedomaindrivendesign.io/problem-space-and-solution-space/" },
@@ -85,6 +110,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w2-2",
                         title: "核心域、支撑域与通用域",
                         detail: "掌握子域分类方法，学会识别业务中的核心竞争力。",
+                        keyPoints: [
+                            "核心域是企业的竞争优势所在，应投入最优秀的团队和最多的资源。",
+                            "支撑域为核心域提供必要支持，有一定业务特殊性但非竞争优势。",
+                            "通用域解决通用问题（如认证、通知），优先使用成熟的第三方方案。",
+                        ],
                         resources: [
                             { title: "Core Domain Patterns", url: "https://www.domainlanguage.com/ddd/reference/" },
                             { title: "Identifying Core Domains", url: "https://medium.com/nick-tune-tech-strategy-blog/core-domain-patterns-941f89446af5" },
@@ -95,6 +125,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w2-3",
                         title: "子域划分的实践方法",
                         detail: "学习子域划分的具体技术和工具，包括领域故事讲述和事件风暴。",
+                        keyPoints: [
+                            "领域故事讲述（Domain Storytelling）通过可视化业务流程发现子域边界。",
+                            "事件风暴（Event Storming）通过识别领域事件和命令来划分子域。",
+                            "Wardley Mapping 可帮助评估子域的成熟度和战略价值，指导投资决策。",
+                        ],
                         resources: [
                             { title: "Domain Storytelling", url: "https://domainstorytelling.org/" },
                             { title: "EventStorming for Subdomain Discovery", url: "https://www.eventstorming.com/" },
@@ -105,6 +140,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w2-4",
                         title: "案例：电商系统的子域划分",
                         detail: "通过电商系统案例，实践子域识别与分类的完整过程。",
+                        keyPoints: [
+                            "电商核心域通常包括商品目录、订单管理、定价策略等直接影响竞争力的部分。",
+                            "支撑域如库存管理、物流跟踪对业务运转必要，但通常不构成差异化竞争力。",
+                            "通用域如用户认证、支付网关、通知服务可直接采用第三方 SaaS 或开源方案。",
+                        ],
                         resources: [
                             { title: "E-commerce DDD Example", url: "https://github.com/ddd-by-examples/library" },
                             { title: "电商领域建模实例", url: "https://www.infoq.cn/article/ddd-ecommerce-domain-model" },
@@ -128,6 +168,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w3-1",
                         title: "限界上下文的本质",
                         detail: "深入理解限界上下文的定义、作用，以及它如何解决大型系统中的概念混淆问题。",
+                        keyPoints: [
+                            "限界上下文为领域模型划定语义边界，同一术语在不同上下文中可有不同含义。",
+                            "限界上下文解决大型系统中的概念混淆：如「产品」在目录和订单中含义不同。",
+                            "每个限界上下文内部保持模型一致性，上下文之间通过明确的接口通信。",
+                        ],
                         resources: [
                             { title: "Bounded Context（Martin Fowler）", url: "https://martinfowler.com/bliki/BoundedContext.html" },
                             { title: "限界上下文详解", url: "https://www.domainlanguage.com/ddd/reference/" },
@@ -138,6 +183,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w3-2",
                         title: "如何识别与划分限界上下文",
                         detail: "学习识别限界上下文的信号和划分方法，避免常见的划分误区。",
+                        keyPoints: [
+                            "识别限界上下文的信号：语言差异、模型冲突、团队边界、业务流程断点。",
+                            "常见划分误区：按技术层划分（UI/Service/DB）而非按业务能力划分。",
+                            "启发式规则：如果两个概念总是一起变化，它们可能属于同一个上下文。",
+                        ],
                         resources: [
                             { title: "Identifying Bounded Contexts", url: "https://medium.com/nick-tune-tech-strategy-blog/bounded-context-design-heuristics-f1ae7faf7aa5" },
                             { title: "Context Mapping Patterns", url: "https://www.infoq.com/articles/ddd-contextmapping/" },
@@ -148,6 +198,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w3-3",
                         title: "限界上下文画布",
                         detail: "使用限界上下文画布工具，系统化地描述和设计限界上下文。",
+                        keyPoints: [
+                            "限界上下文画布记录上下文的职责、输入输出、统一语言和关键决策。",
+                            "画布帮助团队系统化思考上下文的边界、依赖关系和演进方向。",
+                            "画布可作为团队间沟通工具，明确上下文之间的协作方式和数据流。",
+                        ],
                         resources: [
                             { title: "Bounded Context Canvas", url: "https://github.com/ddd-crew/bounded-context-canvas" },
                             { title: "Canvas 使用指南", url: "https://medium.com/nick-tune-tech-strategy-blog/bounded-context-canvas-v2-simplifications-and-டextensions-f4c7f3cc5e4d" },
@@ -158,6 +213,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w3-4",
                         title: "限界上下文与微服务的关系",
                         detail: "理解限界上下文与微服务的联系和区别，避免机械地将上下文映射为服务。",
+                        keyPoints: [
+                            "限界上下文是逻辑边界，微服务是部署边界，两者并非一一对应。",
+                            "一个限界上下文可以拆分为多个微服务，也可以多个上下文合并部署。",
+                            "先设计好限界上下文，再根据团队规模和运维能力决定服务划分粒度。",
+                        ],
                         resources: [
                             { title: "Bounded Context vs Microservice", url: "https://www.infoq.com/articles/microservices-bounded-context-domain-driven-design/" },
                             { title: "DDD and Microservices", url: "https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/" },
@@ -181,6 +241,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w4-1",
                         title: "统一语言的重要性",
                         detail: "理解为什么统一语言是 DDD 成功的关键，以及语言不一致带来的问题。",
+                        keyPoints: [
+                            "语言不一致会导致需求误解、代码与业务脱节、团队沟通成本高。",
+                            "统一语言不仅用于沟通，更要体现在代码、文档、测试和数据库设计中。",
+                            "当开发者和业务专家使用不同术语时，每次翻译都可能引入信息损失。",
+                        ],
                         resources: [
                             { title: "Ubiquitous Language（Martin Fowler）", url: "https://martinfowler.com/bliki/UbiquitousLanguage.html" },
                             { title: "The Power of Ubiquitous Language", url: "https://www.domainlanguage.com/ddd/reference/" },
@@ -191,6 +256,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w4-2",
                         title: "如何建立统一语言",
                         detail: "学习与领域专家协作建立统一语言的方法和工具，包括词汇表、模型和代码。",
+                        keyPoints: [
+                            "通过领域专家访谈、工作坊和代码审查，逐步建立和精化统一语言。",
+                            "维护领域词汇表，记录每个术语的定义、上下文和使用示例。",
+                            "代码中的命名应直接使用统一语言术语，避免技术缩写或自造词汇。",
+                        ],
                         resources: [
                             { title: "Building Ubiquitous Language", url: "https://www.infoq.com/articles/ddd-ubiquitous-language/" },
                             { title: "Domain Glossary", url: "https://github.com/ddd-crew/ddd-glossary" },
@@ -201,6 +271,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w4-3",
                         title: "领域模型概述",
                         detail: "理解领域模型的定义、作用，以及贫血模型与充血模型的区别。",
+                        keyPoints: [
+                            "领域模型是对业务知识的抽象表达，包含实体、值对象、聚合和领域服务。",
+                            "贫血模型只有数据没有行为，业务逻辑散落在服务层；充血模型将行为封装在实体中。",
+                            "DDD 推崇充血模型：让领域对象拥有业务行为，提高内聚性和可维护性。",
+                        ],
                         resources: [
                             { title: "Domain Model（Martin Fowler）", url: "https://martinfowler.com/eaaCatalog/domainModel.html" },
                             { title: "Anemic Domain Model", url: "https://martinfowler.com/bliki/AnemicDomainModel.html" },
@@ -211,6 +286,11 @@ export const domainDrivenDesignStages: Stage[] = [
                         id: "w4-4",
                         title: "领域建模的基本原则",
                         detail: "掌握领域建模的核心原则，包括模型的简洁性、可理解性和可演进性。",
+                        keyPoints: [
+                            "好的领域模型应简洁且可理解，反映业务本质而非技术实现细节。",
+                            "模型是可演进的：随着业务理解深入，模型需要持续重构和精化。",
+                            "建模时优先考虑行为而非数据：先问「这个对象能做什么」而非「它有什么属性」。",
+                        ],
                         resources: [
                             { title: "Domain Modeling Principles", url: "https://www.domainlanguage.com/ddd/reference/" },
                             { title: "Effective Domain Modeling", url: "https://www.infoq.com/presentations/effective-domain-modelling/" },

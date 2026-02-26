@@ -22,6 +22,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w1-1",
                         title: "单体架构：优势、局限与适用场景",
                         detail: "深入理解单体架构的特点，认识其在小团队和早期产品中的价值，以及随规模增长面临的挑战。",
+                        keyPoints: [
+                            "单体优势：开发简单、部署方便、ACID 事务天然支持、进程内调用零延迟。",
+                            "规模瓶颈：代码库膨胀后编译慢、部署风险高、团队协作冲突频繁、无法按模块独立扩展。",
+                            "适用场景：小团队（<10 人）、早期产品验证阶段、业务复杂度低的系统优先选择单体。",
+                        ],
                         resources: [
                             { title: "Monolithic Architecture Pattern", url: "https://microservices.io/patterns/monolithic.html" },
                             { title: "MonolithFirst - Martin Fowler", url: "https://martinfowler.com/bliki/MonolithFirst.html" },
@@ -32,6 +37,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w1-2",
                         title: "微服务架构：定义、原则与核心特征",
                         detail: "掌握微服务架构的定义、核心原则（独立部署、松耦合、业务能力导向），理解 Chris Richardson 的模式语言框架。",
+                        keyPoints: [
+                            "核心原则：每个服务围绕单一业务能力组织，独立开发、独立部署、独立扩展。",
+                            "松耦合要求：服务间通过定义良好的 API 交互，不共享数据库、不共享内部模型。",
+                            "模式语言框架：microservices.io 将微服务模式分为分解、数据、通信、可靠性等类别，形成完整知识体系。",
+                        ],
                         resources: [
                             { title: "Microservice Architecture Pattern", url: "https://microservices.io/patterns/microservices.html" },
                             { title: "Microservices - Martin Fowler", url: "https://martinfowler.com/articles/microservices.html" },
@@ -128,6 +138,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w3-1",
                         title: "Strangler Fig 模式：渐进式替换单体",
                         detail: "深入理解 Strangler Fig 模式的原理，学会识别适合提取的功能模块，规划迁移路径。",
+                        keyPoints: [
+                            "渐进替换：通过路由层逐步将请求从单体转发到新服务，每次只迁移一小部分功能，降低风险。",
+                            "优先拆分标准：选择变更频率高、团队职责清晰、耦合度低的模块优先迁移。",
+                            "流量切换：使用反向代理或 API 网关控制流量分配，支持灰度发布和快速回退。",
+                        ],
                         resources: [
                             { title: "Strangler Fig Application", url: "https://microservices.io/patterns/refactoring/strangler-application.html" },
                             { title: "StranglerFigApplication - Fowler", url: "https://martinfowler.com/bliki/StranglerFigApplication.html" },
@@ -148,6 +163,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w3-3",
                         title: "数据迁移策略：拆分共享数据库",
                         detail: "学习将单体数据库拆分为多个服务数据库的策略，理解数据同步、双写、CDC 等技术方案。",
+                        keyPoints: [
+                            "拆分策略：先逻辑拆分（Schema 隔离），再物理拆分（独立数据库实例），分步降低风险。",
+                            "数据同步：过渡期使用双写或 CDC（Change Data Capture）保持新旧数据源同步。",
+                            "跨库查询：拆分后需要通过 API Composition 或物化视图解决跨服务的数据聚合需求。",
+                        ],
                         resources: [
                             { title: "Refactoring Databases", url: "https://martinfowler.com/books/refactoringDatabases.html" },
                             { title: "Database per Service", url: "https://microservices.io/patterns/data/database-per-service.html" },
@@ -242,6 +262,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w5-1",
                         title: "Saga 模式原理：从 2PC 到最终一致性",
                         detail: "理解为什么微服务不适合 2PC，学习 Saga 模式的核心思想和设计原则。",
+                        keyPoints: [
+                            "2PC 的问题：两阶段提交需要所有参与者锁资源等待协调，延迟高、可用性差，不适合微服务。",
+                            "Saga 核心：将分布式事务拆分为一系列本地事务，每个事务有对应的补偿操作实现逻辑回滚。",
+                            "最终一致性：Saga 保证最终一致性而非强一致性，中间状态对外可见，需要业务层面处理。",
+                        ],
                         resources: [
                             { title: "Saga Pattern", url: "https://microservices.io/patterns/data/saga.html" },
                             { title: "Saga Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/saga/saga" },
@@ -262,6 +287,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w5-3",
                         title: "协同式 Saga：事件驱动的实现",
                         detail: "学习通过事件（Domain Events）实现服务间协作的 Saga，理解其去中心化的优势和追踪的挑战。",
+                        keyPoints: [
+                            "去中心化：每个服务监听前一步的完成事件并执行自己的本地事务，无中央协调者。",
+                            "松耦合优势：服务间仅通过事件交互，不直接依赖彼此，更容易独立演进。",
+                            "追踪困难：业务流程分散在多个服务中，调试和监控需要分布式追踪工具支撑。",
+                        ],
                         resources: [
                             { title: "Choreography-based Saga", url: "https://microservices.io/patterns/data/saga.html#choreography" },
                             { title: "Saga Choreography - AWS", url: "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-choreography.html" },
@@ -356,6 +386,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w7-1",
                         title: "Remote Procedure Invocation：同步调用模式",
                         detail: "理解 RPC 风格的服务调用，比较 REST、gRPC、GraphQL 等技术的适用场景。",
+                        keyPoints: [
+                            "REST：基于 HTTP 的资源导向风格，简单通用但缺乏类型安全，适合公开 API。",
+                            "gRPC：基于 HTTP/2 和 Protocol Buffers，高性能、强类型、支持流式传输，适合内部服务通信。",
+                            "GraphQL：客户端按需查询所需字段，减少数据过载和不足，适合前端聚合多数据源场景。",
+                        ],
                         resources: [
                             { title: "Remote Procedure Invocation", url: "https://microservices.io/patterns/communication-style/rpi.html" },
                             { title: "REST vs gRPC vs GraphQL", url: "https://konghq.com/blog/engineering/rest-vs-grpc-vs-graphql" },
@@ -376,6 +411,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w7-3",
                         title: "Domain Event：领域事件驱动通信",
                         detail: "理解领域事件的定义，学会设计和发布领域事件，实现服务间的松耦合协作。",
+                        keyPoints: [
+                            "领域事件定义：表示业务领域中已经发生的有意义的事实，如「订单已创建」「库存已扣减」。",
+                            "事件设计原则：事件应包含足够的上下文信息，消费者无需回调生产者即可完成处理。",
+                            "发布一致性：使用 Transactional Outbox 确保业务数据更新和事件发布的原子性。",
+                        ],
                         resources: [
                             { title: "Domain Event Pattern", url: "https://microservices.io/patterns/data/domain-event.html" },
                             { title: "Domain Events - Fowler", url: "https://martinfowler.com/eaaDev/DomainEvent.html" },
@@ -462,6 +502,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w9-1",
                         title: "Service Registry：服务注册中心",
                         detail: "理解 Service Registry 的核心功能，学习 Consul、Eureka、etcd、Zookeeper 等实现的比较。",
+                        keyPoints: [
+                            "核心功能：存储服务实例的网络地址，支持注册、注销、心跳续约和健康检查。",
+                            "高可用要求：注册中心本身必须高可用，通常采用集群部署和 AP 或 CP 一致性模型。",
+                            "技术选型：Consul 功能全面支持多数据中心，Eureka 偏 AP 适合大规模部署，etcd 是 K8s 内置方案。",
+                        ],
                         resources: [
                             { title: "Service Registry Pattern", url: "https://microservices.io/patterns/service-registry.html" },
                             { title: "Consul Service Discovery", url: "https://developer.hashicorp.com/consul/docs/concepts/service-discovery" },
@@ -472,6 +517,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w9-2",
                         title: "Client-side Discovery：客户端发现模式",
                         detail: "学习客户端发现的实现原理，理解其优势（减少网络跳数）和劣势（客户端复杂度）。",
+                        keyPoints: [
+                            "工作原理：客户端直接从 Service Registry 获取实例列表，自行实现负载均衡选择目标实例。",
+                            "减少跳数：请求直达目标实例，无需经过中间负载均衡器，降低延迟。",
+                            "客户端耦合：每种编程语言都需要实现发现逻辑，增加了客户端的复杂度和维护成本。",
+                        ],
                         resources: [
                             { title: "Client-side Discovery", url: "https://microservices.io/patterns/client-side-discovery.html" },
                             { title: "Spring Cloud LoadBalancer", url: "https://spring.io/guides/gs/spring-cloud-loadbalancer/" },
@@ -576,6 +626,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w11-1",
                         title: "微服务测试金字塔",
                         detail: "理解测试金字塔在微服务架构中的应用，学会平衡测试覆盖率和测试成本。",
+                        keyPoints: [
+                            "金字塔结构：底层大量单元测试（快速廉价），中层适量集成/组件测试，顶层少量端到端测试。",
+                            "微服务特殊性：服务间交互增加了测试复杂度，需要契约测试弥补单元和端到端测试的空白。",
+                            "测试隔离：每个服务独立测试，使用 Mock/Stub 模拟外部依赖，避免测试环境的级联故障。",
+                        ],
                         resources: [
                             { title: "Testing Strategies in Microservices", url: "https://martinfowler.com/articles/microservice-testing/" },
                             { title: "The Practical Test Pyramid", url: "https://martinfowler.com/articles/practical-test-pyramid.html" },
@@ -586,6 +641,11 @@ export const microservicesPatternsStages: Stage[] = [
                         id: "w11-2",
                         title: "Consumer-driven Contract Test：契约测试",
                         detail: "学习消费者驱动的契约测试，使用 Pact 等工具验证服务间的 API 兼容性。",
+                        keyPoints: [
+                            "消费者驱动：由 API 消费者定义期望的请求和响应格式，生成契约文件供提供者验证。",
+                            "独立验证：消费者和提供者各自运行测试，无需同时启动，降低集成测试的复杂度和不稳定性。",
+                            "版本兼容：每次 API 变更时自动验证所有消费者的契约，提前发现破坏性变更。",
+                        ],
                         resources: [
                             { title: "Consumer-driven Contract Test", url: "https://microservices.io/patterns/testing/consumer-driven-contract-test.html" },
                             { title: "Pact Documentation", url: "https://docs.pact.io/" },

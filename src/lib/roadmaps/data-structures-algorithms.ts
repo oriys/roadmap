@@ -11,6 +11,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w1",
         title: "第 1 周：复杂度分析与数组",
         summary: "理解算法效率评估方法，掌握数组和字符串的核心操作与经典问题。",
+        overview: "本周从大 O 表示法入手，建立算法效率评估思维，然后深入数组的内存布局与操作复杂度，掌握双指针和滑动窗口两大核心技巧。",
         keyPoints: [
           "大 O 表示法是衡量算法效率的通用语言，关注最坏情况和渐近行为。",
           "数组支持 O(1) 随机访问，但插入删除需要 O(n) 时间移动元素。",
@@ -21,6 +22,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w1-1",
             title: "时间与空间复杂度",
             detail: "掌握大 O、大 Ω、大 Θ 表示法，学会分析递归与迭代算法的复杂度。",
+            keyPoints: [
+                "大 O 关注最坏情况下的增长趋势，忽略常数因子和低阶项。",
+                "递归算法复杂度可通过递推关系式和主定理（Master Theorem）求解。",
+                "空间复杂度需考虑辅助空间和递归调用栈的深度。",
+            ],
             resources: [
               { title: "Big O Cheat Sheet", url: "https://www.bigocheatsheet.com/" },
               { title: "MIT 算法导论 - 复杂度分析", url: "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/" },
@@ -31,6 +37,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w1-2",
             title: "数组基础与操作",
             detail: "理解数组内存布局、动态数组原理，掌握增删改查的时间复杂度。",
+            keyPoints: [
+                "数组在内存中连续存储，支持 O(1) 随机访问但插入删除需移动元素。",
+                "动态数组（如 Python list）通过预分配和倍增策略实现均摊 O(1) 追加。",
+                "数组适合读多写少的场景，频繁插入删除应考虑链表或其他结构。",
+            ],
             resources: [
               { title: "数组 - 力扣学习", url: "https://leetcode.cn/leetbook/detail/array-and-string/" },
               { title: "动态数组实现原理", url: "https://www.geeksforgeeks.org/how-do-dynamic-arrays-work/" },
@@ -41,6 +52,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w1-3",
             title: "双指针技巧",
             detail: "掌握同向双指针、对撞指针、快慢指针三种模式及其典型应用。",
+            keyPoints: [
+                "对撞指针从两端向中间收缩，适合有序数组的两数之和、容器盛水等问题。",
+                "快慢指针可用于链表环检测、找中点、判断回文等问题。",
+                "同向双指针适合去重、移除元素等原地修改数组的场景。",
+            ],
             resources: [
               { title: "双指针技巧总结", url: "https://leetcode.cn/circle/discuss/0vGxlm/" },
               { title: "Two Pointers Pattern", url: "https://www.educative.io/courses/grokking-the-coding-interview/xlK78P3Xl7E" },
@@ -51,6 +67,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w1-4",
             title: "滑动窗口",
             detail: "学习定长窗口与变长窗口的模板，解决子数组/子串最优问题。",
+            keyPoints: [
+                "定长窗口在窗口大小固定时使用，右边加入一个元素、左边移出一个元素。",
+                "变长窗口通过条件判断动态调整窗口大小，解决最短/最长子串问题。",
+                "滑动窗口本质是双指针的特殊形式，关键在于明确窗口的扩张和收缩条件。",
+            ],
             resources: [
               { title: "滑动窗口算法框架", url: "https://labuladong.online/algo/essential-technique/sliding-window-framework/" },
               { title: "Sliding Window Pattern", url: "https://www.educative.io/courses/grokking-the-coding-interview/7D5NNZWQ8Wr" },
@@ -63,6 +84,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w2",
         title: "第 2 周：链表与线性结构",
         summary: "深入理解链表的结构与操作，掌握栈和队列的实现与应用。",
+        overview: "本周学习链表的节点结构与增删操作，理解栈的后进先出和队列的先进先出特性，并通过经典题目巩固线性结构的应用。",
         keyPoints: [
           "链表通过指针连接节点，插入删除 O(1)，但访问需要 O(n) 遍历。",
           "栈是后进先出(LIFO)结构，用于递归模拟、括号匹配、表达式求值。",
@@ -73,6 +95,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w2-1",
             title: "单链表与操作",
             detail: "实现单链表的增删查改，掌握虚拟头节点技巧简化边界处理。",
+            keyPoints: [
+                "单链表每个节点存储数据和指向下一节点的指针，头部插入删除 O(1)。",
+                "虚拟头节点（dummy head）简化头部插入删除的边界处理，避免特殊判断。",
+                "链表的反转、合并、排序是面试高频考点，需要熟练掌握迭代和递归实现。",
+            ],
             resources: [
               { title: "链表 - 力扣学习", url: "https://leetcode.cn/leetbook/detail/linked-list/" },
               { title: "Visualgo 链表可视化", url: "https://visualgo.net/en/list" },
@@ -83,6 +110,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w2-2",
             title: "双向链表与环形链表",
             detail: "理解双向链表的优势，学习环检测的 Floyd 算法。",
+            keyPoints: [
+                "双向链表每个节点有前驱和后继指针，支持 O(1) 双向遍历和删除。",
+                "Floyd 算法用快慢指针检测环：慢指针走一步、快指针走两步，相遇则有环。",
+                "LRU 缓存用双向链表 + 哈希表实现，O(1) 访问和淘汰最久未使用的元素。",
+            ],
             resources: [
               { title: "双向链表详解", url: "https://www.geeksforgeeks.org/doubly-linked-list/" },
               { title: "Floyd 环检测算法", url: "https://leetcode.cn/problems/linked-list-cycle/solutions/175734/huan-xing-lian-biao-by-leetcode-solution/" },
@@ -93,6 +125,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w2-3",
             title: "栈的实现与应用",
             detail: "用数组和链表实现栈，解决括号匹配、单调栈等问题。",
+            keyPoints: [
+                "栈的后进先出特性天然适合递归模拟、函数调用管理和回溯算法。",
+                "单调栈维护一个单调递增或递减的栈，高效解决下一个更大/更小元素问题。",
+                "括号匹配是栈的经典应用：遇到左括号入栈，遇到右括号与栈顶匹配。",
+            ],
             resources: [
               { title: "栈 - 力扣学习", url: "https://leetcode.cn/leetbook/detail/queue-stack/" },
               { title: "单调栈详解", url: "https://labuladong.online/algo/data-structure/monotonic-stack/" },
@@ -103,6 +140,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w2-4",
             title: "队列与双端队列",
             detail: "实现队列和双端队列，理解循环队列的空间优化。",
+            keyPoints: [
+                "队列的先进先出特性是 BFS 和层序遍历的基础数据结构。",
+                "循环队列用数组实现，通过取模运算复用空间，避免频繁搬移数据。",
+                "双端队列（Deque）两端都可入队出队，是滑动窗口最大值等问题的核心工具。",
+            ],
             resources: [
               { title: "队列与 BFS", url: "https://leetcode.cn/leetbook/read/queue-stack/kbcqv/" },
               { title: "双端队列 Deque", url: "https://www.geeksforgeeks.org/deque-set-1-introduction-applications/" },
@@ -115,6 +157,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w3",
         title: "第 3 周：哈希表与集合",
         summary: "掌握哈希表的原理与实现，学习高效解决查找和统计问题。",
+        overview: "本周深入哈希表的底层原理，包括哈希函数设计和冲突处理策略，学会利用 O(1) 查找特性高效解决频率统计和两数之和等经典问题。",
         keyPoints: [
           "哈希表通过哈希函数实现平均 O(1) 的增删查，是最常用的数据结构之一。",
           "处理哈希冲突的主要方法是链地址法和开放寻址法。",
@@ -125,6 +168,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w3-1",
             title: "哈希表原理",
             detail: "理解哈希函数设计、冲突处理策略和负载因子的作用。",
+            keyPoints: [
+                "好的哈希函数应均匀分布、计算快速、最小化冲突。",
+                "链地址法用链表存储冲突元素，简单但可能退化为 O(n) 查找。",
+                "负载因子 = 元素数/桶数，负载因子过高时需要扩容以维持 O(1) 性能。",
+            ],
             resources: [
               { title: "哈希表详解", url: "https://leetcode.cn/leetbook/detail/hash-table/" },
               { title: "Visualgo 哈希表", url: "https://visualgo.net/en/hashtable" },
@@ -135,6 +183,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w3-2",
             title: "哈希表实现与优化",
             detail: "动手实现哈希表，学习扩容策略和性能优化技巧。",
+            keyPoints: [
+                "扩容时需重新哈希所有元素，渐进式 rehash 可避免一次性迁移的性能抖动。",
+                "开放寻址法（线性探测、双重哈希）将冲突元素存在其他空桶中。",
+                "一致性哈希在分布式系统中减少节点变动时的数据迁移量。",
+            ],
             resources: [
               { title: "从零实现 HashMap", url: "https://www.geeksforgeeks.org/implementing-our-own-hash-table-with-separate-chaining-in-java/" },
               { title: "Java HashMap 源码", url: "https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java" },
@@ -145,6 +198,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w3-3",
             title: "哈希表经典应用",
             detail: "用哈希表解决两数之和、字母异位词、最长连续序列等问题。",
+            keyPoints: [
+                "两数之和用哈希表将 O(n²) 暴力搜索优化为 O(n) 一次遍历。",
+                "字母异位词分组的关键是选择合适的哈希键：排序后的字符串或字符频率。",
+                "最长连续序列利用哈希集合实现 O(n) 查找，从每个序列起点向后扩展。",
+            ],
             resources: [
               { title: "两数之和", url: "https://leetcode.cn/problems/two-sum/" },
               { title: "字母异位词分组", url: "https://leetcode.cn/problems/group-anagrams/" },
@@ -155,6 +213,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w3-4",
             title: "集合与位运算优化",
             detail: "使用集合进行去重和快速查找，了解位图的空间优化。",
+            keyPoints: [
+                "集合（Set）基于哈希表实现，提供 O(1) 的成员判断和去重能力。",
+                "位图用一个比特表示一个元素的存在性，空间效率极高但只支持整数键。",
+                "布隆过滤器用多个哈希函数判断元素可能存在或一定不存在，有假阳性无假阴性。",
+            ],
             resources: [
               { title: "集合操作", url: "https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset" },
               { title: "位运算技巧", url: "https://leetcode.cn/circle/discuss/CaOJ45/" },
@@ -167,6 +230,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w4",
         title: "第 4 周：树与二叉树基础",
         summary: "掌握树的基本概念和二叉树的遍历，为后续高级树结构打基础。",
+        overview: "本周学习树的基本术语和二叉树的四种遍历方式（前序、中序、后序、层序），掌握递归与迭代两种实现，并理解二叉搜索树的有序性。",
         keyPoints: [
           "树是非线性结构，节点通过父子关系组织，适合表示层次数据。",
           "二叉树遍历有前序、中序、后序、层序四种方式，递归与迭代各有优势。",
@@ -177,6 +241,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w4-1",
             title: "树的基本概念",
             detail: "理解树的术语（根、叶、深度、高度），掌握 N 叉树的表示方法。",
+            keyPoints: [
+                "树由节点和边组成，每个节点最多一个父节点，根节点没有父节点。",
+                "深度是从根到该节点的边数，高度是从该节点到最远叶子的边数。",
+                "N 叉树可用子节点列表或左孩子右兄弟法表示，后者将 N 叉树转为二叉树。",
+            ],
             resources: [
               { title: "树 - 力扣学习", url: "https://leetcode.cn/leetbook/detail/data-structure-binary-tree/" },
               { title: "树的可视化", url: "https://visualgo.net/en/bst" },
@@ -187,6 +256,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w4-2",
             title: "二叉树遍历",
             detail: "实现前序、中序、后序的递归和迭代版本，理解层序遍历。",
+            keyPoints: [
+                "前序（根左右）、中序（左根右）、后序（左右根）是三种深度优先遍历方式。",
+                "迭代遍历用显式栈模拟递归调用栈，Morris 遍历可实现 O(1) 空间遍历。",
+                "层序遍历（BFS）用队列逐层访问节点，常用于求树的最小深度和层级信息。",
+            ],
             resources: [
               { title: "二叉树遍历专题", url: "https://leetcode.cn/leetbook/read/data-structure-binary-tree/xe17x7/" },
               { title: "Morris 遍历", url: "https://leetcode.cn/problems/binary-tree-inorder-traversal/solutions/412886/er-cha-shu-de-zhong-xu-bian-li-by-leetcode-solutio/" },
@@ -197,6 +271,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w4-3",
             title: "二叉搜索树",
             detail: "理解 BST 性质，实现查找、插入、删除操作，处理中序后继问题。",
+            keyPoints: [
+                "BST 的中序遍历结果是有序序列，这是验证 BST 合法性的关键性质。",
+                "BST 删除节点分三种情况：叶子直接删、单子节点替换、双子节点用中序后继替换。",
+                "普通 BST 最坏退化为链表，查找变为 O(n)，需要平衡树保证 O(log n)。",
+            ],
             resources: [
               { title: "BST 详解", url: "https://leetcode.cn/leetbook/read/introduction-to-data-structure-binary-search-tree/xp6kh3/" },
               { title: "验证 BST", url: "https://leetcode.cn/problems/validate-binary-search-tree/" },
@@ -207,6 +286,11 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
             id: "dsa-w4-4",
             title: "二叉树经典问题",
             detail: "解决最大深度、路径和、最近公共祖先等高频面试题。",
+            keyPoints: [
+                "最大深度用递归一行解决：max(左子树深度, 右子树深度) + 1。",
+                "路径和问题需要在递归中传递累积值，判断从根到叶子的路径是否满足条件。",
+                "最近公共祖先（LCA）利用递归后序遍历：左右子树各找一个则当前节点为 LCA。",
+            ],
             resources: [
               { title: "二叉树最大深度", url: "https://leetcode.cn/problems/maximum-depth-of-binary-tree/" },
               { title: "路径总和", url: "https://leetcode.cn/problems/path-sum/" },
@@ -227,6 +311,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w5",
         title: "第 5 周：平衡树与堆",
         summary: "理解自平衡树的原理，掌握堆的实现与优先队列应用。",
+        overview: "本周探索 AVL 树和红黑树的旋转平衡机制，学习堆的数组实现与上浮下沉操作，掌握优先队列在 Top-K 和合并排序链表中的应用。",
         keyPoints: [
           "AVL 树和红黑树通过旋转保持平衡，保证最坏 O(log n) 操作。",
           "堆是完全二叉树，支持 O(log n) 插入和 O(1) 获取最值。",
@@ -279,6 +364,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w6",
         title: "第 6 周：图的基础",
         summary: "掌握图的表示方法和基本遍历算法，理解图论的核心概念。",
+        overview: "本周学习邻接矩阵和邻接表两种图的表示方式，掌握 DFS 和 BFS 遍历算法，并应用于连通分量检测、拓扑排序等经典问题。",
         keyPoints: [
           "图由顶点和边组成，可用邻接矩阵或邻接表表示，各有优劣。",
           "DFS 用栈/递归实现，适合路径查找和连通性判断。",
@@ -331,6 +417,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w7",
         title: "第 7 周：高级数据结构",
         summary: "学习并查集、字典树、线段树等进阶数据结构，解决特定场景问题。",
+        overview: "本周学习并查集的路径压缩与按秩合并优化，掌握字典树的前缀匹配能力，以及线段树在区间查询中的高效应用。",
         keyPoints: [
           "并查集高效解决动态连通性问题，路径压缩和按秩合并是关键优化。",
           "字典树(Trie)是前缀匹配的最优解，广泛用于自动补全和词频统计。",
@@ -391,6 +478,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w8",
         title: "第 8 周：排序与查找",
         summary: "掌握经典排序算法的原理与实现，深入理解二分查找的各种变体。",
+        overview: "本周系统学习冒泡、归并、快排等经典排序算法的时间复杂度与适用场景，深入理解二分查找的边界处理和左右边界变体。",
         keyPoints: [
           "比较排序的时间下界是 O(n log n)，快排、归并、堆排序达到此最优。",
           "计数排序、基数排序是非比较排序，特定场景下可达 O(n)。",
@@ -443,6 +531,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w9",
         title: "第 9 周：动态规划",
         summary: "系统学习动态规划方法论，从入门到精通解决 DP 问题。",
+        overview: "本周从最优子结构和重叠子问题两大特征出发，掌握状态定义、转移方程推导和空间优化技巧，覆盖背包、路径、子序列等经典 DP 模型。",
         keyPoints: [
           "动态规划的核心是定义状态和状态转移方程，关键是找到最优子结构。",
           "自顶向下(记忆化搜索)和自底向上(迭代)是两种实现方式。",
@@ -495,6 +584,7 @@ export const dataStructuresAlgorithmsStages: Stage[] = [
         id: "dsa-w10",
         title: "第 10 周：算法设计范式",
         summary: "掌握分治、贪心、回溯等核心算法思想，建立完整的算法知识体系。",
+        overview: "本周学习分治法的递归分解策略、贪心算法的局部最优选择，以及回溯算法的剪枝搜索框架，融会贯通各类算法设计范式。",
         keyPoints: [
           "分治将问题分解为独立子问题，递归求解后合并结果。",
           "贪心在每一步选择局部最优，适用于具有贪心选择性质的问题。",

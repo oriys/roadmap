@@ -14,6 +14,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w1",
         title: "第 1 周：可观测性概念与三支柱",
         summary: "从被动监控到主动可观测，理解日志、指标、追踪的定位与协作关系。",
+        overview: "本周建立可观测性的全局认知，理解从传统监控到现代可观测性的演进，掌握日志、指标、追踪三支柱各自的定位与协同方式。",
         keyPoints: [
           "可观测性关注系统内部状态的可推断性，而非仅仅监控已知指标。",
           "三支柱各有侧重：指标看趋势、日志看细节、追踪看链路。",
@@ -71,6 +72,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w2",
         title: "第 2 周：指标体系设计",
         summary: "掌握指标类型、命名规范与方法论，设计有效的指标体系。",
+        overview: "本周深入指标体系设计，学习 Counter、Gauge、Histogram、Summary 四种类型的适用场景，掌握 RED 和 USE 方法论指导指标选取。",
         keyPoints: [
           "理解 Counter、Gauge、Histogram、Summary 的语义与适用场景。",
           "RED 方法用于服务指标，USE 方法用于资源指标。",
@@ -128,6 +130,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w3",
         title: "第 3 周：结构化日志与分布式追踪",
         summary: "设计结构化日志体系，理解分布式追踪的原理与采样策略。",
+        overview: "本周学习用 JSON 格式输出结构化日志并统一关联字段，理解 Trace、Span 和 Context Propagation 的工作原理与采样策略选择。",
         keyPoints: [
           "结构化日志便于机器解析，应包含 Trace ID 实现关联。",
           "分布式追踪通过 Context Propagation 串联跨服务调用。",
@@ -197,6 +200,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w4",
         title: "第 4 周：Prometheus 与 Mimir",
         summary: "掌握 Prometheus 监控生态与 Mimir 长期存储方案。",
+        overview: "本周实践 Prometheus 拉取模型与 PromQL 查询语言，学习 Alertmanager 告警路由配置，以及使用 Mimir 实现指标的长期存储与高可用。",
         keyPoints: [
           "Prometheus 采用拉取模型，通过服务发现自动发现目标。",
           "PromQL 是强大的时序查询语言，支持向量运算与聚合。",
@@ -254,6 +258,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w5",
         title: "第 5 周：Loki 与 Tempo",
         summary: "掌握 Loki 日志聚合与 Tempo 分布式追踪系统。",
+        overview: "本周学习 Loki 的标签索引日志聚合方案与 LogQL 查询，以及 Tempo 的全量追踪存储架构，实现日志与追踪的关联分析。",
         keyPoints: [
           "Loki 只索引标签，日志内容存储在对象存储，成本低。",
           "Tempo 无索引设计，通过 Trace ID 直接查询。",
@@ -311,6 +316,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w6",
         title: "第 6 周：Grafana 可视化与告警",
         summary: "设计有效的仪表盘，配置告警规则与关联分析。",
+        overview: "本周学习 Grafana 仪表盘设计原则，掌握面板布局与变量模板化技巧，配置多数据源告警规则并实现指标、日志、追踪的关联分析。",
         keyPoints: [
           "仪表盘设计应遵循信息层次：概览 → 详情 → 调试。",
           "Alertmanager 处理告警路由、分组、静默与通知。",
@@ -380,6 +386,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w7",
         title: "第 7 周：Datadog 核心功能",
         summary: "掌握 Datadog Agent、APM、日志管理与 RUM 的核心能力。",
+        overview: "本周学习 Datadog 商业可观测性平台，部署 Agent 采集基础设施指标，使用 APM 追踪应用性能，集成日志管理与真实用户监控。",
         keyPoints: [
           "Datadog Agent 是数据采集的核心，支持 1000+ 集成。",
           "APM 提供自动追踪、服务地图与错误追踪。",
@@ -437,6 +444,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w8",
         title: "第 8 周：Datadog 高级能力",
         summary: "探索 Synthetic 监控、AI 辅助分析与成本管理。",
+        overview: "本周探索 Datadog 的高级能力，使用 Synthetic 监控模拟用户行为，利用 Watchdog AI 自动发现异常，并学习标签治理与成本优化策略。",
         keyPoints: [
           "Synthetic 监控主动探测 API 和页面可用性。",
           "Bits AI 利用大模型加速根因分析。",
@@ -506,6 +514,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w9",
         title: "第 9 周：SLO/SLI/SLA 工程",
         summary: "定义有意义的服务水平目标，建立可靠性度量体系。",
+        overview: "本周进入 SRE 实践，学习如何从用户视角定义 SLI 指标、设定 SLO 目标，理解 SLA 的业务承诺含义，建立以数据驱动的可靠性度量体系。",
         keyPoints: [
           "SLI 是可测量的服务质量指标，SLO 是目标值。",
           "选择用户可感知的 SLI，而非内部技术指标。",
@@ -563,6 +572,7 @@ export const observabilitySreStages: Stage[] = [
         id: "obs-w10",
         title: "第 10 周：错误预算与发布",
         summary: "使用错误预算平衡可靠性与创新速度。",
+        overview: "本周学习错误预算的计算与管理方法，理解如何用预算消耗数据驱动发布决策，在系统可靠性与产品迭代速度之间找到最优平衡点。",
         keyPoints: [
           "错误预算 = 1 - SLO，是可接受的不可靠时间。",
           "预算消耗速率指导发布节奏与风险承担。",
@@ -587,7 +597,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w10-2",
             title: "基于预算的发布决策",
-            detail: "将错误预算与发布流程结合。",
+            detail: "将错误预算消耗状态与 CI/CD 发布流程结合，动态决定是否允许发布。",
             keyPoints: [
               "预算充足时：鼓励快速迭代、承担更多风险。",
               "预算紧张时：减缓发布、增加测试、优先修复。",
@@ -785,7 +795,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w13-3",
             title: "基于 SLO 的告警",
-            detail: "使用错误预算燃烧率设计告警。",
+            detail: "使用错误预算燃烧率和多窗口策略设计基于 SLO 的高质量告警规则。",
             keyPoints: [
               "燃烧率告警：预算消耗速度超过阈值时告警。",
               "多窗口告警：短窗口检测突发，长窗口检测趋势。",
@@ -953,7 +963,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w16-2",
             title: "故障注入实践",
-            detail: "使用工具进行故障注入实验。",
+            detail: "使用 Chaos Monkey、Litmus 和 Gremlin 等工具在生产环境进行故障注入实验。",
             keyPoints: [
               "Chaos Monkey：随机终止生产实例。",
               "Litmus：Kubernetes 原生混沌工程平台。",
@@ -1010,7 +1020,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w17-2",
             title: "依赖治理",
-            detail: "管理服务依赖，提高系统韧性。",
+            detail: "区分强依赖与弱依赖，管理服务间依赖关系以提高系统整体韧性。",
             keyPoints: [
               "依赖分级：区分强依赖与弱依赖。",
               "弱依赖降级：非核心依赖故障时降级而非失败。",
@@ -1025,7 +1035,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w17-3",
             title: "容灾与恢复",
-            detail: "设计和演练灾难恢复能力。",
+            detail: "设计 RTO/RPO 目标，建立主备切换机制并定期演练灾难恢复能力。",
             keyPoints: [
               "RTO/RPO：恢复时间目标与恢复点目标。",
               "灾备切换：主动切换 vs 被动切换。",
@@ -1079,7 +1089,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w18-2",
             title: "Pyroscope / Parca 实战",
-            detail: "使用开源工具进行持续剖析。",
+            detail: "使用 Pyroscope 和 Parca 等开源工具在生产环境中进行持续性能剖析。",
             keyPoints: [
               "Pyroscope：Grafana 的持续剖析解决方案。",
               "Parca：CNCF 孵化项目，与 eBPF 结合。",
@@ -1094,7 +1104,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w18-3",
             title: "生产环境剖析策略",
-            detail: "在生产环境安全使用持续剖析。",
+            detail: "控制采样率和隐私风险，在生产环境中安全部署和使用持续剖析方案。",
             keyPoints: [
               "采样率控制：平衡数据粒度与开销。",
               "隐私考量：剖析数据可能包含敏感信息。",
@@ -1193,7 +1203,7 @@ export const observabilitySreStages: Stage[] = [
           {
             id: "obs-w20-2",
             title: "智能告警与降噪",
-            detail: "使用 AI 提高告警质量。",
+            detail: "使用 AI 驱动的告警聚合、根因推断和自动分类来提高告警质量和降噪。",
             keyPoints: [
               "告警聚合：基于相关性自动聚合相关告警。",
               "根因推断：从症状推断可能的根因。",

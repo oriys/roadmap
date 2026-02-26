@@ -14,6 +14,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w1",
         title: "第 1 周：消息队列概念与模式",
         summary: "理解为什么需要消息队列，掌握核心消息传递模式与语义保证。",
+        overview: "本周建立消息队列的基础认知，理解异步解耦、削峰填谷的价值，掌握点对点和发布订阅模式，以及至少一次、至多一次、精确一次的语义保证。",
         keyPoints: [
           "消息队列实现系统解耦、流量削峰、异步处理。",
           "点对点与发布订阅是两种基本消息传递模式。",
@@ -71,6 +72,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w2",
         title: "第 2 周：消息队列核心概念",
         summary: "掌握 Topic、Partition、Consumer Group 等核心概念与消息序列化。",
+        overview: "本周深入消息队列的核心抽象，理解 Topic 的逻辑分类、Partition 的并行机制和 Consumer Group 的消费协调，以及消息序列化格式的选择。",
         keyPoints: [
           "Topic 是消息的逻辑分类，Partition 实现并行与扩展。",
           "Consumer Group 实现消费者负载均衡与故障转移。",
@@ -80,7 +82,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w2-1",
             title: "Topic、Partition、Offset",
-            detail: "理解消息组织的核心抽象概念。",
+            detail: "理解 Topic、Partition 和 Offset 等消息队列中消息组织的核心抽象概念。",
             keyPoints: [
               "Topic：消息的逻辑分类，类似于数据库的表。",
               "Partition：Topic 的物理分片，实现并行处理。",
@@ -128,6 +130,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w3",
         title: "第 3 周：消息队列可靠性",
         summary: "掌握消息持久化、确认机制与错误处理策略。",
+        overview: "本周聚焦消息可靠性，学习消息持久化到磁盘的机制、ACK 确认与重试策略，以及死信队列和幂等消费等错误处理方案。",
         keyPoints: [
           "持久化与复制确保消息不因节点故障而丢失。",
           "消息确认机制确保消息被正确处理。",
@@ -197,6 +200,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w4",
         title: "第 4 周：Kafka 架构与 KRaft",
         summary: "理解 Kafka 4.0 的新架构，掌握 KRaft 共识协议。",
+        overview: "本周进入 Kafka 专题，学习 Kafka 4.0 彻底移除 ZooKeeper 后的 KRaft 架构，理解元数据管理与 Controller 选举的新机制。",
         keyPoints: [
           "Kafka 4.0 完全移除 ZooKeeper，使用 KRaft 管理元数据。",
           "KRaft 基于 Raft 协议，简化运维，支持百万级分区。",
@@ -254,6 +258,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w5",
         title: "第 5 周：Producer 与 Consumer",
         summary: "掌握 Kafka Producer 与 Consumer 的配置与调优。",
+        overview: "本周深入 Kafka 客户端编程，学习 Producer 的批量发送与压缩配置，掌握 Consumer 的偏移量管理、再均衡与消费组协调机制。",
         keyPoints: [
           "Producer 配置影响吞吐量、延迟与数据可靠性。",
           "Consumer 配置影响消费速度与 Rebalance 行为。",
@@ -311,6 +316,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w6",
         title: "第 6 周：分区、副本与数据可靠性",
         summary: "深入理解 Kafka 的分区策略、副本机制与数据可靠性保证。",
+        overview: "本周学习 Kafka 的分区分配策略、ISR 副本同步机制和 acks 配置，理解如何通过多副本与最小同步副本数保障数据不丢失。",
         keyPoints: [
           "分区策略决定消息如何分布与顺序保证。",
           "ISR 与 ELR 机制确保数据不丢失。",
@@ -350,7 +356,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w6-3",
             title: "数据保留与压缩",
-            detail: "配置消息保留策略与日志压缩。",
+            detail: "配置基于时间和大小的消息保留策略，掌握日志压缩保留最新 Key 值的机制。",
             keyPoints: [
               "基于时间保留：retention.ms 设置保留时长。",
               "基于大小保留：retention.bytes 设置分区大小上限。",
@@ -368,6 +374,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w7",
         title: "第 7 周：Kafka Streams",
         summary: "使用 Kafka Streams 构建流处理应用。",
+        overview: "本周学习 Kafka Streams 库，掌握 KStream 和 KTable 的抽象模型，实现过滤、转换、聚合和窗口操作等实时流处理逻辑。",
         keyPoints: [
           "Kafka Streams 是轻量级流处理库，无需独立集群。",
           "DSL 提供高级抽象，Processor API 提供底层控制。",
@@ -425,6 +432,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w8",
         title: "第 8 周：Kafka Connect 与生态",
         summary: "使用 Kafka Connect 集成外部系统，掌握 Kafka 监控与运维。",
+        overview: "本周学习 Kafka Connect 的 Source 和 Sink 连接器与外部系统集成，掌握 JMX 指标监控、集群运维和 Topic 管理的最佳实践。",
         keyPoints: [
           "Kafka Connect 简化数据集成，无需编写代码。",
           "Schema Registry 确保生产者和消费者的数据兼容。",
@@ -494,6 +502,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w9",
         title: "第 9 周：RabbitMQ 架构",
         summary: "理解 AMQP 协议、Exchange 类型与 RabbitMQ 核心概念。",
+        overview: "本周进入 RabbitMQ 专题，学习 AMQP 协议的消息路由模型，掌握 Direct、Topic、Fanout、Headers 四种 Exchange 类型的使用场景。",
         keyPoints: [
           "RabbitMQ 基于 AMQP 协议，提供灵活的路由能力。",
           "Exchange 决定消息如何路由到队列。",
@@ -552,6 +561,7 @@ export const messageQueueStages: Stage[] = [
         id: "mq-w10",
         title: "第 10 周：队列类型与高可用",
         summary: "掌握 RabbitMQ 4.x 的队列类型与高可用机制。",
+        overview: "本周深入 RabbitMQ 4.x 的新特性，学习 Quorum Queue 和 Stream 队列的使用场景，掌握镜像队列与集群的高可用配置方案。",
         keyPoints: [
           "Quorum Queues 是 RabbitMQ 4.x 的默认高可用队列。",
           "Streams 提供高吞吐、可重放的消息存储。",
@@ -774,7 +784,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w13-3",
             title: "消息系统选型决策树",
-            detail: "根据需求选择合适的消息系统。",
+            detail: "根据吞吐量、延迟、路由灵活性等需求维度选择合适的消息系统。",
             keyPoints: [
               "高吞吐 + 持久化 → Kafka。",
               "低延迟 + 简单运维 → NATS。",
@@ -829,7 +839,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w14-2",
             title: "事件通知 vs 事件携带状态",
-            detail: "选择合适的事件设计模式。",
+            detail: "比较事件通知与事件携带状态两种模式，选择合适的事件设计方案。",
             keyPoints: [
               "事件通知：只包含 ID，消费者需要查询详情。",
               "事件携带状态：包含完整数据，消费者自给自足。",
@@ -886,7 +896,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w15-2",
             title: "事件存储设计",
-            detail: "设计和实现事件存储。",
+            detail: "设计事件存储的格式、聚合根组织方式与乐观并发版本控制机制。",
             keyPoints: [
               "事件格式：ID、类型、数据、元数据、时间戳。",
               "聚合根：事件按聚合组织，保证一致性边界。",
@@ -901,7 +911,7 @@ export const messageQueueStages: Stage[] = [
           {
             id: "mq-w15-3",
             title: "快照与重放",
-            detail: "优化事件溯源的性能与可用性。",
+            detail: "使用快照减少事件重放开销，掌握事件版本化以优化溯源的性能与可用性。",
             keyPoints: [
               "快照：定期保存聚合状态，减少重放事件数量。",
               "快照策略：每 N 个事件或每 T 时间。",

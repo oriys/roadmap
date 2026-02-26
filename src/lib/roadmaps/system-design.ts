@@ -22,6 +22,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w1-1",
                         title: "系统设计四步法：从需求到架构的结构化思维",
                         detail: "掌握系统设计面试和实际架构设计的标准流程：需求澄清、高层设计、组件深入、扩展优化。",
+                        keyPoints: [
+                            "需求澄清：明确功能/非功能需求、用户规模、读写比例，确定设计约束边界。",
+                            "高层设计：先画出核心组件和数据流，再逐步深入细节，避免过早陷入局部优化。",
+                            "扩展优化：识别系统瓶颈，提出水平扩展、缓存、异步等优化方案并分析权衡。",
+                        ],
                         resources: [
                             { title: "System Design Primer", url: "https://github.com/donnemartin/system-design-primer" },
                             { title: "Grokking System Design（概览）", url: "https://www.designgurus.io/course/grokking-the-system-design-interview" },
@@ -32,6 +37,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w1-2",
                         title: "性能 vs 可扩展性：理解增长的代价",
                         detail: "区分性能优化（单请求更快）与可扩展性设计（处理更多请求），理解 Amdahl 定律与扩展瓶颈。",
+                        keyPoints: [
+                            "性能优化关注单请求延迟，可扩展性关注系统在负载增长时的表现，两者目标不同。",
+                            "Amdahl 定律表明并行化的收益受限于串行部分比例，是扩展瓶颈的理论基础。",
+                            "垂直扩展（升级硬件）简单但有上限，水平扩展（加机器）复杂但理论上无限。",
+                        ],
                         resources: [
                             { title: "Scalable Web Applications: Best Practices", url: "https://42works.net/scalable-web-applications-from-basics-to-best-practices/" },
                             { title: "High Scalability Blog", url: "http://highscalability.com/" },
@@ -42,6 +52,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w1-3",
                         title: "延迟 vs 吞吐量：量化系统边界",
                         detail: "理解延迟分布（P50/P99/P999）、吞吐量计算，以及 Little's Law 在容量规划中的应用。",
+                        keyPoints: [
+                            "P50/P99/P999 延迟反映不同用户体验，长尾延迟往往暴露系统的真实瓶颈。",
+                            "Little's Law（L = λW）将并发数、吞吐量、延迟三者关联，是容量规划的核心公式。",
+                            "批处理提升吞吐量但增加延迟，异步化降低感知延迟但增加系统复杂度。",
+                        ],
                         resources: [
                             { title: "Latency Numbers Every Programmer Should Know", url: "https://gist.github.com/jboner/2841832" },
                             { title: "Little's Law（维基百科）", url: "https://en.wikipedia.org/wiki/Little%27s_law" },
@@ -75,6 +90,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w2-1",
                         title: "CAP 定理：不可能三角的真正含义",
                         detail: "深入理解 CAP 定理的证明、常见误解，以及为什么CP 和 AP是简化模型。",
+                        keyPoints: [
+                            "CAP 定理证明分布式系统在网络分区时只能选择一致性（CP）或可用性（AP）。",
+                            "常见误解：CAP 不是三选二，网络分区是必然存在的，关键在于分区时的取舍。",
+                            "现实中大多数系统是 CP/AP 的混合体，不同数据可以有不同的一致性策略。",
+                        ],
                         resources: [
                             { title: "CAP Theorem（Martin Kleppmann）", url: "https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html" },
                             { title: "Brewer's Conjecture（原始论文）", url: "https://users.ece.cmu.edu/~adrian/731-sp04/readings/GL-cap.pdf" },
@@ -85,6 +105,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w2-2",
                         title: "PACELC：延迟与一致性的日常权衡",
                         detail: "理解 PACELC 模型：即使没有分区，也要在延迟和一致性之间取舍，这是大多数系统的真实挑战。",
+                        keyPoints: [
+                            "PACELC 模型扩展了 CAP：即使没有分区（正常情况），也需在延迟和一致性间权衡。",
+                            "PA/EL 系统（如 Cassandra）优先可用性和低延迟，PC/EC 系统（如 HBase）优先一致性。",
+                            "日常设计中延迟与一致性的权衡比网络分区更常见，PACELC 更具实践指导意义。",
+                        ],
                         resources: [
                             { title: "PACELC 论文", url: "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" },
                             { title: "Consistency Tradeoffs in Modern Distributed Database System Design", url: "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" },
@@ -95,6 +120,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w2-3",
                         title: "一致性模型光谱：从强到弱的语义保证",
                         detail: "掌握线性一致性、顺序一致性、因果一致性、最终一致性的定义与应用场景。",
+                        keyPoints: [
+                            "线性一致性保证操作按全局时间排序，是最强的一致性，但延迟和吞吐量代价最高。",
+                            "因果一致性保证因果关系的操作有序，是实践中性能与正确性的良好平衡点。",
+                            "最终一致性只保证在没有新写入时所有副本最终趋于一致，适合可容忍短暂不一致的场景。",
+                        ],
                         resources: [
                             { title: "Jepsen Consistency Models", url: "https://jepsen.io/consistency" },
                             { title: "Consistency Models（分布式系统概念）", url: "https://www.allthingsdistributed.com/2008/12/eventually_consistent.html" },
@@ -128,6 +158,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w3-1",
                         title: "SLA/SLO/SLI：定义与度量可用性",
                         detail: "理解服务级别协议（SLA）、目标（SLO）、指标（SLI）的关系，以及如何设定合理的可用性目标。",
+                        keyPoints: [
+                            "SLI 是可观测的服务指标（如请求成功率），SLO 是目标值，SLA 是带惩罚的商业承诺。",
+                            "可用性目标每多一个 9，工程成本呈指数增长，需根据业务影响合理设定。",
+                            "错误预算（Error Budget）机制将可靠性目标与开发速度挂钩，平衡创新与稳定。",
+                        ],
                         resources: [
                             { title: "Google SRE Book - SLOs", url: "https://sre.google/sre-book/service-level-objectives/" },
                             { title: "The Art of SLOs（Google）", url: "https://sre.google/workbook/implementing-slos/" },
@@ -138,6 +173,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w3-2",
                         title: "故障转移：Active-Passive vs Active-Active",
                         detail: "深入理解主从切换和多活架构的实现原理、故障检测机制与数据同步挑战。",
+                        keyPoints: [
+                            "Active-Passive 主从模式实现简单，但切换时存在短暂不可用和数据丢失风险。",
+                            "Active-Active 多活模式提高资源利用率和可用性，但数据冲突和一致性处理更复杂。",
+                            "故障检测的速度和准确性直接影响切换时长，需平衡误判率与检测延迟。",
+                        ],
                         resources: [
                             { title: "High Availability Patterns", url: "https://docs.microsoft.com/en-us/azure/architecture/patterns/category/availability" },
                             { title: "Failover Strategies", url: "https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-i-strategies-for-recovery-in-the-cloud/" },
@@ -148,6 +188,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w3-3",
                         title: "复制策略：同步、异步与半同步",
                         detail: "比较不同复制模式的延迟、一致性、可用性权衡，以及 RPO/RTO 的影响。",
+                        keyPoints: [
+                            "同步复制保证强一致但增加写入延迟，任一从库故障都会阻塞主库写入。",
+                            "异步复制延迟最低但存在数据丢失风险（RPO > 0），适合可容忍短暂不一致的场景。",
+                            "半同步复制在性能和一致性间取得平衡，至少一个从库确认后即返回成功。",
+                        ],
                         resources: [
                             { title: "Replication（Designing Data-Intensive Applications）", url: "https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/" },
                             { title: "PostgreSQL Streaming Replication", url: "https://www.postgresql.org/docs/current/warm-standby.html" },
@@ -181,6 +226,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w4-1",
                         title: "分布式时间：为什么物理时钟不可靠",
                         detail: "理解时钟漂移、NTP 同步误差、Google TrueTime 的设计思路，以及 Spanner 如何利用时间不确定性。",
+                        keyPoints: [
+                            "物理时钟存在漂移（石英钟约 10-100 ppm），NTP 同步也无法消除毫秒级误差。",
+                            "Google TrueTime 通过 GPS+原子钟将不确定性控制在几毫秒内，支撑 Spanner 的外部一致性。",
+                            "依赖物理时间排序分布式事件是危险的，需要逻辑时钟等机制补充因果关系。",
+                        ],
                         resources: [
                             { title: "Time, Clocks, and the Ordering of Events（Lamport 论文）", url: "https://lamport.azurewebsites.net/pubs/time-clocks.pdf" },
                             { title: "Spanner: Google's Globally-Distributed Database", url: "https://research.google/pubs/pub39966/" },
@@ -191,6 +241,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w4-2",
                         title: "逻辑时钟：Lamport 时钟与向量时钟",
                         detail: "掌握逻辑时钟的实现原理，理解如何通过因果顺序而非物理时间排序分布式事件。",
+                        keyPoints: [
+                            "Lamport 时钟为事件分配单调递增的逻辑时间戳，可判断因果顺序但无法检测并发。",
+                            "向量时钟为每个节点维护独立计数器，能精确判断事件的因果关系和并发关系。",
+                            "Dynamo 使用向量时钟检测写入冲突，将冲突解决推迟到读取时由客户端处理。",
+                        ],
                         resources: [
                             { title: "Lamport Timestamps", url: "https://en.wikipedia.org/wiki/Lamport_timestamp" },
                             { title: "Vector Clocks", url: "https://en.wikipedia.org/wiki/Vector_clock" },
@@ -201,6 +256,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w4-3",
                         title: "Paxos 与 Raft：共识算法核心原理",
                         detail: "深入理解 Paxos 的 Prepare/Accept 两阶段和 Raft 的 Leader Election/Log Replication 机制。",
+                        keyPoints: [
+                            "Paxos 通过 Prepare/Accept 两阶段在多数节点间达成一致，正确性经过严格证明。",
+                            "Raft 将共识分解为 Leader 选举、日志复制、安全性三个子问题，更易理解和实现。",
+                            "共识算法的核心是多数派（Quorum）原则：只要多数节点存活，系统就能继续工作。",
+                        ],
                         resources: [
                             { title: "Raft 官方可视化", url: "https://raft.github.io/" },
                             { title: "In Search of an Understandable Consensus Algorithm（Raft 论文）", url: "https://raft.github.io/raft.pdf" },
@@ -242,6 +302,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w5-1",
                         title: "DNS 解析原理：从输入 URL 到获取 IP",
                         detail: "深入理解 DNS 递归/迭代查询、各级缓存机制、记录类型（A/AAAA/CNAME/MX）的作用。",
+                        keyPoints: [
+                            "DNS 解析经历浏览器缓存→OS 缓存→递归解析器→根/TLD/权威服务器的多层查询链路。",
+                            "常见记录类型：A（IPv4）、AAAA（IPv6）、CNAME（别名）、MX（邮件）各有不同用途。",
+                            "递归查询由解析器代为完成全部查询，迭代查询由客户端逐级查询，两者开销不同。",
+                        ],
                         resources: [
                             { title: "How DNS Works（Cloudflare）", url: "https://www.cloudflare.com/learning/dns/what-is-dns/" },
                             { title: "DNS RFC 1035", url: "https://datatracker.ietf.org/doc/html/rfc1035" },
@@ -252,6 +317,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w5-2",
                         title: "DNS 负载均衡与流量调度",
                         detail: "掌握 DNS 轮询、权重分配、GeoDNS、GSLB 的实现原理与适用场景。",
+                        keyPoints: [
+                            "DNS 轮询将请求分发到多个 IP，简单但无法感知后端健康状态和负载情况。",
+                            "GeoDNS 根据用户地理位置返回最近的服务器 IP，是全球化部署的基础流量调度手段。",
+                            "DNS 负载均衡粒度粗（TTL 周期内不变），通常需与应用层负载均衡配合使用。",
+                        ],
                         resources: [
                             { title: "Route 53 Routing Policies", url: "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" },
                             { title: "Cloudflare Load Balancing", url: "https://developers.cloudflare.com/load-balancing/" },
@@ -262,6 +332,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w5-3",
                         title: "DNS 缓存与 TTL 策略",
                         detail: "理解 TTL 对解析性能和故障切换的影响，如何在稳定性和灵活性之间取舍。",
+                        keyPoints: [
+                            "TTL 值越大缓存命中率越高但切换越慢，灾备场景建议提前降低 TTL 以加速切换。",
+                            "负缓存（Negative Caching）缓存 NXDOMAIN 结果，防止对不存在域名的重复查询。",
+                            "DNS 预取（dns-prefetch）和预连接（preconnect）可减少浏览器解析延迟，提升首屏速度。",
+                        ],
                         resources: [
                             { title: "DNS TTL Best Practices", url: "https://www.cloudflare.com/learning/dns/dns-cache-poisoning/" },
                             { title: "负缓存与 Negative TTL", url: "https://datatracker.ietf.org/doc/html/rfc2308" },
@@ -295,6 +370,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w6-1",
                         title: "CDN 架构原理：边缘节点与回源机制",
                         detail: "理解 CDN 的分层架构、边缘 PoP 分布、回源策略，以及 Anycast 如何实现就近接入。",
+                        keyPoints: [
+                            "CDN 边缘节点（PoP）部署在靠近用户的位置，通过就近服务减少网络往返延迟。",
+                            "回源机制在缓存未命中时向源站请求内容，多级缓存（L1/L2）可减少源站压力。",
+                            "Anycast 将同一 IP 广播到多个节点，用户请求自动路由到最近的边缘节点。",
+                        ],
                         resources: [
                             { title: "What is a CDN（Cloudflare）", url: "https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" },
                             { title: "Akamai Architecture Overview", url: "https://www.akamai.com/why-akamai" },
@@ -305,6 +385,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w6-2",
                         title: "缓存策略：Push vs Pull 与 Cache-Control",
                         detail: "掌握 CDN 的 Push（预热）和 Pull（按需）缓存模式，理解 HTTP 缓存头的配置与权衡。",
+                        keyPoints: [
+                            "Pull 模式按需缓存，首次访问有回源延迟；Push 模式主动预热，适合可预测的热点内容。",
+                            "Cache-Control 头控制缓存行为：max-age 设置过期时间，no-cache 强制重新验证，no-store 禁止缓存。",
+                            "缓存失效（Purge）是 CDN 运维的关键操作，需权衡一致性要求与失效传播延迟。",
+                        ],
                         resources: [
                             { title: "HTTP Caching（MDN）", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching" },
                             { title: "Cache-Control 详解", url: "https://www.keycdn.com/blog/http-cache-headers" },
@@ -315,6 +400,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w6-3",
                         title: "动态内容加速：从 DSA 到边缘计算",
                         detail: "理解动态站点加速（DSA）、TCP 优化、边缘计算（Edge Computing）如何处理非缓存内容。",
+                        keyPoints: [
+                            "动态站点加速（DSA）通过优化路由、TCP 连接复用和协议优化加速非缓存内容。",
+                            "边缘计算（如 Cloudflare Workers）在 CDN 节点运行业务逻辑，减少到源站的往返。",
+                            "边缘计算适合轻量级处理（A/B 测试、鉴权、重定向），复杂业务逻辑仍需中心化处理。",
+                        ],
                         resources: [
                             { title: "Dynamic Site Acceleration", url: "https://www.cloudflare.com/application-services/products/argo-smart-routing/" },
                             { title: "Cloudflare Workers", url: "https://developers.cloudflare.com/workers/" },
@@ -348,6 +438,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w7-1",
                         title: "L4 vs L7 负载均衡：原理与性能权衡",
                         detail: "理解四层（TCP/UDP）和七层（HTTP）负载均衡的工作原理、性能特点与适用场景。",
+                        keyPoints: [
+                            "L4 负载均衡基于 IP+端口转发，性能高但无法根据请求内容（URL/Header）做路由决策。",
+                            "L7 负载均衡解析应用层协议，支持基于内容的路由、SSL 终止、请求改写等高级功能。",
+                            "L4 适合高吞吐量场景（如数据库代理），L7 适合需要智能路由的 Web 应用。",
+                        ],
                         resources: [
                             { title: "Load Balancing 101（F5）", url: "https://www.f5.com/glossary/load-balancer" },
                             { title: "HAProxy L4 vs L7", url: "https://www.haproxy.com/blog/layer-4-vs-layer-7-load-balancing" },
@@ -358,6 +453,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w7-2",
                         title: "负载均衡算法深度对比",
                         detail: "掌握各类负载均衡算法的原理与适用场景，特别是一致性哈希在有状态服务中的应用。",
+                        keyPoints: [
+                            "轮询和加权轮询适合无状态服务，最少连接适合请求处理时间差异大的场景。",
+                            "一致性哈希将节点映射到环上，节点变更时只影响相邻区间的请求，适合有状态服务。",
+                            "Power of Two Random Choices 随机选两个节点取负载更低的，简单且效果接近最优。",
+                        ],
                         resources: [
                             { title: "Consistent Hashing", url: "https://www.toptal.com/big-data/consistent-hashing" },
                             { title: "Power of Two Random Choices", url: "https://www.nginx.com/blog/nginx-power-of-two-choices-load-balancing-algorithm/" },
@@ -368,6 +468,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w7-3",
                         title: "健康检查与优雅下线",
                         detail: "理解主动/被动健康检查、优雅关闭（Graceful Shutdown）、连接排空（Connection Draining）的实现。",
+                        keyPoints: [
+                            "主动健康检查定期探测后端状态，被动健康检查根据请求失败统计判断节点健康。",
+                            "优雅关闭先停止接收新请求，等待已有请求处理完毕后再关闭，避免请求中断。",
+                            "连接排空（Connection Draining）给予存量请求一定时间完成，超时后强制断开。",
+                        ],
                         resources: [
                             { title: "HAProxy Health Checks", url: "https://www.haproxy.com/documentation/haproxy-configuration-tutorials/health-checks/" },
                             { title: "AWS ELB Health Checks", url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html" },
@@ -401,6 +506,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w8-1",
                         title: "反向代理原理：请求转发与 SSL 终止",
                         detail: "理解反向代理的工作原理、与正向代理的区别，以及 SSL/TLS 终止的性能影响。",
+                        keyPoints: [
+                            "反向代理代表后端服务器接收客户端请求，隐藏真实服务器地址，提供安全和负载均衡。",
+                            "SSL 终止在反向代理处解密 HTTPS，后端使用 HTTP 明文通信，降低后端 CPU 开销。",
+                            "反向代理还可提供压缩、静态文件服务、请求缓冲等功能，减轻后端服务器压力。",
+                        ],
                         resources: [
                             { title: "Reverse Proxy（Cloudflare）", url: "https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" },
                             { title: "NGINX Reverse Proxy", url: "https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/" },
@@ -411,6 +521,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w8-2",
                         title: "API 网关：微服务的统一入口",
                         detail: "掌握 API 网关的核心职责：路由、限流、认证、协议转换，以及与 BFF（Backend For Frontend）的关系。",
+                        keyPoints: [
+                            "API 网关聚合多个微服务的 API，为客户端提供统一入口，简化客户端调用逻辑。",
+                            "横切关注点（认证、限流、日志）在网关层统一处理，避免每个服务重复实现。",
+                            "BFF（Backend For Frontend）模式为不同客户端（Web/Mobile）定制专属的 API 聚合层。",
+                        ],
                         resources: [
                             { title: "API Gateway Pattern", url: "https://microservices.io/patterns/apigateway.html" },
                             { title: "Kong Gateway 文档", url: "https://docs.konghq.com/gateway/latest/" },
@@ -421,6 +536,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w8-3",
                         title: "限流与熔断：保护后端服务",
                         detail: "理解令牌桶、漏桶、滑动窗口等限流算法，以及熔断器模式的状态机实现。",
+                        keyPoints: [
+                            "令牌桶允许突发流量但限制平均速率，漏桶以恒定速率处理请求平滑流量波峰。",
+                            "熔断器在错误率超阈值时自动打开，阻断请求并快速失败，防止故障级联扩散。",
+                            "熔断器有关闭、打开、半开三种状态，半开状态允许少量请求探测后端是否恢复。",
+                        ],
                         resources: [
                             { title: "Rate Limiting Algorithms", url: "https://blog.bytebytego.com/p/rate-limiting-fundamentals" },
                             { title: "Circuit Breaker Pattern", url: "https://martinfowler.com/bliki/CircuitBreaker.html" },
@@ -462,6 +582,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w9-1",
                         title: "查询优化：从 EXPLAIN 到索引设计",
                         detail: "掌握 EXPLAIN 执行计划分析、索引类型选择、复合索引设计原则，以及常见的查询反模式。",
+                        keyPoints: [
+                            "EXPLAIN 分析执行计划，关注 type（扫描类型）、rows（扫描行数）、Extra（额外操作）。",
+                            "复合索引遵循最左前缀原则，索引列顺序应按查询条件的选择性从高到低排列。",
+                            "覆盖索引将查询所需列全部包含在索引中，避免回表查询，显著提升查询性能。",
+                        ],
                         resources: [
                             { title: "MySQL EXPLAIN 详解", url: "https://dev.mysql.com/doc/refman/8.0/en/explain-output.html" },
                             { title: "Use The Index, Luke", url: "https://use-the-index-luke.com/" },
@@ -472,6 +597,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w9-2",
                         title: "连接池与事务优化",
                         detail: "理解连接池配置（HikariCP）、事务隔离级别、死锁检测与长事务的影响。",
+                        keyPoints: [
+                            "连接池复用数据库连接，避免频繁创建/销毁连接的开销，HikariCP 是 Java 生态首选。",
+                            "事务隔离级别从低到高：读未提交、读已提交、可重复读、串行化，级别越高并发性能越低。",
+                            "长事务占用锁和连接资源，应尽量缩短事务范围，将非数据库操作移出事务。",
+                        ],
                         resources: [
                             { title: "HikariCP 配置指南", url: "https://github.com/brettwooldridge/HikariCP/wiki" },
                             { title: "MySQL Transaction Isolation", url: "https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html" },
@@ -482,6 +612,11 @@ export const systemDesignStages: Stage[] = [
                         id: "w9-3",
                         title: "读写分离：架构设计与一致性保证",
                         detail: "掌握主从复制架构、读写分离中间件（ProxySQL/ShardingSphere）、解决复制延迟导致的读不一致。",
+                        keyPoints: [
+                            "读写分离将写请求路由到主库、读请求路由到从库，有效分散读取压力。",
+                            "主从复制延迟导致从库数据滞后，可通过强制主库读、延迟感知路由等方式解决。",
+                            "ProxySQL/ShardingSphere 等中间件自动路由读写请求，对应用代码透明无侵入。",
+                        ],
                         resources: [
                             { title: "MySQL Replication", url: "https://dev.mysql.com/doc/refman/8.0/en/replication.html" },
                             { title: "ProxySQL 文档", url: "https://proxysql.com/documentation/" },

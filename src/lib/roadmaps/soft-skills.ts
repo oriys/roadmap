@@ -14,6 +14,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w1",
         title: "第 1 周：有效沟通原则",
         summary: "理解沟通的本质与有效沟通的核心要素。",
+        overview: "本周从沟通模型入手，学习信息传递的完整流程和常见障碍，掌握积极倾听和非语言沟通技巧，为高效沟通打下坚实基础。",
         keyPoints: [
           "沟通是双向的信息交换过程。",
           "积极倾听是有效沟通的基础。",
@@ -39,7 +40,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w1-2",
             title: "积极倾听",
-            detail: "培养积极倾听的技能和习惯。",
+            detail: "学习专注倾听、复述确认和有效回应的核心技巧，培养深度倾听的习惯。",
             keyPoints: [
               "专注：全神贯注，避免分心和打断。",
               "理解：复述确认，提问澄清。",
@@ -55,7 +56,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w1-3",
             title: "非语言沟通",
-            detail: "理解和运用非语言沟通。",
+            detail: "掌握肢体语言、眼神交流和语调语速等非语言沟通要素，提升整体表达效果。",
             keyPoints: [
               "肢体语言：姿势、手势、面部表情。",
               "眼神交流：表达关注、建立信任。",
@@ -74,6 +75,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w2",
         title: "第 2 周：书面沟通",
         summary: "提升书面表达能力，掌握职场写作技巧。",
+        overview: "本周聚焦书面沟通，从职场邮件到技术文档和业务报告，学习金字塔原理和结构化写作方法，以及即时通讯工具的高效使用。",
         keyPoints: [
           "清晰简洁是书面沟通的核心原则。",
           "结构化写作提高信息传递效率。",
@@ -83,7 +85,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w2-1",
             title: "职场邮件写作",
-            detail: "撰写清晰有效的职场邮件。",
+            detail: "掌握职场邮件的主题行撰写、金字塔结构和行动项管理，提升邮件沟通效率。",
             keyPoints: [
               "主题行：明确、具体、吸引注意。",
               "开头：明确目的，尊重对方时间。",
@@ -134,6 +136,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w3",
         title: "第 3 周：口头表达与演讲",
         summary: "提升口头表达能力，克服演讲恐惧。",
+        overview: "本周围绕演讲展开，学习演讲结构设计、声音和肢体表达技巧，以及用故事增强影响力的方法，全面提升口头表达能力。",
         keyPoints: [
           "演讲是可以学习和提高的技能。",
           "准备充分是成功演讲的关键。",
@@ -143,7 +146,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w3-1",
             title: "演讲结构设计",
-            detail: "设计引人入胜的演讲结构。",
+            detail: "学习演讲的开场吸引、主体论证和收尾呼吁技巧，设计清晰有力的演讲结构。",
             keyPoints: [
               "开场：吸引注意，建立联系（故事、问题、数据）。",
               "主体：3-5 个要点，每点有论据支撑。",
@@ -159,7 +162,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w3-2",
             title: "演讲技巧与呈现",
-            detail: "提升演讲的表达和呈现能力。",
+            detail: "掌握声音控制、肢体语言和眼神交流技巧，克服紧张情绪，提升演讲表现力。",
             keyPoints: [
               "声音控制：音量、语速、停顿、强调。",
               "肢体语言：开放姿态、手势辅助、移动自然。",
@@ -175,7 +178,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w3-3",
             title: "故事讲述",
-            detail: "用故事增强沟通的影响力。",
+            detail: "学习故事结构和英雄之旅框架，用个人故事和数据叙事增强沟通感染力。",
             keyPoints: [
               "故事结构：情境 → 冲突 → 解决 → 启示。",
               "英雄之旅：平凡世界 → 冒险召唤 → 考验 → 转变 → 回归。",
@@ -206,6 +209,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w4",
         title: "第 4 周：团队合作基础",
         summary: "理解团队动态，提升协作效能。",
+        overview: "本周深入团队协作基础，学习 Tuckman 团队发展模型、心理安全感的构建方法，以及 SBI 反馈模型等实用工具。",
         keyPoints: [
           "高效团队有明确的目标和角色分工。",
           "心理安全感是团队创新的基础。",
@@ -215,7 +219,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w4-1",
             title: "团队发展阶段",
-            detail: "理解团队发展的不同阶段。",
+            detail: "学习 Tuckman 模型的形成期、风暴期、规范期和执行期，把握团队成长规律。",
             keyPoints: [
               "形成期（Forming）：礼貌客气，了解彼此。",
               "风暴期（Storming）：冲突产生，争夺影响力。",
@@ -231,7 +235,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w4-2",
             title: "心理安全感",
-            detail: "建立团队心理安全感。",
+            detail: "学习如何营造让成员敢于承担风险、提出不同意见的团队心理安全环境。",
             keyPoints: [
               "心理安全感：团队成员敢于承担风险而不担心被惩罚。",
               "领导者示范：承认错误、请求反馈。",
@@ -247,7 +251,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w4-3",
             title: "给予和接受反馈",
-            detail: "掌握建设性反馈的技巧。",
+            detail: "学习 SBI 反馈模型，掌握及时、具体、对事不对人的建设性反馈与接受技巧。",
             keyPoints: [
               "SBI 模型：情境（Situation）→ 行为（Behavior）→ 影响（Impact）。",
               "及时反馈：事件发生后尽快反馈。",
@@ -266,6 +270,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w5",
         title: "第 5 周：冲突管理",
         summary: "学会识别和有效处理团队冲突。",
+        overview: "本周学习冲突管理，从识别冲突类型和根源开始，掌握 Thomas-Kilmann 冲突处理模型和调解对话技巧，将冲突转化为成长机会。",
         keyPoints: [
           "冲突是团队发展的自然组成部分。",
           "建设性冲突可以产生更好的决策。",
@@ -275,7 +280,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w5-1",
             title: "冲突类型与来源",
-            detail: "识别不同类型的冲突及其根源。",
+            detail: "分析任务冲突、关系冲突和过程冲突的特征，识别资源稀缺和沟通不畅等根源。",
             keyPoints: [
               "任务冲突：关于工作内容和目标的分歧。",
               "关系冲突：人际紧张和情绪对立。",
@@ -308,7 +313,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w5-3",
             title: "调解与对话",
-            detail: "促进建设性对话解决冲突。",
+            detail: "运用利益导向的调解方法，分离人与问题，促进建设性对话并创造双赢解决方案。",
             keyPoints: [
               "分离人与问题：关注利益而非立场。",
               "积极倾听双方：理解各方需求和关切。",
@@ -327,6 +332,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w6",
         title: "第 6 周：跨文化协作",
         summary: "提升跨文化沟通和协作能力。",
+        overview: "本周探索跨文化协作，学习 Hofstede 文化维度理论、高低语境沟通差异，以及远程跨国团队的高效协作实践。",
         keyPoints: [
           "文化影响沟通风格和工作方式。",
           "文化智商（CQ）是全球化时代的关键能力。",
@@ -336,7 +342,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w6-1",
             title: "文化维度理论",
-            detail: "理解文化差异的主要维度。",
+            detail: "学习 Hofstede 文化维度理论，理解权力距离、个人主义和不确定性规避等维度。",
             keyPoints: [
               "权力距离：对权力不平等的接受程度。",
               "个人主义 vs 集体主义：个人目标 vs 群体利益。",
@@ -352,7 +358,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w6-2",
             title: "跨文化沟通技巧",
-            detail: "提升跨文化沟通的有效性。",
+            detail: "掌握高低语境差异、时间观念差异等跨文化沟通技巧，避免文化偏见和误解。",
             keyPoints: [
               "高语境 vs 低语境：隐含意义 vs 直接表达。",
               "时间观念：单一时间 vs 多元时间文化。",
@@ -368,7 +374,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w6-3",
             title: "远程跨国团队协作",
-            detail: "有效管理分布式跨国团队。",
+            detail: "学习时区协调、异步沟通和文档透明等实践，提升远程跨国团队协作效能。",
             keyPoints: [
               "时区协调：选择重叠时间，轮流牺牲。",
               "异步为主：减少对同步会议的依赖。",
@@ -399,6 +405,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w7",
         title: "第 7 周：时间管理",
         summary: "掌握时间管理方法，提升工作效率。",
+        overview: "本周专注时间管理，学习艾森豪威尔矩阵进行优先级排序、深度工作与番茄工作法，以及 GTD 任务管理系统的完整流程。",
         keyPoints: [
           "时间管理的本质是优先级管理。",
           "深度工作需要刻意保护。",
@@ -424,7 +431,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w7-2",
             title: "深度工作与专注",
-            detail: "培养深度工作能力，减少干扰。",
+            detail: "学习时间块和番茄工作法等专注技巧，创造无干扰环境以实现高效深度工作。",
             keyPoints: [
               "深度工作：在无干扰状态下进行高认知要求的工作。",
               "时间块（Time Blocking）：为深度工作预留专门时间。",
@@ -440,7 +447,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w7-3",
             title: "任务管理系统",
-            detail: "建立可靠的任务管理系统。",
+            detail: "学习 GTD 方法论，掌握捕获、澄清、组织、回顾和执行的完整任务管理流程。",
             keyPoints: [
               "GTD（Getting Things Done）：捕获 → 澄清 → 组织 → 回顾 → 执行。",
               "收件箱清零：定时处理，不让任务堆积。",
@@ -459,6 +466,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w8",
         title: "第 8 周：压力管理",
         summary: "理解压力机制，建立健康的应对策略。",
+        overview: "本周关注压力管理，从认识压力源和耶克斯-多德森定律开始，学习多元应对策略和恢复韧性方法，实现身心可持续发展。",
         keyPoints: [
           "适度压力可以提升表现，过度压力有害健康。",
           "压力管理需要身心双重关注。",
@@ -468,7 +476,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w8-1",
             title: "压力认知与识别",
-            detail: "理解压力的来源和影响。",
+            detail: "识别工作负荷和不确定性等压力源，理解压力的生理、情绪和认知反应机制。",
             keyPoints: [
               "压力源：工作负荷、人际关系、不确定性、缺乏控制。",
               "压力反应：生理（心跳加速）、情绪（焦虑）、认知（注意力下降）。",
@@ -484,7 +492,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w8-2",
             title: "应对策略",
-            detail: "建立健康的压力应对机制。",
+            detail: "学习问题导向、情绪调节和认知重构等应对策略，建立多元化的压力管理体系。",
             keyPoints: [
               "问题导向：直接解决压力源。",
               "情绪导向：调节对压力的情绪反应。",
@@ -500,7 +508,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w8-3",
             title: "恢复与韧性",
-            detail: "建立恢复机制，增强心理韧性。",
+            detail: "掌握休息恢复、正念冥想和工作生活边界管理技巧，培养从挫折中成长的韧性。",
             keyPoints: [
               "休息恢复：充足睡眠、定期运动、健康饮食。",
               "正念冥想：活在当下，减少焦虑。",
@@ -519,6 +527,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w9",
         title: "第 9 周：自我管理与成长",
         summary: "培养成长心态，持续自我提升。",
+        overview: "本周聚焦自我管理与成长，学习固定心态与成长心态的差异、内在和外在自我意识的培养，以及 70-20-10 终身学习模型。",
         keyPoints: [
           "成长心态相信能力可以通过努力发展。",
           "自我意识是自我管理的基础。",
@@ -528,7 +537,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w9-1",
             title: "成长心态",
-            detail: "培养相信能力可以发展的心态。",
+            detail: "对比固定心态与成长心态的差异，学习拥抱挑战、从失败中学习的积极思维方式。",
             keyPoints: [
               "固定心态 vs 成长心态：能力固定 vs 能力可发展。",
               "拥抱挑战：将困难视为成长机会。",
@@ -544,7 +553,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w9-2",
             title: "自我意识",
-            detail: "提升对自身的认知和理解。",
+            detail: "培养内在和外在自我意识，通过反思实践和主动寻求反馈提升自我认知深度。",
             keyPoints: [
               "内在自我意识：了解自己的价值观、情绪、优劣势。",
               "外在自我意识：理解他人如何看待自己。",
@@ -560,7 +569,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w9-3",
             title: "持续学习",
-            detail: "建立终身学习的习惯和系统。",
+            detail: "运用 70-20-10 学习模型，建立知识管理系统和分享输出的终身学习习惯。",
             keyPoints: [
               "学习目标：明确想要发展的技能和知识。",
               "学习方法：70-20-10 模型（实践-社交-正式）。",
@@ -591,6 +600,7 @@ export const softSkillsStages: Stage[] = [
         id: "soft-w10",
         title: "第 10 周：批判性思维",
         summary: "培养批判性思维能力，避免认知偏差。",
+        overview: "本周培养批判性思维，学习系统化分析框架识别假设和评估证据，了解常见认知偏差及纠偏方法，掌握苏格拉底式提问技巧。",
         keyPoints: [
           "批判性思维是分析和评估信息的能力。",
           "认知偏差影响我们的判断和决策。",
@@ -600,7 +610,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w10-1",
             title: "批判性思维框架",
-            detail: "建立系统化的批判性思维方法。",
+            detail: "学习识别假设、评估证据和考虑替代解释的系统化批判性思维分析框架。",
             keyPoints: [
               "识别假设：区分事实与观点。",
               "评估证据：来源可靠性、样本大小、逻辑关联。",
@@ -616,7 +626,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w10-2",
             title: "认知偏差",
-            detail: "识别和克服常见的认知偏差。",
+            detail: "了解确认偏差、锚定效应和可得性偏差等常见认知陷阱，学习系统化纠偏方法。",
             keyPoints: [
               "确认偏差：倾向于寻找支持现有观点的信息。",
               "锚定效应：过度依赖首先获得的信息。",
@@ -632,7 +642,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w10-3",
             title: "提问的艺术",
-            detail: "通过有力的问题深化思考。",
+            detail: "掌握开放式提问、5 个为什么和苏格拉底式提问技巧，用提问引导深度思考。",
             keyPoints: [
               "开放式问题：激发思考和讨论。",
               "5 个为什么：追问根本原因。",
@@ -660,7 +670,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w11-1",
             title: "问题定义与分析",
-            detail: "准确定义问题和分析根因。",
+            detail: "学习清晰的问题陈述方法，运用鱼骨图和 5 Why 分析法精准定位问题根因。",
             keyPoints: [
               "问题陈述：清晰、具体、可衡量。",
               "问题分解：MECE 原则，分而治之。",
@@ -676,7 +686,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w11-2",
             title: "结构化问题解决",
-            detail: "应用结构化框架解决问题。",
+            detail: "掌握麦肯锡方法、PDCA 循环和 A3 思维等结构化问题解决框架并实践应用。",
             keyPoints: [
               "麦肯锡方法：假设驱动、事实依据、结构清晰。",
               "PDCA 循环：计划 → 执行 → 检查 → 改进。",
@@ -692,7 +702,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w11-3",
             title: "创造性问题解决",
-            detail: "运用创造性思维产生创新方案。",
+            detail: "学习头脑风暴、逆向思维、类比思维和 SCAMPER 等创造性问题解决方法。",
             keyPoints: [
               "头脑风暴：数量优先、延迟判断、借力发挥。",
               "逆向思维：如果想让问题更糟会怎么做？",
@@ -720,7 +730,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w12-1",
             title: "决策框架",
-            detail: "应用决策框架提高决策质量。",
+            detail: "学习决策矩阵、利弊分析和决策树等工具，系统化评估选项以提高决策质量。",
             keyPoints: [
               "决策矩阵：列出选项、标准、权重、评分。",
               "利弊分析：系统性列出优缺点。",
@@ -736,7 +746,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w12-2",
             title: "快速决策与深思决策",
-            detail: "根据情境选择合适的决策方式。",
+            detail: "区分可逆与不可逆决策，掌握 OODA 循环和 70% 规则等快速决策方法论。",
             keyPoints: [
               "可逆 vs 不可逆：可逆决策快速决定，不可逆谨慎考虑。",
               "OODA 循环：观察 → 定向 → 决策 → 行动。",
@@ -752,7 +762,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w12-3",
             title: "群体决策与共识",
-            detail: "促进有效的群体决策。",
+            detail: "识别群体思维陷阱，运用 RAPID 框架明确决策角色，促进高质量的团队决策。",
             keyPoints: [
               "群体思维陷阱：追求和谐而压制不同意见。",
               "异议的价值：指定唱反调的人。",
@@ -792,7 +802,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w13-1",
             title: "影响力原则",
-            detail: "理解和应用影响力的心理原则。",
+            detail: "学习 Cialdini 的互惠、社会认同、权威和稀缺等六大影响力心理原则及应用。",
             keyPoints: [
               "互惠原则：先给予，再请求。",
               "社会认同：人们跟随大众。",
@@ -810,7 +820,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w13-2",
             title: "无权威影响力",
-            detail: "在没有正式权力时影响他人。",
+            detail: "通过建立信任、找到共同利益和构建支持网络，在缺乏正式权力时有效影响他人。",
             keyPoints: [
               "建立信任：展示能力、保持一致、真诚关心。",
               "找到共同利益：双赢的方案。",
@@ -826,7 +836,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w13-3",
             title: "说服性沟通",
-            detail: "构建有说服力的论点和表达。",
+            detail: "运用 AIDA 模型和框架效应，结合受众分析构建有说服力的论点并处理异议。",
             keyPoints: [
               "了解受众：他们关心什么？担心什么？",
               "AIDA 模型：注意 → 兴趣 → 欲望 → 行动。",
@@ -854,7 +864,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w14-1",
             title: "谈判准备",
-            detail: "为谈判做好充分准备。",
+            detail: "学习评估 BATNA 和 ZOPA，了解对方需求和约束，为谈判制定系统化准备方案。",
             keyPoints: [
               "BATNA：最佳替代方案，谈判的底牌。",
               "ZOPA：可能达成协议的区间。",
@@ -870,7 +880,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w14-2",
             title: "谈判策略与技巧",
-            detail: "应用有效的谈判策略。",
+            detail: "掌握利益导向谈判、价值创造和锚定效应等核心策略，实现互利共赢的谈判结果。",
             keyPoints: [
               "利益导向：探索背后的真正需求。",
               "创造价值：扩大蛋糕而非争夺份额。",
@@ -886,7 +896,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w14-3",
             title: "困难谈判与僵局",
-            detail: "处理困难的谈判情境。",
+            detail: "学习在僵局中管理情绪、打破僵局和处理不当行为的技巧，把握离开谈判的时机。",
             keyPoints: [
               "情绪管理：保持冷静，不被激怒。",
               "打破僵局：改变议题、引入第三方、暂停休息。",
@@ -914,7 +924,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w15-1",
             title: "领导力理论与风格",
-            detail: "了解不同的领导力理论和风格。",
+            detail: "学习情境领导、变革型领导和仆人式领导等理论，根据团队需求选择合适风格。",
             keyPoints: [
               "情境领导：根据下属成熟度调整风格。",
               "变革型领导：激励愿景、智力激发、个性化关怀。",
@@ -930,7 +940,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w15-2",
             title: "愿景与激励",
-            detail: "设定愿景并激励团队。",
+            detail: "学习如何设定清晰鼓舞人心的愿景，运用自主、精通和目的三要素激励团队。",
             keyPoints: [
               "愿景：清晰、鼓舞人心、有意义。",
               "沟通愿景：反复强调、以身作则。",
@@ -946,7 +956,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w15-3",
             title: "授权与培养",
-            detail: "有效授权并培养团队成员。",
+            detail: "掌握授权的目标设定和权限给予技巧，运用 GROW 模型教练式培养团队成员。",
             keyPoints: [
               "授权：明确目标、给予权限、支持而非干预。",
               "培养：教练式对话、提供发展机会。",
@@ -986,7 +996,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w16-1",
             title: "情绪智力",
-            detail: "理解和提升情绪智力。",
+            detail: "学习自我意识、自我管理、社会意识和关系管理四维度，系统性提升情绪智力。",
             keyPoints: [
               "自我意识：识别和理解自己的情绪。",
               "自我管理：调节情绪，适应变化。",
@@ -1002,7 +1012,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w16-2",
             title: "同理心与理解",
-            detail: "培养同理心，理解他人视角。",
+            detail: "发展认知同理心和情感同理心，通过同理心倾听和换位思考深入理解他人视角。",
             keyPoints: [
               "认知同理心：理解他人的思维方式。",
               "情感同理心：感受他人的情绪。",
@@ -1018,7 +1028,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w16-3",
             title: "职场人际关系",
-            detail: "建立和维护职场人际网络。",
+            detail: "掌握向上管理、同事协作和跨部门关系建设技巧，主动经营职场人际网络。",
             keyPoints: [
               "向上管理：理解上级优先级，主动沟通进展。",
               "同事关系：合作互助，避免办公室政治。",
@@ -1062,7 +1072,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w17-2",
             title: "职业目标设定",
-            detail: "设定清晰的职业发展目标。",
+            detail: "制定长期职业愿景和中短期里程碑目标，运用 SMART 原则规划职业发展路径。",
             keyPoints: [
               "长期愿景：5-10 年后想成为什么样的人？",
               "中期目标：2-3 年的里程碑。",
@@ -1078,7 +1088,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w17-3",
             title: "职业转型与发展",
-            detail: "管理职业变化和持续发展。",
+            detail: "识别可迁移技能，制定技能差距填补计划，掌握职业转型的探索和过渡策略。",
             keyPoints: [
               "技能可迁移性：识别跨领域通用技能。",
               "学习路径：填补技能差距的计划。",
@@ -1106,7 +1116,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w18-1",
             title: "个人品牌建设",
-            detail: "定义和建立个人专业品牌。",
+            detail: "明确个人品牌定位和独特价值，通过简历、作品集和内容输出建立专业形象。",
             keyPoints: [
               "品牌定位：你希望被如何认知？独特价值是什么？",
               "一致性：线上线下表现一致。",
@@ -1122,7 +1132,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w18-2",
             title: "职业网络建设",
-            detail: "建立和维护职业人际网络。",
+            detail: "理解强弱连接理论，通过给予优先和定期跟进建立可持续的职业人际网络。",
             keyPoints: [
               "网络的价值：信息、机会、支持、影响力。",
               "强连接与弱连接：弱连接带来新信息和机会。",
@@ -1138,7 +1148,7 @@ export const softSkillsStages: Stage[] = [
           {
             id: "soft-w18-3",
             title: "在线影响力",
-            detail: "建立在线专业影响力。",
+            detail: "选择合适的在线平台，制定内容策略，通过知识分享和互动参与建立专业影响力。",
             keyPoints: [
               "平台选择：LinkedIn、Twitter/X、个人博客、GitHub。",
               "内容策略：分享知识、观点、经验。",

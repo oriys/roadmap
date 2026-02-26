@@ -14,6 +14,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w1",
         title: "第 1 周：Pulsar 概述与架构",
         summary: "理解 Pulsar 的设计理念、核心组件与独特的计算存储分离架构。",
+        overview: "本周从整体视角认识 Apache Pulsar，理解 Broker 与 BookKeeper 的计算存储分离设计，以及分层存储带来的弹性扩展优势。",
         keyPoints: [
           "Pulsar 是云原生分布式消息流平台，原生支持多租户。",
           "计算存储分离：Broker 无状态，BookKeeper 负责持久化。",
@@ -71,6 +72,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w2",
         title: "第 2 周：核心概念",
         summary: "掌握 Pulsar 的核心抽象概念：租户、命名空间、Topic 与消息模型。",
+        overview: "本周深入 Pulsar 的多租户模型，理解租户、命名空间与 Topic 的层级关系，以及消息的生命周期与元数据管理方式。",
         keyPoints: [
           "多租户层级：Tenant → Namespace → Topic 实现资源隔离。",
           "Topic 是消息的逻辑通道，支持分区与持久化/非持久化模式。",
@@ -128,6 +130,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w3",
         title: "第 3 周：快速上手",
         summary: "搭建 Pulsar 环境，实现第一个消息收发应用。",
+        overview: "本周动手搭建 Pulsar 开发环境，使用 Docker 快速启动单机集群，通过 Java/Python 客户端完成第一个 Producer 和 Consumer 程序。",
         keyPoints: [
           "使用 Docker 或 Standalone 模式快速启动 Pulsar。",
           "pulsar-admin 是管理 Pulsar 的命令行工具。",
@@ -197,6 +200,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w4",
         title: "第 4 周：订阅类型",
         summary: "掌握 Pulsar 四种订阅类型及其适用场景。",
+        overview: "本周深入学习 Exclusive、Shared、Failover 和 Key_Shared 四种订阅模式，理解各自的消息分发机制与典型适用场景。",
         keyPoints: [
           "Exclusive：独占订阅，只有一个消费者。",
           "Shared：共享订阅，消息轮询分发给多个消费者。",
@@ -255,6 +259,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w5",
         title: "第 5 周：消息传递保证",
         summary: "理解 Pulsar 的消息确认、重试与传递保证机制。",
+        overview: "本周深入消息可靠性保证，掌握 ACK/NACK 确认机制、死信队列与重试策略，理解 Exactly-Once 语义的实现方式。",
         keyPoints: [
           "Pulsar 默认提供 At-least-once 传递保证。",
           "消息确认（ACK）机制确保消息被正确处理。",
@@ -294,7 +299,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w5-3",
             title: "消息去重与幂等",
-            detail: "实现消息去重与幂等消费。",
+            detail: "基于 Sequence ID 和 Broker 端去重实现消息去重，在消费端保证幂等处理。",
             keyPoints: [
               "Producer 去重：基于 Sequence ID 防止重复发送。",
               "Consumer 幂等：业务层保证处理幂等性。",
@@ -312,6 +317,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w6",
         title: "第 6 周：高级消费模式",
         summary: "掌握 Reader、延迟消息与消息回溯等高级功能。",
+        overview: "本周探索 Pulsar 的高级消费模式，学习 Reader 接口实现灵活读取、延迟消息的定时投递，以及按时间戳回溯消费历史数据。",
         keyPoints: [
           "Reader 允许从任意位置读取消息，不影响订阅进度。",
           "延迟消息支持定时投递场景。",
@@ -381,6 +387,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w7",
         title: "第 7 周：Producer 深入",
         summary: "掌握 Producer 的配置选项与发送模式。",
+        overview: "本周深入 Producer 端，学习同步与异步发送模式的选择、批量发送的参数调优，以及消息路由策略的定制方法。",
         keyPoints: [
           "同步发送保证消息可靠性，异步发送提高吞吐。",
           "批量发送（Batching）减少网络开销。",
@@ -405,7 +412,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w7-2",
             title: "批量发送",
-            detail: "配置批量发送提高吞吐量。",
+            detail: "配置批量发送的消息数、字节数和等待时间参数，显著提高发送吞吐量。",
             keyPoints: [
               "batchingEnabled：开启批量发送。",
               "batchingMaxBytes：批次最大字节数。",
@@ -439,6 +446,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w8",
         title: "第 8 周：消息压缩与 Schema",
         summary: "使用消息压缩减少存储和网络开销，使用 Schema 确保数据一致性。",
+        overview: "本周学习 LZ4、ZSTD 等压缩算法的选型与配置，掌握 Avro、JSON、Protobuf 等 Schema 类型实现生产者与消费者的数据契约。",
         keyPoints: [
           "支持 LZ4、ZLIB、ZSTD、Snappy 等压缩算法。",
           "Schema Registry 管理消息结构与版本演进。",
@@ -496,6 +504,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w9",
         title: "第 9 周：性能调优",
         summary: "优化 Pulsar 客户端和集群的性能配置。",
+        overview: "本周聚焦性能调优实践，从客户端连接池、批量参数到 Broker 线程模型和 BookKeeper 写入策略，全面提升系统吞吐量。",
         keyPoints: [
           "客户端连接池和线程配置影响并发性能。",
           "内存管理影响消息处理效率。",
@@ -565,6 +574,7 @@ export const pulsarStages: Stage[] = [
         id: "pulsar-w10",
         title: "第 10 周：地理复制",
         summary: "配置跨数据中心的消息复制，实现异地多活。",
+        overview: "本周学习 Pulsar 地理复制能力，配置多集群间的消息同步，掌握全网格与聚合复制模式，实现跨数据中心的高可用架构。",
         keyPoints: [
           "Geo-Replication 支持跨集群的异步消息复制。",
           "全网格复制：所有集群互相同步。",
@@ -589,7 +599,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w10-2",
             title: "配置地理复制",
-            detail: "配置跨集群的消息复制。",
+            detail: "在全局 ZooKeeper 注册集群并配置 Namespace 策略，实现跨集群消息复制。",
             keyPoints: [
               "集群注册：在全局 ZooKeeper 注册集群。",
               "Namespace 策略：指定复制的目标集群。",
@@ -604,7 +614,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w10-3",
             title: "复制模式与故障处理",
-            detail: "选择复制模式与处理复制故障。",
+            detail: "选择全网格或聚合等复制拓扑模式，掌握复制故障时的自动与手动切换策略。",
             keyPoints: [
               "全网格：所有集群双向复制。",
               "聚合：多个边缘集群复制到中心集群。",
@@ -661,7 +671,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w11-3",
             title: "分层存储最佳实践",
-            detail: "优化分层存储的配置与使用。",
+            detail: "优化分层存储的卸载时机、保留策略和监控配置，平衡成本与读取性能。",
             keyPoints: [
               "卸载时机：平衡存储成本与读取性能。",
               "保留策略：结合消息保留和分层存储策略。",
@@ -830,7 +840,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w14-2",
             title: "窗口函数",
-            detail: "使用窗口函数进行聚合计算。",
+            detail: "使用 Tumbling Window 和 Sliding Window 等窗口函数对流数据进行聚合计算。",
             keyPoints: [
               "Tumbling Window：固定大小的滚动窗口。",
               "Sliding Window：滑动窗口。",
@@ -941,7 +951,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w16-1",
             title: "认证",
-            detail: "配置客户端和服务端认证。",
+            detail: "配置 JWT、OAuth 2.0 和 mTLS 等认证方式，保障客户端和服务端通信安全。",
             keyPoints: [
               "JWT 认证：基于 Token 的认证。",
               "OAuth 2.0：集成身份提供商。",
@@ -956,7 +966,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w16-2",
             title: "授权",
-            detail: "配置基于角色的访问控制。",
+            detail: "配置 Superuser、Tenant Admin 等角色权限，实现细粒度的访问控制。",
             keyPoints: [
               "Superuser：超级管理员角色。",
               "Tenant Admin：租户管理员权限。",
@@ -1070,7 +1080,7 @@ export const pulsarStages: Stage[] = [
           {
             id: "pulsar-w18-2",
             title: "备份与恢复",
-            detail: "配置数据备份与灾难恢复策略。",
+            detail: "配置 ZooKeeper 元数据备份与跨区域地理复制，制定完善的灾难恢复策略。",
             keyPoints: [
               "ZooKeeper 备份：元数据定期备份。",
               "BookKeeper 数据：多副本保障，无需额外备份。",

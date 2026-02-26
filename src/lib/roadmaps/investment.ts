@@ -14,6 +14,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w1",
         title: "第 1 周：财务规划入门",
         summary: "学习预算管理和财务目标设定的基本方法。",
+        overview: "本周从个人财务评估开始，帮助你全面了解自己的收支和资产负债状况，再学习多种预算编制方法，最后设定清晰可行的短中长期财务目标。",
         keyPoints: [
           "预算是财务管理的基础工具。",
           "了解自己的收支情况是第一步。",
@@ -39,7 +40,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w1-2",
             title: "预算编制方法",
-            detail: "学习不同的预算方法，找到适合自己的方式。",
+            detail: "学习 50/30/20 法则、零基预算和信封法等不同的预算编制方法，根据自身收入和消费习惯找到最适合的方式。",
             keyPoints: [
               "50/30/20 法则：50% 必需支出、30% 个人消费、20% 储蓄。",
               "零基预算：每一分钱都要有去处。",
@@ -55,7 +56,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w1-3",
             title: "财务目标设定",
-            detail: "设定短期、中期和长期财务目标。",
+            detail: "运用 SMART 原则设定短期、中期和长期财务目标，明确时间节点与金额，为投资规划提供清晰方向。",
             keyPoints: [
               "SMART 目标：具体、可衡量、可实现、相关、有时限。",
               "短期目标：1 年内，如建立应急基金。",
@@ -74,6 +75,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w2",
         title: "第 2 周：应急基金与债务管理",
         summary: "建立财务安全网，制定债务偿还策略。",
+        overview: "本周聚焦财务安全基础：学习建立充足的应急基金以应对突发状况，掌握雪球法和雪崩法等债务偿还策略，并了解信用评分对长期借贷成本的影响。",
         keyPoints: [
           "应急基金是抵御财务风险的第一道防线。",
           "高息债务是财富积累的最大敌人。",
@@ -83,7 +85,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w2-1",
             title: "建立应急基金",
-            detail: "了解应急基金的重要性和建立方法。",
+            detail: "了解应急基金在财务安全中的关键作用，学习确定目标金额、选择存放工具和建立自动储蓄计划的方法。",
             keyPoints: [
               "目标金额：3-6 个月的生活必需支出。",
               "存放位置：高收益储蓄账户或货币市场基金。",
@@ -99,7 +101,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w2-2",
             title: "债务偿还策略",
-            detail: "学习有效的债务偿还方法。",
+            detail: "学习雪球法和雪崩法等有效的债务偿还策略，制定优先还款计划，加速摆脱高利率负债。",
             keyPoints: [
               "雪球法：先还最小额债务，建立信心。",
               "雪崩法：先还最高利率债务，节省利息。",
@@ -115,7 +117,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w2-3",
             title: "信用管理",
-            detail: "了解信用评分和信用记录的重要性。",
+            detail: "了解信用评分的计算因素和信用记录对贷款利率、租房审批等方面的重要影响，掌握提升信用分数的方法。",
             keyPoints: [
               "信用评分因素：还款历史、信用使用率、账龄、信用类型。",
               "保持信用使用率低于 30%。",
@@ -134,6 +136,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w3",
         title: "第 3 周：保险与风险保障",
         summary: "了解保险在财务规划中的作用。",
+        overview: "本周学习保险的基本原理和风险转移机制，了解人寿险、健康险等人身保障类保险的选择方法，以及房屋保险、车险等财产保险的配置要点。",
         keyPoints: [
           "保险是风险转移的重要工具。",
           "只购买真正需要的保险。",
@@ -143,7 +146,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w3-1",
             title: "保险基础知识",
-            detail: "了解保险的基本原理和类型。",
+            detail: "了解保险的风险转移原理，区分人寿、健康、财产和责任等主要保险类型及其适用场景。",
             keyPoints: [
               "保险原理：用确定的小额保费转移不确定的大额损失。",
               "保险类型：人寿、健康、财产、责任。",
@@ -159,7 +162,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w3-2",
             title: "人寿与健康保险",
-            detail: "了解人身保障类保险的选择要点。",
+            detail: "了解定期寿险与终身寿险的区别，掌握保额计算方法和健康险的选择要点，构建完善的人身保障体系。",
             keyPoints: [
               "定期寿险 vs 终身寿险：根据需求选择。",
               "寿险保额：一般为年收入的 10-15 倍。",
@@ -175,7 +178,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w3-3",
             title: "财产与责任保险",
-            detail: "保护资产免受意外损失。",
+            detail: "学习配置房屋保险、车险和责任险等财产类保险，有效保护个人资产免受自然灾害和意外事故的损失。",
             keyPoints: [
               "房屋保险：保护房产和个人财物。",
               "车险：责任险是必需，全险视车龄而定。",
@@ -206,6 +209,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w4",
         title: "第 4 周：投资入门",
         summary: "了解投资的本质和基本原理。",
+        overview: "本周正式进入投资领域：理解投资与投机、储蓄的区别，掌握货币时间价值的核心概念，并深入学习复利效应如何驱动长期财富积累。",
         keyPoints: [
           "投资是用当前资源换取未来更大回报。",
           "复利是财富增长的核心引擎。",
@@ -215,7 +219,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w4-1",
             title: "什么是投资",
-            detail: "理解投资的定义、目的和基本类型。",
+            detail: "理解投资与投机、储蓄的本质区别，掌握股票、债券、基金等基本投资类型的定义与核心特征。",
             keyPoints: [
               "投资 vs 投机：长期价值创造 vs 短期价格波动。",
               "投资 vs 储蓄：承担风险换取更高回报。",
@@ -231,7 +235,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w4-2",
             title: "货币时间价值",
-            detail: "理解今天的一元钱比明天的一元钱更值钱。",
+            detail: "理解货币时间价值的核心概念：今天的一元钱因为投资机会和通胀因素，其实际购买力远高于未来的一元钱。",
             keyPoints: [
               "现值（PV）：未来现金流的当前价值。",
               "终值（FV）：当前投资的未来价值。",
@@ -247,7 +251,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w4-3",
             title: "复利的力量",
-            detail: "理解复利如何推动财富增长。",
+            detail: "深入理解复利的数学公式和 72 法则，掌握复利如何通过时间的力量指数级地推动长期财富增长。",
             keyPoints: [
               "复利公式：FV = PV × (1 + r)^n",
               "72 法则：72 ÷ 年化收益率 = 资产翻倍所需年数。",
@@ -266,6 +270,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w5",
         title: "第 5 周：风险与收益",
         summary: "理解投资风险的类型和风险收益权衡。",
+        overview: "本周深入探讨投资风险的本质：学习系统性风险与非系统性风险的分类，评估个人风险承受能力，掌握标准差、Beta 等风险度量工具和风险收益权衡方法。",
         keyPoints: [
           "风险与收益正相关是投资的基本定律。",
           "了解自己的风险承受能力至关重要。",
@@ -275,7 +280,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w5-1",
             title: "投资风险类型",
-            detail: "了解影响投资回报的各种风险因素。",
+            detail: "了解市场风险、利率风险、通胀风险和流动性风险等影响投资回报的各种系统性和非系统性风险因素。",
             keyPoints: [
               "市场风险：整体市场下跌影响所有资产。",
               "信用风险：债务人无法履行还款义务。",
@@ -292,7 +297,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w5-2",
             title: "风险承受能力",
-            detail: "评估自己的风险承受能力和投资期限。",
+            detail: "通过问卷和情景分析评估自己的风险承受能力，结合年龄、收入和投资期限确定合适的投资风险水平。",
             keyPoints: [
               "风险承受能力：财务能力承受损失的程度。",
               "风险偏好：心理上对风险的态度。",
@@ -308,7 +313,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w5-3",
             title: "风险与收益权衡",
-            detail: "理解风险收益的关系和衡量方法。",
+            detail: "学习用标准差和夏普比率等指标量化风险与收益的关系，理解高风险高收益的投资基本定律及其应用。",
             keyPoints: [
               "高风险高收益：股票 > 债券 > 现金。",
               "标准差：衡量收益波动性的指标。",
@@ -327,6 +332,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w6",
         title: "第 6 周：投资工具概览",
         summary: "了解主要的投资工具及其特点。",
+        overview: "本周全面介绍三大核心投资工具：股票代表公司所有权并提供资本增值机会，债券作为固定收益产品提供稳定回报，共同基金与 ETF 则让普通投资者轻松实现分散投资。",
         keyPoints: [
           "不同投资工具有不同的风险收益特征。",
           "基金是普通投资者的理想选择。",
@@ -336,7 +342,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w6-1",
             title: "股票基础",
-            detail: "了解股票投资的基本概念。",
+            detail: "了解股票代表公司所有权的含义，掌握股息收入和资本增值两种收益来源以及股票的分类方式。",
             keyPoints: [
               "股票代表公司所有权的一部分。",
               "收益来源：股息收入 + 资本增值。",
@@ -352,7 +358,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w6-2",
             title: "债券基础",
-            detail: "理解债券的运作机制和投资特点。",
+            detail: "理解债券作为固定收益工具的运作机制，掌握票息、到期收益率和信用评级等核心概念及投资特点。",
             keyPoints: [
               "债券是借款人的债务凭证。",
               "收益来源：利息收入（票息）+ 到期还本。",
@@ -368,7 +374,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w6-3",
             title: "基金与 ETF",
-            detail: "了解共同基金和 ETF 的投资方式。",
+            detail: "了解共同基金和 ETF 的结构差异、费用比较和交易方式，学会利用基金产品实现低成本分散投资。",
             keyPoints: [
               "基金：集合投资者资金，由专业经理管理。",
               "ETF：交易所交易基金，可像股票一样买卖。",
@@ -399,6 +405,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w7",
         title: "第 7 周：股票市场运作",
         summary: "了解股票市场的结构和参与者。",
+        overview: "本周学习股票市场的运作机制：了解交易所的功能与组织形式，理解一级市场和二级市场的区别，认识散户、机构投资者和做市商等市场参与者的角色与影响力。",
         keyPoints: [
           "股票市场是资本配置的重要场所。",
           "一级市场与二级市场功能不同。",
@@ -408,7 +415,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w7-1",
             title: "证券交易所",
-            detail: "了解全球主要证券交易所及其特点。",
+            detail: "了解纽约证券交易所、纳斯达克、上海证券交易所等全球主要交易所的运作模式、交易时间和上市标准。",
             keyPoints: [
               "纽交所（NYSE）：全球最大，采用专家做市商制度。",
               "纳斯达克（NASDAQ）：电子交易，科技股集中。",
@@ -424,7 +431,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w7-2",
             title: "一级与二级市场",
-            detail: "理解证券发行和交易的市场结构。",
+            detail: "理解一级市场（IPO 发行）和二级市场（投资者间交易）的运作机制，掌握证券市场的整体架构。",
             keyPoints: [
               "一级市场：公司首次发行证券（IPO）。",
               "二级市场：投资者之间交易已发行证券。",
@@ -440,7 +447,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w7-3",
             title: "市场参与者",
-            detail: "了解股票市场中的各类参与者。",
+            detail: "了解散户投资者、机构投资者、做市商和监管机构等市场参与者的角色定位及其对价格形成的影响。",
             keyPoints: [
               "散户投资者：个人投资者，交易量小。",
               "机构投资者：基金、保险、养老金，主导市场。",
@@ -459,6 +466,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w8",
         title: "第 8 周：市场指数与分析",
         summary: "学习市场指数和经济指标分析。",
+        overview: "本周学习宏观分析基础：了解道琼斯、标普 500 等主要指数的构成与意义，理解经济周期四阶段对不同行业的影响，掌握 GDP、CPI 等关键经济指标的解读方法。",
         keyPoints: [
           "指数是衡量市场整体表现的标尺。",
           "经济周期影响市场走势。",
@@ -468,7 +476,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w8-1",
             title: "主要市场指数",
-            detail: "了解全球主要股票指数及其构成。",
+            detail: "了解道琼斯、标普 500、纳斯达克等全球主要股票指数的编制方法、成分股构成及其作为市场晴雨表的意义。",
             keyPoints: [
               "道琼斯工业指数：30 只美国大盘股。",
               "标普 500：500 家美国大公司，市值加权。",
@@ -484,7 +492,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w8-2",
             title: "经济周期",
-            detail: "理解经济周期对投资的影响。",
+            detail: "理解扩张、顶峰、收缩和低谷四个经济周期阶段的特征，掌握不同行业在各阶段的表现差异和配置策略。",
             keyPoints: [
               "四个阶段：扩张、顶峰、收缩、低谷。",
               "不同行业在不同周期阶段表现各异。",
@@ -500,7 +508,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w8-3",
             title: "宏观经济指标",
-            detail: "学习关键经济指标的解读方法。",
+            detail: "学习解读 GDP 增长率、CPI 通胀率、失业率和利率等关键经济指标，判断宏观经济走势对投资市场的影响。",
             keyPoints: [
               "GDP：经济总量和增长率。",
               "通胀指标：CPI、PPI、PCE。",
@@ -519,6 +527,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w9",
         title: "第 9 周：交易基础",
         summary: "学习股票交易的实操知识。",
+        overview: "本周进入实操环节：学习如何选择券商和开设证券账户，掌握市价单、限价单等不同订单类型的使用场景，了解佣金、价差和税务等交易成本对投资收益的影响。",
         keyPoints: [
           "选择合适的券商是投资的第一步。",
           "理解不同订单类型能更好地执行交易。",
@@ -528,7 +537,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w9-1",
             title: "证券账户开设",
-            detail: "了解如何开设和管理证券账户。",
+            detail: "了解券商选择标准和开户流程，掌握个人账户与退休账户等不同账户类型的特点及日常管理方法。",
             keyPoints: [
               "券商选择：费用、平台、研究工具、客服。",
               "账户类型：个人账户、退休账户（IRA/401k）。",
@@ -544,7 +553,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w9-2",
             title: "订单类型",
-            detail: "掌握各种股票订单类型及其使用场景。",
+            detail: "掌握市价单、限价单、止损单和止损限价单等各种订单类型的特点，学会根据不同交易场景选择合适的下单方式。",
             keyPoints: [
               "市价单：立即以当前价格成交。",
               "限价单：以指定价格或更优价格成交。",
@@ -560,7 +569,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w9-3",
             title: "交易成本与税务",
-            detail: "了解投资相关的费用和税务影响。",
+            detail: "了解佣金、买卖价差、基金管理费等投资费用构成，以及资本利得税和股息税对投资净收益的实际影响。",
             keyPoints: [
               "佣金：多数券商已实现零佣金交易。",
               "买卖价差：隐性交易成本。",
@@ -591,6 +600,7 @@ export const investmentStages: Stage[] = [
         id: "inv-w10",
         title: "第 10 周：财务报表分析",
         summary: "学习阅读和分析公司财务报表。",
+        overview: "本周学习基本面分析的基石：掌握资产负债表的结构与核心科目，学会分析利润表中的收入、成本和盈利趋势，理解现金流量表揭示的企业真实资金状况。",
         keyPoints: [
           "三张表相互关联，反映公司全貌。",
           "财务报表是了解公司的窗口。",
@@ -600,7 +610,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w10-1",
             title: "资产负债表",
-            detail: "了解公司的资产、负债和所有者权益。",
+            detail: "学习阅读资产负债表，理解公司的资产结构、负债水平和所有者权益构成，评估企业的财务基础和偿债能力。",
             keyPoints: [
               "基本等式：资产 = 负债 + 所有者权益。",
               "流动资产 vs 非流动资产：变现能力。",
@@ -616,7 +626,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w10-2",
             title: "利润表",
-            detail: "分析公司的收入、成本和盈利能力。",
+            detail: "通过利润表分析公司的收入结构、成本控制能力和净利润趋势，评估企业的持续盈利能力和增长潜力。",
             keyPoints: [
               "收入增长：是否持续、来源是否多元。",
               "毛利率：反映产品竞争力和定价能力。",
@@ -632,7 +642,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w10-3",
             title: "现金流量表",
-            detail: "理解公司的现金流入和流出。",
+            detail: "通过现金流量表理解公司经营、投资和融资活动的现金流入与流出，验证利润质量和企业真实资金状况。",
             keyPoints: [
               "三类现金流：经营、投资、融资活动。",
               "经营现金流是核心：利润的现金验证。",
@@ -660,7 +670,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w11-1",
             title: "盈利能力指标",
-            detail: "分析公司的盈利能力和效率。",
+            detail: "运用 ROE、ROA 和利润率等核心财务比率，系统分析公司的盈利能力、运营效率和资产利用水平。",
             keyPoints: [
               "ROE（净资产收益率）：股东权益回报。",
               "ROA（总资产收益率）：资产利用效率。",
@@ -676,7 +686,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w11-2",
             title: "估值指标",
-            detail: "学习常用的股票估值方法。",
+            detail: "学习市盈率、市净率和市销率等常用估值指标的计算方法，判断股票价格是否被高估或低估。",
             keyPoints: [
               "市盈率（P/E）：股价相对于每股收益。",
               "市净率（P/B）：股价相对于每股净资产。",
@@ -692,7 +702,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w11-3",
             title: "偿债与流动性指标",
-            detail: "评估公司的财务风险和流动性。",
+            detail: "通过流动比率、速动比率和资产负债率等指标评估公司的短期偿债能力、长期财务风险和流动性状况。",
             keyPoints: [
               "流动比率：流动资产 / 流动负债，>1 为佳。",
               "速动比率：（流动资产 - 存货）/ 流动负债。",
@@ -720,7 +730,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w12-1",
             title: "价值投资理念",
-            detail: "理解价值投资的核心思想。",
+            detail: "理解格雷厄姆和巴菲特倡导的价值投资核心思想，学习安全边际、市场先生比喻和逆向投资的理念。",
             keyPoints: [
               "格雷厄姆和多德开创了价值投资。",
               "市场先生比喻：市场是服务你的伙伴。",
@@ -736,7 +746,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w12-2",
             title: "内在价值估算",
-            detail: "学习计算公司内在价值的方法。",
+            detail: "学习折现现金流模型和股息折现模型等内在价值计算方法，掌握合理估算公司长期投资价值的技能。",
             keyPoints: [
               "DCF 模型：折现未来自由现金流。",
               "股息折现模型：适用于稳定分红公司。",
@@ -752,7 +762,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w12-3",
             title: "安全边际与投资实践",
-            detail: "将价值投资理念应用于实践。",
+            detail: "将安全边际和护城河分析等价值投资理念应用于实际选股，构建长期持有的优质价值投资组合。",
             keyPoints: [
               "安全边际：以低于内在价值的价格买入。",
               "护城河：可持续竞争优势。",
@@ -792,7 +802,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w13-1",
             title: "K 线图基础",
-            detail: "学习 K 线图（蜡烛图）的读法。",
+            detail: "学习 K 线图（蜡烛图）的四要素：开盘价、收盘价、最高价和最低价，掌握阳线阴线的含义及基本读图方法。",
             keyPoints: [
               "K 线四要素：开盘、收盘、最高、最低。",
               "阳线（实体白/绿）：收盘 > 开盘。",
@@ -808,7 +818,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w13-2",
             title: "趋势与趋势线",
-            detail: "识别和绘制价格趋势。",
+            detail: "学习识别上升趋势、下降趋势和横盘整理，掌握绘制趋势线的方法和趋势交易的基本原则。",
             keyPoints: [
               "上升趋势：更高的高点和更高的低点。",
               "下降趋势：更低的高点和更低的低点。",
@@ -824,7 +834,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w13-3",
             title: "支撑与阻力",
-            detail: "识别关键价格水平。",
+            detail: "学习识别支撑位和阻力位等关键价格水平，理解买卖力量在这些区域的博弈以及突破与回踩的交易信号。",
             keyPoints: [
               "支撑：买方力量集中的价格区域。",
               "阻力：卖方力量集中的价格区域。",
@@ -852,7 +862,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w14-1",
             title: "移动平均线",
-            detail: "学习移动平均线的计算和应用。",
+            detail: "学习简单移动平均线和指数移动平均线的计算原理，掌握均线交叉、金叉死叉等趋势判断信号的实际应用。",
             keyPoints: [
               "简单移动平均（SMA）：等权重平均。",
               "指数移动平均（EMA）：近期数据权重更高。",
@@ -868,7 +878,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w14-2",
             title: "RSI 与动量指标",
-            detail: "学习相对强弱指标和动量分析。",
+            detail: "学习 RSI 相对强弱指标的计算方法，掌握超买超卖区域判断和 MACD 等动量指标的综合分析技巧。",
             keyPoints: [
               "RSI：衡量价格变动的速度和幅度。",
               "超买区（>70）和超卖区（<30）。",
@@ -884,7 +894,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w14-3",
             title: "成交量分析",
-            detail: "理解成交量在技术分析中的作用。",
+            detail: "理解成交量在技术分析中验证趋势的重要作用，学习量价配合与量价背离信号对买卖决策的指导意义。",
             keyPoints: [
               "量价配合：价升量增、价跌量缩为健康。",
               "量价背离：可能预示趋势反转。",
@@ -912,7 +922,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w15-1",
             title: "K 线形态",
-            detail: "识别重要的单根和多根 K 线形态。",
+            detail: "识别锤子线、吞没形态等重要的单根和多根 K 线形态，理解其在趋势反转或延续中的预测意义。",
             keyPoints: [
               "锤子线/上吊线：长下影线，可能反转。",
               "吞没形态：大实体吞没前一根 K 线。",
@@ -928,7 +938,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w15-2",
             title: "反转形态",
-            detail: "识别趋势反转的图形形态。",
+            detail: "学习识别头肩顶底、双顶双底等经典趋势反转图形形态，掌握形态确认条件和目标价位的计算方法。",
             keyPoints: [
               "头肩顶/底：最可靠的反转形态之一。",
               "双顶/双底（M 顶/W 底）。",
@@ -944,7 +954,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w15-3",
             title: "持续形态",
-            detail: "识别趋势延续的图形形态。",
+            detail: "学习识别三角形、旗形和楔形等趋势延续图形形态，理解价格整理后继续原有趋势的交易机会。",
             keyPoints: [
               "三角形：对称、上升、下降三角形。",
               "旗形和楔形：短期整理后继续原趋势。",
@@ -984,7 +994,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w16-1",
             title: "资产类别",
-            detail: "了解主要资产类别及其特点。",
+            detail: "了解股票、债券、现金、房地产和大宗商品等主要资产类别的风险收益特征和在组合中的配置角色。",
             keyPoints: [
               "股票：高风险高收益，长期增长。",
               "债券：中等风险，稳定收益。",
@@ -1000,7 +1010,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w16-2",
             title: "配置策略",
-            detail: "学习不同的资产配置方法。",
+            detail: "学习战略资产配置和战术资产配置等不同方法，根据个人目标和市场环境制定合理的资产比例方案。",
             keyPoints: [
               "战略配置：基于长期目标的固定比例。",
               "战术配置：根据市场状况短期调整。",
@@ -1016,7 +1026,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w16-3",
             title: "组合再平衡",
-            detail: "学习何时以及如何再平衡投资组合。",
+            detail: "学习根据市场变化和目标偏离程度判断何时需要再平衡投资组合，掌握定期再平衡和阈值再平衡的实操方法。",
             keyPoints: [
               "为什么再平衡：维持风险水平，买低卖高。",
               "定时再平衡：每季度或每年一次。",
@@ -1044,7 +1054,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w17-1",
             title: "分散投资",
-            detail: "理解分散投资的原理和方法。",
+            detail: "理解现代投资组合理论中分散投资降低风险的原理，学习跨资产类别、地区和行业的多维度分散方法。",
             keyPoints: [
               "现代投资组合理论：相关性决定分散效果。",
               "跨资产类别分散：股票、债券、另类。",
@@ -1060,7 +1070,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w17-2",
             title: "风险度量",
-            detail: "学习量化投资风险的方法。",
+            detail: "学习使用波动率、Beta 值和最大回撤等指标量化投资组合风险，建立系统化的风险评估框架。",
             keyPoints: [
               "波动率：收益的标准差。",
               "Beta：相对于市场的系统性风险。",
@@ -1076,7 +1086,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w17-3",
             title: "止损与仓位管理",
-            detail: "学习保护资本的实用技巧。",
+            detail: "学习止损设置、仓位管理和对冲等保护资本的实用技巧，确保单一投资失误不会造成致命损失。",
             keyPoints: [
               "止损设置：基于波动率或固定百分比。",
               "仓位大小：单一持仓不超过总资产 5-10%。",
@@ -1104,7 +1114,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w18-1",
             title: "定期定额投资",
-            detail: "学习定投策略的原理和实践。",
+            detail: "学习美元成本平均法的定投策略原理，理解定期定额投资如何平滑市场波动并降低择时风险。",
             keyPoints: [
               "美元成本平均法：定期投入固定金额。",
               "平滑波动：高价少买、低价多买。",
@@ -1120,7 +1130,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w18-2",
             title: "投资计划制定",
-            detail: "制定个人投资策略和计划。",
+            detail: "根据个人目标、时间框架和风险承受能力，制定涵盖资产配置和再平衡规则的完整投资策略计划。",
             keyPoints: [
               "明确目标：退休、教育、购房等。",
               "确定时间框架和风险承受能力。",
@@ -1136,7 +1146,7 @@ export const investmentStages: Stage[] = [
           {
             id: "inv-w18-3",
             title: "持续学习与调整",
-            detail: "建立投资学习和复盘的习惯。",
+            detail: "建立定期回顾投资组合和记录交易决策的复盘习惯，通过持续学习和反思不断提升投资能力。",
             keyPoints: [
               "定期回顾：至少每季度检视投资组合。",
               "记录投资决策和结果。",

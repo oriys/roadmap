@@ -22,6 +22,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w1-1",
                         title: "电商业务模型与平台架构总览",
                         detail: "理解不同电商模式（B2C/B2B/C2C/O2O）的业务特点，以及典型电商平台的系统边界与核心模块。",
+                        keyPoints: [
+                            "B2C 模式：面向消费者的直营模式，核心挑战在于高并发商品浏览和订单处理能力。",
+                            "C2C/平台模式：连接买卖双方的平台，需要解决信任、评价、纠纷仲裁等平台治理问题。",
+                            "系统边界：典型电商包含用户中心、商品中心、交易中心、支付中心、物流中心等核心模块。",
+                        ],
                         resources: [
                             { title: "Scalable E-Commerce Platform Project（roadmap.sh）", url: "https://roadmap.sh/projects/scalable-ecommerce-platform" },
                             { title: "E-commerce Architecture Best Practices", url: "https://www.elastic.co/enterprise-search/ecommerce" },
@@ -32,6 +37,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w1-2",
                         title: "核心业务流程与领域建模",
                         detail: "分析电商核心业务流程：商品浏览、购物车、订单创建、支付、履约、售后，建立领域模型。",
+                        keyPoints: [
+                            "领域建模：使用 DDD 战略设计识别核心域（交易）、支撑域（物流）、通用域（用户认证）。",
+                            "事件风暴：通过领域事件驱动建模，识别关键业务事件如「订单已创建」「支付已完成」。",
+                            "聚合边界：商品、订单、支付各为独立聚合，通过领域事件实现跨聚合的最终一致性。",
+                        ],
                         resources: [
                             { title: "Domain-Driven Design（DDD）概述", url: "https://martinfowler.com/bliki/DomainDrivenDesign.html" },
                             { title: "电商领域模型设计", url: "https://microservices.io/patterns/decomposition/decompose-by-subdomain.html" },
@@ -189,6 +199,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w4-1",
                         title: "JWT 认证：实现与安全考量",
                         detail: "实现基于 JWT 的用户认证系统，包括 Token 生成、验证、刷新机制，以及安全存储策略。",
+                        keyPoints: [
+                            "JWT 结构：Header.Payload.Signature 三部分组成，Payload 携带用户 ID 和角色等声明信息。",
+                            "Token 刷新：Access Token 短有效期（15 分钟）+ Refresh Token 长有效期（7 天），兼顾安全与体验。",
+                            "存储策略：Access Token 存内存，Refresh Token 存 HttpOnly Cookie，防止 XSS 窃取。",
+                        ],
                         resources: [
                             { title: "JWT.io 介绍", url: "https://jwt.io/introduction" },
                             { title: "OAuth 2.0 最佳实践", url: "https://oauth.net/2/oauth-best-practice/" },
@@ -199,6 +214,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w4-2",
                         title: "OAuth2 社交登录集成",
                         detail: "实现 Google、GitHub 等第三方 OAuth2 登录，理解授权码流程与安全考量。",
+                        keyPoints: [
+                            "授权码流程：用户授权 → 获取 Authorization Code → 后端用 Code 换取 Access Token，避免前端暴露密钥。",
+                            "State 参数：使用随机 State 值防止 CSRF 攻击，授权回调时验证 State 一致性。",
+                            "账号关联：社交登录需处理账号合并场景，同一邮箱绑定多个社交账号的策略设计。",
+                        ],
                         resources: [
                             { title: "OAuth 2.0 RFC 6749", url: "https://datatracker.ietf.org/doc/html/rfc6749" },
                             { title: "Google OAuth2 文档", url: "https://developers.google.com/identity/protocols/oauth2" },
@@ -242,6 +262,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w5-1",
                         title: "多级分类树的设计与实现",
                         detail: "实现商品分类的树形结构，比较邻接表、嵌套集、闭包表、物化路径的优劣。",
+                        keyPoints: [
+                            "邻接表：最简单的 parent_id 方式，适合写多读少场景，查询子树需要递归 CTE。",
+                            "物化路径：存储完整路径如 /1/3/7/，查询祖先和后代极快，移动节点需更新所有子节点。",
+                            "PostgreSQL ltree：原生树类型支持，提供路径匹配和索引，适合中等规模分类树。",
+                        ],
                         resources: [
                             { title: "树形结构存储方案对比", url: "https://schinckel.net/2014/09/13/postgres-tree-shootout-part-2:-adjacency-list-vs-ltree-vs-recursive-cte/" },
                             { title: "PostgreSQL ltree 模块", url: "https://www.postgresql.org/docs/current/ltree.html" },
@@ -252,6 +277,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w5-2",
                         title: "商品 SPU/SKU 模型实现",
                         detail: "实现 SPU（商品主体）和 SKU（规格变体）的关系，支持多规格商品（颜色、尺寸等）。",
+                        keyPoints: [
+                            "SPU/SKU 关系：SPU 是商品抽象（iPhone 15），SKU 是具体变体（iPhone 15 256GB 黑色），一对多关系。",
+                            "规格笛卡尔积：颜色 × 尺寸 × 版本自动生成 SKU 组合，前端需展示规格选择矩阵。",
+                            "库存与价格：每个 SKU 独立管理库存数量和销售价格，支持不同规格差异化定价。",
+                        ],
                         resources: [
                             { title: "商品 SKU 设计", url: "https://www.shopify.com/blog/what-is-a-sku" },
                             { title: "变体组合算法", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce" },
@@ -295,6 +325,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w6-1",
                         title: "购物车：Redis 实现与状态管理",
                         detail: "使用 Redis 实现高性能购物车，处理匿名/登录购物车合并、商品失效检测。",
+                        keyPoints: [
+                            "Redis Hash 存储：用户 ID 作为 Key，商品 SKU ID 作为 Field，数量作为 Value，读写 O(1) 复杂度。",
+                            "匿名购物车合并：用户登录时将 Cookie 中的匿名购物车与账户购物车合并，处理重复商品。",
+                            "商品失效检测：定时或访问时检查商品是否下架、库存是否不足，标记失效商品提示用户。",
+                        ],
                         resources: [
                             { title: "Redis 购物车设计", url: "https://redis.io/learn/howtos/shoppingcart" },
                             { title: "Redis Hash 数据结构", url: "https://redis.io/docs/latest/develop/data-types/hashes/" },
@@ -315,6 +350,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w6-3",
                         title: "库存扣减与一致性保证",
                         detail: "实现下单锁定库存、支付确认扣减、超时自动释放，处理并发扣减的一致性问题。",
+                        keyPoints: [
+                            "预扣库存：下单时使用乐观锁或 Redis 原子操作锁定库存，防止超卖但允许少卖。",
+                            "超时释放：未支付订单 15-30 分钟后自动取消，通过延迟队列或定时任务释放预留库存。",
+                            "并发控制：高并发场景使用 Redis Lua 脚本实现原子性扣减，避免竞态条件。",
+                        ],
                         resources: [
                             { title: "库存管理系统设计", url: "https://www.cockroachlabs.com/blog/inventory-management-reference-architecture/" },
                             { title: "乐观锁 vs 悲观锁", url: "https://www.postgresql.org/docs/current/explicit-locking.html" },
@@ -348,6 +388,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w7-1",
                         title: "Stripe 支付集成",
                         detail: "集成 Stripe Payment Intent API，实现信用卡支付、支付状态追踪、错误处理。",
+                        keyPoints: [
+                            "Payment Intent 生命周期：created → requires_payment_method → requires_confirmation → succeeded/failed，全流程状态追踪。",
+                            "客户端安全：使用 Stripe Elements 在前端安全收集卡号，敏感数据不经过自己的服务器，满足 PCI 合规。",
+                            "幂等性处理：为每次支付请求设置 Idempotency Key，防止网络重试导致的重复扣款。",
+                        ],
                         resources: [
                             { title: "Stripe 官方文档", url: "https://docs.stripe.com" },
                             { title: "Payment Intents API", url: "https://docs.stripe.com/payments/payment-intents" },
@@ -358,6 +403,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w7-2",
                         title: "Webhook 处理与异步通知",
                         detail: "实现 Webhook 接收端点，处理支付成功/失败通知，确保消息幂等处理。",
+                        keyPoints: [
+                            "签名验证：使用 Webhook Secret 验证请求签名，确保通知确实来自 Stripe，防止伪造回调。",
+                            "幂等消费：记录已处理的事件 ID，重复投递时直接跳过，避免重复发货或重复退款。",
+                            "异步可靠处理：Webhook 端点应快速返回 200，将耗时业务逻辑放入消息队列异步处理。",
+                        ],
                         resources: [
                             { title: "Stripe Webhooks", url: "https://docs.stripe.com/webhooks" },
                             { title: "Webhook 签名验证", url: "https://docs.stripe.com/webhooks/signatures" },
@@ -515,6 +565,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w10-1",
                         title: "优惠券系统设计",
                         detail: "设计优惠券模型（满减券、折扣券、无门槛券），实现发放、领取、核销流程。",
+                        keyPoints: [
+                            "优惠券模型：区分优惠券模板（规则定义）和优惠券实例（用户领取的具体券），支持批量发放。",
+                            "防重领取：数据库唯一索引（用户 ID + 券模板 ID）保证同一用户不会重复领取同一类优惠券。",
+                            "核销规则：验证有效期、使用门槛、适用品类，支持订单取消后自动退还未使用的优惠券。",
+                        ],
                         resources: [
                             { title: "优惠券系统设计", url: "https://www.geeksforgeeks.org/system-design/design-coupon-and-voucher-management-system/" },
                             { title: "Stripe Coupons API", url: "https://docs.stripe.com/api/coupons" },
@@ -535,6 +590,11 @@ export const ecommerceStages: Stage[] = [
                         id: "w10-3",
                         title: "限时秒杀系统",
                         detail: "设计秒杀系统架构：预热、限流、排队、库存扣减，应对高并发场景。",
+                        keyPoints: [
+                            "流量削峰：前端答题验证 + 后端令牌桶限流 + 消息队列排队，层层过滤减少到达数据库的请求量。",
+                            "库存预热：秒杀开始前将库存从数据库加载到 Redis，使用 DECR 原子操作扣减，避免数据库瓶颈。",
+                            "异步下单：库存扣减成功后发送消息到队列，异步创建订单，前端轮询或 WebSocket 获取结果。",
+                        ],
                         resources: [
                             { title: "秒杀系统设计", url: "https://www.designgurus.io/course-play/grokking-system-design-interview-ii/doc/design-a-flash-sale-for-an-ecommerce-site" },
                             { title: "Redis 原子扣减", url: "https://redis.io/commands/decr/" },

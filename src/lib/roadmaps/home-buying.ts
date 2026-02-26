@@ -14,6 +14,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w1",
         title: "第 1 周：财务规划与资格审核",
         summary: "评估个人财务状况，确认购房资格和预算。",
+        overview: "本周从收入、负债、信用评估入手，帮助你全面了解自身购房能力，明确限购资格与公积金额度，制定合理的购房预算方案。",
         keyPoints: [
           "购房前必须全面评估个人财务状况。",
           "了解当地限购限贷政策是第一步。",
@@ -90,6 +91,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w2",
         title: "第 2 周：市场与需求分析",
         summary: "明确购房需求，选择目标区域和房产类型。",
+        overview: "本周梳理家庭人口结构、通勤需求和教育资源等因素，分析不同区域的优劣势，帮助你锁定最适合的目标片区与户型。",
         keyPoints: [
           "购房需求要结合家庭实际情况分析。",
           "地段是房产价值的核心因素。",
@@ -178,6 +180,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w3",
         title: "第 3 周：新房购买攻略",
         summary: "学习新房选购的核心要点和开发商评估方法。",
+        overview: "本周聚焦新房市场，学习如何评估开发商资质和项目品质，掌握五证二书核验流程，避免踩坑烂尾楼和虚假宣传。",
         keyPoints: [
           "五证齐全是购买新房的前提条件。",
           "开发商信誉决定了交付质量和风险。",
@@ -203,7 +206,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w3-2",
             title: "五证二书核验",
-            detail: "了解购房必须核验的法律文件。",
+            detail: "了解购房时必须核验的五证二书等法律文件，确保项目合法合规。",
             keyPoints: [
               "五证：国有土地使用证、建设用地规划许可证、建设工程规划许可证、建筑工程施工许可证、商品房预售许可证。",
               "二书：住宅质量保证书、住宅使用说明书。",
@@ -254,6 +257,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w4",
         title: "第 4 周：二手房购买攻略",
         summary: "掌握二手房交易的关键环节和风险防范。",
+        overview: "本周深入二手房交易流程，学习产权核查、房屋估价和中介选择的技巧，掌握如何防范交易中的常见法律和资金风险。",
         keyPoints: [
           "产权清晰是二手房交易的核心前提。",
           "房屋实际状况需要仔细核查。",
@@ -342,6 +346,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w5",
         title: "第 5 周：贷款基础知识",
         summary: "了解各类房贷产品的特点和适用场景。",
+        overview: "本周全面了解公积金贷款、商业贷款和组合贷款的利率差异与适用条件，学会根据自身情况选择最优贷款方案和还款方式。",
         keyPoints: [
           "公积金贷款利率最低，应优先使用。",
           "商业贷款额度高但利率相对较高。",
@@ -418,6 +423,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w6",
         title: "第 6 周：贷款实操",
         summary: "掌握贷款申请的具体流程和资金安全。",
+        overview: "本周进入贷款实操阶段，学习征信准备、材料提交、银行面签等具体流程，掌握资金监管与安全支付的关键注意事项。",
         keyPoints: [
           "贷款额度受收入、征信、房产多因素影响。",
           "还款方式选择影响总利息支出。",
@@ -475,7 +481,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w6-4",
             title: "资金监管与安全",
-            detail: "了解交易资金的安全保障措施。",
+            detail: "了解交易资金的安全保障措施，掌握资金监管账户和支付凭证管理。",
             keyPoints: [
               "资金监管：通过银行监管账户进行资金交割。",
               "首付支付：必须支付到预售资金监管账户。",
@@ -506,6 +512,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w7",
         title: "第 7 周：合同签订",
         summary: "学习购房合同的核心条款和签约注意事项。",
+        overview: "本周学习如何逐条审核购房合同，理解面积约定、交房标准、违约责任等核心条款，掌握补充协议的谈判技巧。",
         keyPoints: [
           "合同是保障购房者权益的法律文件。",
           "定金具有法律约束力，不可随意退还。",
@@ -582,6 +589,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w8",
         title: "第 8 周：过户与税费",
         summary: "掌握房产过户流程和税费计算。",
+        overview: "本周掌握从网签到不动产权证办理的完整过户流程，学会计算契税、增值税和个人所得税，确保产权顺利转移。",
         keyPoints: [
           "过户是产权转移的关键环节。",
           "税费计算需要考虑房屋性质和持有年限。",
@@ -607,7 +615,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w8-2",
             title: "税费计算",
-            detail: "掌握购房相关税费的计算方法。",
+            detail: "掌握契税、增值税、个人所得税等购房相关税费的计算方法与减免条件。",
             keyPoints: [
               "契税：首套 90㎡以下 1%，90㎡以上 1.5%；非首套 3%。",
               "增值税：满 2 年免征，不满 2 年按 5.6%。",
@@ -670,6 +678,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w9",
         title: "第 9 周：新房收房",
         summary: "学习新房收房的流程和验收标准。",
+        overview: "本周学习新房收房的完整流程，从材料与工具准备到三书一表核查，再到墙面、水电、面积等各项质量验收要点。",
         keyPoints: [
           "三书一表是收房的必备文件。",
           "先验房再收房，发现问题及时记录。",
@@ -679,7 +688,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w9-1",
             title: "收房准备工作",
-            detail: "做好收房前的各项准备工作。",
+            detail: "做好收房前的材料、费用、工具和验房知识等各项准备工作。",
             keyPoints: [
               "材料准备：身份证、购房合同、入住通知书。",
               "费用准备：契税、维修基金、物业费等。",
@@ -695,7 +704,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w9-2",
             title: "三书一表核查",
-            detail: "了解必须核验的交房文件。",
+            detail: "了解收房时必须核验的三书一表等交房文件，确认工程质量合格。",
             keyPoints: [
               "住宅质量保证书：开发商对房屋质量的承诺。",
               "住宅使用说明书：房屋结构和使用注意事项。",
@@ -727,7 +736,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w9-4",
             title: "面积与设施验收",
-            detail: "核实房屋面积和配套设施。",
+            detail: "核实房屋实测面积与合同面积的偏差，验收水电和配套设施是否达标。",
             keyPoints: [
               "面积核实：对照实测面积报告，误差不超过 3%。",
               "水电验收：水压、电压、插座、开关测试。",
@@ -746,6 +755,7 @@ export const homeBuyingStages: Stage[] = [
         id: "hb-w10",
         title: "第 10 周：问题处理",
         summary: "学习处理验房问题和办理入住手续。",
+        overview: "本周学习验房发现问题后的维权与整改流程，完成物业费用结算、钥匙交接、户口迁移和水电开户等入住手续。",
         keyPoints: [
           "发现问题要书面记录并要求整改。",
           "物业交接需确认各项费用结清。",
@@ -771,7 +781,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w10-2",
             title: "整改与维权",
-            detail: "学习维护自身权益的正确方法。",
+            detail: "学习验房发现问题后的记录、书面通知和整改维权的正确方法。",
             keyPoints: [
               "问题记录：拍照、录像，填写验房表。",
               "书面通知：向开发商发出书面整改通知。",
@@ -787,7 +797,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w10-3",
             title: "物业交接",
-            detail: "完成物业相关的交接手续。",
+            detail: "完成水电气费用结算、钥匙移交和装修登记等物业交接手续。",
             keyPoints: [
               "费用结算：水电气费、物业费的起算时间。",
               "钥匙交接：入户门、信箱、车库等钥匙。",
@@ -803,7 +813,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w10-4",
             title: "入住手续办理",
-            detail: "完成入住所需的各项手续。",
+            detail: "完成户口迁移、水电开户、燃气开通等入住所需的各项手续。",
             keyPoints: [
               "户口迁移：了解落户条件和办理流程。",
               "水电开户：到相关部门办理开户手续。",
@@ -935,7 +945,7 @@ export const homeBuyingStages: Stage[] = [
           {
             id: "hb-w12-2",
             title: "验收与整改",
-            detail: "完成装修竣工验收并处理问题。",
+            detail: "完成水电、木工、油漆等各项装修竣工验收，并及时处理遗留问题。",
             keyPoints: [
               "水电验收：开关插座、水压、排水畅通。",
               "木工验收：柜门平整、五金件牢固。",

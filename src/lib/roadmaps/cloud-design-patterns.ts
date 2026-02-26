@@ -22,6 +22,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w1-1",
                         title: "Retry 模式：优雅处理临时故障",
                         detail: "学习如何设计重试策略，包括指数退避、抖动、最大重试次数等，以及如何区分可重试和不可重试的错误。",
+                        keyPoints: [
+                            "指数退避与抖动：逐步增加重试间隔并添加随机抖动，避免多个客户端同时重试导致的「重试风暴」。",
+                            "幂等性保证：重试前提是操作幂等，否则可能导致重复处理，需要通过幂等键或去重机制保障。",
+                            "可重试 vs 不可重试：网络超时、5xx 错误可重试，4xx 客户端错误（如 400/403）不应重试。",
+                        ],
                         resources: [
                             { title: "Retry Pattern - Azure Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/retry" },
                             { title: "Exponential Backoff And Jitter - AWS", url: "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/" },
@@ -32,6 +37,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w1-2",
                         title: "Circuit Breaker 模式：防止级联故障",
                         detail: "深入理解熔断器的三态（Closed/Open/Half-Open）转换，学习配置阈值、超时和监控的最佳实践。",
+                        keyPoints: [
+                            "三态转换：Closed（正常计数失败）→ Open（直接拒绝请求）→ Half-Open（放行少量探测请求验证恢复）。",
+                            "阈值配置：需要根据服务 SLA 设定失败率阈值和超时窗口，过于敏感会频繁熔断，过于宽松则无法保护系统。",
+                            "降级策略：熔断触发后应返回缓存数据、默认值或友好错误提示，而非直接抛出异常。",
+                        ],
                         resources: [
                             { title: "Circuit Breaker Pattern - Azure Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker" },
                             { title: "Circuit Breaker - Martin Fowler", url: "https://martinfowler.com/bliki/CircuitBreaker.html" },
@@ -42,6 +52,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w1-3",
                         title: "Bulkhead 模式：隔离故障影响",
                         detail: "学习如何通过资源隔离（线程池、进程、容器）限制故障的影响范围，防止单点故障拖垮整个系统。",
+                        keyPoints: [
+                            "线程池隔离：为不同下游服务分配独立线程池，一个服务超时不会耗尽所有线程影响其他服务。",
+                            "进程/容器隔离：通过独立进程或容器运行关键组件，实现更强的资源隔离和故障边界。",
+                            "隔离粒度权衡：隔离越细保护越强，但资源利用率降低，需根据服务重要性合理划分。",
+                        ],
                         resources: [
                             { title: "Bulkhead Pattern - Azure Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead" },
                             { title: "Resilience4j Bulkhead", url: "https://resilience4j.readme.io/docs/bulkhead" },
@@ -52,6 +67,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w1-4",
                         title: "Rate Limiting 与 Throttling：控制资源消耗",
                         detail: "学习如何通过限流和节流保护系统免受过载，理解令牌桶、漏桶等算法的实现和适用场景。",
+                        keyPoints: [
+                            "令牌桶算法：按固定速率补充令牌，允许突发流量但限制平均速率，适合大部分 API 限流场景。",
+                            "漏桶算法：请求进入队列按固定速率处理，流量更平滑但不允许突发，适合对下游速率敏感的场景。",
+                            "多维度限流：可按用户、IP、API 路径等多个维度组合限流，结合 429 状态码和 Retry-After 响应头。",
+                        ],
                         resources: [
                             { title: "Throttling Pattern - Azure Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/throttling" },
                             { title: "Rate Limiting Pattern - Azure Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern" },
@@ -136,6 +156,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w3-1",
                         title: "Queue-Based Load Leveling 模式：平滑负载峰值",
                         detail: "学习如何使用消息队列作为缓冲区，在任务和服务之间解耦，平滑间歇性重负载对系统的冲击。",
+                        keyPoints: [
+                            "缓冲作用：队列吸收突发请求峰值，消费者按自身能力从队列拉取处理，保护后端服务不被冲垮。",
+                            "解耦优势：生产者和消费者独立扩展、独立部署，生产者无需等待消费者处理完成。",
+                            "队列积压监控：需要监控队列深度和消费延迟，及时扩展消费者避免消息积压过久。",
+                        ],
                         resources: [
                             { title: "Queue-Based Load Leveling - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling" },
                             { title: "Message Queue Patterns", url: "https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageChannel.html" },
@@ -146,6 +171,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w3-2",
                         title: "Competing Consumers 模式：并行消息处理",
                         detail: "学习如何启用多个并发消费者处理同一消息通道的消息，实现水平扩展和高可用。",
+                        keyPoints: [
+                            "水平扩展：增加消费者实例即可提高消息处理吞吐量，消费者之间自动负载均衡。",
+                            "消息确认机制：消费者处理完毕后才确认消息，未确认的消息会重新分配给其他消费者。",
+                            "顺序性挑战：多消费者并行处理时无法保证全局顺序，需要分区或 Session 机制实现部分有序。",
+                        ],
                         resources: [
                             { title: "Competing Consumers Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/competing-consumers" },
                             { title: "Competing Consumers - EIP", url: "https://www.enterpriseintegrationpatterns.com/patterns/messaging/CompetingConsumers.html" },
@@ -250,6 +280,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w5-1",
                         title: "Cache-Aside 模式：按需缓存",
                         detail: "学习 Cache-Aside 模式的实现，理解缓存失效策略、缓存穿透、缓存雪崩等问题的解决方案。",
+                        keyPoints: [
+                            "读取流程：先查缓存，命中则返回；未命中则查数据库，写入缓存后返回，实现按需加载。",
+                            "缓存穿透防护：对不存在的 Key 缓存空值或使用布隆过滤器，防止恶意请求绕过缓存直击数据库。",
+                            "缓存雪崩预防：为缓存 Key 设置随机过期时间，避免大量 Key 同时失效导致数据库压力激增。",
+                        ],
                         resources: [
                             { title: "Cache-Aside Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside" },
                             { title: "Caching Best Practices - AWS", url: "https://aws.amazon.com/caching/best-practices/" },
@@ -270,6 +305,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w5-3",
                         title: "Sharding 模式：数据水平分区",
                         detail: "学习数据分片的策略（范围、哈希、目录），理解分片键的选择和跨分片查询的挑战。",
+                        keyPoints: [
+                            "分片策略：范围分片适合范围查询，哈希分片分布更均匀，目录分片最灵活但引入额外查找。",
+                            "分片键选择：应确保数据均匀分布避免热点，同时支持最常见的查询模式减少跨分片查询。",
+                            "跨分片难题：跨分片的 JOIN、事务和聚合查询代价高昂，设计时应尽量将相关数据放在同一分片。",
+                        ],
                         resources: [
                             { title: "Sharding Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding" },
                             { title: "Database Sharding Explained", url: "https://www.digitalocean.com/community/tutorials/understanding-database-sharding" },
@@ -364,6 +404,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w7-1",
                         title: "Gateway Aggregation 模式：请求聚合",
                         detail: "学习如何使用网关将多个后端请求聚合为单个请求，减少客户端和后端之间的往返次数。",
+                        keyPoints: [
+                            "减少往返：客户端发送一次请求，网关并行调用多个后端服务并聚合结果，降低网络延迟。",
+                            "聚合策略：支持并行扇出、顺序依赖、部分失败降级等多种聚合策略，需权衡复杂度。",
+                            "性能风险：聚合请求的延迟取决于最慢的后端服务，需设置合理的超时和降级机制。",
+                        ],
                         resources: [
                             { title: "Gateway Aggregation Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-aggregation" },
                             { title: "API Gateway Pattern - microservices.io", url: "https://microservices.io/patterns/apigateway.html" },
@@ -384,6 +429,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w7-3",
                         title: "Ambassador 模式：代理服务",
                         detail: "学习如何创建辅助服务（Ambassador）代表消费者服务发送网络请求，处理连接管理、监控、重试等。",
+                        keyPoints: [
+                            "代理职责：Ambassador 处理重试、熔断、TLS 终止、日志等横切关注点，主服务保持简洁。",
+                            "部署方式：通常作为 Sidecar 与主服务部署在同一主机或 Pod，通过 localhost 通信。",
+                            "Service Mesh 基础：Envoy 代理正是 Ambassador 模式的实现，是 Istio 等服务网格的核心组件。",
+                        ],
                         resources: [
                             { title: "Ambassador Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/ambassador" },
                             { title: "Envoy Proxy", url: "https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy" },
@@ -486,6 +536,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w9-1",
                         title: "Federated Identity 模式：委托身份验证",
                         detail: "学习如何将身份验证委托给外部身份提供商（如 Azure AD、Auth0），实现单点登录和简化用户管理。",
+                        keyPoints: [
+                            "委托认证：应用不直接管理用户凭据，而是将认证委托给受信任的 IdP（如 Azure AD、Okta）。",
+                            "单点登录（SSO）：用户一次登录后可访问多个应用，减少密码疲劳和安全风险。",
+                            "标准协议：基于 OAuth 2.0 / OpenID Connect / SAML 等标准协议，确保互操作性。",
+                        ],
                         resources: [
                             { title: "Federated Identity Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/federated-identity" },
                             { title: "OAuth 2.0 and OpenID Connect", url: "https://oauth.net/2/" },
@@ -506,6 +561,11 @@ export const cloudDesignPatternsStages: Stage[] = [
                         id: "w9-3",
                         title: "Quarantine 模式：资源隔离检疫",
                         detail: "学习如何确保外部资产在被系统使用前满足团队定义的质量标准，防止恶意或不合规资源进入系统。",
+                        keyPoints: [
+                            "隔离验证：外部资产（容器镜像、依赖包）先进入隔离区，通过安全扫描和合规检查后才允许使用。",
+                            "供应链安全：防止恶意依赖或受损镜像进入生产环境，是零信任安全策略的重要组成部分。",
+                            "自动化门控：将安全扫描集成到 CI/CD 流水线，不合格资产自动拦截，减少人工审核成本。",
+                        ],
                         resources: [
                             { title: "Quarantine Pattern - Azure", url: "https://learn.microsoft.com/en-us/azure/architecture/patterns/quarantine" },
                             { title: "Container Image Security", url: "https://docs.docker.com/scout/" },

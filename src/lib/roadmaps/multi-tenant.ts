@@ -22,6 +22,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w1-1",
                         title: "多租户 vs 单租户：架构对比",
                         detail: "深入理解多租户与单租户架构的本质区别，以及各自的适用场景与成本模型。",
+                        keyPoints: [
+                            "单租户为每个客户部署独立实例，多租户用一个实例服务所有客户。",
+                            "多租户在运维效率和成本上优势明显，但需要额外的隔离和安全设计。",
+                            "架构选择取决于客户需求：企业大客户偏好单租户隔离，中小客户适合多租户共享。",
+                        ],
                         resources: [
                             { title: "AWS SaaS Architecture Fundamentals", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/re-defining-multi-tenancy.html" },
                             { title: "Azure SaaS and Multitenant Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/saas-multitenant-solution-architecture/" },
@@ -32,6 +37,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w1-2",
                         title: "多租户的业务价值与 TCO 分析",
                         detail: "理解多租户如何降低总拥有成本（TCO），以及 SaaS 商业模式的经济学基础。",
+                        keyPoints: [
+                            "多租户通过共享基础设施大幅降低单客户运维成本，实现规模经济效应。",
+                            "TCO 分析需考虑基础设施、运维人力、升级部署、监控告警等多个维度。",
+                            "SaaS 商业模式的核心是将固定成本转化为边际成本递减的规模效应。",
+                        ],
                         resources: [
                             { title: "SaaS Economics - Scaling to $100M", url: "https://www.bvp.com/atlas/scaling-to-100-million" },
                             { title: "AWS SaaS Cost Allocation", url: "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/expenditure-awareness.html" },
@@ -42,6 +52,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w1-3",
                         title: "多租户核心挑战概览",
                         detail: "全面了解多租户架构面临的技术挑战：数据隔离、性能隔离、定制化、合规性等。",
+                        keyPoints: [
+                            "数据隔离是最基本的挑战：确保租户 A 绝不能看到租户 B 的数据。",
+                            "性能隔离防止「吵闹邻居」问题：一个租户的高负载不能影响其他租户。",
+                            "定制化需求与标准化之间的平衡：过度定制会抵消多租户的成本优势。",
+                        ],
                         resources: [
                             { title: "Azure Tenancy Models", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models" },
                             { title: "AWS Tenant Isolation", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/tenant-isolation.html" },
@@ -52,6 +67,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w1-4",
                         title: "多租户架构决策框架",
                         detail: "建立多租户架构决策的评估框架，根据业务需求选择合适的隔离级别。",
+                        keyPoints: [
+                            "决策框架需综合考虑合规要求、性能 SLA、成本预算和团队能力。",
+                            "从低隔离开始、按需升级是常见策略，避免过度设计初始架构。",
+                            "不同组件可采用不同的隔离级别：计算层共享、数据层隔离是常见模式。",
+                        ],
                         resources: [
                             { title: "AWS Tenant Isolation Mindset", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/the-isolation-mindset.html" },
                             { title: "Azure Multitenant Approaches", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview" },
@@ -75,6 +95,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w2-1",
                         title: "池化模型：共享一切",
                         detail: "深入理解池化模型的架构设计、数据隔离实现、适用场景与风险。",
+                        keyPoints: [
+                            "池化模型中所有租户共享计算、存储和网络资源，通过逻辑隔离保护数据。",
+                            "行级安全策略（RLS）是池化模型中最常用的数据隔离手段。",
+                            "池化模型适合租户数量多、单租户数据量小、合规要求不高的场景。",
+                        ],
                         resources: [
                             { title: "Azure SaaS Tenancy Patterns", url: "https://learn.microsoft.com/en-us/azure/azure-sql/database/saas-tenancy-app-design-patterns?view=azuresql" },
                             { title: "PostgreSQL Row-Level Security", url: "https://www.postgresql.org/docs/current/ddl-rowsecurity.html" },
@@ -85,6 +110,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w2-2",
                         title: "孤岛模型：完全隔离",
                         detail: "掌握孤岛模型的架构设计、资源管理、适用场景（如金融/医疗等强合规领域）。",
+                        keyPoints: [
+                            "孤岛模型为每个租户提供完全独立的资源栈，实现最强隔离。",
+                            "资源管理是孤岛模型的核心挑战：需要自动化的租户环境创建和销毁。",
+                            "金融、医疗等强合规行业通常要求孤岛模型以满足数据驻留和审计要求。",
+                        ],
                         resources: [
                             { title: "AWS Silo Isolation", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/silo-isolation.html" },
                             { title: "Azure Multitenant Approaches", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview" },
@@ -95,6 +125,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w2-3",
                         title: "桥接模型：混合隔离",
                         detail: "理解桥接模型如何在成本与隔离之间取得平衡，以及不同层的隔离策略。",
+                        keyPoints: [
+                            "桥接模型按资源类型混合使用池化和孤岛策略，兼顾成本与隔离。",
+                            "常见模式：共享计算层（API Gateway/应用服务）+ 隔离数据层（独立数据库）。",
+                            "可按租户层级分层隔离：免费租户用池化、付费租户用桥接、企业租户用孤岛。",
+                        ],
                         resources: [
                             { title: "AWS Tier-Based Isolation", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/tier-based-isolation.html" },
                             { title: "Azure Storage Data Approaches", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/storage-data" },
@@ -105,6 +140,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w2-4",
                         title: "隔离模型选择决策树",
                         detail: "建立隔离模型选择的决策框架，根据合规、性能、成本等因素选择最优方案。",
+                        keyPoints: [
+                            "决策树从合规要求出发：强合规直接选孤岛，弱合规再考虑成本因素。",
+                            "性能 SLA 是第二考虑因素：高 SLA 倾向孤岛或桥接，低 SLA 可用池化。",
+                            "隔离模型不是一成不变的：系统应设计为可从池化逐步迁移到孤岛模型。",
+                        ],
                         resources: [
                             { title: "Azure Tenancy Models", url: "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models" },
                             { title: "AWS Runtime Policy Isolation", url: "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/run-time-policy-based-isolation-with-iam.html" },
@@ -128,6 +168,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w3-1",
                         title: "租户识别策略",
                         detail: "深入理解子域名、URL 路径、HTTP Header、JWT Claim 等租户识别方式的实现与权衡。",
+                        keyPoints: [
+                            "子域名方式（tenant.app.com）最直观，但需要通配符 SSL 和 DNS 管理。",
+                            "URL 路径方式（app.com/tenant）实现简单，但路由冲突和 SEO 需额外处理。",
+                            "JWT Claim 方式将租户信息嵌入令牌，适合 API 优先和微服务架构。",
+                        ],
                         resources: [
                             { title: "Tenant Resolution Strategies", url: "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/tenant-resolution" },
                             { title: "Subdomain Routing", url: "https://www.nginx.com/resources/wiki/start/topics/examples/server_blocks/" },
@@ -138,6 +183,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w3-2",
                         title: "租户上下文管理",
                         detail: "掌握租户上下文的存储、访问与生命周期管理，以及线程安全与异步处理的注意事项。",
+                        keyPoints: [
+                            "租户上下文应在请求入口（中间件/过滤器）统一解析并注入，后续代码透明使用。",
+                            "线程安全是关键：使用 ThreadLocal 或请求作用域存储租户上下文。",
+                            "异步处理（线程池、消息队列）中需要显式传递租户上下文，避免丢失。",
+                        ],
                         resources: [
                             { title: "Request Context Pattern", url: "https://www.baeldung.com/spring-request-response-body" },
                             { title: "Thread-Local Storage", url: "https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadLocal.html" },
@@ -148,6 +198,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w3-3",
                         title: "跨服务租户上下文传播",
                         detail: "理解微服务架构中租户上下文的传递机制：HTTP Header、gRPC Metadata、消息 Header。",
+                        keyPoints: [
+                            "HTTP Header（如 X-Tenant-ID）是微服务间传递租户上下文的最常用方式。",
+                            "gRPC Metadata 和消息队列 Header 是非 HTTP 协议的上下文传递机制。",
+                            "分布式追踪中可使用 OpenTelemetry Baggage 自动传播租户标识。",
+                        ],
                         resources: [
                             { title: "Context Propagation in Microservices", url: "https://www.w3.org/TR/trace-context/" },
                             { title: "gRPC Metadata", url: "https://grpc.io/docs/guides/metadata/" },
@@ -158,6 +213,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w3-4",
                         title: "租户审计与追踪",
                         detail: "掌握多租户系统的审计日志设计、租户级别追踪与合规性报告生成。",
+                        keyPoints: [
+                            "审计日志必须包含租户标识，记录谁在何时对什么数据做了什么操作。",
+                            "租户级别的追踪和监控帮助快速定位特定租户的问题和性能瓶颈。",
+                            "合规性报告（如 SOC 2）需要证明租户数据隔离和访问控制的有效性。",
+                        ],
                         resources: [
                             { title: "Multi-Tenant Audit Logging", url: "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/audit-logs" },
                             { title: "OpenTelemetry Baggage", url: "https://opentelemetry.io/docs/concepts/signals/baggage/" },
@@ -181,6 +241,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w4-1",
                         title: "多租户身份认证",
                         detail: "深入理解多租户身份认证的挑战与解决方案：IdP 集成、租户专属域名、企业 SSO。",
+                        keyPoints: [
+                            "多租户认证需支持多种 IdP：自建认证、OAuth/OIDC、企业 SAML SSO。",
+                            "租户专属域名和登录页面提升企业客户体验，但增加了路由和证书管理复杂度。",
+                            "用户可能属于多个租户：需要租户切换机制和跨租户身份关联。",
+                        ],
                         resources: [
                             { title: "Multi-Tenant Identity", url: "https://auth0.com/docs/manage-users/access-control/multi-tenant-applications" },
                             { title: "Azure AD Multi-Tenant", url: "https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant" },
@@ -191,6 +256,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w4-2",
                         title: "多租户授权模型",
                         detail: "掌握 RBAC/ABAC 在多租户场景的设计，包括租户角色、跨租户访问控制。",
+                        keyPoints: [
+                            "多租户 RBAC 中角色定义分为全局角色（平台管理员）和租户角色（租户管理员）。",
+                            "ABAC 支持更细粒度的访问控制：基于租户属性、资源标签和环境条件动态决策。",
+                            "跨租户访问控制需要严格防护：默认拒绝一切跨租户请求，白名单例外。",
+                        ],
                         resources: [
                             { title: "Multi-Tenant RBAC", url: "https://docs.microsoft.com/en-us/azure/architecture/guide/saas-multitenant/identity-authorization" },
                             { title: "ABAC Policy Design", url: "https://aws.amazon.com/blogs/apn/isolating-saas-tenants-with-dynamically-generated-iam-policies/" },
@@ -201,6 +271,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w4-3",
                         title: "租户数据加密与密钥管理",
                         detail: "理解多租户数据加密策略：租户专属密钥、密钥层级、密钥轮换、BYOK。",
+                        keyPoints: [
+                            "租户专属密钥（Per-Tenant Key）确保即使数据泄露也无法跨租户解密。",
+                            "信封加密分层管理：主密钥保护数据密钥，数据密钥加密实际数据。",
+                            "BYOK 让企业客户自带加密密钥，满足最严格的数据主权和合规要求。",
+                        ],
                         resources: [
                             { title: "Tenant Encryption Keys", url: "https://aws.amazon.com/blogs/security/how-to-use-customer-managed-keys-in-aws-key-management-service-to-secure-multi-tenant-saas-applications/" },
                             { title: "Envelope Encryption", url: "https://cloud.google.com/kms/docs/envelope-encryption" },
@@ -211,6 +286,11 @@ export const multiTenantStages: Stage[] = [
                         id: "w4-4",
                         title: "多租户安全威胁与防护",
                         detail: "了解多租户特有的安全威胁（租户间泄露、提权）及防护措施。",
+                        keyPoints: [
+                            "租户间数据泄露是最严重的威胁：缺失的 WHERE 条件可能导致跨租户查询。",
+                            "租户提权攻击通过篡改租户标识获取其他租户权限，需在多层验证身份。",
+                            "定期进行租户隔离渗透测试，使用自动化工具验证数据隔离策略的有效性。",
+                        ],
                         resources: [
                             { title: "Multi-Tenant Security Threats", url: "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/09-Test_Upload_of_Malicious_Files" },
                             { title: "Tenant Isolation Testing", url: "https://aws.amazon.com/blogs/apn/isolating-saas-tenants-with-dynamically-generated-iam-policies/" },

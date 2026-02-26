@@ -14,6 +14,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w1",
         title: "第 1 周：命令行基础",
         summary: "熟练使用 Linux 命令行，掌握基础命令与 Shell 操作。",
+        overview: "本周介绍 Linux 命令行环境的核心操作，从 Shell 的工作原理到管道、重定向和文本处理三大基础技能，帮助你高效地在终端中完成日常任务。",
         keyPoints: [
           "命令行是 Linux 管理的核心技能。",
           "管道和重定向实现命令组合与数据流控制。",
@@ -39,7 +40,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w1-2",
             title: "管道与重定向",
-            detail: "使用管道和重定向组合命令。",
+            detail: "使用管道连接命令、通过重定向控制数据流的输入与输出。",
             keyPoints: [
               "标准流：stdin（0）、stdout（1）、stderr（2）。",
               "重定向：>（覆盖）、>>（追加）、2>&1（合并错误）。",
@@ -74,6 +75,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w2",
         title: "第 2 周：文件系统与权限",
         summary: "理解 Linux 文件系统层次结构与权限模型。",
+        overview: "本周深入 Linux 文件系统的目录结构与权限体系，从 FHS 标准目录布局到 rwx 权限位、特殊权限和 ACL，全面掌握文件访问控制。",
         keyPoints: [
           "FHS 定义了 Linux 目录结构标准。",
           "权限控制访问，所有者/组/其他三级别。",
@@ -99,7 +101,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w2-2",
             title: "文件权限与所有权",
-            detail: "管理文件权限与所有权。",
+            detail: "使用 chmod 和 chown 管理文件的读写执行权限与所有权归属。",
             keyPoints: [
               "权限位：r（4）、w（2）、x（1），三组 owner/group/others。",
               "chmod：修改权限，数字模式（755）或符号模式（u+x）。",
@@ -115,7 +117,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w2-3",
             title: "特殊权限与 ACL",
-            detail: "使用特殊权限和访问控制列表。",
+            detail: "掌握 SUID、SGID、Sticky Bit 特殊权限与 ACL 访问控制列表的配置。",
             keyPoints: [
               "SUID（4）：以文件所有者身份执行，如 /usr/bin/passwd。",
               "SGID（2）：继承目录组，协作目录常用。",
@@ -134,6 +136,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w3",
         title: "第 3 周：用户与组管理",
         summary: "掌握 Linux 用户、组与认证管理。",
+        overview: "本周学习 Linux 多用户环境下的身份与访问管理，涵盖用户和组的创建维护、PAM 认证框架的配置，以及 sudo 权限委派的安全实践。",
         keyPoints: [
           "用户和组是 Linux 访问控制的基础。",
           "PAM 提供灵活的认证框架。",
@@ -143,7 +146,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w3-1",
             title: "用户与组管理",
-            detail: "创建和管理用户与组。",
+            detail: "使用 useradd、groupadd 等命令创建和管理系统用户与组。",
             keyPoints: [
               "useradd/usermod/userdel：用户管理命令。",
               "groupadd/groupmod/groupdel：组管理命令。",
@@ -159,7 +162,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w3-2",
             title: "PAM 认证框架",
-            detail: "理解可插拔认证模块。",
+            detail: "理解 PAM 可插拔认证模块的架构原理与配置方法。",
             keyPoints: [
               "PAM：Pluggable Authentication Modules。",
               "配置文件：/etc/pam.d/ 下按服务配置。",
@@ -206,6 +209,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w4",
         title: "第 4 周：进程管理",
         summary: "理解 Linux 进程模型与管理工具。",
+        overview: "本周探索 Linux 进程的核心概念，从进程的创建与状态转换、信号机制，到使用 ps/top/htop 等工具监控进程，以及 cgroups 资源限制。",
         keyPoints: [
           "进程是程序的运行实例，有唯一 PID。",
           "进程有不同状态：运行、睡眠、停止、僵尸。",
@@ -215,7 +219,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w4-1",
             title: "进程基础",
-            detail: "理解 Linux 进程模型。",
+            detail: "理解 Linux 进程的创建、状态转换与生命周期管理。",
             keyPoints: [
               "进程属性：PID、PPID、UID、GID、优先级。",
               "进程状态：R（运行）、S（睡眠）、D（不可中断）、Z（僵尸）、T（停止）。",
@@ -231,7 +235,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w4-2",
             title: "进程监控与管理",
-            detail: "使用工具监控和管理进程。",
+            detail: "使用 ps、top、htop 等工具监控进程状态并发送信号管理进程。",
             keyPoints: [
               "ps：查看进程，aux 显示所有进程详情。",
               "top/htop：实时进程监控。",
@@ -247,7 +251,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w4-3",
             title: "资源限制与 cgroups",
-            detail: "限制进程资源使用。",
+            detail: "使用 ulimit 和 cgroups 限制进程对 CPU、内存等资源的使用。",
             keyPoints: [
               "ulimit：用户级资源限制（文件数、内存等）。",
               "/etc/security/limits.conf：持久化限制配置。",
@@ -266,6 +270,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w5",
         title: "第 5 周：systemd 服务管理",
         summary: "掌握 systemd 服务与系统管理。",
+        overview: "本周全面学习 systemd 作为现代 Linux 初始化系统的架构设计，包括服务单元的管理与编写、自定义服务创建，以及 timer 定时任务和 socket 激活机制。",
         keyPoints: [
           "systemd 是现代 Linux 的初始化系统和服务管理器。",
           "Unit 文件定义服务配置和依赖关系。",
@@ -326,6 +331,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w6",
         title: "第 6 周：软件包与日志管理",
         summary: "掌握软件包管理与 journald 日志系统。",
+        overview: "本周学习不同发行版的软件包管理工具以及 systemd 日志子系统 journald 的使用，掌握软件安装更新与系统日志的查询分析技能。",
         keyPoints: [
           "不同发行版有不同的包管理器。",
           "journald 是 systemd 的日志组件。",
@@ -335,7 +341,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w6-1",
             title: "软件包管理",
-            detail: "使用不同发行版的包管理器。",
+            detail: "掌握 APT、DNF、Zypper 等不同发行版的软件包管理工具。",
             keyPoints: [
               "APT（Debian/Ubuntu）：apt install/remove/update/upgrade。",
               "DNF/YUM（RHEL/Fedora）：dnf install/remove/update。",
@@ -398,6 +404,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w7",
         title: "第 7 周：磁盘与文件系统",
         summary: "理解磁盘分区与 Linux 文件系统。",
+        overview: "本周深入磁盘管理与文件系统基础，学习 MBR/GPT 分区方案的区别与操作、ext4/XFS/Btrfs 等文件系统的特性比较，以及文件系统的创建挂载与日常维护。",
         keyPoints: [
           "GPT 是现代分区表标准，取代 MBR。",
           "ext4 是最常用的 Linux 文件系统。",
@@ -407,7 +414,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w7-1",
             title: "磁盘分区",
-            detail: "管理磁盘分区表和分区。",
+            detail: "使用 fdisk 和 parted 管理 MBR/GPT 磁盘分区表与分区操作。",
             keyPoints: [
               "MBR vs GPT：MBR 最大 2TB，GPT 支持更大磁盘。",
               "fdisk：MBR 分区工具，gdisk/parted：GPT 工具。",
@@ -423,7 +430,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w7-2",
             title: "文件系统类型",
-            detail: "理解不同文件系统的特点。",
+            detail: "比较 ext4、XFS、Btrfs 等文件系统的特性与适用场景。",
             keyPoints: [
               "ext4：成熟稳定，日志文件系统，最大 16TB 文件。",
               "XFS：高性能，大文件优化，在线扩展。",
@@ -439,7 +446,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w7-3",
             title: "文件系统管理",
-            detail: "创建、挂载和维护文件系统。",
+            detail: "使用 mkfs 创建文件系统，通过 mount 和 fstab 管理挂载与维护。",
             keyPoints: [
               "mkfs：创建文件系统，mkfs.ext4、mkfs.xfs。",
               "mount/umount：挂载和卸载文件系统。",
@@ -458,6 +465,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w8",
         title: "第 8 周：LVM 与 RAID",
         summary: "使用 LVM 和 RAID 实现灵活的存储管理。",
+        overview: "本周学习高级存储管理技术，包括 LVM 逻辑卷的创建与扩展、RAID 阵列的冗余配置，以及 RHEL 环境下 Stratis 存储管理框架的使用。",
         keyPoints: [
           "LVM 提供逻辑卷的灵活管理。",
           "RAID 通过冗余提高可靠性或性能。",
@@ -467,7 +475,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w8-1",
             title: "LVM 逻辑卷管理",
-            detail: "使用 LVM 管理存储。",
+            detail: "使用 LVM 实现物理卷、卷组和逻辑卷的灵活存储管理。",
             keyPoints: [
               "PV（物理卷）→ VG（卷组）→ LV（逻辑卷）。",
               "pvcreate/vgcreate/lvcreate：创建 LVM 组件。",
@@ -518,6 +526,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w9",
         title: "第 9 周：网络存储",
         summary: "配置和使用网络存储（NFS、iSCSI）。",
+        overview: "本周学习网络存储技术，配置 NFS 实现文件级共享、iSCSI 提供块级存储访问，并使用 autofs 实现远程文件系统的按需自动挂载。",
         keyPoints: [
           "NFS 是 Linux 最常用的网络文件系统。",
           "iSCSI 通过网络提供块级存储。",
@@ -527,7 +536,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w9-1",
             title: "NFS 服务器与客户端",
-            detail: "配置 NFS 共享文件系统。",
+            detail: "配置 NFS 服务器和客户端，实现跨主机的文件系统共享。",
             keyPoints: [
               "NFS v4：当前标准，更好的安全性和性能。",
               "/etc/exports：服务器端导出配置。",
@@ -559,7 +568,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w9-3",
             title: "autofs 自动挂载",
-            detail: "配置按需自动挂载。",
+            detail: "使用 autofs 配置按需自动挂载，减少系统资源占用。",
             keyPoints: [
               "autofs：按需挂载，空闲后自动卸载。",
               "/etc/auto.master：主配置文件。",
@@ -590,6 +599,7 @@ export const linuxStages: Stage[] = [
         id: "linux-w10",
         title: "第 10 周：网络基础配置",
         summary: "配置 Linux 网络接口与路由。",
+        overview: "本周学习 Linux 网络基础配置，包括网络接口的 IP 地址与子网配置、静态路由和网关的设置，以及 DNS 域名解析服务的配置方法。",
         keyPoints: [
           "NetworkManager 是现代 Linux 的网络管理工具。",
           "ip 命令是 iproute2 套件的核心工具。",
@@ -615,7 +625,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w10-2",
             title: "路由与网关",
-            detail: "配置静态路由和默认网关。",
+            detail: "使用 ip route 命令配置静态路由表和默认网关转发策略。",
             keyPoints: [
               "ip route：查看和管理路由表。",
               "默认网关：ip route add default via <gateway>。",
@@ -631,7 +641,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w10-3",
             title: "DNS 配置",
-            detail: "配置 DNS 解析。",
+            detail: "配置 resolv.conf 与 systemd-resolved 实现域名解析服务。",
             keyPoints: [
               "/etc/resolv.conf：传统 DNS 配置文件。",
               "systemd-resolved：现代 DNS 解析服务。",
@@ -691,7 +701,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w11-3",
             title: "NAT 与端口转发",
-            detail: "配置网络地址转换和端口转发。",
+            detail: "配置 SNAT、DNAT 网络地址转换与端口转发规则，实现网络互联。",
             keyPoints: [
               "SNAT/MASQUERADE：源地址转换，共享上网。",
               "DNAT：目标地址转换，端口映射。",
@@ -719,7 +729,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w12-1",
             title: "SSH 服务配置",
-            detail: "配置安全的 SSH 服务。",
+            detail: "配置 SSH 服务器的安全参数，包括密钥认证与访问控制。",
             keyPoints: [
               "sshd_config：SSH 服务器配置文件。",
               "密钥认证：ssh-keygen、ssh-copy-id。",
@@ -791,7 +801,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w13-1",
             title: "SELinux 基础",
-            detail: "理解和配置 SELinux。",
+            detail: "理解 SELinux 强制访问控制的工作模式与安全上下文配置方法。",
             keyPoints: [
               "模式：Enforcing、Permissive、Disabled。",
               "上下文：user:role:type:level，type 最重要。",
@@ -867,7 +877,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w14-2",
             title: "SSH 安全加固",
-            detail: "强化 SSH 服务安全配置。",
+            detail: "强化 SSH 服务安全，禁用密码登录、限制用户并配置端口策略。",
             keyPoints: [
               "禁用密码认证：PasswordAuthentication no。",
               "禁用 root 登录：PermitRootLogin no。",
@@ -883,7 +893,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w14-3",
             title: "服务最小化与加固",
-            detail: "减少攻击面，加固必要服务。",
+            detail: "关闭不必要的服务和端口，减少系统攻击面并加固关键服务配置。",
             keyPoints: [
               "禁用不必要服务：systemctl disable/mask。",
               "端口扫描：ss -tulpn 查看监听端口。",
@@ -999,7 +1009,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w16-2",
             title: "控制流与函数",
-            detail: "使用条件、循环和函数。",
+            detail: "掌握 Bash 脚本中条件判断、循环结构和函数定义的用法。",
             keyPoints: [
               "条件：if/elif/else、test/[/[[、case。",
               "循环：for、while、until、break、continue。",
@@ -1015,7 +1025,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w16-3",
             title: "脚本最佳实践",
-            detail: "编写健壮可维护的脚本。",
+            detail: "运用严格模式、错误处理和代码规范编写健壮可维护的脚本。",
             keyPoints: [
               "set -euo pipefail：严格模式，出错即退。",
               "ShellCheck：静态分析工具，检查常见错误。",
@@ -1103,7 +1113,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w18-1",
             title: "性能分析方法论",
-            detail: "系统性的性能分析方法。",
+            detail: "掌握 USE 方法等系统性性能分析方法论与排查思路。",
             keyPoints: [
               "USE 方法：Utilization、Saturation、Errors。",
               "性能指标：CPU、内存、磁盘 I/O、网络。",
@@ -1135,7 +1145,7 @@ export const linuxStages: Stage[] = [
           {
             id: "linux-w18-3",
             title: "系统调优实践",
-            detail: "实施系统级性能调优。",
+            detail: "针对 CPU、内存、磁盘和网络实施系统级性能调优策略。",
             keyPoints: [
               "CPU 调优：调度器、CPU 亲和性、频率调节。",
               "内存调优：vm.swappiness、透明大页、NUMA。",

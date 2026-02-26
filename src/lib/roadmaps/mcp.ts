@@ -14,6 +14,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w1",
         title: "第 1 周：大语言模型基础",
         summary: "理解 LLM 的工作原理与能力边界。",
+        overview: "本周聚焦大语言模型的核心原理，从 Transformer 架构到工具使用，帮助你理解 AI 能做什么、不能做什么，以及为什么需要 MCP 这样的协议来扩展模型能力。",
         keyPoints: [
           "LLM 基于 Transformer 架构，通过预测下一个 token 工作。",
           "上下文窗口限制了模型能处理的信息量。",
@@ -23,7 +24,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w1-1",
             title: "LLM 工作原理",
-            detail: "理解大语言模型的核心机制。",
+            detail: "深入理解大语言模型的核心工作机制，包括 Transformer 架构、预训练流程与自回归推理生成过程。",
             keyPoints: [
               "Transformer 架构：自注意力机制、位置编码。",
               "预训练与微调：海量数据预训练，任务特定微调。",
@@ -39,7 +40,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w1-2",
             title: "LLM 能力与局限",
-            detail: "了解 LLM 的能力边界与固有局限。",
+            detail: "全面了解大语言模型的能力边界与固有局限，包括知识截止、幻觉问题与上下文长度限制等关键挑战。",
             keyPoints: [
               "知识截止：训练数据有时间截止点。",
               "幻觉问题：可能生成看似合理但错误的信息。",
@@ -55,7 +56,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w1-3",
             title: "工具使用与 Agent",
-            detail: "理解如何扩展 LLM 的能力边界。",
+            detail: "理解如何通过工具调用和 Agent 架构扩展大语言模型的能力边界，实现与外部系统的实时交互。",
             keyPoints: [
               "Function Calling：让模型决定调用哪个函数。",
               "ReAct 模式：推理 + 行动的循环。",
@@ -74,6 +75,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w2",
         title: "第 2 周：MCP 协议概述",
         summary: "理解 Model Context Protocol 的设计理念与架构。",
+        overview: "本周深入 MCP 协议本身，理解它的设计动机、客户端-服务器架构和三种核心能力（Tools、Resources、Prompts），为后续开发打下坚实的概念基础。",
         keyPoints: [
           "MCP 是连接 AI 模型与外部系统的开放标准。",
           "采用客户端-服务器架构，通过 JSON-RPC 通信。",
@@ -83,7 +85,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w2-1",
             title: "MCP 设计理念",
-            detail: "理解 MCP 解决的问题与设计目标。",
+            detail: "深入理解 MCP 协议的设计理念，了解它如何通过统一标准解决 AI 工具集成碎片化的核心问题。",
             keyPoints: [
               "问题：每个 AI 应用都要重新实现工具集成。",
               "解决方案：统一的协议标准，一次构建到处使用。",
@@ -99,7 +101,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w2-2",
             title: "MCP 架构",
-            detail: "理解 MCP 的整体架构与组件。",
+            detail: "全面理解 MCP 的客户端-服务器架构、各核心组件的职责及其交互关系，掌握协议的通信机制。",
             keyPoints: [
               "Host：托管 AI 模型的应用（如 Claude Desktop）。",
               "Client：MCP 客户端，连接服务器。",
@@ -115,7 +117,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w2-3",
             title: "MCP 核心概念",
-            detail: "掌握 MCP 的三种核心能力。",
+            detail: "系统掌握 MCP 提供的三种核心能力：工具调用、资源访问和提示词模板的基本概念与使用场景。",
             keyPoints: [
               "Tools：可执行的函数，模型决定何时调用。",
               "Resources：可读取的数据源，如文件、数据库记录。",
@@ -134,6 +136,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w3",
         title: "第 3 周：开发环境搭建",
         summary: "搭建 MCP 开发环境，运行第一个 MCP 服务器。",
+        overview: "本周从动手实践开始，安装开发工具链、配置 MCP 宿主应用，并从零创建你的第一个 MCP 服务器，完成从理论到实践的第一步。",
         keyPoints: [
           "MCP SDK 支持 TypeScript/Python 等多种语言。",
           "Claude Desktop 是最常用的 MCP Host。",
@@ -143,7 +146,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w3-1",
             title: "SDK 与工具链",
-            detail: "了解 MCP 开发工具生态。",
+            detail: "了解并搭建 MCP 开发环境，安装官方 SDK、调试工具和命令行检查器等必备开发工具链。",
             keyPoints: [
               "TypeScript SDK：@modelcontextprotocol/sdk。",
               "Python SDK：mcp 包。",
@@ -159,7 +162,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w3-2",
             title: "配置 Claude Desktop",
-            detail: "在 Claude Desktop 中配置 MCP 服务器。",
+            detail: "在 Claude Desktop 等主流宿主应用中配置和管理 MCP 服务器连接，验证工具调用功能是否正常运行。",
             keyPoints: [
               "配置文件：claude_desktop_config.json。",
               "服务器配置：command、args、env。",
@@ -175,7 +178,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w3-3",
             title: "Hello World 服务器",
-            detail: "创建并运行第一个 MCP 服务器。",
+            detail: "从零开始创建、编写并运行第一个 MCP 服务器，实现基础的工具注册与请求响应完整流程。",
             keyPoints: [
               "项目初始化：使用 create-mcp-server 或手动创建。",
               "基本结构：Server 实例、工具注册、启动逻辑。",
@@ -206,6 +209,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w4",
         title: "第 4 周：Tools 开发",
         summary: "开发 MCP Tools，让 AI 能够执行操作。",
+        overview: "本周专注于 MCP 最核心的能力——工具开发，学习如何定义、注册和实现各类工具，掌握参数设计、错误处理与安全性方面的最佳实践。",
         keyPoints: [
           "Tools 是 MCP 最强大的能力，让 AI 能执行动作。",
           "工具定义包括名称、描述、输入 Schema。",
@@ -215,7 +219,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w4-1",
             title: "Tool 定义与注册",
-            detail: "学习如何定义和注册 MCP 工具。",
+            detail: "学习如何使用 TypeScript SDK 定义和注册 MCP 工具，掌握输入参数校验与返回值结构设计。",
             keyPoints: [
               "工具元数据：name、description、inputSchema。",
               "JSON Schema：定义输入参数结构。",
@@ -231,7 +235,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w4-2",
             title: "工具实现模式",
-            detail: "掌握常见的工具实现模式。",
+            detail: "掌握常见的 MCP 工具实现模式，包括查询类、操作类和计算类工具的参数设计与错误处理策略。",
             keyPoints: [
               "API 调用工具：封装外部 API 调用。",
               "文件操作工具：读写本地文件。",
@@ -247,7 +251,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w4-3",
             title: "工具设计最佳实践",
-            detail: "设计易用、安全的工具。",
+            detail: "学习设计易用、安全且高效的 MCP 工具，掌握命名规范、权限控制与文档编写的最佳实践。",
             keyPoints: [
               "清晰的描述：帮助模型理解何时使用工具。",
               "参数验证：使用 JSON Schema 严格验证输入。",
@@ -266,6 +270,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w5",
         title: "第 5 周：Resources 开发",
         summary: "开发 MCP Resources，为 AI 提供数据访问。",
+        overview: "本周学习 MCP 的资源能力，掌握如何定义静态和动态资源、使用 URI 模板，并将数据库、文件系统等数据源封装为可供 AI 读取的标准化资源。",
         keyPoints: [
           "Resources 让 AI 能读取外部数据源。",
           "使用 URI 标识资源，支持多种格式。",
@@ -275,7 +280,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w5-1",
             title: "Resource 定义与暴露",
-            detail: "学习如何定义和暴露资源。",
+            detail: "学习如何在 MCP 服务器中定义和暴露资源，掌握静态资源声明、内容类型设置与元数据管理。",
             keyPoints: [
               "资源 URI：唯一标识资源的路径。",
               "资源元数据：name、description、mimeType。",
@@ -291,7 +296,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w5-2",
             title: "动态资源与模板",
-            detail: "实现动态资源和 URI 模板。",
+            detail: "实现基于 URI 模板的动态资源访问，支持参数化路径匹配与运行时资源内容的动态生成。",
             keyPoints: [
               "URI 模板：file:///{path} 支持参数化。",
               "动态列表：根据条件返回不同资源列表。",
@@ -307,7 +312,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w5-3",
             title: "常见资源类型",
-            detail: "实现各类数据源的资源访问。",
+            detail: "实现各类数据源的资源访问，将数据库查询结果、文件内容和远程接口数据封装为标准化 MCP 资源。",
             keyPoints: [
               "文件资源：本地文件系统访问。",
               "数据库资源：表、记录、查询结果。",
@@ -326,6 +331,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w6",
         title: "第 6 周：Prompts 与高级功能",
         summary: "开发 Prompts 和其他高级服务器功能。",
+        overview: "本周探索 MCP 的提示词模板、采样和日志通知等高级功能，学习如何构建功能完善、可观测的生产级 MCP 服务器。",
         keyPoints: [
           "Prompts 提供可复用的提示词模板。",
           "Sampling 让服务器请求模型生成。",
@@ -335,7 +341,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w6-1",
             title: "Prompts 开发",
-            detail: "创建可复用的提示词模板。",
+            detail: "创建可复用的 MCP 提示词模板，学习参数化模板设计、多步骤提示组合与上下文注入技巧。",
             keyPoints: [
               "Prompt 定义：name、description、arguments。",
               "参数化提示：动态生成提示词内容。",
@@ -351,7 +357,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w6-2",
             title: "Sampling 能力",
-            detail: "让服务器请求 AI 生成内容。",
+            detail: "通过 MCP 采样功能让服务器端主动请求 AI 模型生成内容，实现服务器驱动的智能处理流程。",
             keyPoints: [
               "Sampling：服务器请求客户端的 AI 模型生成。",
               "使用场景：Agentic 工作流、内容生成。",
@@ -367,7 +373,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w6-3",
             title: "日志与进度",
-            detail: "实现服务器日志和进度报告。",
+            detail: "实现 MCP 服务器的结构化日志输出和任务进度报告，帮助客户端实时追踪长时间运行操作的状态。",
             keyPoints: [
               "日志级别：debug、info、warning、error。",
               "notifications/message：发送日志到客户端。",
@@ -398,6 +404,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w7",
         title: "第 7 周：MCP 客户端开发",
         summary: "开发 MCP 客户端，连接和使用 MCP 服务器。",
+        overview: "本周从消费者视角学习 MCP，开发自己的客户端程序，理解连接管理、能力协商和多服务器路由等关键机制。",
         keyPoints: [
           "客户端负责连接服务器、调用工具、读取资源。",
           "需要实现连接管理、能力协商、请求处理。",
@@ -407,7 +414,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w7-1",
             title: "客户端基础",
-            detail: "理解 MCP 客户端的职责与实现。",
+            detail: "深入理解 MCP 客户端的核心职责，学习如何实现连接管理、能力协商和工具调用结果处理。",
             keyPoints: [
               "连接管理：建立、维护、断开连接。",
               "能力协商：initialize 阶段交换能力信息。",
@@ -423,7 +430,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w7-2",
             title: "传输层实现",
-            detail: "实现不同的传输方式。",
+            detail: "实现 MCP 协议支持的多种传输方式，包括标准输入输出和可流式传输的 HTTP 等通信通道的配置与切换。",
             keyPoints: [
               "stdio：标准输入输出，本地进程通信。",
               "HTTP + SSE：服务器发送事件，远程通信。",
@@ -439,7 +446,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w7-3",
             title: "多服务器管理",
-            detail: "管理多个 MCP 服务器连接。",
+            detail: "实现同时管理多个 MCP 服务器连接的客户端，处理服务发现、连接池化与跨服务器的工具路由分发。",
             keyPoints: [
               "服务器发现：配置或动态发现服务器。",
               "并发连接：同时连接多个服务器。",
@@ -458,6 +465,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w8",
         title: "第 8 周：与 AI 框架集成",
         summary: "将 MCP 集成到 AI 应用框架中。",
+        overview: "本周学习将 MCP 与 LangChain、Anthropic SDK 等主流 AI 框架集成，让现有应用无缝接入 MCP 工具生态，实现功能增强。",
         keyPoints: [
           "MCP 可以集成到各种 AI 开发框架。",
           "需要将 MCP 工具转换为框架的工具格式。",
@@ -467,7 +475,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w8-1",
             title: "LangChain 集成",
-            detail: "在 LangChain 中使用 MCP 工具。",
+            detail: "在 LangChain 框架中集成和使用 MCP 工具，实现工具自动发现、链式调用与对话上下文管理。",
             keyPoints: [
               "工具适配：将 MCP Tool 转为 LangChain Tool。",
               "Agent 集成：在 Agent 中使用 MCP 工具。",
@@ -483,7 +491,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w8-2",
             title: "Anthropic SDK 集成",
-            detail: "直接使用 Anthropic SDK 与 MCP。",
+            detail: "直接使用 Anthropic SDK 与 MCP 服务器交互，实现原生工具调用、流式响应处理与会话状态管理。",
             keyPoints: [
               "Tool Use：Claude API 的原生工具使用。",
               "工具定义转换：MCP Schema 到 Claude 格式。",
@@ -499,7 +507,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w8-3",
             title: "其他框架集成",
-            detail: "与更多 AI 框架的集成。",
+            detail: "探索与更多主流 AI 框架的集成方案，包括 LlamaIndex 和 AutoGen 等框架的适配器开发与调用模式。",
             keyPoints: [
               "Vercel AI SDK：Next.js 应用中使用 MCP。",
               "Semantic Kernel：.NET 生态的 AI 框架。",
@@ -518,6 +526,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w9",
         title: "第 9 周：数据源集成",
         summary: "将各类数据源通过 MCP 暴露给 AI。",
+        overview: "本周聚焦真实数据集成场景，学习通过 MCP 连接数据库、文件系统和外部 API，构建实用的数据访问服务。",
         keyPoints: [
           "数据库、文件系统、API 都可以通过 MCP 访问。",
           "需要考虑数据安全和访问控制。",
@@ -527,7 +536,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w9-1",
             title: "数据库集成",
-            detail: "通过 MCP 访问数据库。",
+            detail: "通过 MCP 服务器安全地访问和操作数据库，实现查询构建、结果格式化与连接池等核心数据层功能。",
             keyPoints: [
               "SQL 数据库：PostgreSQL、MySQL、SQLite。",
               "查询工具：执行 SQL 查询。",
@@ -543,7 +552,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w9-2",
             title: "文件与文档",
-            detail: "通过 MCP 访问文件和文档。",
+            detail: "通过 MCP 服务器访问本地文件和文档，支持文件读写、目录遍历、内容搜索与格式转换等操作。",
             keyPoints: [
               "文件系统：读取、搜索、监控文件。",
               "文档格式：PDF、Word、Markdown 解析。",
@@ -559,7 +568,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w9-3",
             title: "外部 API 集成",
-            detail: "将外部 API 封装为 MCP 服务。",
+            detail: "将外部 REST 和 GraphQL 接口封装为标准 MCP 服务，处理认证、速率限制、数据转换与错误映射。",
             keyPoints: [
               "REST API：HTTP 请求封装。",
               "GraphQL：查询和变更操作。",
@@ -590,6 +599,7 @@ export const mcpStages: Stage[] = [
         id: "mcp-w10",
         title: "第 10 周：Agentic 工作流",
         summary: "构建复杂的 AI Agent 工作流。",
+        overview: "本周进入高级应用层面，学习基于 MCP 设计和实现智能 Agent 工作流，包括多 Agent 协作与人机协作模式。",
         keyPoints: [
           "Agent 可以自主决策、规划和执行任务。",
           "复杂任务需要多步骤、多工具协作。",
@@ -599,7 +609,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w10-1",
             title: "Agent 架构模式",
-            detail: "设计 Agent 工作流架构。",
+            detail: "设计基于 MCP 的智能 Agent 工作流架构，规划任务分解、工具选择策略与执行流程编排方案。",
             keyPoints: [
               "ReAct 模式：推理-行动循环。",
               "计划-执行：先规划再执行。",
@@ -615,7 +625,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w10-2",
             title: "多 Agent 协作",
-            detail: "实现多个 Agent 的协作。",
+            detail: "实现多个智能 Agent 之间的协作通信，设计任务分配、结果汇聚与冲突解决的协调机制。",
             keyPoints: [
               "Agent 通信：Agent 间消息传递。",
               "任务分解：将复杂任务分配给专业 Agent。",
@@ -631,7 +641,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w10-3",
             title: "人机协作",
-            detail: "实现人在回路的 Agent 工作流。",
+            detail: "实现人在回路的 Agent 工作流，在关键决策点引入人工审批与干预机制确保操作安全可控。",
             keyPoints: [
               "确认机制：关键操作需用户确认。",
               "审批流程：敏感操作的多级审批。",
@@ -659,7 +669,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w11-1",
             title: "认证与授权",
-            detail: "实现 MCP 的身份验证和权限控制。",
+            detail: "实现 MCP 服务器的身份验证和细粒度权限控制，集成 OAuth 认证协议并设计基于角色的访问策略。",
             keyPoints: [
               "服务器认证：验证客户端身份。",
               "工具权限：基于角色的工具访问控制。",
@@ -675,7 +685,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w11-2",
             title: "输入验证与净化",
-            detail: "防止恶意输入和注入攻击。",
+            detail: "防止针对 MCP 工具的恶意输入和注入攻击，实现严格的参数校验、输入净化与提示词注入防御机制。",
             keyPoints: [
               "Schema 验证：严格验证工具输入。",
               "路径遍历：防止访问非授权文件。",
@@ -691,7 +701,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w11-3",
             title: "敏感操作保护",
-            detail: "保护高风险操作。",
+            detail: "为 MCP 服务器中的高风险操作建立安全防护，实现操作沙箱隔离、资源访问限制与审计日志记录。",
             keyPoints: [
               "操作分级：根据风险级别分类操作。",
               "双重确认：敏感操作需二次确认。",
@@ -719,7 +729,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w12-1",
             title: "性能优化",
-            detail: "优化 MCP 服务器性能。",
+            detail: "全面优化 MCP 服务器的运行性能，实现请求缓存、连接复用、异步处理与资源懒加载等关键策略。",
             keyPoints: [
               "连接池：复用数据库和 HTTP 连接。",
               "缓存策略：缓存频繁访问的数据。",
@@ -735,7 +745,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w12-2",
             title: "错误处理与恢复",
-            detail: "实现健壮的错误处理。",
+            detail: "实现 MCP 服务器健壮的错误处理机制，包括异常分类、优雅降级、自动重试与客户端友好的错误消息。",
             keyPoints: [
               "错误分类：可恢复 vs 不可恢复错误。",
               "重试策略：指数退避重试。",
@@ -751,7 +761,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w12-3",
             title: "监控与可观测性",
-            detail: "建立 MCP 应用的监控体系。",
+            detail: "建立完善的 MCP 应用监控和可观测性体系，集成指标采集、分布式追踪与告警通知等运维能力。",
             keyPoints: [
               "指标收集：请求量、延迟、错误率。",
               "分布式追踪：跨服务请求追踪。",
@@ -791,7 +801,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w13-1",
             title: "Docker 化 MCP 服务",
-            detail: "将 MCP 服务打包为 Docker 镜像。",
+            detail: "将 MCP 服务打包为高效精简的 Docker 镜像，优化多阶段构建流程并配置健康检查与资源限制。",
             keyPoints: [
               "Dockerfile：多阶段构建，最小化镜像。",
               "基础镜像：Node.js/Python 官方镜像。",
@@ -807,7 +817,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w13-2",
             title: "Docker Compose 编排",
-            detail: "使用 Compose 编排多服务。",
+            detail: "使用 Docker Compose 编排和管理多个关联的 MCP 服务容器，配置网络、存储卷与依赖启动顺序。",
             keyPoints: [
               "服务定义：MCP 服务器、数据库、缓存。",
               "网络配置：服务间通信。",
@@ -823,7 +833,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w13-3",
             title: "远程 MCP 服务",
-            detail: "部署可远程访问的 MCP 服务。",
+            detail: "部署可远程访问的 MCP 服务到云端环境，配置安全传输通道、域名解析与负载均衡等基础设施。",
             keyPoints: [
               "HTTP 传输：使用 HTTP + SSE。",
               "TLS 加密：HTTPS 保护通信。",
@@ -851,7 +861,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w14-1",
             title: "K8s 资源定义",
-            detail: "定义 MCP 服务的 Kubernetes 资源。",
+            detail: "为 MCP 服务定义 Kubernetes 部署清单，编写标准化的工作负载、服务发现与配置管理资源声明。",
             keyPoints: [
               "Deployment：无状态服务部署。",
               "Service：服务发现和负载均衡。",
@@ -867,7 +877,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w14-2",
             title: "扩缩与高可用",
-            detail: "实现 MCP 服务的弹性扩缩。",
+            detail: "实现 MCP 服务在 Kubernetes 上的弹性扩缩容策略，配置水平自动伸缩、资源配额与健康探针。",
             keyPoints: [
               "HPA：基于指标的自动扩缩。",
               "副本数：多副本保证高可用。",
@@ -883,7 +893,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w14-3",
             title: "Helm Charts",
-            detail: "使用 Helm 管理 MCP 部署。",
+            detail: "使用 Helm Charts 模板化管理 MCP 服务的 Kubernetes 部署配置，支持多环境参数化与版本化发布。",
             keyPoints: [
               "Chart 结构：templates、values、Chart.yaml。",
               "Values 覆盖：环境特定配置。",
@@ -911,7 +921,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w15-1",
             title: "CI/CD 流水线",
-            detail: "构建 MCP 应用的 CI/CD 流程。",
+            detail: "构建 MCP 应用的完整持续集成和持续部署流水线，自动化测试、构建、镜像推送与环境部署流程。",
             keyPoints: [
               "代码检查：lint、类型检查、安全扫描。",
               "自动化测试：单元测试、集成测试。",
@@ -927,7 +937,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w15-2",
             title: "GitOps 部署",
-            detail: "使用 GitOps 管理部署。",
+            detail: "使用 GitOps 模式管理 MCP 服务的声明式部署，通过代码仓库驱动基础设施变更与自动化同步。",
             keyPoints: [
               "声明式配置：Git 仓库作为唯一真相来源。",
               "ArgoCD/Flux：GitOps 工具。",
@@ -943,7 +953,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w15-3",
             title: "运维最佳实践",
-            detail: "MCP 服务的日常运维。",
+            detail: "掌握 MCP 服务在生产环境中的日常运维操作，包括版本升级、配置变更、故障排查与容量规划。",
             keyPoints: [
               "日志聚合：集中收集和分析日志。",
               "告警响应：定义告警规则和响应流程。",
@@ -983,7 +993,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w16-1",
             title: "官方服务器",
-            detail: "了解 Anthropic 官方 MCP 服务器。",
+            detail: "深入了解 Anthropic 官方提供的各类 MCP 参考服务器，学习其设计模式、功能实现与最佳实践。",
             keyPoints: [
               "Filesystem：文件系统访问。",
               "GitHub：仓库、Issue、PR 操作。",
@@ -999,7 +1009,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w16-2",
             title: "社区服务器",
-            detail: "探索社区贡献的 MCP 服务器。",
+            detail: "探索社区开发者贡献的各类 MCP 服务器资源，了解热门项目的功能特色、集成方式与使用技巧。",
             keyPoints: [
               "数据库：各类数据库连接器。",
               "云服务：AWS、GCP、Azure 集成。",
@@ -1015,7 +1025,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w16-3",
             title: "贡献与参与",
-            detail: "参与 MCP 社区贡献。",
+            detail: "积极参与 MCP 开源社区的贡献活动，学习提交高质量代码、撰写文档与参与协议标准讨论的流程。",
             keyPoints: [
               "贡献代码：提交 PR 到官方仓库。",
               "报告问题：发现 Bug 或提出建议。",
@@ -1043,7 +1053,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w17-1",
             title: "项目规划",
-            detail: "规划综合实战项目。",
+            detail: "系统规划综合实战项目的架构设计与功能模块，明确技术选型、开发里程碑与交付标准。",
             keyPoints: [
               "需求分析：明确要解决的问题。",
               "功能设计：工具、资源、提示词清单。",
@@ -1059,7 +1069,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w17-2",
             title: "开发实现",
-            detail: "实现项目核心功能。",
+            detail: "动手实现综合实战项目的核心功能模块，完成主要工具开发、资源集成与端到端业务流程验证。",
             keyPoints: [
               "服务器开发：实现 Tools、Resources、Prompts。",
               "测试覆盖：单元测试和集成测试。",
@@ -1075,7 +1085,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w17-3",
             title: "部署上线",
-            detail: "部署项目到生产环境。",
+            detail: "将完成的综合实战项目部署到生产环境，完成最终测试、性能调优、文档编写与上线发布流程。",
             keyPoints: [
               "容器化：构建 Docker 镜像。",
               "部署配置：环境变量、密钥管理。",
@@ -1103,7 +1113,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w18-1",
             title: "协议演进",
-            detail: "关注 MCP 协议的发展。",
+            detail: "持续关注 MCP 协议的最新发展动态与版本演进，了解新增特性、规范变更与未来技术路线规划。",
             keyPoints: [
               "版本迭代：协议新特性和改进。",
               "向后兼容：保持兼容性的策略。",
@@ -1119,7 +1129,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w18-2",
             title: "AI Agent 生态",
-            detail: "了解更广泛的 AI Agent 生态。",
+            detail: "了解更广泛的 AI Agent 技术生态与行业格局，对比分析主流框架的架构差异与应用前景。",
             keyPoints: [
               "Agent 框架：AutoGPT、CrewAI、LangGraph。",
               "工具生态：各类工具和集成。",
@@ -1135,7 +1145,7 @@ export const mcpStages: Stage[] = [
           {
             id: "mcp-w18-3",
             title: "标准化与互操作",
-            detail: "了解 AI 工具标准化趋势。",
+            detail: "了解 AI 工具协议标准化的最新趋势，分析行业联盟推动的互操作性规范与生态融合方向。",
             keyPoints: [
               "互操作性：不同系统间的兼容。",
               "行业标准：AI 工具的标准化努力。",

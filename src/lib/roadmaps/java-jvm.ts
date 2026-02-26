@@ -14,6 +14,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w1",
         title: "第 1 周：Java 21 LTS 核心特性",
         summary: "掌握 Virtual Threads、Record Patterns 等 Java 21 重要特性。",
+        overview: "本周深入 Java 21 LTS 的核心新特性，体验虚拟线程带来的并发编程革新，学习 Record Patterns 和 Sealed Classes 等现代语法增强。",
         keyPoints: [
           "Virtual Threads 是轻量级线程，可创建百万级并发。",
           "Record 是不可变数据载体，自动生成 equals/hashCode/toString。",
@@ -74,6 +75,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w2",
         title: "第 2 周：函数式编程",
         summary: "深入 Stream API、Optional 与 Lambda 表达式的高级用法。",
+        overview: "本周聚焦 Java 函数式编程范式，掌握 Stream 的中间操作与终端操作、Optional 的正确使用方式，以及方法引用等高级技巧。",
         keyPoints: [
           "Stream API 是声明式数据处理的核心。",
           "Optional 是处理空值的函数式方式。",
@@ -134,6 +136,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w3",
         title: "第 3 周：并发编程进阶",
         summary: "掌握 Structured Concurrency、CompletableFuture 与并发集合。",
+        overview: "本周深入并发编程高级主题，学习结构化并发简化异步任务管理，掌握 CompletableFuture 的组合与异常处理，以及并发集合的正确选型。",
         keyPoints: [
           "Structured Concurrency 将相关任务作为一个工作单元管理。",
           "CompletableFuture 是异步编程的核心工具。",
@@ -206,6 +209,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w4",
         title: "第 4 周：JVM 架构",
         summary: "理解 JVM 的类加载、运行时数据区与执行引擎。",
+        overview: "本周从 JVM 架构全局出发，理解类加载的双亲委派机制、运行时数据区的内存划分，以及解释执行与编译执行的协作方式。",
         keyPoints: [
           "类加载器采用双亲委派模型，保证类的唯一性。",
           "运行时数据区包括堆、栈、方法区、程序计数器。",
@@ -266,6 +270,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w5",
         title: "第 5 周：内存模型",
         summary: "深入理解 Java 内存模型与对象内存布局。",
+        overview: "本周深入 JMM 与对象存储细节，理解 happens-before 规则、volatile 语义，以及对象头、实例数据、对齐填充的内存布局。",
         keyPoints: [
           "JMM 定义了多线程环境下的内存可见性规则。",
           "对象在堆中的布局影响内存占用与缓存效率。",
@@ -291,7 +296,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w5-2",
             title: "对象内存布局",
-            detail: "理解对象在堆中的存储结构。",
+            detail: "理解对象在堆中的存储结构，包括对象头、实例数据和对齐填充的布局方式。",
             keyPoints: [
               "对象头：Mark Word（锁状态、GC 年龄）、类型指针。",
               "实例数据：字段值，按类型对齐。",
@@ -326,6 +331,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w6",
         title: "第 6 周：JIT 编译",
         summary: "深入理解 JIT 编译器的工作原理与优化技术。",
+        overview: "本周探索 JIT 编译器如何将热点字节码编译为高效机器码，学习 C1/C2 编译器的分层编译策略与内联、逃逸分析等关键优化技术。",
         keyPoints: [
           "分层编译结合解释器与 C1/C2 编译器的优势。",
           "JIT 编译器应用多种优化技术提升性能。",
@@ -398,6 +404,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w7",
         title: "第 7 周：GC 基础",
         summary: "理解垃圾收集的基本原理与算法。",
+        overview: "本周建立 GC 基础认知，理解标记-清除、标记-整理、复制算法的原理与权衡，掌握分代收集的设计思想与 GC Roots 可达性分析。",
         keyPoints: [
           "可达性分析是判断对象存活的核心算法。",
           "分代假说是现代 GC 设计的基础。",
@@ -423,7 +430,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w7-2",
             title: "分代收集",
-            detail: "理解分代假说与分代收集策略。",
+            detail: "理解弱分代假说和强分代假说，掌握 Young 与 Old 分代收集策略的原理。",
             keyPoints: [
               "弱分代假说：大多数对象朝生夕死。",
               "强分代假说：熬过多次 GC 的对象更难死亡。",
@@ -458,6 +465,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w8",
         title: "第 8 周：G1GC 与 ZGC",
         summary: "掌握 G1GC 与 Generational ZGC 的原理与配置。",
+        overview: "本周深入现代垃圾收集器，学习 G1GC 的 Region 划分与混合回收机制，以及 ZGC 的染色指针和亚毫秒级停顿实现原理。",
         keyPoints: [
           "G1GC 是 Java 默认 GC，平衡吞吐量与延迟。",
           "ZGC 追求极低延迟，暂停时间 <1ms。",
@@ -518,6 +526,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w9",
         title: "第 9 周：GC 调优实战",
         summary: "掌握 GC 日志分析与调优技巧。",
+        overview: "本周进入 GC 调优实战，学习如何开启和解读 GC 日志，使用 GCEasy、GCViewer 等工具分析停顿时间与吞吐量，制定调优策略。",
         keyPoints: [
           "GC 日志是诊断 GC 问题的核心数据。",
           "选择合适的 GC 取决于应用特点。",
@@ -590,6 +599,7 @@ export const javaJvmStages: Stage[] = [
         id: "java-w10",
         title: "第 10 周：Spring Boot 3.x",
         summary: "掌握 Spring Boot 3.x 核心特性与最佳实践。",
+        overview: "本周学习 Spring Boot 3.x 的核心变化，包括 Jakarta EE 迁移、GraalVM 原生编译支持，以及自动配置与 Starter 的最佳实践。",
         keyPoints: [
           "Spring Boot 3.x 基于 Spring Framework 6.x 和 Jakarta EE。",
           "自动配置大幅减少样板代码。",
@@ -795,7 +805,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w13-2",
             title: "配置中心",
-            detail: "使用配置中心管理分布式配置。",
+            detail: "使用 Spring Cloud Config、Nacos 等配置中心统一管理分布式系统配置。",
             keyPoints: [
               "Spring Cloud Config：Git 后端配置中心。",
               "Consul KV：Consul 配置存储。",
@@ -883,7 +893,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w14-3",
             title: "火焰图分析",
-            detail: "使用火焰图可视化性能数据。",
+            detail: "使用火焰图可视化 CPU 和内存性能数据，定位热点方法与调用瓶颈。",
             keyPoints: [
               "火焰图：X 轴是方法调用栈，Y 轴是调用深度。",
               "宽度代表采样占比，越宽越热。",
@@ -911,7 +921,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w15-1",
             title: "堆转储分析",
-            detail: "获取和分析堆转储文件。",
+            detail: "使用 jmap、jcmd 等工具获取堆转储文件，并通过 MAT 进行深入分析。",
             keyPoints: [
               "获取方式：jmap、jcmd、-XX:+HeapDumpOnOutOfMemoryError。",
               "MAT（Memory Analyzer Tool）：Eclipse 内存分析工具。",
@@ -927,7 +937,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w15-2",
             title: "内存泄漏排查",
-            detail: "识别和修复常见内存泄漏问题。",
+            detail: "识别静态集合、监听器未注销、ThreadLocal 等常见内存泄漏场景并修复。",
             keyPoints: [
               "常见泄漏：静态集合、监听器未注销、ThreadLocal。",
               "GC Roots 分析：追踪对象为何无法被回收。",
@@ -943,7 +953,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w15-3",
             title: "堆外内存分析",
-            detail: "监控和分析堆外内存使用。",
+            detail: "使用 Native Memory Tracking 监控和分析 DirectBuffer、Metaspace 等堆外内存。",
             keyPoints: [
               "堆外内存：DirectByteBuffer、Metaspace、JNI。",
               "Native Memory Tracking：-XX:NativeMemoryTracking=summary。",
@@ -971,7 +981,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w16-1",
             title: "代码层优化",
-            detail: "优化热点代码提升应用性能。",
+            detail: "优化字符串、集合选择和装箱等热点代码，减少不必要的性能开销。",
             keyPoints: [
               "字符串优化：StringBuilder、String.intern()。",
               "集合选择：ArrayList vs LinkedList、HashMap 容量。",
@@ -987,7 +997,7 @@ export const javaJvmStages: Stage[] = [
           {
             id: "java-w16-2",
             title: "连接池与缓存",
-            detail: "使用连接池和缓存提升性能。",
+            detail: "使用 HikariCP 连接池和 Caffeine 缓存等手段提升数据访问性能。",
             keyPoints: [
               "数据库连接池：HikariCP 配置与调优。",
               "HTTP 连接池：连接复用，减少握手开销。",
