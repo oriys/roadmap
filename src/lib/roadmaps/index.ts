@@ -40,6 +40,12 @@ import { developmentAntiPatternsRoadmap } from "./development-anti-patterns"
 import { redisRoadmap } from "./redis"
 import { dockerRoadmap } from "./docker"
 import { cicdRoadmap } from "./cicd"
+import { elasticsearchRoadmap } from "./elasticsearch"
+import { networkProtocolRoadmap } from "./network-protocol"
+import { reactRoadmap } from "./react"
+import { kafkaRoadmap } from "./kafka"
+import { rustRoadmap } from "./rust"
+import { nginxRoadmap } from "./nginx"
 import type { RoadmapDefinition, RoadmapId, RoadmapCategory } from "../types"
 
 export * from "./kubernetes"
@@ -84,6 +90,12 @@ export * from "./development-anti-patterns"
 export * from "./redis"
 export * from "./docker"
 export * from "./cicd"
+export * from "./network-protocol"
+export * from "./elasticsearch"
+export * from "./rust"
+export * from "./nginx"
+export * from "./react"
+export * from "./kafka"
 
 export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   kubernetes: kubernetesRoadmap,
@@ -128,6 +140,12 @@ export const ROADMAPS: Record<RoadmapId, RoadmapDefinition> = {
   redis: redisRoadmap,
   docker: dockerRoadmap,
   cicd: cicdRoadmap,
+  elasticsearch: elasticsearchRoadmap,
+  "network-protocol": networkProtocolRoadmap,
+  kafka: kafkaRoadmap,
+  nginx: nginxRoadmap,
+  react: reactRoadmap,
+  rust: rustRoadmap,
 }
 
 export const ROADMAP_LIST: RoadmapDefinition[] = [
@@ -173,6 +191,12 @@ export const ROADMAP_LIST: RoadmapDefinition[] = [
   redisRoadmap,
   dockerRoadmap,
   cicdRoadmap,
+  elasticsearchRoadmap,
+  networkProtocolRoadmap,
+  kafkaRoadmap,
+  rustRoadmap,
+  nginxRoadmap,
+  reactRoadmap,
 ]
 export const DEFAULT_ROADMAP_ID: RoadmapId = "kubernetes"
 
@@ -230,9 +254,15 @@ export const CATEGORY_MAP: Record<RoadmapId, RoadmapCategory> = {
   redis: "backend",
   docker: "devops",
   cicd: "devops",
+  elasticsearch: "backend",
+  "network-protocol": "other",
+  nginx: "devops",
+  rust: "backend",
+  kafka: "backend",
   // Other
   blockchain: "other",
   "data-structures-algorithms": "other",
   investment: "other",
   "home-buying": "other",
+  react: "other",
 }

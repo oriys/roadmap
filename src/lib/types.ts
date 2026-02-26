@@ -51,6 +51,12 @@ export type RoadmapId =
   | "redis"
   | "docker"
   | "cicd"
+  | "network-protocol"
+  | "react"
+  | "elasticsearch"
+  | "kafka"
+  | "rust"
+  | "nginx"
 
 export type RoadmapCategory =
   | "all"
